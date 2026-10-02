@@ -1,13 +1,13 @@
 {
   "bom_format": "project-internal CycloneDX-inspired inventory",
   "spec_note": "不是CycloneDX官方验证输出；用于依赖追溯与赛前许可证复核。",
-  "generated_at": "2026-10-02T14:57:56.949252+00:00",
+  "generated_at": "2026-10-02T20:47:45.998154+00:00",
   "runtime": {
     "python": "3.12.14",
     "platform": "Windows-11-10.0.26200-SP0"
   },
   "source": "requirements.lock",
-  "component_count": 45,
+  "component_count": 46,
   "all_installed": true,
   "all_versions_match": true,
   "missing": [],
@@ -272,6 +272,15 @@
       "license_declared": "not-declared",
       "homepage": "not-declared",
       "purl": "pkg:pypi/pygments@2.21.0"
+    },
+    {
+      "name": "pypdfium2",
+      "locked_version": "4.30.0",
+      "installed_version": "4.30.0",
+      "version_matches": true,
+      "license_declared": "(Apache-2.0 OR BSD-3-Clause) AND LicenseRef-PdfiumThirdParty",
+      "homepage": "https://github.com/pypdfium2-team/pypdfium2",
+      "purl": "pkg:pypi/pypdfium2@4.30.0"
     },
     {
       "name": "pytest",

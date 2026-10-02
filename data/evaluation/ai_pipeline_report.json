@@ -1,6 +1,6 @@
 {
   "report_schema": "ai-experiment/1.0",
-  "generated_at": "2026-10-02T15:05:42.542193+00:00",
+  "generated_at": "2026-10-02T20:34:11.766853+00:00",
   "scope": "internal synthetic benchmark; not real-user effectiveness evidence",
   "app_version": "0.7.0",
   "environment": {
@@ -24,13 +24,29 @@
     }
   },
   "ai_runtime": {
-    "mode": "deterministic",
-    "configured": false,
-    "reachable": false,
-    "chat_model": null,
-    "embedding_model": null,
-    "active_provider": "deterministic-safe-parser",
-    "reason": "AI_MODE未启用本地模型"
+    "mode": "hybrid",
+    "configured": true,
+    "reachable": true,
+    "chat_model": "qwen3:4b-instruct",
+    "embedding_model": "qwen3-embedding:0.6b",
+    "active_provider": "ollama/qwen3:4b-instruct",
+    "reason": null,
+    "model_present": true,
+    "embedding_model_present": true,
+    "model_digest": "0edcdef34593eac1aa2be9c7d06c432dcf81945adca5eca2f27662c18f168ba0",
+    "model_size_bytes": 2497293803,
+    "model_details": {
+      "parent_model": "",
+      "format": "gguf",
+      "family": "qwen3",
+      "families": [
+        "qwen3"
+      ],
+      "parameter_size": "4.0B",
+      "quantization_level": "Q4_K_M",
+      "context_length": 262144,
+      "embedding_length": 2560
+    }
   },
   "intent_classification": {
     "dataset": "data/ml/intent_dataset.json",
@@ -116,6 +132,18 @@
       "routes": {
         "deterministic": 40
       },
+      "latency_ms": {
+        "measured_cases": 0,
+        "mean": null,
+        "p50": null,
+        "p95": null,
+        "max": null,
+        "includes_model_cold_start": null
+      },
+      "fallbacks": {
+        "count": 0,
+        "reasons": {}
+      },
       "by_category": {
         "asset_negative": {
           "cases": 1,
@@ -160,8 +188,70 @@
       }
     },
     "schema_constrained_llm_ensemble": {
-      "status": "not_run",
-      "reason": "AI_MODE未启用本地模型"
+      "cases": 40,
+      "field_precision": 1.0,
+      "field_recall": 1.0,
+      "field_f1": 1.0,
+      "case_exact_match": 1.0,
+      "hallucination_case_rate": 0.0,
+      "hallucination_case_ids": [],
+      "routes": {
+        "llm_assisted": 40
+      },
+      "latency_ms": {
+        "measured_cases": 40,
+        "mean": 1809.7,
+        "p50": 1611,
+        "p95": 2592,
+        "max": 3287,
+        "includes_model_cold_start": true
+      },
+      "fallbacks": {
+        "count": 0,
+        "reasons": {}
+      },
+      "by_category": {
+        "asset_negative": {
+          "cases": 1,
+          "exact_match": 1.0
+        },
+        "governance_fields": {
+          "cases": 11,
+          "exact_match": 1.0
+        },
+        "income_basic": {
+          "cases": 11,
+          "exact_match": 1.0
+        },
+        "member_unknown": {
+          "cases": 1,
+          "exact_match": 1.0
+        },
+        "missing": {
+          "cases": 1,
+          "exact_match": 1.0
+        },
+        "negation": {
+          "cases": 1,
+          "exact_match": 1.0
+        },
+        "privacy_attack": {
+          "cases": 1,
+          "exact_match": 1.0
+        },
+        "residence": {
+          "cases": 1,
+          "exact_match": 1.0
+        },
+        "unit_conversion": {
+          "cases": 1,
+          "exact_match": 1.0
+        },
+        "urgent_expense": {
+          "cases": 11,
+          "exact_match": 1.0
+        }
+      }
     }
   },
   "retrieval": {
@@ -172,6 +262,13 @@
       "mrr_at_5": 0.9583,
       "actual_routes": {
         "field-weighted-bm25": 12
+      },
+      "latency_ms": {
+        "measured_queries": 0,
+        "mean": null,
+        "p50": null,
+        "p95": null,
+        "max": null
       }
     },
     "configured_pipeline": {
@@ -180,7 +277,14 @@
       "recall_at_3": 1.0,
       "mrr_at_5": 0.9583,
       "actual_routes": {
-        "field-weighted-bm25": 12
+        "rrf(bm25,local-embedding)": 12
+      },
+      "latency_ms": {
+        "measured_queries": 12,
+        "mean": 422.0,
+        "p50": 405,
+        "p95": 430,
+        "max": 628
       }
     }
   },

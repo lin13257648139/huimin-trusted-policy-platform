@@ -31,12 +31,15 @@
 
 ## 可选本地大模型复现
 
-当前代码在没有模型时会如实标记`not_run`并安全降级。若本机已安装Ollama并已下载模型，可在新PowerShell中设置：
+代码在没有模型时会如实标记 `not_run` 并安全降级。先拉取冻结模型，再在新 PowerShell 中复现：
 
 ```powershell
+ollama pull qwen3:4b-instruct
+ollama pull qwen3-embedding:0.6b
 $env:AI_MODE='hybrid'
-$env:OLLAMA_MODEL='qwen2.5:7b-instruct-q4_K_M'
-$env:OLLAMA_EMBED_MODEL='bge-m3'
+$env:OLLAMA_MODEL='qwen3:4b-instruct'
+$env:OLLAMA_EMBED_MODEL='qwen3-embedding:0.6b'
+$env:OLLAMA_TIMEOUT_SECONDS='120'
 .\start.ps1
 .\.venv\Scripts\python.exe scripts\evaluate_ai_pipeline.py
 ```

@@ -3,6 +3,7 @@ from __future__ import annotations
 import hashlib
 import io
 import warnings as warning_control
+from collections import Counter
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
@@ -145,17 +146,109 @@ def _check_image(
     return score, checks, warnings
 
 
-def _check_pdf(content: bytes) -> tuple[int, list[dict[str, Any]], list[str]]:
+def _merge_page_ocr(pages: list[OCRAnalysis]) -> OCRAnalysis:
+    enabled_pages = [item for item in pages if item.enabled]
+    if not enabled_pages:
+        warning = next((item.warning for item in pages if item.warning), "PDF逐页OCR未启用。")
+        return OCRAnalysis(False, None, 0, None, "unknown", [], {}, None, warning)
+    type_scores: Counter[str] = Counter()
+    keyword_hits: list[str] = []
+    fields: dict[str, list[str]] = {}
+    score_sum = 0.0
+    score_lines = 0
+    page_hashes = []
+    for item in enabled_pages:
+        if item.detected_type != "unknown":
+            type_scores[item.detected_type] += max(1, sum(len(v) for v in item.keyword_hits))
+        keyword_hits.extend(item.keyword_hits)
+        for key, values in item.extracted_fields.items():
+            fields.setdefault(key, []).extend(values)
+        if item.average_line_score is not None and item.line_count:
+            score_sum += item.average_line_score * item.line_count
+            score_lines += item.line_count
+        if item.text_sha256_prefix:
+            page_hashes.append(item.text_sha256_prefix)
+    merged_fields = {
+        key: list(dict.fromkeys(values))[:12] for key, values in fields.items()
+    }
+    detected_type = type_scores.most_common(1)[0][0] if type_scores else "unknown"
+    digest = (
+        hashlib.sha256("|".join(page_hashes).encode("ascii")).hexdigest()[:12]
+        if page_hashes
+        else None
+    )
+    return OCRAnalysis(
+        True,
+        "pypdfium2 + RapidOCR/ONNX Runtime",
+        sum(item.line_count for item in enabled_pages),
+        round(score_sum / score_lines, 4) if score_lines else None,
+        detected_type,
+        list(dict.fromkeys(keyword_hits)),
+        merged_fields,
+        digest,
+        None if score_lines else "PDF各页均未识别到可靠文字，材料类型仍需人工确认。",
+    )
+
+
+def _check_pdf(
+    content: bytes,
+    *,
+    max_image_pixels: int,
+    max_pages: int,
+    ocr_enabled: bool,
+) -> tuple[int, list[dict[str, Any]], list[str], OCRAnalysis]:
     if not content.startswith(b"%PDF"):
         raise DocumentValidationError("文件扩展名为PDF，但内容不是有效PDF")
+    try:
+        import pypdfium2 as pdfium
+
+        document = pdfium.PdfDocument(content)
+        page_count = len(document)
+        if page_count < 1:
+            raise DocumentValidationError("PDF不包含可处理页面")
+        if page_count > max_pages:
+            raise DocumentValidationError(f"PDF页数超过安全上限（{max_pages}页）")
+        page_analyses: list[OCRAnalysis] = []
+        page_quality: list[int] = []
+        for index in range(page_count):
+            page = document[index]
+            width_points, height_points = page.get_size()
+            scale = min(2.0, (max_image_pixels / max(width_points * height_points, 1)) ** 0.5)
+            bitmap = page.render(scale=max(scale, 1.0))
+            image = bitmap.to_pil().convert("RGB")
+            buffer = io.BytesIO()
+            image.save(buffer, format="PNG")
+            rendered = buffer.getvalue()
+            quality, _, _ = _check_image(rendered, max_image_pixels=max_image_pixels)
+            page_quality.append(quality)
+            page_analyses.append(analyze_image_text(rendered, enabled=ocr_enabled))
+            page.close()
+        document.close()
+    except DocumentValidationError:
+        raise
+    except Exception as exc:
+        raise DocumentValidationError(f"PDF无法安全解析：{type(exc).__name__}") from exc
     eof_ok = b"%%EOF" in content[-2048:]
     checks = [
         {"code": "pdf_header", "passed": True, "value": "%PDF", "label": "PDF文件头"},
         {"code": "pdf_eof", "passed": eof_ok, "value": "found" if eof_ok else "missing", "label": "PDF完整性"},
+        {"code": "pdf_pages", "passed": True, "value": page_count, "label": "PDF页数"},
+        {
+            "code": "pdf_page_quality",
+            "passed": all(value >= 75 for value in page_quality),
+            "value": round(sum(page_quality) / len(page_quality), 1),
+            "label": "页面平均质量",
+        },
     ]
     warnings = [] if eof_ok else ["PDF可能未完整写入，请重新导出。"]
-    warnings.append("PDF文本与页级OCR需配置文档解析服务后启用。")
-    return 90 if eof_ok else 55, checks, warnings
+    if any(value < 75 for value in page_quality):
+        warnings.append("PDF中存在低质量页面，建议核对扫描清晰度。")
+    return (
+        min(100, round(sum(page_quality) / len(page_quality))) if eof_ok else 55,
+        checks,
+        warnings,
+        _merge_page_ocr(page_analyses),
+    )
 
 
 def check_document(
@@ -176,17 +269,11 @@ def check_document(
         raise DocumentValidationError(f"文件超过{max_bytes // 1024 // 1024}MB限制")
 
     if suffix == ".pdf":
-        score, checks, warnings = _check_pdf(content)
-        ocr = OCRAnalysis(
-            False,
-            None,
-            0,
-            None,
-            "unknown",
-            [],
-            {},
-            None,
-            "当前仅对图片材料执行OCR；PDF页级OCR仍需文档渲染服务。",
+        score, checks, warnings, ocr = _check_pdf(
+            content,
+            max_image_pixels=max_image_pixels,
+            max_pages=settings.max_pdf_pages,
+            ocr_enabled=settings.ocr_enabled if ocr_enabled is None else ocr_enabled,
         )
     else:
         score, checks, warnings = _check_image(content, max_image_pixels=max_image_pixels)
@@ -241,6 +328,33 @@ def check_document_package(
         hashes.setdefault(document.sha256_prefix, []).append(document.file_name)
     exact_duplicates = [names for names in hashes.values() if len(names) > 1]
     low_quality = [item.file_name for item in documents if item.quality_score < 75]
+    dates: dict[str, list[str]] = {}
+    amounts: dict[str, list[str]] = {}
+    for document in documents:
+        extracted = document.ocr.get("extracted_fields") or {}
+        for value in extracted.get("date_candidates", []):
+            dates.setdefault(value, []).append(document.file_name)
+        for value in extracted.get("amount_candidates", []):
+            amounts.setdefault(value, []).append(document.file_name)
+    consistency_flags = []
+    if len(dates) > 1:
+        consistency_flags.append(
+            {
+                "code": "multiple_dates",
+                "severity": "review",
+                "message": "材料包识别到多个日期候选，请人工核对是否属于同一申请事项。",
+                "values": dates,
+            }
+        )
+    if len(amounts) > 1:
+        consistency_flags.append(
+            {
+                "code": "multiple_amounts",
+                "severity": "review",
+                "message": "材料包识别到多个金额候选，请人工核对合计口径和票据对应关系。",
+                "values": amounts,
+            }
+        )
     return {
         "benefit_id": benefit_id,
         "files_checked": len(documents),
@@ -251,6 +365,7 @@ def check_document_package(
         "duplicate_types": [MATERIAL_LABELS.get(item, item) for item in duplicates],
         "exact_duplicate_files": exact_duplicates,
         "low_quality_files": low_quality,
+        "consistency_flags": consistency_flags,
         "ready_for_manual_review": not missing and not low_quality,
         "disclaimer": "这里只检查材料包是否便于提交前人工复核，不认定材料真实有效或必然齐全。",
     }

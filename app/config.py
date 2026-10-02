@@ -24,6 +24,7 @@ class Settings:
     max_upload_bytes: int = int(os.getenv("MAX_UPLOAD_BYTES", str(8 * 1024 * 1024)))
     max_image_pixels: int = int(os.getenv("MAX_IMAGE_PIXELS", "40000000"))
     max_package_files: int = int(os.getenv("MAX_PACKAGE_FILES", "12"))
+    max_pdf_pages: int = int(os.getenv("MAX_PDF_PAGES", "12"))
     upload_ttl_seconds: int = int(os.getenv("UPLOAD_TTL_SECONDS", "900"))
     data_retention_days: int = int(os.getenv("DATA_RETENTION_DAYS", "30"))
     admin_api_token: str | None = os.getenv("ADMIN_API_TOKEN")
@@ -32,9 +33,12 @@ class Settings:
         "ollama" if os.getenv("OLLAMA_ENABLED", "false").lower() == "true" else "deterministic",
     ).lower()
     ollama_url: str = os.getenv("OLLAMA_URL", "http://127.0.0.1:11434")
-    ollama_model: str = os.getenv("OLLAMA_MODEL", "qwen2.5:7b-instruct-q4_K_M")
-    ollama_embedding_model: str | None = os.getenv("OLLAMA_EMBED_MODEL") or None
-    ollama_timeout_seconds: float = float(os.getenv("OLLAMA_TIMEOUT_SECONDS", "25"))
+    ollama_model: str = os.getenv("OLLAMA_MODEL", "qwen3:4b-instruct")
+    ollama_embedding_model: str | None = (
+        os.getenv("OLLAMA_EMBED_MODEL", "qwen3-embedding:0.6b") or None
+    )
+    # 4060 笔记本首次加载 4B 模型需要十余秒，预留冷启动与 JSON 约束生成时间。
+    ollama_timeout_seconds: float = float(os.getenv("OLLAMA_TIMEOUT_SECONDS", "120"))
     ocr_enabled: bool = os.getenv("OCR_ENABLED", "true").lower() == "true"
     policy_as_of: str = "2026-09-30"
 

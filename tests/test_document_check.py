@@ -67,6 +67,25 @@ def test_fake_pdf_is_rejected() -> None:
         )
 
 
+def test_pdf_is_rendered_page_by_page_without_persisting_text() -> None:
+    image = Image.new("RGB", (1200, 800), "white")
+    draw = ImageDraw.Draw(image)
+    draw.text((80, 80), "DEMO PDF DOCUMENT 2026-09-15 3000.00", fill="black")
+    buffer = io.BytesIO()
+    image.save(buffer, format="PDF")
+    result = check_document(
+        filename="合成材料.pdf",
+        content=buffer.getvalue(),
+        declared_type="auto",
+        max_bytes=8 * 1024 * 1024,
+        ocr_enabled=False,
+    )
+    page_check = next(item for item in result.checks if item["code"] == "pdf_pages")
+    assert page_check["value"] == 1
+    assert result.privacy["stored"] is False
+    assert "text" not in result.ocr
+
+
 def test_disallowed_extension_is_rejected() -> None:
     with pytest.raises(DocumentValidationError):
         check_document(

@@ -41,6 +41,39 @@ CHINESE_DIGITS = {
     "十": 10,
 }
 
+# 模型只能补充原文中存在相应语义锚点的字段。Schema 能限制“字段长什么样”，
+# 但不能证明字段“来自原文”；这道独立门专门阻断语义联想型幻觉。
+MODEL_FIELD_ANCHORS: dict[str, re.Pattern[str]] = {
+    "district": re.compile("区"),
+    "household_size": re.compile(r"(?:口|人)(?:之家|家庭)?"),
+    "is_local_hukou": re.compile(r"(?:户籍|户口)"),
+    "has_local_family_member": re.compile(r"(?:本市|广州).{0,8}(?:家庭成员|亲属)"),
+    "member_scope_confirmed": re.compile(r"共同生活.{0,10}(?:成员|家庭成员)"),
+    "residence_proof": re.compile(r"(?:居住证|居住登记|居住凭证|连续居住)"),
+    "monthly_income_total": re.compile(r"(?:月|每月).{0,8}收入|收入.{0,8}(?:每月|/月)"),
+    "deductible_monthly_total": re.compile(r"(?:扣减|扣除).{0,8}(?:支出|费用|金额)"),
+    "assets_eligible": re.compile(r"(?:财产状况|家庭财产)"),
+    "financial_assets_per_capita": re.compile(r"(?:金融资产|存款|理财|证券).{0,10}(?:人均|每人)"),
+    "rigid_expenses_12m": re.compile(r"(?:刚性支出|医疗|看病|住院|教育|学费)"),
+    "medical_expenses_12m": re.compile(r"(?:医疗|看病|住院)"),
+    "education_expenses_12m": re.compile(r"(?:教育|学费)"),
+    "urgent_event": re.compile(r"(?:火灾|交通事故|重大疾病|突发急病|意外伤害|急难事件)"),
+    "urgent_event_date": re.compile(
+        r"(?:\d{4}[-/.年]\d{1,2}[-/.月]\d{1,2}(?:日)?|\d{1,2}月\d{1,2}日)"
+    ),
+    "urgent_event_type": re.compile(r"(?:火灾|交通事故|重大疾病|突发急病|意外伤害|急难事件)"),
+    "basic_life_interrupted": re.compile(r"(?:基本生活|生活).{0,8}(?:困难|中断|无法维持|陷入困难)"),
+}
+
+
+def _model_field_has_source_anchor(key: str, value: Any, text: str) -> bool:
+    anchor = MODEL_FIELD_ANCHORS.get(key)
+    if anchor is None or not anchor.search(text):
+        return False
+    if key in {"district", "urgent_event_type"}:
+        return str(value) in text
+    return True
+
 
 class _ProfileExtraction(BaseModel):
     """The only fields a model may propose. Extra keys are rejected, not ignored."""
@@ -279,7 +312,11 @@ def parse_profile(request: ParseProfileRequest) -> ParseProfileResponse:
 
     model_fields = candidate.model_dump(mode="json", exclude_none=True)
     conflicts: list[str] = []
+    unsupported: list[str] = []
     for key, value in model_fields.items():
+        if not _model_field_has_source_anchor(key, value, request.text):
+            unsupported.append(key)
+            continue
         if key in baseline.fields and str(baseline.fields[key]) != str(value):
             conflicts.append(key)
             continue
@@ -301,6 +338,10 @@ def parse_profile(request: ParseProfileRequest) -> ParseProfileResponse:
     if conflicts:
         baseline.warnings.append(
             f"模型与高精度规则在{len(conflicts)}个字段上冲突，已保留规则结果并要求人工确认。"
+        )
+    if unsupported:
+        baseline.warnings.append(
+            f"模型提出的{len(unsupported)}个字段缺少原文语义锚点，已拒绝写入画像。"
         )
     baseline.warnings.append("本地模型只补全画像草稿；全部关键字段仍须用户逐项确认。")
     baseline.provider = f"deterministic+{trace.provider}"

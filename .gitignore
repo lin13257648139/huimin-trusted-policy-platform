@@ -1,5 +1,12 @@
 .venv/
 __pycache__/
+.chart-data-*/
+deliverables/_qa_*/
+deliverables/_ppt_build/*
+!deliverables/_ppt_build/build_pitch_deck.mjs
+deliverables/pptx/*_v1.pdf
+deliverables/pptx/*_v1.pptx
+release/
 *.py[cod]
 .pytest_cache/
 .ruff_cache/

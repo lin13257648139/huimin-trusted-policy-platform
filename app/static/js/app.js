@@ -627,11 +627,16 @@ function renderDocumentPackage(result) {
     ${ocrDetail}
     ${document.warnings.map((warning) => `<p class="document-warning">${escapeHtml(warning)}</p>`).join("")}
   </article>`; }).join("");
+  const consistencyFlags = (result.consistency_flags || []).map((flag) => {
+    const details = Object.entries(flag.values || {}).map(([value, names]) => `${escapeHtml(value)}（${names.map(escapeHtml).join("、")}）`).join("；");
+    return `<p class="document-warning"><strong>跨材料一致性提示：</strong>${escapeHtml(flag.message)}${details ? `<br>${details}` : ""}</p>`;
+  }).join("");
   $("#document-result").innerHTML = `<div class="document-report package-report">
     <div class="package-status ${result.ready_for_manual_review ? "ready" : "needs-work"}"><span>${result.ready_for_manual_review ? icons.check : icons.alert}</span><div><h3>${readiness}</h3><p>已检查 ${result.files_checked} 份材料；${escapeHtml(result.disclaimer)}</p></div></div>
     <div class="package-summary"><div><strong>建议材料</strong><p>${result.required_materials.map(escapeHtml).join("、") || "以窗口告知为准"}</p></div><div><strong>识别到</strong><p>${result.detected_materials.map(escapeHtml).join("、") || "文件名无法判断，请人工分类"}</p></div><div><strong>还建议补充</strong><p>${result.missing_recommended.map(escapeHtml).join("、") || "暂未发现明显缺项"}</p></div></div>
     ${result.duplicate_types.length ? `<p class="document-warning">发现可能重复的材料类型：${result.duplicate_types.map(escapeHtml).join("、")}</p>` : ""}
     ${result.exact_duplicate_files.length ? `<p class="document-warning">发现内容完全相同的重复文件：${result.exact_duplicate_files.map((names) => names.map(escapeHtml).join(" / ")).join("；")}</p>` : ""}
+    ${consistencyFlags}
     ${documentCards}
   </div>`;
 }

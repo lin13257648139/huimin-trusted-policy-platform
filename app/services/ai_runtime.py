@@ -69,18 +69,36 @@ def ollama_runtime_status(*, probe: bool = True) -> dict[str, Any]:
         return status
     try:
         payload = _request_json("/api/tags", None, timeout=min(settings.ollama_timeout_seconds, 1.2))
-        installed = {
-            str(item.get("name", ""))
-            for item in payload.get("models", [])
-            if isinstance(item, dict)
-        }
+        model_rows = [item for item in payload.get("models", []) if isinstance(item, dict)]
+        installed = {str(item.get("name", "")) for item in model_rows}
         aliases = installed | {name.split(":", 1)[0] for name in installed}
         wanted = settings.ollama_model
         model_present = wanted in aliases or wanted.split(":", 1)[0] in aliases
+        selected = next(
+            (
+                item
+                for item in model_rows
+                if str(item.get("name", "")) == wanted
+                or str(item.get("name", "")).split(":", 1)[0] == wanted.split(":", 1)[0]
+            ),
+            None,
+        )
+        embedding_wanted = settings.ollama_embedding_model
+        embedding_present = bool(
+            embedding_wanted
+            and (
+                embedding_wanted in aliases
+                or embedding_wanted.split(":", 1)[0] in aliases
+            )
+        )
         status.update(
             {
                 "reachable": True,
                 "model_present": model_present,
+                "embedding_model_present": embedding_present,
+                "model_digest": selected.get("digest") if selected else None,
+                "model_size_bytes": selected.get("size") if selected else None,
+                "model_details": selected.get("details") if selected else None,
                 "active_provider": (
                     f"ollama/{wanted}" if model_present else "deterministic-safe-parser"
                 ),

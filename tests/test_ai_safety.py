@@ -61,6 +61,33 @@ def test_llm_failure_is_visible_and_falls_back(monkeypatch: pytest.MonkeyPatch) 
     assert result.fallback_reason == "test outage"
 
 
+def test_llm_field_without_source_anchor_is_rejected(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setattr(profile_parser, "settings", SimpleNamespace(ollama_enabled=True))
+
+    def hallucinate(_: ParseProfileRequest):
+        return (
+            profile_parser._ProfileExtraction(residence_proof=True),
+            SimpleNamespace(
+                provider="test-model",
+                model_id="test/model",
+                latency_ms=1,
+                prompt_sha256="0" * 64,
+            ),
+        )
+
+    monkeypatch.setattr(profile_parser, "_ollama_parse", hallucinate)
+    result = profile_parser.parse_profile(
+        ParseProfileRequest(
+            text="从化区4口之家，月收入4000元，家庭财产状况符合救助规定。",
+            query_date=date(2026, 9, 30),
+        )
+    )
+    assert "residence_proof" not in result.fields
+    assert any("缺少原文语义锚点" in warning for warning in result.warnings)
+
+
 def test_production_requires_admin_token() -> None:
     with pytest.raises(RuntimeError, match="ADMIN_API_TOKEN"):
         Settings(environment="production", admin_api_token=None).validate_runtime()

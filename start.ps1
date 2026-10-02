@@ -1,6 +1,9 @@
 ﻿param(
     [ValidateRange(1, 65535)]
-    [int]$Port = 8000
+    [int]$Port = 8000,
+
+    [ValidateSet('auto', 'deterministic', 'ollama', 'hybrid')]
+    [string]$AIMode = 'auto'
 )
 
 $ErrorActionPreference = 'Stop'
@@ -21,6 +24,30 @@ if (-not $PSBoundParameters.ContainsKey('Port') -and (Test-Path -LiteralPath $Po
     }
 }
 $HealthUri = "http://127.0.0.1:$Port/api/health"
+
+# auto 会在本机同时存在对话与嵌入模型时启用完整混合管线；否则使用确定性安全底座。
+# 用户仍可用 -AIMode deterministic 强制无模型演示，或显式选择 ollama/hybrid。
+$ResolvedAIMode = $AIMode
+if ($AIMode -eq 'auto') {
+    $ResolvedAIMode = 'deterministic'
+    try {
+        $Tags = Invoke-RestMethod -Uri 'http://127.0.0.1:11434/api/tags' -Method Get -TimeoutSec 2
+        $ModelNames = @($Tags.models | ForEach-Object { $_.name })
+        if (($ModelNames -contains 'qwen3:4b-instruct') -and ($ModelNames -contains 'qwen3-embedding:0.6b')) {
+            $ResolvedAIMode = 'hybrid'
+        }
+        elseif ($ModelNames -contains 'qwen3:4b-instruct') {
+            $ResolvedAIMode = 'ollama'
+        }
+    }
+    catch {
+        # Ollama 不可达时仍可完整运行确定性导办，不把启动失败转嫁给用户。
+    }
+}
+$env:AI_MODE = $ResolvedAIMode
+$env:OLLAMA_MODEL = 'qwen3:4b-instruct'
+$env:OLLAMA_EMBED_MODEL = 'qwen3-embedding:0.6b'
+$env:OLLAMA_TIMEOUT_SECONDS = '120'
 
 function Test-AppHealth {
     try {
@@ -119,6 +146,7 @@ for ($Attempt = 0; $Attempt -lt 60; $Attempt++) {
         Write-Host "惠民智导启动成功。" -ForegroundColor Green
         Write-Host "访问地址： http://127.0.0.1:$Port"
         Write-Host "进程 PID： $($ServerProcess.Id)"
+        Write-Host "AI 模式： $ResolvedAIMode"
         Write-Host "查看状态： .\status.ps1"
         Write-Host "查看日志： .\logs.ps1"
         Write-Host "停止服务： .\stop.ps1"

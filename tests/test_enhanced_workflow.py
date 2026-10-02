@@ -1,10 +1,25 @@
 import json
+import io
 import sqlite3
 from pathlib import Path
 
 from fastapi.testclient import TestClient
+from PIL import Image, ImageDraw
 
 from app.repositories.database import Database
+
+
+def _valid_demo_pdf() -> bytes:
+    image = Image.new("RGB", (1200, 800), (235, 235, 235))
+    draw = ImageDraw.Draw(image)
+    draw.rectangle((45, 45, 1155, 755), outline="black", width=4)
+    for row in range(18):
+        y = 75 + row * 36
+        draw.text((80, y), f"SYNTHETIC MATERIAL LINE {row:02d}", fill="black")
+        draw.line((340, y + 8, 1080, y + 8), fill="black", width=2)
+    buffer = io.BytesIO()
+    image.save(buffer, format="PDF")
+    return buffer.getvalue()
 
 
 def _profile(statement: str = "不要把这段自由叙述写入数据库") -> dict[str, object]:
@@ -120,7 +135,7 @@ def test_material_package_precheck_detects_minimum_set(
     import app.main as main
 
     monkeypatch.setattr(main, "database", Database(tmp_path / "package.db"))
-    pdf = b"%PDF-1.4\n1 0 obj\n<<>>\nendobj\n%%EOF"
+    pdf = _valid_demo_pdf()
     files = [
         ("files", ("身份证.pdf", pdf, "application/pdf")),
         ("files", ("核对授权书.pdf", pdf, "application/pdf")),

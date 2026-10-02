@@ -3,6 +3,7 @@ from __future__ import annotations
 import hashlib
 import json
 import platform
+import statistics
 import sys
 from collections import Counter, defaultdict
 from datetime import date, datetime, timezone
@@ -100,6 +101,14 @@ def _normal(value: object) -> object:
     return value
 
 
+def _percentile(values: list[int], fraction: float) -> int | None:
+    if not values:
+        return None
+    ordered = sorted(values)
+    index = round((len(ordered) - 1) * fraction)
+    return ordered[index]
+
+
 def _evaluate_profile_method(
     cases: list[dict[str, Any]],
     parser: Callable[[ParseProfileRequest], Any],
@@ -109,11 +118,17 @@ def _evaluate_profile_method(
     hallucination_cases: list[str] = []
     by_category: dict[str, Counter[str]] = defaultdict(Counter)
     modes: Counter[str] = Counter()
+    latencies: list[int] = []
+    fallbacks: Counter[str] = Counter()
     for item in cases:
         result = parser(
             ParseProfileRequest(text=item["text"], query_date=date(2026, 9, 30))
         )
         modes[result.mode] += 1
+        if result.latency_ms is not None:
+            latencies.append(result.latency_ms)
+        if result.fallback_used:
+            fallbacks[result.fallback_reason or "unspecified"] += 1
         expected = {key: _normal(value) for key, value in item["expected_fields"].items()}
         predicted = {
             key: _normal(value)
@@ -145,6 +160,15 @@ def _evaluate_profile_method(
         "hallucination_case_rate": round(len(hallucination_cases) / max(len(cases), 1), 4),
         "hallucination_case_ids": hallucination_cases,
         "routes": dict(modes),
+        "latency_ms": {
+            "measured_cases": len(latencies),
+            "mean": round(statistics.fmean(latencies), 1) if latencies else None,
+            "p50": _percentile(latencies, 0.50),
+            "p95": _percentile(latencies, 0.95),
+            "max": max(latencies) if latencies else None,
+            "includes_model_cold_start": True if latencies else None,
+        },
+        "fallbacks": {"count": sum(fallbacks.values()), "reasons": dict(fallbacks)},
         "by_category": {
             key: {"cases": value["cases"], "exact_match": round(value["exact"] / value["cases"], 4)}
             for key, value in sorted(by_category.items())
@@ -155,11 +179,15 @@ def _evaluate_profile_method(
 def _evaluate_retrieval(benchmark: list[dict[str, Any]], hybrid: bool) -> dict[str, Any]:
     ranks: list[int | None] = []
     actual_routes: Counter[str] = Counter()
+    latencies: list[int] = []
     for item in benchmark:
         if hybrid:
             result = search_evidence_result(item["query"], limit=5)
             results = result["items"]
             actual_routes[result["retriever"]["name"]] += 1
+            latency = result["retriever"].get("latency_ms")
+            if isinstance(latency, int):
+                latencies.append(latency)
         else:
             results = search_evidence(item["query"], limit=5)
             actual_routes["field-weighted-bm25"] += 1
@@ -173,6 +201,13 @@ def _evaluate_retrieval(benchmark: list[dict[str, Any]], hybrid: bool) -> dict[s
         "recall_at_3": round(sum(rank is not None and rank <= 3 for rank in ranks) / max(len(ranks), 1), 4),
         "mrr_at_5": round(sum(1 / rank if rank else 0 for rank in ranks) / max(len(ranks), 1), 4),
         "actual_routes": dict(actual_routes),
+        "latency_ms": {
+            "measured_queries": len(latencies),
+            "mean": round(statistics.fmean(latencies), 1) if latencies else None,
+            "p50": _percentile(latencies, 0.50),
+            "p95": _percentile(latencies, 0.95),
+            "max": max(latencies) if latencies else None,
+        },
     }
 
 
