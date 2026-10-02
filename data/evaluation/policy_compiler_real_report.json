@@ -1,0 +1,143 @@
+{
+  "benchmark_role": "real_official_clause_project_authored_gold",
+  "case_count": 11,
+  "providers": {
+    "local-policy-compiler/1.0": 11
+  },
+  "benefit_accuracy": 1.0,
+  "effective_from_accuracy": 1.0,
+  "effective_to_accuracy": 1.0,
+  "missing_date_guard_accuracy": 1.0,
+  "parameter_pair": {
+    "precision": 0.5,
+    "recall": 0.5,
+    "f1": 0.5
+  },
+  "condition_field": {
+    "precision": 0.8571,
+    "recall": 0.6316,
+    "f1": 0.7273
+  },
+  "source_quote_grounding_rate": 1.0,
+  "details": [
+    {
+      "case_id": "PCR-R001",
+      "benefit_match": true,
+      "effective_from_match": true,
+      "effective_to_match": true,
+      "predicted_parameters": {},
+      "predicted_condition_fields": [
+        "assets_eligible"
+      ]
+    },
+    {
+      "case_id": "PCR-R002",
+      "benefit_match": true,
+      "effective_from_match": true,
+      "effective_to_match": true,
+      "predicted_parameters": {},
+      "predicted_condition_fields": [
+        "assets_eligible"
+      ]
+    },
+    {
+      "case_id": "PCR-R003",
+      "benefit_match": true,
+      "effective_from_match": true,
+      "effective_to_match": true,
+      "predicted_parameters": {},
+      "predicted_condition_fields": [
+        "assets_eligible",
+        "per_capita_annual_income"
+      ]
+    },
+    {
+      "case_id": "PCR-R004",
+      "benefit_match": true,
+      "effective_from_match": true,
+      "effective_to_match": true,
+      "predicted_parameters": {},
+      "predicted_condition_fields": [
+        "assets_eligible"
+      ]
+    },
+    {
+      "case_id": "PCR-R005",
+      "benefit_match": true,
+      "effective_from_match": true,
+      "effective_to_match": true,
+      "predicted_parameters": {
+        "edge_standard_monthly_per_capita": "1990.50",
+        "income_multiplier": 1.5
+      },
+      "predicted_condition_fields": []
+    },
+    {
+      "case_id": "PCR-R006",
+      "benefit_match": true,
+      "effective_from_match": true,
+      "effective_to_match": true,
+      "predicted_parameters": {},
+      "predicted_condition_fields": []
+    },
+    {
+      "case_id": "PCR-R007",
+      "benefit_match": true,
+      "effective_from_match": true,
+      "effective_to_match": true,
+      "predicted_parameters": {
+        "income_multiplier": 1.5
+      },
+      "predicted_condition_fields": [
+        "is_local_hukou",
+        "member_scope_confirmed"
+      ]
+    },
+    {
+      "case_id": "PCR-R008",
+      "benefit_match": true,
+      "effective_from_match": true,
+      "effective_to_match": true,
+      "predicted_parameters": {
+        "rigid_expense_income_ratio": 0.6
+      },
+      "predicted_condition_fields": [
+        "is_local_hukou",
+        "member_scope_confirmed",
+        "per_capita_annual_income",
+        "rigid_expenses_12m"
+      ]
+    },
+    {
+      "case_id": "PCR-R009",
+      "benefit_match": true,
+      "effective_from_match": true,
+      "effective_to_match": true,
+      "predicted_parameters": {},
+      "predicted_condition_fields": [
+        "urgent_event"
+      ]
+    },
+    {
+      "case_id": "PCR-R010",
+      "benefit_match": true,
+      "effective_from_match": true,
+      "effective_to_match": true,
+      "predicted_parameters": {},
+      "predicted_condition_fields": [
+        "residence_proof"
+      ]
+    },
+    {
+      "case_id": "PCR-R011",
+      "benefit_match": true,
+      "effective_from_match": true,
+      "effective_to_match": true,
+      "predicted_parameters": {},
+      "predicted_condition_fields": [
+        "assets_eligible"
+      ]
+    }
+  ],
+  "warning": "本基准标签由项目组从官方条款编制，尚不是独立双人盲标结果；不得包装为外部专家评测。"
+}

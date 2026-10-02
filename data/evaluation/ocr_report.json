@@ -1,0 +1,205 @@
+{
+  "benchmark_role": "synthetic_ocr_robustness_benchmark",
+  "case_count": 16,
+  "classification_accuracy": 1.0,
+  "date_candidate_recall": 1.0,
+  "amount_candidate_recall": 1.0,
+  "mean_seconds_per_image": 3.2435,
+  "by_variant": {
+    "clear": {
+      "cases": 4,
+      "classification_accuracy": 1.0
+    },
+    "low_contrast": {
+      "cases": 4,
+      "classification_accuracy": 1.0
+    },
+    "rotate": {
+      "cases": 4,
+      "classification_accuracy": 1.0
+    },
+    "slight_blur": {
+      "cases": 4,
+      "classification_accuracy": 1.0
+    }
+  },
+  "details": [
+    {
+      "case_id": "OCR-001",
+      "variant": "clear",
+      "expected_type": "medical_expense",
+      "predicted_type": "medical_expense",
+      "classification_match": true,
+      "date_match": true,
+      "amount_match": true,
+      "quality_score": 100,
+      "ocr_line_count": 9
+    },
+    {
+      "case_id": "OCR-002",
+      "variant": "low_contrast",
+      "expected_type": "medical_expense",
+      "predicted_type": "medical_expense",
+      "classification_match": true,
+      "date_match": true,
+      "amount_match": true,
+      "quality_score": 75,
+      "ocr_line_count": 9
+    },
+    {
+      "case_id": "OCR-003",
+      "variant": "slight_blur",
+      "expected_type": "medical_expense",
+      "predicted_type": "medical_expense",
+      "classification_match": true,
+      "date_match": true,
+      "amount_match": true,
+      "quality_score": 75,
+      "ocr_line_count": 9
+    },
+    {
+      "case_id": "OCR-004",
+      "variant": "rotate",
+      "expected_type": "medical_expense",
+      "predicted_type": "medical_expense",
+      "classification_match": true,
+      "date_match": true,
+      "amount_match": true,
+      "quality_score": 100,
+      "ocr_line_count": 9
+    },
+    {
+      "case_id": "OCR-005",
+      "variant": "clear",
+      "expected_type": "income",
+      "predicted_type": "income",
+      "classification_match": true,
+      "date_match": true,
+      "amount_match": true,
+      "quality_score": 100,
+      "ocr_line_count": 9
+    },
+    {
+      "case_id": "OCR-006",
+      "variant": "low_contrast",
+      "expected_type": "income",
+      "predicted_type": "income",
+      "classification_match": true,
+      "date_match": true,
+      "amount_match": true,
+      "quality_score": 75,
+      "ocr_line_count": 9
+    },
+    {
+      "case_id": "OCR-007",
+      "variant": "slight_blur",
+      "expected_type": "income",
+      "predicted_type": "income",
+      "classification_match": true,
+      "date_match": true,
+      "amount_match": true,
+      "quality_score": 75,
+      "ocr_line_count": 9
+    },
+    {
+      "case_id": "OCR-008",
+      "variant": "rotate",
+      "expected_type": "income",
+      "predicted_type": "income",
+      "classification_match": true,
+      "date_match": true,
+      "amount_match": true,
+      "quality_score": 100,
+      "ocr_line_count": 9
+    },
+    {
+      "case_id": "OCR-009",
+      "variant": "clear",
+      "expected_type": "residence",
+      "predicted_type": "residence",
+      "classification_match": true,
+      "date_match": true,
+      "amount_match": null,
+      "quality_score": 100,
+      "ocr_line_count": 9
+    },
+    {
+      "case_id": "OCR-010",
+      "variant": "low_contrast",
+      "expected_type": "residence",
+      "predicted_type": "residence",
+      "classification_match": true,
+      "date_match": true,
+      "amount_match": null,
+      "quality_score": 75,
+      "ocr_line_count": 9
+    },
+    {
+      "case_id": "OCR-011",
+      "variant": "slight_blur",
+      "expected_type": "residence",
+      "predicted_type": "residence",
+      "classification_match": true,
+      "date_match": true,
+      "amount_match": null,
+      "quality_score": 75,
+      "ocr_line_count": 9
+    },
+    {
+      "case_id": "OCR-012",
+      "variant": "rotate",
+      "expected_type": "residence",
+      "predicted_type": "residence",
+      "classification_match": true,
+      "date_match": true,
+      "amount_match": null,
+      "quality_score": 100,
+      "ocr_line_count": 9
+    },
+    {
+      "case_id": "OCR-013",
+      "variant": "clear",
+      "expected_type": "verification_authorization",
+      "predicted_type": "verification_authorization",
+      "classification_match": true,
+      "date_match": true,
+      "amount_match": null,
+      "quality_score": 100,
+      "ocr_line_count": 9
+    },
+    {
+      "case_id": "OCR-014",
+      "variant": "low_contrast",
+      "expected_type": "verification_authorization",
+      "predicted_type": "verification_authorization",
+      "classification_match": true,
+      "date_match": true,
+      "amount_match": null,
+      "quality_score": 100,
+      "ocr_line_count": 9
+    },
+    {
+      "case_id": "OCR-015",
+      "variant": "slight_blur",
+      "expected_type": "verification_authorization",
+      "predicted_type": "verification_authorization",
+      "classification_match": true,
+      "date_match": true,
+      "amount_match": null,
+      "quality_score": 75,
+      "ocr_line_count": 9
+    },
+    {
+      "case_id": "OCR-016",
+      "variant": "rotate",
+      "expected_type": "verification_authorization",
+      "predicted_type": "verification_authorization",
+      "classification_match": true,
+      "date_match": true,
+      "amount_match": null,
+      "quality_score": 100,
+      "ocr_line_count": 9
+    }
+  ],
+  "warning": "全部图片为程序生成的无真实信息材料；正式国赛必须增加独立模板和人工标注图片，不能把该结果写成真实材料准确率。"
+}

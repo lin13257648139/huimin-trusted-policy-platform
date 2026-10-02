@@ -1,0 +1,348 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="惠民智导——可信、可解释、可追溯的社会救助智能导办系统">
+  <meta name="theme-color" content="#071a1d">
+  <meta name="color-scheme" content="light">
+  <title>惠民智导 · 社会救助智能导办</title>
+  <link rel="manifest" href="/static/manifest.webmanifest">
+  <link rel="icon" href="/static/icons/app-icon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/static/css/app.css?v=0.7.0">
+</head>
+<body>
+  <a class="skip-link" href="#main-content">跳到主要内容</a>
+  <div class="ambient ambient-one"></div>
+  <div class="ambient ambient-two"></div>
+
+  <aside class="sidebar" id="main-sidebar" aria-label="主导航">
+    <a class="brand" href="#overview" data-nav="overview" aria-label="惠民智导首页">
+      <span class="brand-mark" aria-hidden="true">
+        <svg viewBox="0 0 40 40"><path d="M20 4 34 12v16L20 36 6 28V12L20 4Z"/><path d="M13 21.5 18 26l9-11"/></svg>
+      </span>
+      <span><strong>惠民智导</strong><small>可信社会救助导办</small></span>
+    </a>
+
+    <nav class="nav-stack">
+      <p class="nav-label">工作台</p>
+      <a href="#overview" class="nav-item active" data-nav="overview"><span data-icon="grid"></span><span>项目总览</span></a>
+      <a href="#screening" class="nav-item" data-nav="screening"><span data-icon="spark"></span><span>智能预筛</span><em>核心</em></a>
+      <a href="#documents" class="nav-item" data-nav="documents"><span data-icon="scan"></span><span>材料预检</span></a>
+      <a href="#evidence" class="nav-item" data-nav="evidence"><span data-icon="book"></span><span>政策证据</span></a>
+      <a href="#worker" class="nav-item" data-nav="worker"><span data-icon="users"></span><span>工作人员模式</span><em>原型</em></a>
+      <a href="#demo" class="nav-item" data-nav="demo"><span data-icon="wand"></span><span>评委演示中心</span></a>
+      <p class="nav-label">治理</p>
+      <a href="#admin" class="nav-item" data-nav="admin"><span data-icon="shield"></span><span>可信治理</span></a>
+    </nav>
+
+    <div class="sidebar-foot">
+      <div class="trust-seal"><span class="pulse-dot"></span><div><strong>规则库在线</strong><small id="trust-policy-date">核验日期加载中</small></div></div>
+      <p>辅助导办，不替代行政审批</p>
+    </div>
+  </aside>
+
+  <main class="main-shell" id="main-content" tabindex="-1">
+    <header class="topbar">
+      <button class="mobile-menu" id="mobile-menu" aria-label="打开导航" aria-controls="main-sidebar" aria-expanded="false"><span data-icon="menu"></span></button>
+      <div>
+        <p class="eyebrow" id="page-eyebrow">可信民生 AI</p>
+        <h1 id="page-title">项目总览</h1>
+      </div>
+      <div class="topbar-actions">
+        <div class="system-status" id="runtime-status"><span></span>正在核验运行环境</div>
+        <button class="icon-button" id="read-page-aloud" aria-label="朗读当前页面重点内容" aria-pressed="false" title="本地朗读"><span data-icon="volume"></span></button>
+        <button class="icon-button" id="accessibility-toggle" aria-label="切换大字模式" aria-pressed="false" title="大字模式"><span data-icon="type"></span></button>
+      </div>
+    </header>
+
+    <section class="view active" id="view-overview" data-view="overview">
+      <div class="hero-card">
+        <div class="hero-copy">
+          <div class="hero-badge"><span data-icon="shield-check"></span> POLICY-GROUNDED · HUMAN-IN-THE-LOOP</div>
+          <h2>让每一次求助，<br><span>都能找到清晰路径。</span></h2>
+          <p>不是替群众做决定，而是把复杂政策变成可理解、可追溯、可核验的下一步。</p>
+          <div class="hero-actions">
+            <button class="primary-button" data-go="screening">开始智能预筛 <span data-icon="arrow"></span></button>
+            <button class="ghost-button" data-go="evidence">查看政策证据</button>
+          </div>
+          <div class="hero-proof">
+            <div><strong id="hero-sources">—</strong><span>份官方来源</span></div>
+            <div><strong>5</strong><span>类核心事项</span></div>
+            <div><strong>3</strong><span>态安全推理</span></div>
+          </div>
+        </div>
+        <div class="hero-visual" aria-label="可信推理架构示意">
+          <div class="orbit orbit-a"></div>
+          <div class="orbit orbit-b"></div>
+          <div class="core-node">
+            <span data-icon="brain"></span>
+            <strong>可信推理核</strong>
+            <small id="retrieval-stack-label">Rule · Retrieve · Explain</small>
+          </div>
+          <div class="float-node node-a"><span data-icon="clock"></span><b>时态政策</b><small>版本不混用</small></div>
+          <div class="float-node node-b"><span data-icon="branch"></span><b>三值逻辑</b><small>允许不知道</small></div>
+          <div class="float-node node-c"><span data-icon="quote"></span><b>逐条证据</b><small>结论可追溯</small></div>
+          <div class="float-node node-d"><span data-icon="lock"></span><b>隐私最小化</b><small>原件不落盘</small></div>
+        </div>
+      </div>
+
+      <div class="metric-grid" id="metric-grid">
+        <article class="metric-card"><div class="metric-icon teal"><span data-icon="database"></span></div><div><span>官方数据源</span><strong id="metric-source-count">—</strong><small>国家 / 广东 / 广州</small></div><i>可追溯</i></article>
+        <article class="metric-card"><div class="metric-icon blue"><span data-icon="layers"></span></div><div><span>当前救助标准</span><strong id="metric-dibao">—</strong><small>低保 · 人/月</small></div><i>动态加载</i></article>
+        <article class="metric-card"><div class="metric-icon amber"><span data-icon="alert"></span></div><div><span>明确有效期来源</span><strong id="metric-policy-watch">—</strong><small>到期前需复核</small></div><i>主动预警</i></article>
+        <article class="metric-card"><div class="metric-icon violet"><span data-icon="map"></span></div><div><span>服务窗口</span><strong id="metric-office-count">—</strong><small>市级 + 11区</small></div><i>可导办</i></article>
+      </div>
+
+      <div class="overview-grid">
+        <article class="panel architecture-panel">
+          <div class="panel-heading"><div><p class="eyebrow">CORE ARCHITECTURE</p><h3>一条可信结论如何产生</h3></div><span class="soft-tag">全链路留痕</span></div>
+          <div class="flow-track">
+            <div class="flow-step"><span class="step-no">01</span><div class="flow-icon"><span data-icon="message"></span></div><strong>理解情况</strong><p>自然语言转成最小家庭画像，逐项由用户确认</p></div>
+            <span class="flow-arrow" data-icon="chevron"></span>
+            <div class="flow-step"><span class="step-no">02</span><div class="flow-icon"><span data-icon="clock"></span></div><strong>选择版本</strong><p>按地区和查询日期定位有效政策快照</p></div>
+            <span class="flow-arrow" data-icon="chevron"></span>
+            <div class="flow-step"><span class="step-no">03</span><div class="flow-icon"><span data-icon="branch"></span></div><strong>规则求值</strong><p>满足、不满足、信息不足三态推理</p></div>
+            <span class="flow-arrow" data-icon="chevron"></span>
+            <div class="flow-step"><span class="step-no">04</span><div class="flow-icon"><span data-icon="quote"></span></div><strong>证据解释</strong><p>给出缺口、材料、原文依据与官方路径</p></div>
+          </div>
+        </article>
+
+        <article class="panel policy-watch">
+          <div class="panel-heading"><div><p class="eyebrow">POLICY WATCH</p><h3>政策时态雷达</h3></div><button class="text-button" data-go="admin">查看治理台</button></div>
+          <div class="timeline-mini" id="policy-watch-list">
+            <div class="skeleton-line"></div><div class="skeleton-line"></div><div class="skeleton-line"></div>
+          </div>
+        </article>
+      </div>
+
+      <div class="principle-strip">
+        <div><span data-icon="shield-check"></span><strong>保守而可信</strong><p>高风险场景宁可说“不知道”，也不虚构确定答案。</p></div>
+        <div><span data-icon="eye"></span><strong>过程可解释</strong><p>每个判断拆到条件，每个条件回到政策证据。</p></div>
+        <div><span data-icon="heart"></span><strong>以人为中心</strong><p>不评判、不贴标签，只提供清晰、尊重的下一步。</p></div>
+      </div>
+    </section>
+
+    <section class="view" id="view-screening" data-view="screening">
+      <div class="section-intro">
+        <div><p class="eyebrow">INTELLIGENT PRE-SCREENING</p><h2>一次描述，形成一份可解释导办清单</h2><p>先用自然语言生成草稿，再确认关键字段；资格判断始终由规则引擎完成。</p></div>
+        <div class="intro-actions">
+          <button class="outline-button care-toggle" id="care-mode-toggle" aria-pressed="false"><span data-icon="heart"></span>开启一步一问</button>
+          <button class="outline-button" id="load-demo"><span data-icon="wand"></span>载入演示家庭</button>
+        </div>
+      </div>
+
+      <div class="screening-layout">
+        <div class="screening-main">
+          <article class="panel narrative-card">
+            <div class="panel-heading"><div><span class="number-badge">1</span><h3>先说说目前的情况</h3></div><span class="soft-tag" id="parser-mode-tag">安全规则抽取</span></div>
+            <div class="narrative-box">
+              <textarea id="narrative" rows="4" placeholder="例如：我们是广州天河区三口之家，家庭月收入约3200元，最近因住院花费3万元，基本生活受到影响……"></textarea>
+              <div class="narrative-actions"><p><span data-icon="lock"></span>描述不会原文落库</p><button class="small-primary" id="parse-narrative">生成画像草稿</button></div>
+            </div>
+            <div class="parse-notice hidden" id="parse-notice" aria-live="polite"></div>
+            <div class="guidance-card" id="guidance-card" aria-live="polite">
+              <div><span class="number-badge">问</span><div><strong>下一项最值得确认的信息</strong><p id="guidance-question">填写或生成画像后，系统会按影响范围推荐下一个问题。</p></div></div>
+              <p id="guidance-reason">只追问会影响候选救助判断的字段。</p>
+              <div class="guidance-actions"><button type="button" class="text-button hidden" id="skip-guidance-field">暂时跳过</button><button type="button" class="small-primary hidden" id="focus-guidance-field">去确认这一项</button></div>
+            </div>
+          </article>
+
+          <form id="screening-form" novalidate>
+            <article class="panel form-panel">
+              <div class="panel-heading"><div><span class="number-badge">2</span><h3>确认家庭关键信息</h3></div><div class="completion"><span id="completion-label">已完成 0%</span><i><b id="completion-bar"></b></i></div></div>
+              <div class="care-flow-status hidden" id="care-flow-status" aria-live="polite"><span data-icon="heart"></span><div><strong>一步一问关怀模式</strong><p id="care-flow-message">系统只展示当前最需要确认的一项，随时可以退出并查看完整表单。</p></div></div>
+
+              <div class="form-section">
+                <div class="form-section-title"><span data-icon="map"></span><div><strong>地区与时间</strong><small>政策随地区和日期变化</small></div></div>
+                <div class="field-grid cols-3">
+                  <label class="field"><span>查询日期 <em>*</em></span><input type="date" id="query_date" required></label>
+                  <label class="field"><span>所在区 <em>*</em></span><select id="district" required><option value="">请选择</option><option>越秀区</option><option>海珠区</option><option>荔湾区</option><option>天河区</option><option>白云区</option><option>黄埔区</option><option>花都区</option><option>番禺区</option><option>南沙区</option><option>从化区</option><option>增城区</option></select></label>
+                  <label class="field"><span>广州户籍</span><select id="is_local_hukou"><option value="">不清楚 / 暂不提供</option><option value="true">是</option><option value="false">否</option></select></label>
+                </div>
+              </div>
+
+              <div class="form-section">
+                <div class="form-section-title"><span data-icon="users"></span><div><strong>家庭与经济状况</strong><small>用于计算人均收入并判断信息完整性</small></div></div>
+                <div class="field-grid cols-3">
+                  <label class="field"><span>共同生活人数 <em>*</em></span><div class="input-unit"><input type="number" id="household_size" min="1" max="30" placeholder="3" required><b>人</b></div></label>
+                  <label class="field"><span>家庭月总收入</span><div class="input-unit"><input type="number" id="monthly_income_total" min="0" step="0.01" placeholder="3200"><b>元</b></div></label>
+                  <label class="field"><span>政策允许扣除的月支出 <button type="button" class="help-tip" title="仅填写政策明确允许从收入中扣除的项目；不清楚时保持为0并在窗口核对。" aria-label="解释政策允许扣除的月支出">?</button></span><div class="input-unit"><input type="number" id="deductible_monthly_total" min="0" step="0.01" value="0"><b>元</b></div></label>
+                  <label class="field"><span>共同生活成员范围 <button type="button" class="help-tip" title="通常指一起生活并共同承担生活费用的家庭成员。" aria-label="解释共同生活成员范围">?</button></span><select id="member_scope_confirmed"><option value="">不清楚</option><option value="true">已确认</option><option value="false">可能不完整</option></select></label>
+                  <label class="field"><span>房产、车辆和金融资产情况</span><select id="assets_eligible"><option value="">尚未核对</option><option value="true">未发现超标项</option><option value="false">存在可能超标项</option></select></label>
+                  <label class="field"><span>人均金融资产</span><div class="input-unit"><input type="number" id="financial_assets_per_capita" min="0" step="0.01" placeholder="选填"><b>元</b></div></label>
+                </div>
+              </div>
+
+              <div class="form-section">
+                <div class="form-section-title"><span data-icon="receipt"></span><div><strong>刚性支出</strong><small>建议填写近12个月实际、有凭据的金额</small></div></div>
+                <div class="field-grid cols-3">
+                  <label class="field"><span>医疗支出</span><div class="input-unit"><input type="number" id="medical_expenses_12m" min="0" step="0.01" placeholder="0"><b>元</b></div></label>
+                  <label class="field"><span>教育支出</span><div class="input-unit"><input type="number" id="education_expenses_12m" min="0" step="0.01" placeholder="0"><b>元</b></div></label>
+                  <label class="field"><span>刚性支出合计</span><div class="input-unit"><input type="number" id="rigid_expenses_12m" min="0" step="0.01" placeholder="自动或手动填写"><b>元</b></div></label>
+                </div>
+              </div>
+
+              <div class="form-section">
+                <div class="form-section-title"><span data-icon="alert"></span><div><strong>急难情形</strong><small>如突发急病、火灾、事故或基本生活暂时中断</small></div></div>
+                <div class="toggle-line"><div><strong>近期是否发生急难事件？ <em>*</em></strong><small>请选择“是”或“否”，系统不会默认替你回答</small></div><label class="urgent-choice"><span class="sr-only">近期是否发生急难事件</span><select id="urgent_event" required aria-controls="urgent-fields"><option value="">请选择</option><option value="true">是</option><option value="false">否</option></select></label></div>
+                <div class="field-grid cols-3 conditional muted" id="urgent-fields">
+                  <label class="field"><span>事件类型</span><select id="urgent_event_type"><option value="">请选择</option><option>突发急病</option><option>重大疾病</option><option>火灾</option><option>交通事故</option><option>意外伤害</option><option>其他特殊原因</option></select></label>
+                  <label class="field"><span>发生日期</span><input type="date" id="urgent_event_date"></label>
+                  <label class="field"><span>基本生活是否受严重影响</span><select id="basic_life_interrupted"><option value="">不清楚</option><option value="true">是</option><option value="false">否</option></select></label>
+                  <label class="field hidden" id="residence-field"><span>非广州户籍的居住证明</span><select id="residence_proof"><option value="">不清楚 / 暂不提供</option><option value="true">有</option><option value="false">没有</option></select></label>
+                </div>
+              </div>
+
+              <div class="consent-box"><span data-icon="info"></span><div><p>本系统根据自述信息进行申请前预筛，结果不等于政府审批；无需填写姓名、身份证号或银行卡号。</p><label class="screening-consent"><input type="checkbox" id="screening-consent" required><span>我已理解上述说明，并同意按本页说明处理本次结构化信息。</span></label></div></div>
+              <button type="submit" class="submit-button" id="screen-submit"><span data-icon="spark"></span><span>生成可信导办报告</span><small>规则推理 · 逐条证据 · 材料清单</small></button>
+            </article>
+          </form>
+        </div>
+
+        <aside class="screening-aside">
+          <article class="side-card privacy-card"><span class="side-icon"><span data-icon="lock"></span></span><h3>隐私最小化</h3><p>无需姓名、证件号和银行卡。自由描述不会原文写入数据库。</p><div class="privacy-list"><span><i></i>金额仅用于本次计算</span><span><i></i>政策结论全程可追溯</span><span><i></i>材料原件默认不落盘</span></div></article>
+          <article class="side-card"><p class="eyebrow">当前年度参数</p><div class="standard-row"><span>低保标准</span><strong>1,327<small> 元/人/月</small></strong></div><div class="standard-row"><span>低保边缘</span><strong>1,990.5<small> 元/人/月</small></strong></div><p class="microcopy">来源：穗民〔2026〕78号。最终以官方核定为准。</p></article>
+          <article class="side-card help-card"><span data-icon="phone"></span><div><strong>紧急情况？</strong><p>如基本生活无法维持，请优先联系所在街道或广州12345。</p></div></article>
+        </aside>
+      </div>
+
+      <div class="results-zone hidden" id="results-zone">
+        <div class="report-head">
+          <div><p class="eyebrow">TRUSTED GUIDANCE REPORT</p><h2>可信导办报告</h2><p id="report-meta"></p></div>
+          <div class="report-actions"><button class="outline-button" id="print-report"><span data-icon="print"></span>打印报告</button><button class="outline-button" id="new-screening">重新预筛</button></div>
+        </div>
+        <div class="warning-stack" id="global-warnings"></div>
+        <div class="result-summary" id="result-summary"></div>
+        <article class="panel next-step-panel" id="next-step-panel"></article>
+        <div class="result-list" id="result-list"></div>
+        <div class="feedback-card" id="feedback-card"><div><strong>这份导办报告有帮助吗？</strong><p>匿名反馈将进入规则复核队列。</p><label class="feedback-detail hidden" id="feedback-detail"><span>哪里需要改进</span><select id="feedback-type"><option value="policy">政策依据</option><option value="reasoning">判断解释</option><option value="usability">操作体验</option><option value="other">其他</option></select><textarea id="feedback-comment" maxlength="1000" placeholder="请勿填写姓名、证件号或病历原文"></textarea><button type="button" id="send-feedback">提交反馈</button></label></div><div><button data-helpful="true">有帮助</button><button data-helpful="false">需要改进</button></div></div>
+        <div class="data-actions"><span>预筛记录将在 <b id="retention-days">30</b> 天后自动清理。</span><button type="button" class="text-button" id="delete-screening">立即删除本次记录</button></div>
+      </div>
+    </section>
+
+    <section class="view" id="view-documents" data-view="documents">
+      <div class="section-intro"><div><p class="eyebrow">DOCUMENT PRE-CHECK</p><h2>材料先预检，减少无效往返</h2><p>检测文件完整性、图像质量，并用本地OCR按内容辅助分类、提取日期和金额候选；完整文字与原件均不落盘。</p></div><span class="secure-pill"><span data-icon="lock"></span>原件与全文不落盘</span></div>
+      <div class="document-layout">
+        <article class="panel upload-panel">
+          <div class="panel-heading"><div><h3>上传材料包</h3><p>一次可选择多份 JPG、PNG、WEBP、PDF；单文件不超过8MB</p></div></div>
+          <div class="demo-files"><span>没有测试材料？</span><a href="/demo-assets/合成_医疗支出凭据_清晰.png" target="_blank">查看清晰样例</a><a href="/demo-assets/合成_医疗支出凭据_模糊.png" target="_blank">查看模糊样例</a></div>
+          <label class="field"><span>准备咨询的事项</span><select id="document-benefit"><option value="B002">最低生活保障</option><option value="B003">低保边缘家庭认定</option><option value="B004">刚性支出困难家庭认定</option><option value="B005">临时救助</option><option value="B001">低收入人口认定与监测</option></select></label>
+          <label class="drop-zone" id="drop-zone">
+            <input type="file" id="document-file" accept=".jpg,.jpeg,.png,.webp,.pdf" multiple>
+            <span class="drop-icon"><span data-icon="upload"></span></span>
+            <strong>拖拽文件到这里，或点击选择</strong>
+            <p id="selected-file">尚未选择文件</p>
+          </label>
+          <label class="check-consent"><input type="checkbox" id="document-consent"><span>我同意系统仅在本次请求中处理文件，了解当前版本不保存原件。</span></label>
+          <button class="submit-button compact" id="check-document"><span data-icon="scan"></span><span>检查材料质量和完整性</span></button>
+        </article>
+        <div>
+          <article class="panel result-placeholder" id="document-result">
+            <div class="radar-placeholder"><span data-icon="scan"></span><i></i><i></i><i></i></div>
+            <h3>等待材料</h3><p>预检完成后，这里会显示质量评分、风险项和重拍建议。</p>
+          </article>
+          <article class="panel material-checklist"><div class="panel-heading"><h3>低保基础材料提示</h3><span class="soft-tag">以窗口告知为准</span></div><ul><li><span data-icon="check"></span>身份类证明或电子证照</li><li><span data-icon="check"></span>家庭经济状况核对授权书</li><li><span data-icon="check"></span>具体事项要求的收入、财产或支出材料</li></ul></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="view" id="view-evidence" data-view="evidence">
+      <div class="section-intro"><div><p class="eyebrow">POLICY EVIDENCE</p><h2>每一条结论，都能回到原始政策</h2><p>本地政策目录保留发布机构、文号、生效区间、状态、用途和政府官网链接。</p></div></div>
+      <article class="search-hero">
+        <span data-icon="search"></span><input id="evidence-query" placeholder="搜索：低保收入、临时救助、材料、隐私……"><input type="date" id="evidence-as-of" aria-label="政策查询日期"><button id="evidence-search">检索证据</button>
+      </article>
+      <div class="evidence-layout">
+        <div>
+          <div class="evidence-results" id="evidence-results"><div class="empty-state"><span data-icon="book"></span><h3>检索已核验条款片段</h3><p>输入关键词，查看原文依据、文号和有效期。</p></div></div>
+        </div>
+        <aside class="panel source-panel"><div class="panel-heading"><div><p class="eyebrow">SOURCE CATALOG</p><h3>官方来源目录</h3></div><span id="source-count" class="count-badge">—</span></div><div class="source-list" id="source-list"><div class="skeleton-line"></div><div class="skeleton-line"></div><div class="skeleton-line"></div></div></aside>
+      </div>
+    </section>
+
+    <section class="view" id="view-worker" data-view="worker">
+      <div class="section-intro"><div><p class="eyebrow">WORKER PROTOTYPE</p><h2>工作人员匿名咨询工作台</h2><p>面向社工、志愿者和咨询人员的原型模式；未经过真实基层试点，不宣称已投入业务使用。</p></div><span class="secure-pill"><span data-icon="lock"></span>不录入姓名和证件号</span></div>
+      <div class="worker-layout">
+        <article class="panel">
+          <div class="panel-heading"><div><h3>快速录入匿名概况</h3><p>只采集影响规则判断的最小字段。</p></div><span class="soft-tag">五事项并排</span></div>
+          <form id="worker-form" class="worker-form">
+            <div class="field-grid cols-3">
+              <label class="field"><span>查询日期</span><input type="date" id="worker-query-date" required></label>
+              <label class="field"><span>所在区</span><select id="worker-district" required><option>天河区</option><option>越秀区</option><option>海珠区</option><option>荔湾区</option><option>白云区</option><option>黄埔区</option><option>花都区</option><option>番禺区</option><option>南沙区</option><option>从化区</option><option>增城区</option></select></label>
+              <label class="field"><span>共同生活人数</span><input type="number" id="worker-household-size" min="1" max="30" value="3" required></label>
+              <label class="field"><span>家庭月总收入</span><input type="number" id="worker-income" min="0" value="3200"></label>
+              <label class="field"><span>成员范围</span><select id="worker-member"><option value="true">已确认</option><option value="">不清楚</option><option value="false">可能不完整</option></select></label>
+              <label class="field"><span>财产线索</span><select id="worker-assets"><option value="true">未发现超标</option><option value="">尚未核对</option><option value="false">可能超标</option></select></label>
+              <label class="field"><span>广州户籍</span><select id="worker-hukou"><option value="true">是</option><option value="false">否</option><option value="">不清楚</option></select></label>
+              <label class="field"><span>近12个月刚性支出</span><input type="number" id="worker-expenses" min="0" value="0"></label>
+              <label class="field"><span>急难事件</span><select id="worker-urgent"><option value="false">否</option><option value="true">是</option></select></label>
+            </div>
+            <button class="submit-button compact" type="submit"><span data-icon="spark"></span><span>生成工作人员咨询摘要</span></button>
+          </form>
+        </article>
+        <article class="panel worker-output" id="worker-output"><div class="empty-state"><span data-icon="users"></span><h3>等待匿名概况</h3><p>提交后并排显示五类事项、UNKNOWN条件、最小缺口和窗口信息。</p></div></article>
+      </div>
+    </section>
+
+    <section class="view" id="view-demo" data-view="demo">
+      <div class="section-intro"><div><p class="eyebrow">JURY DEMONSTRATION</p><h2>六个可复现的评委演示</h2><p>所有人物与材料均为合成案例；每个按钮都调用真实接口或打开真实预检材料，不使用录屏假页面。</p></div><span class="secure-pill"><span data-icon="shield-check"></span>合成案例 · 可重复</span></div>
+      <div class="demo-grid" id="demo-grid">
+        <article class="panel demo-case"><span>A</span><h3>收入临界边界</h3><p>验证阈值附近不会给出过度确定结论。</p><button data-demo-case="A" class="outline-button">运行案例</button></article>
+        <article class="panel demo-case"><span>B</span><h3>成员范围未知</h3><p>验证UNKNOWN保留和人工核验路径。</p><button data-demo-case="B" class="outline-button">运行案例</button></article>
+        <article class="panel demo-case"><span>C</span><h3>突发急难优先</h3><p>验证基本生活中断时的快速导办。</p><button data-demo-case="C" class="outline-button">运行案例</button></article>
+        <article class="panel demo-case"><span>D</span><h3>新旧政策切换</h3><p>对比2026-07-31与2026-08-01的有效规则。</p><button data-demo-case="D" class="outline-button">运行对比</button></article>
+        <article class="panel demo-case"><span>E</span><h3>240例影响分析</h3><p>跳转到Policy2Rule实验室运行回归影响。</p><button data-demo-case="E" class="outline-button">进入实验室</button></article>
+        <article class="panel demo-case"><span>F</span><h3>清晰与模糊材料</h3><p>打开合成凭据，比较OCR与质量预检结果。</p><button data-demo-case="F" class="outline-button">进入材料预检</button></article>
+      </div>
+      <article class="panel demo-output" id="demo-output"><div class="empty-state compact"><p>选择任一案例开始。结果会显示规则版本、状态、证据与安全验证器输出。</p></div></article>
+    </section>
+
+    <section class="view" id="view-admin" data-view="admin">
+      <div class="section-intro"><div><p class="eyebrow">TRUST & GOVERNANCE</p><h2>让每一次自动导办都可审计</h2><p>治理台展示规则版本、模型运行状态、到期预警、隐私控制和最近预筛快照。</p></div><span class="secure-pill"><span data-icon="shield-check"></span>审计已启用</span></div>
+      <article class="admin-access panel"><label class="field"><span>管理员令牌（部署时可启用）</span><input type="password" id="admin-token" autocomplete="off" placeholder="本地演示未配置时可留空"></label><button type="button" class="outline-button" id="apply-admin-token">验证并刷新</button></article>
+      <article class="panel readiness-panel" id="readiness-panel">
+        <div class="panel-heading"><div><p class="eyebrow">RUNTIME EVIDENCE</p><h3>系统就绪度与数据完整性</h3><p>直接核验当前运行实例使用的政策、规则、窗口、回归集与本地AI依赖。</p></div><span class="soft-tag" id="readiness-status">核验中</span></div>
+        <div class="readiness-summary" id="readiness-summary"></div>
+        <div class="readiness-grid" id="readiness-grid"></div>
+        <p class="readiness-boundary" id="readiness-boundary"></p>
+      </article>
+      <div class="admin-metrics" id="admin-metrics"><article><span>预筛记录</span><strong>—</strong></article><article><span>政策来源</span><strong>—</strong></article><article><span>原件落盘</span><strong>否</strong></article><article><span>数据留存</span><strong>—</strong></article></div>
+      <div class="admin-grid">
+        <article class="panel"><div class="panel-heading"><div><p class="eyebrow">VERSION CONTROL</p><h3>规则发布状态</h3></div><span class="soft-tag success" id="registry-version">加载中</span></div><div class="rule-release" id="rule-release"></div></article>
+        <article class="panel"><div class="panel-heading"><div><p class="eyebrow">PRIVACY POSTURE</p><h3>隐私与安全控制</h3></div></div><div class="security-score"><div class="score-ring"><strong id="control-enabled">—</strong><span id="control-total">项</span></div><div><strong>实际启用的治理控制</strong><p>这里显示可核验控制数量，不再使用无依据的安全评分。</p></div></div><div class="security-list" id="security-list"></div></article>
+      </div>
+      <article class="panel policy-compiler-panel">
+        <div class="panel-heading">
+          <div><p class="eyebrow">POLICY2RULE LAB</p><h3>时态政策编译与影响分析</h3><p>AI只生成候选规则；白名单校验、时间冲突检查、合成案例回归和双人复核共同控制发布。</p></div>
+          <span class="soft-tag">候选规则不可直接发布</span>
+        </div>
+        <div class="compiler-layout">
+          <div class="compiler-inputs">
+            <div class="field-grid cols-3">
+              <label class="field"><span>来源编号</span><input id="compiler-source-id" value="GZ-DEMO-2027" maxlength="40"></label>
+              <label class="field"><span>适用事项</span><select id="compiler-benefit"><option value="B002">最低生活保障</option><option value="B003">低保边缘家庭</option><option value="B004">刚性支出困难家庭</option><option value="B005">临时救助</option><option value="B001">低收入人口认定</option></select></label>
+              <label class="field"><span>适用地区</span><input id="compiler-region" value="广州市" maxlength="40"></label>
+            </div>
+            <label class="field"><span>政策标题</span><input id="compiler-title" value="广州市最低生活保障标准调整演示条款" maxlength="200"></label>
+            <label class="field"><span>政策条款原文</span><textarea id="compiler-text" rows="8" maxlength="20000" placeholder="粘贴公开政策条款；请勿输入群众个人信息。"></textarea></label>
+            <div class="compiler-actions">
+              <label class="check-consent"><input type="checkbox" id="compiler-use-llm" checked><span>本地模型可用时参与候选抽取</span></label>
+              <div><button type="button" class="outline-button" id="load-policy-sample">载入演示条款</button><button type="button" class="small-primary" id="compile-policy">生成并校验候选规则</button></div>
+            </div>
+          </div>
+          <div class="compiler-output" id="compiler-output">
+            <div class="empty-state compact"><p>载入演示条款后，可展示“政策原文 → 候选规则 → 版本差异 → 影响案例”的完整证据链。</p></div>
+          </div>
+        </div>
+      </article>
+      <article class="panel audit-panel"><div class="panel-heading"><div><p class="eyebrow">RECENT SNAPSHOTS</p><h3>最近预筛快照</h3></div><button class="text-button" id="refresh-admin">刷新</button></div><div class="audit-table" id="audit-table"><div class="empty-state compact"><p>还没有预筛记录。</p></div></div></article>
+      <div class="governance-note"><span data-icon="info"></span><div><strong>国赛演示说明</strong><p>管理端刻意展示“不自动判断”的场景：历史规则未核验、文件超出有效期、复杂比例缺少明确参数时，系统会转人工，而不是用大模型补全事实。</p></div></div>
+    </section>
+  </main>
+
+  <div class="toast-region" id="toast-region" aria-live="polite"></div>
+  <div class="loading-overlay hidden" id="loading-overlay"><div class="loader"><span></span><span></span><span></span></div><p id="loading-text">正在执行可信推理…</p></div>
+
+  <script src="/static/js/app.js?v=0.7.0" defer></script>
+</body>
+</html>

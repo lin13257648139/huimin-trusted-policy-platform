@@ -1,0 +1,153 @@
+{
+  "schema_version": "1.0",
+  "generated_at": "2026-10-02T10:03:04.592845+00:00",
+  "catalog": "data/processed/policy_source_catalog.csv",
+  "catalog_sha256": "859529675f10d4d4b739daf37cedae7ca0b850a636ed2fdb13aed70e24d6f5c7",
+  "path_policy": "all paths are project-relative; no personal absolute path is stored",
+  "sources": [
+    {
+      "source_id": "GZ-001",
+      "priority": "P0",
+      "source_url": "https://mzj.gz.gov.cn/gk/zdlyxxgk/shjzxx/content/post_10823124.html",
+      "status": "现行办事指南",
+      "local_file": "data/raw_official/01_广州市社会救助一件事办事指南_2026.html",
+      "availability": "snapshotted",
+      "bytes": 41374,
+      "sha256": "213441ae37a841f0748ae6369d414157991d5bff76bb1fbae0ac505de446e016"
+    },
+    {
+      "source_id": "GZ-009",
+      "priority": "P0",
+      "source_url": "https://www.gz.gov.cn/zwgk/gzsrmzfgbn/2023/20/content/post_10640272.html",
+      "status": "2026-08-01起由穗民规字〔2026〕3号替代；历史快照已核验",
+      "local_file": "政策证据包/广州市民政局关于进一步规范最低生活保障工作的通知 - 广州市人民政府门户网站.pdf",
+      "availability": "snapshotted",
+      "bytes": 648559,
+      "sha256": "c0407693443e53e0321ccd9e99c92ab28bf81a6e1f0690938a6fdc2796da1669"
+    },
+    {
+      "source_id": "GZ-002",
+      "priority": "P0",
+      "source_url": "https://mzj.gz.gov.cn/gkmlpt/content/10/10886/post_10886317.html",
+      "status": "试行有效期内",
+      "local_file": "data/raw_official/02_广州市最低生活保障工作通知_试行_2026.html",
+      "availability": "snapshotted",
+      "bytes": 62149,
+      "sha256": "a81e88ab0364aba8a88633356755858121a4ca1699a6e7ecedc5650d08417a5e"
+    },
+    {
+      "source_id": "GZ-003",
+      "priority": "P0",
+      "source_url": "https://mzj.gz.gov.cn/gkmlpt/content/10/10832/post_10832952.html",
+      "status": "2026年度标准",
+      "local_file": "data/raw_official/03_广州市2026年社会救助标准.html",
+      "availability": "snapshotted",
+      "bytes": 39390,
+      "sha256": "7849dc5864a4fb065fa80a3cb0796a68ebcb0c5ac3f6617918e9df05620011e8"
+    },
+    {
+      "source_id": "GZ-004",
+      "priority": "P0",
+      "source_url": "https://mzj.gz.gov.cn/gkmlpt/content/8/8494/post_8494525.html",
+      "status": "官网文件；上线前需再次核验状态",
+      "local_file": "data/raw_official/04_广州市低保边缘和支出型困难家庭救助_2022.html",
+      "availability": "snapshotted",
+      "bytes": 63781,
+      "sha256": "26d39fa061bf167eab07fd0ba6bb92fc1380e5a4d9fa17cadde29ee710459ec4"
+    },
+    {
+      "source_id": "GZ-005",
+      "priority": "P0",
+      "source_url": "https://www.gz.gov.cn/zwgk/fggw/sfbgtwj/content/mpost_7960480.html",
+      "status": "有效（延续实施）；2026-09-30核验",
+      "local_file": "政策证据包/广州市人民政府办公厅关于印发广州市临时救助实施细则的通知 - 广州市人民政府门户网站.pdf",
+      "availability": "snapshotted",
+      "bytes": 710598,
+      "sha256": "9487291bfdd5195444d8bdbf94065c31bb9a020052b35a550bca04d662dad5f8"
+    },
+    {
+      "source_id": "GD-001",
+      "priority": "P1",
+      "source_url": "https://www.gd.gov.cn/zwgk/gongbao/2021/5/content/post_3367104.html",
+      "status": "现行状态需上线前复核",
+      "local_file": "data/raw_official/06_广东省临时救助办法_2021.html",
+      "availability": "snapshotted",
+      "bytes": 79291,
+      "sha256": "b724b59cd5ed2c4f849d20011f171a7a92b4aaba0157767e24f0d05fbddb7af6"
+    },
+    {
+      "source_id": "GD-002",
+      "priority": "P1",
+      "source_url": "https://www.gd.gov.cn/attachment/0/484/484765/3883664.pdf",
+      "status": "现行状态需上线前复核",
+      "local_file": "data/raw_official/07_广东省低保边缘和支出型困难家庭救助办法_2022.pdf",
+      "availability": "snapshotted",
+      "bytes": 1016972,
+      "sha256": "2f68877a2df91b41a1c61dd35558251ca103f1d14a1515befef9e5b24f15e9e1",
+      "locator": {
+        "pdf_pages": "12-18",
+        "note": "官方附件为广东省政府公报2022年第7期合刊；指定页为本项目使用的完整政策正文。"
+      }
+    },
+    {
+      "source_id": "GD-004",
+      "priority": "P0",
+      "source_url": "https://www.gd.gov.cn/attachment/0/600/600853/4811589.pdf",
+      "status": "现行；2026-09-30核验",
+      "local_file": "政策证据包/广东省民政厅关于广东省最低生活保障.pdf",
+      "availability": "snapshotted",
+      "bytes": 2778004,
+      "sha256": "a3b496a16f691dd27a3ea935f07d67a9922041ae8371e7826ce7c6f457a8bec6"
+    },
+    {
+      "source_id": "GZ-008",
+      "priority": "P0",
+      "source_url": "https://tjj.gz.gov.cn/gkmlpt/content/10/10800/post_10800227.html",
+      "status": "2025年度统计参数；2026-10-02复核",
+      "local_file": "data/raw_official/12_广州市2025年统计公报_2026.html",
+      "availability": "snapshotted",
+      "bytes": 135352,
+      "sha256": "febbcd1e855bf89b51eb9780b25fff10386a06d1c4c75861f1abf904823fc42c"
+    },
+    {
+      "source_id": "GZ-006",
+      "priority": "P1",
+      "source_url": "https://www.gz.gov.cn/gkmlpt/content/5/5444/post_5444920.html",
+      "status": "历史/现行状态待法规库复核",
+      "local_file": "data/raw_official/08_广州市居民家庭经济状况核对办法.html",
+      "availability": "snapshotted",
+      "bytes": 173467,
+      "sha256": "614ad5c1e6876d7635b0927fc36b2848dacfede978394a6892ac7614766ae3fc"
+    },
+    {
+      "source_id": "GZ-007",
+      "priority": "P2",
+      "source_url": "https://www.gz.gov.cn/zwgk/fggw/sfbgtwj/content/post_5618550.html",
+      "status": "扩展模块使用前需核验最新替代文件",
+      "local_file": "data/raw_official/09_广州市医疗救助办法.html",
+      "availability": "snapshotted",
+      "bytes": 89960,
+      "sha256": "b9d6add74a834901cff9cae94732bab26299ddcaff96deb9687114ba9c27e429"
+    },
+    {
+      "source_id": "CN-001",
+      "priority": "P0",
+      "source_url": "https://policy.mofcom.gov.cn/claw/clawContent.shtml?id=105779",
+      "status": "现行",
+      "local_file": "data/raw_official/10_中华人民共和国社会救助法_2026.html",
+      "availability": "snapshotted",
+      "bytes": 40348,
+      "sha256": "ba039a5b7a2642f17485e21467da17eeabba22f24eaa14fdf875f3394884e854"
+    },
+    {
+      "source_id": "GD-003",
+      "priority": "P2",
+      "source_url": "https://smzt.gd.gov.cn/mzzx/tpxw/content/post_4722888.html",
+      "status": "政策实践资料",
+      "local_file": "data/raw_official/11_广东省综合救助服务平台建设说明_2025.html",
+      "availability": "snapshotted",
+      "bytes": 28523,
+      "sha256": "3e680e9df08393b138890f6ae5634b430ee793b92b44ddd72e3662e18b80e9e8"
+    }
+  ]
+}

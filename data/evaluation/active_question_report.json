@@ -1,0 +1,32 @@
+{
+  "schema_version": "1.0",
+  "generated_at": "2026-10-02T14:49:39.970332+00:00",
+  "dataset": "data/processed/synthetic_conformance_cases.jsonl",
+  "dataset_sha256": "377566eaa0667d769187cc51a9c62ad398e5627c6dc3b6f276568d94fbdaf9c0",
+  "dataset_role": "engine_conformance_only; synthetic, not a human trial",
+  "cases": 240,
+  "strategies": {
+    "complete_form": {
+      "questions_per_case": 17,
+      "definition": "当前居民端完整表单中可填写的17个业务字段（含条件字段）"
+    },
+    "fixed_order_relevant": {
+      "questions_per_case": 11
+    },
+    "information_gain": {
+      "mean_questions": 8.25,
+      "median_questions": 8.0,
+      "minimum_questions": 8,
+      "maximum_questions": 10
+    }
+  },
+  "question_reduction_vs_complete_form": 0.5147,
+  "question_reduction_vs_fixed_relevant": 0.25,
+  "status_consistency": 1.0,
+  "urgent_question_miss_rate": 0.0,
+  "mismatches": [],
+  "limitations": [
+    "数据为确定性规则引擎合成一致性案例，不代表真人完成率或真实填写时间。",
+    "问题价值采用可消除UNKNOWN事项数、急难优先级、填写成本和敏感度的可解释评分。"
+  ]
+}

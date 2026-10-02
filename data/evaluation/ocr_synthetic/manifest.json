@@ -1,0 +1,146 @@
+[
+  {
+    "case_id": "OCR-001",
+    "file": "OCR-001.png",
+    "material_type": "medical_expense",
+    "variant": "clear",
+    "expected_date": "2026-09-15",
+    "expected_amount": "30,000.00元",
+    "data_role": "synthetic_ocr_benchmark"
+  },
+  {
+    "case_id": "OCR-002",
+    "file": "OCR-002.png",
+    "material_type": "medical_expense",
+    "variant": "low_contrast",
+    "expected_date": "2026-09-15",
+    "expected_amount": "30,000.00元",
+    "data_role": "synthetic_ocr_benchmark"
+  },
+  {
+    "case_id": "OCR-003",
+    "file": "OCR-003.png",
+    "material_type": "medical_expense",
+    "variant": "slight_blur",
+    "expected_date": "2026-09-15",
+    "expected_amount": "30,000.00元",
+    "data_role": "synthetic_ocr_benchmark"
+  },
+  {
+    "case_id": "OCR-004",
+    "file": "OCR-004.png",
+    "material_type": "medical_expense",
+    "variant": "rotate",
+    "expected_date": "2026-09-15",
+    "expected_amount": "30,000.00元",
+    "data_role": "synthetic_ocr_benchmark"
+  },
+  {
+    "case_id": "OCR-005",
+    "file": "OCR-005.png",
+    "material_type": "income",
+    "variant": "clear",
+    "expected_date": "2026-09-20",
+    "expected_amount": "5,200.00元",
+    "data_role": "synthetic_ocr_benchmark"
+  },
+  {
+    "case_id": "OCR-006",
+    "file": "OCR-006.png",
+    "material_type": "income",
+    "variant": "low_contrast",
+    "expected_date": "2026-09-20",
+    "expected_amount": "5,200.00元",
+    "data_role": "synthetic_ocr_benchmark"
+  },
+  {
+    "case_id": "OCR-007",
+    "file": "OCR-007.png",
+    "material_type": "income",
+    "variant": "slight_blur",
+    "expected_date": "2026-09-20",
+    "expected_amount": "5,200.00元",
+    "data_role": "synthetic_ocr_benchmark"
+  },
+  {
+    "case_id": "OCR-008",
+    "file": "OCR-008.png",
+    "material_type": "income",
+    "variant": "rotate",
+    "expected_date": "2026-09-20",
+    "expected_amount": "5,200.00元",
+    "data_role": "synthetic_ocr_benchmark"
+  },
+  {
+    "case_id": "OCR-009",
+    "file": "OCR-009.png",
+    "material_type": "residence",
+    "variant": "clear",
+    "expected_date": "2026-09-01",
+    "expected_amount": null,
+    "data_role": "synthetic_ocr_benchmark"
+  },
+  {
+    "case_id": "OCR-010",
+    "file": "OCR-010.png",
+    "material_type": "residence",
+    "variant": "low_contrast",
+    "expected_date": "2026-09-01",
+    "expected_amount": null,
+    "data_role": "synthetic_ocr_benchmark"
+  },
+  {
+    "case_id": "OCR-011",
+    "file": "OCR-011.png",
+    "material_type": "residence",
+    "variant": "slight_blur",
+    "expected_date": "2026-09-01",
+    "expected_amount": null,
+    "data_role": "synthetic_ocr_benchmark"
+  },
+  {
+    "case_id": "OCR-012",
+    "file": "OCR-012.png",
+    "material_type": "residence",
+    "variant": "rotate",
+    "expected_date": "2026-09-01",
+    "expected_amount": null,
+    "data_role": "synthetic_ocr_benchmark"
+  },
+  {
+    "case_id": "OCR-013",
+    "file": "OCR-013.png",
+    "material_type": "verification_authorization",
+    "variant": "clear",
+    "expected_date": "2026-09-18",
+    "expected_amount": null,
+    "data_role": "synthetic_ocr_benchmark"
+  },
+  {
+    "case_id": "OCR-014",
+    "file": "OCR-014.png",
+    "material_type": "verification_authorization",
+    "variant": "low_contrast",
+    "expected_date": "2026-09-18",
+    "expected_amount": null,
+    "data_role": "synthetic_ocr_benchmark"
+  },
+  {
+    "case_id": "OCR-015",
+    "file": "OCR-015.png",
+    "material_type": "verification_authorization",
+    "variant": "slight_blur",
+    "expected_date": "2026-09-18",
+    "expected_amount": null,
+    "data_role": "synthetic_ocr_benchmark"
+  },
+  {
+    "case_id": "OCR-016",
+    "file": "OCR-016.png",
+    "material_type": "verification_authorization",
+    "variant": "rotate",
+    "expected_date": "2026-09-18",
+    "expected_amount": null,
+    "data_role": "synthetic_ocr_benchmark"
+  }
+]

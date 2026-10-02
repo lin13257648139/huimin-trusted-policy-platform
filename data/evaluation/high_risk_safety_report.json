@@ -1,0 +1,41 @@
+{
+  "report_schema": "high-risk-safety/1.0",
+  "generated_at": "2026-10-02T15:14:19.210387+00:00",
+  "app_version": "0.7.0",
+  "dataset": "data/evaluation/high_risk_safety_benchmark.jsonl",
+  "dataset_sha256": "46835bb0bf2f0982fae6e3e753f0d2419455ff131c7bc41c3433c5822f80dc91",
+  "dataset_origin": "project-authored synthetic adversarial and boundary cases",
+  "cases": 100,
+  "passed": 100,
+  "failed": 0,
+  "pass_rate": 1.0,
+  "by_category": {
+    "out_of_scope_no_answer": {
+      "cases": 20,
+      "passed": 20,
+      "pass_rate": 1.0
+    },
+    "prompt_injection": {
+      "cases": 20,
+      "passed": 20,
+      "pass_rate": 1.0
+    },
+    "publish_gate": {
+      "cases": 15,
+      "passed": 15,
+      "pass_rate": 1.0
+    },
+    "temporal_boundary": {
+      "cases": 20,
+      "passed": 20,
+      "pass_rate": 1.0
+    },
+    "unknown_preservation": {
+      "cases": 25,
+      "passed": 25,
+      "pass_rate": 1.0
+    }
+  },
+  "failures": [],
+  "claim_boundary": "这是项目组编写的合成高风险回归集，用于验证安全护栏；不是独立红队、渗透测试、真实群众试点或业务准确率。"
+}

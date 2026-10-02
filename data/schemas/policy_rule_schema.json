@@ -1,0 +1,53 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "TemporalPolicyRule",
+  "description": "可追溯、可版本化的政策规则。每条机器规则必须关联原文条款并经过人工复核。",
+  "type": "object",
+  "required": ["rule_id", "benefit_id", "jurisdiction", "effective_from", "logic", "source"],
+  "properties": {
+    "rule_id": {"type": "string"},
+    "benefit_id": {"type": "string"},
+    "jurisdiction": {
+      "type": "object",
+      "required": ["province", "city"],
+      "properties": {
+        "province": {"type": "string"},
+        "city": {"type": "string"},
+        "district": {"type": ["string", "null"]}
+      }
+    },
+    "effective_from": {"type": "string", "format": "date"},
+    "effective_to": {"type": ["string", "null"], "format": "date"},
+    "status": {"enum": ["draft", "verified", "superseded", "expired", "needs_review"]},
+    "priority": {"type": "integer", "minimum": 0},
+    "logic": {
+      "type": "object",
+      "required": ["operator", "conditions"],
+      "properties": {
+        "operator": {"enum": ["AND", "OR", "NOT", "THRESHOLD", "FORMULA"]},
+        "conditions": {"type": "array", "items": {"type": "object"}},
+        "result": {"type": "object"}
+      }
+    },
+    "source": {
+      "type": "object",
+      "required": ["source_id", "clause_text", "source_url"],
+      "properties": {
+        "source_id": {"type": "string"},
+        "article_no": {"type": ["string", "null"]},
+        "clause_text": {"type": "string"},
+        "source_url": {"type": "string", "format": "uri"},
+        "content_hash": {"type": ["string", "null"]}
+      }
+    },
+    "review": {
+      "type": "object",
+      "properties": {
+        "reviewer_a": {"type": ["string", "null"]},
+        "reviewer_b": {"type": ["string", "null"]},
+        "adjudicator": {"type": ["string", "null"]},
+        "reviewed_at": {"type": ["string", "null"], "format": "date-time"}
+      }
+    }
+  }
+}

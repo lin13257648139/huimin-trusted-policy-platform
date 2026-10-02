@@ -1,0 +1,82 @@
+{
+  "report_schema": "safety-ablation/1.0",
+  "generated_at": "2026-10-02T15:05:43.326215+00:00",
+  "app_version": "0.7.0",
+  "engine_version": "rule-engine/0.4.1",
+  "dataset": "data/processed/synthetic_conformance_cases.jsonl",
+  "dataset_sha256": "377566eaa0667d769187cc51a9c62ad398e5627c6dc3b6f276568d94fbdaf9c0",
+  "dataset_role": "engine_conformance_only; labels originate from the deterministic engine",
+  "cases": 240,
+  "full_system": {
+    "regression_mismatches": 0,
+    "status_distribution": {
+      "likely": 417,
+      "unlikely": 579,
+      "manual_review": 32,
+      "incomplete": 172
+    },
+    "evidence_link_coverage": 1.0
+  },
+  "ablations": {
+    "collapse_three_value_to_binary": {
+      "forced_uncertain_to_negative": 204,
+      "meaning": "若把信息不足/人工核验强制折叠为不符合，会丢失这些安全拒答。"
+    },
+    "remove_temporal_selection": {
+      "profiles_using_different_rule_version": 30,
+      "benefit_statuses_changed": 1,
+      "controlled_boundary_probes": [
+        {
+          "query_date": "2026-07-31",
+          "snapshot": "gz-2026-07-31-v2023.06",
+          "dibao_version": "穗民规字〔2023〕3号",
+          "dibao_status": "likely",
+          "warning_count": 2
+        },
+        {
+          "query_date": "2026-08-01",
+          "snapshot": "gz-2026-08-01-v2026.08",
+          "dibao_version": "穗民规字〔2026〕3号",
+          "dibao_status": "likely",
+          "warning_count": 2
+        },
+        {
+          "query_date": "2027-08-01",
+          "snapshot": "gz-2027-08-01-future-review",
+          "dibao_version": "现行试行文件已超出标注有效期",
+          "dibao_status": "manual_review",
+          "warning_count": 3
+        }
+      ],
+      "meaning": "把所有案例错误地固定到2026-09-30规则后，与原查询日期结果的差异。"
+    },
+    "remove_evidence_links": {
+      "conditions_losing_traceability": 4320,
+      "meaning": "移除证据ID后不可追溯的条件数量。"
+    },
+    "remove_schema_constraints": {
+      "unsafe_payloads_tested": 4,
+      "invalid_payloads_rejected_by_full_system": 3,
+      "meaning": "白名单Schema会阻断非法字段、非法操作符和无原文引用；合法控制样本应通过。"
+    },
+    "remove_rule_priority_conflict_protection": {
+      "conflicting_model_fields_protected": 4,
+      "meaning": "模型与高精度规则冲突时保留规则字段；移除该门会允许冲突值覆盖用户明确事实。"
+    },
+    "remove_active_questioning": {
+      "extra_questions_vs_information_gain": 2.75,
+      "status_consistency": 1.0,
+      "meaning": "改回固定相关字段顺序会增加的平均问题数；该指标来自合成一致性案例。"
+    },
+    "remove_human_publish_gate": {
+      "candidate_auto_publish_attempts_blocked": 11,
+      "meaning": "候选规则默认不可发布；移除人工发布门会把这些项目组标注样本暴露给自动发布风险。"
+    },
+    "remove_no_answer_gate": {
+      "out_of_scope_queries": 10,
+      "refused_by_full_system": 10,
+      "meaning": "无答案门阻止越域问题获得看似相关但无依据的政策引用。"
+    }
+  },
+  "claim_boundary": "该报告衡量架构安全属性，不是业务准确率，也不是用户试点。"
+}

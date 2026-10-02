@@ -1,0 +1,144 @@
+{
+  "benchmark_role": "internally_curated_policy_compiler_benchmark",
+  "case_count": 10,
+  "providers": {
+    "local-policy-compiler/1.0": 10
+  },
+  "benefit_accuracy": 1.0,
+  "effective_from_accuracy": 1.0,
+  "effective_to_accuracy": 1.0,
+  "missing_date_guard_accuracy": 1.0,
+  "parameter_pair": {
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+  },
+  "condition_field": {
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+  },
+  "source_quote_grounding_rate": 1.0,
+  "details": [
+    {
+      "case_id": "PCR-T001",
+      "benefit_match": true,
+      "effective_from_match": true,
+      "effective_to_match": true,
+      "predicted_parameters": {
+        "income_standard_monthly_per_capita": "1327.00"
+      },
+      "predicted_condition_fields": [
+        "assets_eligible",
+        "member_scope_confirmed",
+        "per_capita_monthly_income"
+      ]
+    },
+    {
+      "case_id": "PCR-T002",
+      "benefit_match": true,
+      "effective_from_match": true,
+      "effective_to_match": true,
+      "predicted_parameters": {
+        "edge_standard_monthly_per_capita": "1990.50"
+      },
+      "predicted_condition_fields": [
+        "assets_eligible",
+        "per_capita_monthly_income"
+      ]
+    },
+    {
+      "case_id": "PCR-T003",
+      "benefit_match": true,
+      "effective_from_match": true,
+      "effective_to_match": true,
+      "predicted_parameters": {
+        "urgent_event_days": 31
+      },
+      "predicted_condition_fields": [
+        "basic_life_interrupted",
+        "urgent_event",
+        "urgent_event_date"
+      ]
+    },
+    {
+      "case_id": "PCR-T004",
+      "benefit_match": true,
+      "effective_from_match": true,
+      "effective_to_match": true,
+      "predicted_parameters": {},
+      "predicted_condition_fields": [
+        "residence_proof"
+      ]
+    },
+    {
+      "case_id": "PCR-T005",
+      "benefit_match": true,
+      "effective_from_match": true,
+      "effective_to_match": true,
+      "predicted_parameters": {},
+      "predicted_condition_fields": [
+        "assets_eligible"
+      ]
+    },
+    {
+      "case_id": "PCR-T006",
+      "benefit_match": true,
+      "effective_from_match": true,
+      "effective_to_match": true,
+      "predicted_parameters": {
+        "income_standard_monthly_per_capita": "1400.00"
+      },
+      "predicted_condition_fields": [
+        "assets_eligible",
+        "per_capita_monthly_income"
+      ]
+    },
+    {
+      "case_id": "PCR-T007",
+      "benefit_match": true,
+      "effective_from_match": true,
+      "effective_to_match": true,
+      "predicted_parameters": {
+        "income_multiplier": 1.5
+      },
+      "predicted_condition_fields": []
+    },
+    {
+      "case_id": "PCR-T008",
+      "benefit_match": true,
+      "effective_from_match": true,
+      "effective_to_match": true,
+      "predicted_parameters": {},
+      "predicted_condition_fields": []
+    },
+    {
+      "case_id": "PCR-T009",
+      "benefit_match": true,
+      "effective_from_match": true,
+      "effective_to_match": true,
+      "predicted_parameters": {
+        "income_standard_monthly_per_capita": "1327.00"
+      },
+      "predicted_condition_fields": [
+        "assets_eligible",
+        "per_capita_monthly_income"
+      ]
+    },
+    {
+      "case_id": "PCR-T010",
+      "benefit_match": true,
+      "effective_from_match": true,
+      "effective_to_match": true,
+      "predicted_parameters": {
+        "urgent_event_days": 20
+      },
+      "predicted_condition_fields": [
+        "basic_life_interrupted",
+        "urgent_event",
+        "urgent_event_date"
+      ]
+    }
+  ],
+  "warning": "这是内部合成条款基准，只证明编译管线可重复；正式结果必须增加真实政策条款双人标注测试集。"
+}

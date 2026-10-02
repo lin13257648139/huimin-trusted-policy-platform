@@ -1,0 +1,114 @@
+{
+  "dataset": "data/evaluation/expert_gold_master.csv",
+  "original_record_count": 120,
+  "unique_case_count": 107,
+  "duplicate_records_excluded": 13,
+  "decision_count": 535,
+  "overall": {
+    "cases": 535,
+    "strict_exact_accuracy": 1.0,
+    "likely_precision": 1.0,
+    "likely_recall": 1.0,
+    "high_risk_false_positive_rate": 0.0,
+    "auto_coverage": 0.815,
+    "selective_accuracy": 1.0,
+    "unsafe_automation_rate": 0.0,
+    "manual_review_rate": 0.0206,
+    "incomplete_rate": 0.1645,
+    "abstention_rate": 0.185
+  },
+  "policy_snapshot_accuracy": null,
+  "by_benefit": {
+    "B001": {
+      "cases": 107,
+      "strict_exact_accuracy": 1.0,
+      "likely_precision": 1.0,
+      "likely_recall": 1.0,
+      "high_risk_false_positive_rate": 0.0,
+      "auto_coverage": 0.7196,
+      "selective_accuracy": 1.0,
+      "unsafe_automation_rate": 0.0,
+      "manual_review_rate": 0.0,
+      "incomplete_rate": 0.2804,
+      "abstention_rate": 0.2804,
+      "confusion": {
+        "incomplete->incomplete": 30,
+        "likely->likely": 66,
+        "unlikely->unlikely": 11
+      }
+    },
+    "B002": {
+      "cases": 107,
+      "strict_exact_accuracy": 1.0,
+      "likely_precision": 1.0,
+      "likely_recall": 1.0,
+      "high_risk_false_positive_rate": 0.0,
+      "auto_coverage": 0.6449,
+      "selective_accuracy": 1.0,
+      "unsafe_automation_rate": 0.0,
+      "manual_review_rate": 0.0935,
+      "incomplete_rate": 0.2617,
+      "abstention_rate": 0.3551,
+      "confusion": {
+        "incomplete->incomplete": 28,
+        "likely->likely": 25,
+        "manual_review->manual_review": 10,
+        "unlikely->unlikely": 44
+      }
+    },
+    "B003": {
+      "cases": 107,
+      "strict_exact_accuracy": 1.0,
+      "likely_precision": 1.0,
+      "likely_recall": 1.0,
+      "high_risk_false_positive_rate": 0.0,
+      "auto_coverage": 0.7196,
+      "selective_accuracy": 1.0,
+      "unsafe_automation_rate": 0.0,
+      "manual_review_rate": 0.0,
+      "incomplete_rate": 0.2804,
+      "abstention_rate": 0.2804,
+      "confusion": {
+        "incomplete->incomplete": 30,
+        "likely->likely": 65,
+        "unlikely->unlikely": 12
+      }
+    },
+    "B004": {
+      "cases": 107,
+      "strict_exact_accuracy": 1.0,
+      "likely_precision": 1.0,
+      "likely_recall": 1.0,
+      "high_risk_false_positive_rate": 0.0,
+      "auto_coverage": 1.0,
+      "selective_accuracy": 1.0,
+      "unsafe_automation_rate": 0.0,
+      "manual_review_rate": 0.0,
+      "incomplete_rate": 0.0,
+      "abstention_rate": 0.0,
+      "confusion": {
+        "likely->likely": 3,
+        "unlikely->unlikely": 104
+      }
+    },
+    "B005": {
+      "cases": 107,
+      "strict_exact_accuracy": 1.0,
+      "likely_precision": 1.0,
+      "likely_recall": 1.0,
+      "high_risk_false_positive_rate": 0.0,
+      "auto_coverage": 0.9907,
+      "selective_accuracy": 1.0,
+      "unsafe_automation_rate": 0.0,
+      "manual_review_rate": 0.0093,
+      "incomplete_rate": 0.0,
+      "abstention_rate": 0.0093,
+      "confusion": {
+        "likely->likely": 14,
+        "manual_review->manual_review": 1,
+        "unlikely->unlikely": 92
+      }
+    }
+  },
+  "interpretation": "严格准确率把人工复核和信息不足也按四分类计算；自动覆盖率只统计likely/unlikely；选择性准确率衡量自动输出中的正确比例；高风险假阳性指系统给出likely但专家金标不是likely。"
+}

@@ -1,0 +1,12 @@
+.venv
+.pytest_cache
+__pycache__
+*.pyc
+.env
+storage
+tmp
+用户试点
+真人试点填写示例_U00_虚构
+*.log
+*.pid
+*.port

@@ -1,0 +1,65 @@
+{
+  "generated_at": "2026-10-02T15:05:45.529760+00:00",
+  "app_version": "0.7.0",
+  "environment": {
+    "python": "3.12.14",
+    "platform": "Windows-11-10.0.26200-SP0",
+    "processor": "Intel64 Family 6 Model 186 Stepping 2, GenuineIntel",
+    "mode": "FastAPI TestClient, warm-cache, isolated temporary SQLite"
+  },
+  "runs_per_endpoint": 25,
+  "passed": true,
+  "results": [
+    {
+      "name": "health",
+      "runs": 25,
+      "p50_ms": 1.516,
+      "p95_ms": 1.94,
+      "max_ms": 2.213,
+      "threshold_ms": 250,
+      "errors": [],
+      "passed": true
+    },
+    {
+      "name": "system_readiness",
+      "runs": 25,
+      "p50_ms": 21.846,
+      "p95_ms": 23.497,
+      "max_ms": 24.196,
+      "threshold_ms": 750,
+      "errors": [],
+      "passed": true
+    },
+    {
+      "name": "active_question",
+      "runs": 25,
+      "p50_ms": 2.039,
+      "p95_ms": 2.336,
+      "max_ms": 2.341,
+      "threshold_ms": 500,
+      "errors": [],
+      "passed": true
+    },
+    {
+      "name": "evidence_search",
+      "runs": 25,
+      "p50_ms": 4.056,
+      "p95_ms": 4.393,
+      "max_ms": 4.454,
+      "threshold_ms": 750,
+      "errors": [],
+      "passed": true
+    },
+    {
+      "name": "screening",
+      "runs": 25,
+      "p50_ms": 8.978,
+      "p95_ms": 10.841,
+      "max_ms": 12.134,
+      "threshold_ms": 1500,
+      "errors": [],
+      "passed": true
+    }
+  ],
+  "claim_boundary": "本报告仅证明当前机器上的工程响应时间与无错误运行，不代表生产并发能力，也不代表业务准确率。"
+}

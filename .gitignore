@@ -1,0 +1,23 @@
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+.env
+storage/*.db
+storage/*.pid
+storage/*.port
+storage/*.log
+storage/uploads/*
+!storage/uploads/.gitkeep
+tmp/
+用户试点/
+真人试点填写示例_U00_虚构/
+*.user.local
+
+# 真人评审/试点原始表可能包含姓名、单位、签名或联系方式；只在本机留存。
+data/evaluation/expert_review_A.csv
+data/evaluation/expert_review_B.csv
+data/evaluation/expert_review_C.csv
+data/evaluation/pilot_observations.csv
+

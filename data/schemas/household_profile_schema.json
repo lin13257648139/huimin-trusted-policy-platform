@@ -1,0 +1,94 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "HouseholdProfile",
+  "description": "社会救助预筛查家庭画像。真实环境必须加密保存并执行最小必要采集。",
+  "type": "object",
+  "required": ["query_date", "region", "household_members", "income", "assets", "urgent_event"],
+  "properties": {
+    "case_id": {"type": "string"},
+    "query_date": {"type": "string", "format": "date"},
+    "region": {
+      "type": "object",
+      "required": ["province", "city", "district"],
+      "properties": {
+        "province": {"type": "string"},
+        "city": {"type": "string"},
+        "district": {"type": "string"},
+        "household_registration_type": {"enum": ["urban", "rural", "unknown"]},
+        "is_local_hukou": {"type": ["boolean", "null"]},
+        "residence_months": {"type": ["integer", "null"], "minimum": 0}
+      }
+    },
+    "household_members": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["member_token", "age", "relationship"],
+        "properties": {
+          "member_token": {"type": "string", "description": "匿名标识，不保存真实姓名"},
+          "age": {"type": "integer", "minimum": 0, "maximum": 130},
+          "relationship": {"type": "string"},
+          "employment_status": {"type": ["string", "null"]},
+          "student_status": {"type": ["string", "null"]},
+          "disability_level": {"type": ["string", "null"]},
+          "serious_disease": {"type": ["boolean", "null"]},
+          "self_care_ability": {"type": ["string", "null"]}
+        }
+      }
+    },
+    "income": {
+      "type": "object",
+      "required": ["period_months", "declared_total"],
+      "properties": {
+        "period_months": {"type": "integer", "minimum": 1},
+        "declared_total": {"type": "number", "minimum": 0},
+        "deductible_expense_total": {"type": ["number", "null"], "minimum": 0},
+        "excluded_income_total": {"type": ["number", "null"], "minimum": 0},
+        "income_items": {"type": "array", "items": {"type": "object"}}
+      }
+    },
+    "assets": {
+      "type": "object",
+      "properties": {
+        "financial_assets": {"type": ["number", "null"], "minimum": 0},
+        "properties": {"type": "array", "items": {"type": "object"}},
+        "vehicles": {"type": "array", "items": {"type": "object"}},
+        "business_investment": {"type": ["number", "null"], "minimum": 0}
+      }
+    },
+    "rigid_expenses": {
+      "type": "object",
+      "properties": {
+        "medical": {"type": ["number", "null"], "minimum": 0},
+        "education": {"type": ["number", "null"], "minimum": 0},
+        "disability_rehabilitation": {"type": ["number", "null"], "minimum": 0},
+        "other": {"type": ["number", "null"], "minimum": 0}
+      }
+    },
+    "urgent_event": {
+      "type": "object",
+      "required": ["exists"],
+      "properties": {
+        "exists": {"type": "boolean"},
+        "event_type": {"type": ["string", "null"]},
+        "event_date": {"type": ["string", "null"], "format": "date"},
+        "estimated_loss": {"type": ["number", "null"], "minimum": 0},
+        "basic_life_interrupted": {"type": ["boolean", "null"]}
+      }
+    },
+    "document_evidence": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["document_type", "file_token", "consent"],
+        "properties": {
+          "document_type": {"type": "string"},
+          "file_token": {"type": "string"},
+          "consent": {"type": "boolean"},
+          "ocr_status": {"enum": ["pending", "parsed", "failed", "not_required"]}
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,80 @@
+{
+  "generated_at": "2026-10-02T15:14:19.399101+00:00",
+  "manifest_version": "1.0",
+  "assets": [
+    {
+      "path": "data/processed/synthetic_conformance_cases.jsonl",
+      "role": "synthetic_regression",
+      "label_origin": "programmatically generated from documented rules",
+      "independent": false,
+      "contains_personal_data": false,
+      "bytes": 204578,
+      "records": 240,
+      "sha256": "377566eaa0667d769187cc51a9c62ad398e5627c6dc3b6f276568d94fbdaf9c0"
+    },
+    {
+      "path": "data/evaluation/profile_extraction_benchmark.jsonl",
+      "role": "synthetic_profile_extraction_benchmark",
+      "label_origin": "project-authored synthetic gold",
+      "independent": false,
+      "contains_personal_data": false,
+      "bytes": 16608,
+      "records": 40,
+      "sha256": "d71d8664e9838cb68b9aa55a4f0bc8ed4535e412cafcb4061d5b60329c412659"
+    },
+    {
+      "path": "data/evaluation/retrieval_benchmark.json",
+      "role": "internal_retrieval_benchmark",
+      "label_origin": "project-authored queries and expected evidence",
+      "independent": false,
+      "contains_personal_data": false,
+      "bytes": 1239,
+      "records": 12,
+      "sha256": "8ddd4584d953fb12fdfcf01d46a533fc7d348191497b738c9dd7e92f24555b29"
+    },
+    {
+      "path": "data/evaluation/policy_compiler_real_benchmark.jsonl",
+      "role": "official_clause_compiler_benchmark",
+      "label_origin": "official verbatim clauses with project-authored gold",
+      "independent": false,
+      "contains_personal_data": false,
+      "bytes": 9798,
+      "records": 11,
+      "sha256": "0f1d689ff7b2fa743ee1288188e9767a0fba4a841fd6bfe48669783f6c6bd2cc"
+    },
+    {
+      "path": "data/evaluation/expert_gold_master.csv",
+      "role": "external_expert_adjudicated_evaluation",
+      "label_origin": "expert A/B review and expert C adjudication",
+      "independent": true,
+      "contains_personal_data": false,
+      "release_note": "去标识化标签集；原始评审表不随源码发布。",
+      "bytes": 243203,
+      "records": 120,
+      "sha256": "7bc82bdd4b18a931610d29635a147ba3419ceb55c56c477eb4268f9c4423e125"
+    },
+    {
+      "path": "data/evaluation/ocr_synthetic/manifest.json",
+      "role": "synthetic_ocr_robustness_benchmark",
+      "label_origin": "programmatically rendered synthetic documents",
+      "independent": false,
+      "contains_personal_data": false,
+      "bytes": 3991,
+      "records": 16,
+      "sha256": "2d872a11605b6d14cc7cda458bee2f9386604a39316e3f268e41e920fd87c08c"
+    },
+    {
+      "path": "data/evaluation/high_risk_safety_benchmark.jsonl",
+      "role": "synthetic_high_risk_safety_regression",
+      "label_origin": "project-authored adversarial and boundary guards",
+      "independent": false,
+      "contains_personal_data": false,
+      "bytes": 32223,
+      "records": 100,
+      "sha256": "46835bb0bf2f0982fae6e3e753f0d2419455ff131c7bc41c3433c5822f80dc91"
+    }
+  ],
+  "missing": [],
+  "claim_boundary": "合成集和项目自编gold只用于回归、消融与可复现工程验证；仅external_expert_adjudicated_evaluation可作为外部标注证据，仍不得外推为真实困难群众使用效果。",
+  "privacy": "清单不包含群众姓名、证件号、电话、地址或自由叙述。"
+}

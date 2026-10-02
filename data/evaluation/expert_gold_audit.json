@@ -1,0 +1,75 @@
+{
+  "status": "frozen_expert_gold",
+  "frozen_at": "2026-09-30",
+  "records": 120,
+  "unique_profiles": 107,
+  "duplicate_records_excluded_in_evaluation": 13,
+  "adjudication_rows": 6,
+  "adjudication_decisions": 10,
+  "inter_reviewer_agreement": {
+    "all_records": {
+      "decisions": 600,
+      "agreements": 590,
+      "raw_agreement": 0.9833,
+      "cohen_kappa": 0.9735
+    },
+    "unique_profiles": {
+      "decisions": 535,
+      "agreements": 527,
+      "raw_agreement": 0.985,
+      "cohen_kappa": 0.9763
+    },
+    "by_benefit": {
+      "B001": {
+        "decisions": 120,
+        "agreements": 116,
+        "raw_agreement": 0.9667,
+        "cohen_kappa": 0.9356
+      },
+      "B002": {
+        "decisions": 120,
+        "agreements": 118,
+        "raw_agreement": 0.9833,
+        "cohen_kappa": 0.9765
+      },
+      "B003": {
+        "decisions": 120,
+        "agreements": 116,
+        "raw_agreement": 0.9667,
+        "cohen_kappa": 0.9367
+      },
+      "B004": {
+        "decisions": 120,
+        "agreements": 120,
+        "raw_agreement": 1.0,
+        "cohen_kappa": 1.0
+      },
+      "B005": {
+        "decisions": 120,
+        "agreements": 120,
+        "raw_agreement": 1.0,
+        "cohen_kappa": 1.0
+      }
+    }
+  },
+  "allowed_labels": [
+    "incomplete",
+    "likely",
+    "manual_review",
+    "unlikely"
+  ],
+  "sha256": {
+    "expert_review_A.csv": "1e90f9227974cf212e5a4bd5aae7f3ae2f3fc34b83774b149d1a16938e79dc74",
+    "expert_review_B.csv": "2c99d4aa9fea1912ce929821c60e5ea8087367227d4a511f63fc8a46b064417e",
+    "expert_gold_master.csv": "7bc82bdd4b18a931610d29635a147ba3419ceb55c56c477eb4268f9c4423e125"
+  },
+  "validation": {
+    "case_ids_match": true,
+    "source_fields_unchanged": true,
+    "reviewer_labels_unchanged": true,
+    "reviewer_comments_unchanged": true,
+    "all_gold_labels_complete": true,
+    "adjudicator_comments_complete": true,
+    "duplicate_profile_gold_consistent": true
+  }
+}

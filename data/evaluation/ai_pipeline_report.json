@@ -1,0 +1,192 @@
+{
+  "report_schema": "ai-experiment/1.0",
+  "generated_at": "2026-10-02T15:05:42.542193+00:00",
+  "scope": "internal synthetic benchmark; not real-user effectiveness evidence",
+  "app_version": "0.7.0",
+  "environment": {
+    "python": "3.12.14",
+    "platform": "Windows",
+    "architecture": "AMD64",
+    "executable_path_stored": false
+  },
+  "datasets": {
+    "profile": {
+      "path": "data/evaluation/profile_extraction_benchmark.jsonl",
+      "sha256": "d71d8664e9838cb68b9aa55a4f0bc8ed4535e412cafcb4061d5b60329c412659",
+      "cases": 40,
+      "origin": "team-authored synthetic utterances"
+    },
+    "retrieval": {
+      "path": "data/evaluation/retrieval_benchmark.json",
+      "sha256": "8ddd4584d953fb12fdfcf01d46a533fc7d348191497b738c9dd7e92f24555b29",
+      "queries": 12,
+      "origin": "internal policy retrieval questions"
+    }
+  },
+  "ai_runtime": {
+    "mode": "deterministic",
+    "configured": false,
+    "reachable": false,
+    "chat_model": null,
+    "embedding_model": null,
+    "active_provider": "deterministic-safe-parser",
+    "reason": "AI_MODE未启用本地模型"
+  },
+  "intent_classification": {
+    "dataset": "data/ml/intent_dataset.json",
+    "dataset_sha256": "9c5ef0ffc6144fd1deda734df860753086e06715962c5e519d06a7a5b281d039",
+    "origin": "team-authored synthetic utterances; no real people or service records",
+    "keyword_baseline": {
+      "cases": 20,
+      "accuracy": 0.75,
+      "macro_f1": 0.7048,
+      "per_label": {
+        "B001": {
+          "precision": 1.0,
+          "recall": 0.75,
+          "f1": 0.8571
+        },
+        "B002": {
+          "precision": 0.5,
+          "recall": 1.0,
+          "f1": 0.6667
+        },
+        "B003": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0
+        },
+        "B004": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "B005": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        }
+      }
+    },
+    "char_ngram_naive_bayes": {
+      "model_version": "intent-nb/9c5ef0ffc614",
+      "cases": 20,
+      "accuracy": 0.95,
+      "macro_f1": 0.9492,
+      "per_label": {
+        "B001": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "B002": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "B003": {
+          "precision": 0.8,
+          "recall": 1.0,
+          "f1": 0.8889
+        },
+        "B004": {
+          "precision": 1.0,
+          "recall": 0.75,
+          "f1": 0.8571
+        },
+        "B005": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        }
+      },
+      "role": "只排序可能关注事项，不参与资格结论",
+      "score_note": "归一化排序分数，未做概率校准"
+    }
+  },
+  "profile_extraction": {
+    "deterministic_baseline": {
+      "cases": 40,
+      "field_precision": 1.0,
+      "field_recall": 1.0,
+      "field_f1": 1.0,
+      "case_exact_match": 1.0,
+      "hallucination_case_rate": 0.0,
+      "hallucination_case_ids": [],
+      "routes": {
+        "deterministic": 40
+      },
+      "by_category": {
+        "asset_negative": {
+          "cases": 1,
+          "exact_match": 1.0
+        },
+        "governance_fields": {
+          "cases": 11,
+          "exact_match": 1.0
+        },
+        "income_basic": {
+          "cases": 11,
+          "exact_match": 1.0
+        },
+        "member_unknown": {
+          "cases": 1,
+          "exact_match": 1.0
+        },
+        "missing": {
+          "cases": 1,
+          "exact_match": 1.0
+        },
+        "negation": {
+          "cases": 1,
+          "exact_match": 1.0
+        },
+        "privacy_attack": {
+          "cases": 1,
+          "exact_match": 1.0
+        },
+        "residence": {
+          "cases": 1,
+          "exact_match": 1.0
+        },
+        "unit_conversion": {
+          "cases": 1,
+          "exact_match": 1.0
+        },
+        "urgent_expense": {
+          "cases": 11,
+          "exact_match": 1.0
+        }
+      }
+    },
+    "schema_constrained_llm_ensemble": {
+      "status": "not_run",
+      "reason": "AI_MODE未启用本地模型"
+    }
+  },
+  "retrieval": {
+    "bm25_baseline": {
+      "queries": 12,
+      "recall_at_1": 0.9167,
+      "recall_at_3": 1.0,
+      "mrr_at_5": 0.9583,
+      "actual_routes": {
+        "field-weighted-bm25": 12
+      }
+    },
+    "configured_pipeline": {
+      "queries": 12,
+      "recall_at_1": 0.9167,
+      "recall_at_3": 1.0,
+      "mrr_at_5": 0.9583,
+      "actual_routes": {
+        "field-weighted-bm25": 12
+      }
+    }
+  },
+  "claim_boundary": [
+    "画像基准是内部合成语句，不代表真实困难群众表达分布。",
+    "模型未实际运行时不得引用模型指标；报告中的actual_routes是唯一准确信号。",
+    "最终资格始终由时态规则与三值逻辑求值，模型输出仅为待确认候选字段。"
+  ]
+}

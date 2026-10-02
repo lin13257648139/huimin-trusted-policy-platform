@@ -1,0 +1,167 @@
+{
+  "benchmark_role": "internally_curated_retrieval_benchmark",
+  "query_count": 12,
+  "recall_at_1": 0.9167,
+  "recall_at_3": 1.0,
+  "recall_at_5": 1.0,
+  "mrr_at_5": 0.9583,
+  "details": [
+    {
+      "query": "社会救助一件事包括哪些事项",
+      "relevant_ids": [
+        "E-GZ-001-SCOPE"
+      ],
+      "ranked_ids": [
+        "E-GZ-001-SCOPE",
+        "E-GZ-001-MATERIALS",
+        "E-GZ-001-DEADLINE",
+        "E-CN-001-PRIVACY",
+        "E-CN-001-EDGE"
+      ],
+      "first_relevant_rank": 1
+    },
+    {
+      "query": "申请低保一般要准备什么材料",
+      "relevant_ids": [
+        "E-GZ-001-MATERIALS"
+      ],
+      "ranked_ids": [
+        "E-GZ-001-MATERIALS"
+      ],
+      "first_relevant_rank": 1
+    },
+    {
+      "query": "低保办理通常需要多少个工作日",
+      "relevant_ids": [
+        "E-GZ-001-DEADLINE"
+      ],
+      "ranked_ids": [
+        "E-GZ-001-DEADLINE",
+        "E-GZ-005-RESIDENCE",
+        "E-GZ-001-MATERIALS"
+      ],
+      "first_relevant_rank": 1
+    },
+    {
+      "query": "最低生活保障是否同时审查收入和财产",
+      "relevant_ids": [
+        "E-CN-001-DIBAO",
+        "E-GZ-002-ASSET"
+      ],
+      "ranked_ids": [
+        "E-GZ-002-ASSET",
+        "E-CN-001-EDGE",
+        "E-GZ-002-CURRENT",
+        "E-CN-001-DIBAO",
+        "E-GD-002-RIGID"
+      ],
+      "first_relevant_rank": 1
+    },
+    {
+      "query": "低保边缘家庭需要检查财产吗",
+      "relevant_ids": [
+        "E-CN-001-EDGE"
+      ],
+      "ranked_ids": [
+        "E-GD-002-EDGE",
+        "E-CN-001-EDGE",
+        "E-GZ-004-EXPENSE",
+        "E-GD-002-RIGID",
+        "E-GZ-001-SCOPE"
+      ],
+      "first_relevant_rank": 2
+    },
+    {
+      "query": "刚性支出困难家庭是否考虑医疗和教育费用",
+      "relevant_ids": [
+        "E-CN-001-RIGID"
+      ],
+      "ranked_ids": [
+        "E-CN-001-RIGID",
+        "E-GD-002-RIGID",
+        "E-GZ-004-EXPENSE",
+        "E-GD-002-EDGE",
+        "E-GZ-001-SCOPE"
+      ],
+      "first_relevant_rank": 1
+    },
+    {
+      "query": "社会救助个人信息处理要遵循什么原则",
+      "relevant_ids": [
+        "E-CN-001-PRIVACY"
+      ],
+      "ranked_ids": [
+        "E-CN-001-PRIVACY",
+        "E-CN-001-EDGE",
+        "E-GZ-001-SCOPE",
+        "E-CN-001-RIGID",
+        "E-GZ-001-MATERIALS"
+      ],
+      "first_relevant_rank": 1
+    },
+    {
+      "query": "广州新低保通知从什么时候开始试行",
+      "relevant_ids": [
+        "E-GZ-002-CURRENT"
+      ],
+      "ranked_ids": [
+        "E-GZ-002-CURRENT",
+        "E-GZ-002-ASSET"
+      ],
+      "first_relevant_rank": 1
+    },
+    {
+      "query": "2026年广州低保每人每月多少钱",
+      "relevant_ids": [
+        "E-GZ-003-STANDARD"
+      ],
+      "ranked_ids": [
+        "E-GZ-003-STANDARD",
+        "E-GZ-008-INCOME",
+        "E-GZ-002-CURRENT"
+      ],
+      "first_relevant_rank": 1
+    },
+    {
+      "query": "支出型困难家庭收入按多长时间计算",
+      "relevant_ids": [
+        "E-GZ-004-EXPENSE"
+      ],
+      "ranked_ids": [
+        "E-GZ-004-EXPENSE",
+        "E-GD-002-RIGID",
+        "E-GD-002-EDGE",
+        "E-CN-001-RIGID",
+        "E-GZ-001-DEADLINE"
+      ],
+      "first_relevant_rank": 1
+    },
+    {
+      "query": "临时救助的急难事件要求发生在多久以内",
+      "relevant_ids": [
+        "E-GZ-005-URGENT"
+      ],
+      "ranked_ids": [
+        "E-GZ-005-URGENT",
+        "E-GZ-005-RESIDENCE",
+        "E-GZ-001-SCOPE"
+      ],
+      "first_relevant_rank": 1
+    },
+    {
+      "query": "外地户籍申请临时救助是否要广州居住证",
+      "relevant_ids": [
+        "E-GZ-005-RESIDENCE"
+      ],
+      "ranked_ids": [
+        "E-GZ-005-RESIDENCE",
+        "E-GZ-005-URGENT",
+        "E-GZ-001-SCOPE",
+        "E-GZ-001-MATERIALS",
+        "E-GZ-004-EXPENSE"
+      ],
+      "first_relevant_rank": 1
+    }
+  ],
+  "warning": "该结果只评价当前16条证据片段的检索，不等于业务资格判断准确率。"
+}

@@ -1,0 +1,14 @@
+[
+  {"query": "社会救助一件事包括哪些事项", "relevant_ids": ["E-GZ-001-SCOPE"]},
+  {"query": "申请低保一般要准备什么材料", "relevant_ids": ["E-GZ-001-MATERIALS"]},
+  {"query": "低保办理通常需要多少个工作日", "relevant_ids": ["E-GZ-001-DEADLINE"]},
+  {"query": "最低生活保障是否同时审查收入和财产", "relevant_ids": ["E-CN-001-DIBAO", "E-GZ-002-ASSET"]},
+  {"query": "低保边缘家庭需要检查财产吗", "relevant_ids": ["E-CN-001-EDGE"]},
+  {"query": "刚性支出困难家庭是否考虑医疗和教育费用", "relevant_ids": ["E-CN-001-RIGID"]},
+  {"query": "社会救助个人信息处理要遵循什么原则", "relevant_ids": ["E-CN-001-PRIVACY"]},
+  {"query": "广州新低保通知从什么时候开始试行", "relevant_ids": ["E-GZ-002-CURRENT"]},
+  {"query": "2026年广州低保每人每月多少钱", "relevant_ids": ["E-GZ-003-STANDARD"]},
+  {"query": "支出型困难家庭收入按多长时间计算", "relevant_ids": ["E-GZ-004-EXPENSE"]},
+  {"query": "临时救助的急难事件要求发生在多久以内", "relevant_ids": ["E-GZ-005-URGENT"]},
+  {"query": "外地户籍申请临时救助是否要广州居住证", "relevant_ids": ["E-GZ-005-RESIDENCE"]}
+]

@@ -1,0 +1,50 @@
+{
+  "analysis_date": "2026-09-30",
+  "scope": "B002 lowest-living-security eligibility, unique expert profiles only",
+  "gold_path": "data/evaluation/expert_gold_master.csv",
+  "gold_sha256": "7bc82bdd4b18a931610d29635a147ba3419ceb55c56c477eb4268f9c4423e125",
+  "engine_version": "rule-engine/0.4.1",
+  "income_threshold_monthly_per_capita": "1327",
+  "original_record_count": 120,
+  "unique_profile_count": 107,
+  "duplicate_records_excluded": 13,
+  "mismatch_count": 0,
+  "all_mismatches_classified": true,
+  "category_counts": {},
+  "confusion": {
+    "incomplete->incomplete": 28,
+    "likely->likely": 25,
+    "manual_review->manual_review": 10,
+    "unlikely->unlikely": 44
+  },
+  "baseline_metrics": {
+    "cases": 107,
+    "strict_exact_accuracy": 1.0,
+    "exact_count": 107,
+    "likely_precision": 1.0,
+    "likely_recall": 1.0,
+    "high_risk_false_positive_rate": 0.0,
+    "high_risk_false_positive_count": 0,
+    "auto_coverage": 0.6449,
+    "auto_count": 69,
+    "selective_accuracy": 1.0,
+    "auto_wrong_count": 0,
+    "abstention_rate": 0.3551
+  },
+  "counterfactual_after_all_targeted_fixes": {
+    "cases": 107,
+    "strict_exact_accuracy": 1.0,
+    "exact_count": 107,
+    "likely_precision": 1.0,
+    "likely_recall": 1.0,
+    "high_risk_false_positive_rate": 0.0,
+    "high_risk_false_positive_count": 0,
+    "auto_coverage": 0.6449,
+    "auto_count": 69,
+    "selective_accuracy": 1.0,
+    "auto_wrong_count": 0,
+    "abstention_rate": 0.3551
+  },
+  "counterfactual_warning": "This counterfactual only shows arithmetic alignment with the frozen constructed-case gold set. It is not an achieved result and must not be reported until independent implementation and regression tests pass.",
+  "findings": []
+}
