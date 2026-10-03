@@ -76,7 +76,7 @@ function baseSlide(kicker, title, number) {
   rule(slide, 64, 138, 1152, C.line, 1);
   textBox(slide, String(number).padStart(2, "0"), 1160, 36, 56, 28, { size: 13, bold: true, color: C.gray, align: "right" });
   textBox(slide, "惠民智导 · 可信政策智能软件平台", 64, 682, 500, 22, { size: 11, color: C.gray });
-  textBox(slide, "策马奔腾队", 1030, 682, 186, 22, { size: 11, color: C.gray, align: "right" });
+  textBox(slide, "策马奔腾", 1030, 682, 186, 22, { size: 11, color: C.gray, align: "right" });
   return slide;
 }
 
@@ -115,7 +115,8 @@ function addNotes(slide, note) {
   textBox(slide, "模型理解 · 规则裁决 · 原文举证 · 人工发布", 66, 318, 900, 42, { size: 22, color: "#B7C7D4" });
   pill(slide, "AI + 软件创新", 66, 404, 180, "#143D42", "#92E6D8");
   pill(slide, "社会救助深度验证", 260, 404, 220, "#143D42", "#92E6D8");
-  textBox(slide, "策马奔腾队  ·  V0.7.0  ·  RTX 4060 单机本地运行", 66, 616, 850, 32, { size: 15, color: "#9EB2C1" });
+  textBox(slide, "策马奔腾  ·  广州软件学院  ·  V0.7.1", 66, 590, 850, 28, { size: 15, color: "#9EB2C1" });
+  textBox(slide, "队长 林琪东    队员 罗晓蓝    RTX 4060 单机本地运行", 66, 622, 900, 28, { size: 13, color: "#7F98A6" });
   textBox(slide, "可信不是口号，而是每个结论都能回到证据。", 760, 542, 450, 66, { size: 23, bold: true, color: C.white, align: "right" });
   addNotes(slide, "开场：这是一个面向高风险政策服务的可信政策智能软件平台，社会救助是第一个深度验证场景。控制在20秒。数据均来自项目仓库。 ");
 }
@@ -173,14 +174,14 @@ function addNotes(slide, note) {
   });
   card(slide, 64, 442, 550, 138, "UNKNOWN 是合法答案", "用户可以不知道或跳过。缺失值不会被偷偷改写为“不符合”。", { accent: C.teal, fill: C.soft, titleSize: 20, bodySize: 16 });
   card(slide, 666, 442, 550, 138, "系统从不宣布“已批准”", "输出是导办建议，不替代行政机关审批；高风险场景转人工。", { accent: C.red, fill: "#FFF0EE", titleSize: 20, bodySize: 16 });
-  addNotes(slide, "现场演示建议从评审演示中心载入案例A，再切案例B展示信息不足状态。 ");
+  addNotes(slide, "现场演示建议从场景验证中心载入案例A，再切案例B展示信息不足状态。 ");
 }
 
 // 5 Architecture
 {
   const slide = baseSlide("ARCHITECTURE", "一套内核支撑居民、经办与治理三端", 5);
   const layers = [
-    ["交互层", "居民端  ·  经办工作台  ·  治理工作台  ·  评审演示中心", C.cyan],
+    ["交互层", "居民端  ·  经办工作台  ·  治理工作台  ·  场景验证中心", C.cyan],
     ["AI 理解层", "意图分类  ·  字段抽取  ·  OCR  ·  Policy2Rule 候选编译", C.mint],
     ["推理与证据层", "时态规则  ·  三值逻辑  ·  主动提问  ·  BM25/向量接口", C.amberBg],
     ["可信安全层", "独立校验器  ·  注入防护  ·  冲突检测  ·  人工发布门", "#FBE9E7"],
@@ -353,7 +354,7 @@ function addNotes(slide, note) {
     ["材料智能预检", "OCR 候选字段\n质量提醒 · 人工确认", C.amberBg],
     ["经办工作台", "五事项摘要\n缺失信息 · 风险标记", C.soft],
     ["治理工作台", "候选规则 · 版本差异\n影响分析 · 双审发布", "#FBE9E7"],
-    ["评审演示中心", "A–F 六条路径\n现场稳定复现", C.mint],
+    ["场景验证中心", "A–F 六条路径\n现场稳定复现", C.mint],
   ];
   mods.forEach((d, i) => {
     const col = i % 3;
@@ -394,7 +395,7 @@ function addNotes(slide, note) {
 {
   const slide = baseSlide("HONESTY", "我们明确知道：什么已经证明，什么尚未证明", 14);
   card(slide, 64, 180, 536, 360, "已经可验证", "✓ 可信软件闭环可运行\n✓ 规则与证据逐字追溯\n✓ Qwen3双模型GPU冻结评测\n✓ 高风险输出被工程护栏阻断\n✓ 单机并发与供应链状态可检查", { accent: C.teal, fill: C.mint, titleSize: 26, bodySize: 20 });
-  card(slide, 650, 180, 536, 360, "仍需真人完成", "○ 真实参与者可用性试点\n○ 另一台干净电脑安装验收\n○ 3–5 分钟真人演示视频\n○ 盖章、签字与竞赛平台提交\n○ 最终平台信息与网盘链接", { accent: C.amber, fill: C.amberBg, titleSize: 26, bodySize: 20 });
+  card(slide, 650, 180, 536, 360, "仍需真人完成", "○ 真实参与者可用性试点\n○ 另一台干净电脑安装验收\n○ 3–5 分钟真人演示视频\n○ 盖章、签字与指定平台提交\n○ 最终平台信息与下载链接", { accent: C.amber, fill: C.amberBg, titleSize: 26, bodySize: 20 });
   textBox(slide, "不把合成数据写成真人数据，不把导办写成审批，不把内部评测写成第三方认证。", 64, 584, 1122, 54, { size: 21, bold: true, color: C.ink, align: "center", valign: "middle" });
   addNotes(slide, "这一页主动说明边界。模型实测已完成；真人试点、第三方干净机验收和团队视频仍必须由真实参与者完成。 ");
 }
@@ -410,7 +411,7 @@ function addNotes(slide, note) {
   textBox(slide, "受约束神经符号架构  /  时态规则  /  三值逻辑  /  原文证据链  /  人工发布门", 74, 454, 1050, 70, { size: 20, color: "#B7C7D4" });
   pill(slide, "现在进入系统演示", 74, 580, 250, C.teal, C.white);
   textBox(slide, "谢谢", 1030, 576, 170, 50, { size: 28, bold: true, color: C.white, align: "right" });
-  addNotes(slide, "结束语：我们希望评委看到的不是一个政策聊天机器人，而是一套能把生成式AI风险约束进工程流程的可信软件方法。随后进入六条固定演示路径。 ");
+  addNotes(slide, "结束语：惠民智导不是一个政策聊天机器人，而是一套能把生成式AI风险约束进工程流程的可信软件方法。随后进入六条固定演示路径。 ");
 }
 
 const requirements = {

@@ -17,10 +17,18 @@ def test_javascript_id_selectors_exist_in_html() -> None:
 def test_frontend_uses_versioned_assets_and_no_removed_single_file_state() -> None:
     html = (STATIC_DIR / "index.html").read_text(encoding="utf-8")
     javascript = (STATIC_DIR / "js" / "app.js").read_text(encoding="utf-8")
+    css = (STATIC_DIR / "css" / "app.css").read_text(encoding="utf-8")
     assert "/static/js/app.js?v=" in html
     assert "/static/css/app.css?v=" in html
     assert re.search(r"state\.selectedFile(?!s)", javascript) is None
     assert '$("#material-type")' not in javascript
+    assert 'id="sidebar-scrim"' in html
+    assert '$("#sidebar-scrim").addEventListener("click"' in javascript
+    assert 'event.key === "Escape"' in javascript
+    assert "body.nav-open .sidebar-scrim" in css
+    assert "场景验证中心" in html
+    assert ("评委" + "演示中心") not in html
+    assert ("国" + "赛") not in html
 
 
 def test_care_mode_read_aloud_and_readiness_ui_are_wired() -> None:

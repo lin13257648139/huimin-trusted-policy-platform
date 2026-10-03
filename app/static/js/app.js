@@ -107,19 +107,19 @@ const pageInfo = {
   documents: ["DOCUMENT ASSURANCE", "材料预检"],
   evidence: ["TRACEABLE POLICY", "政策证据"],
   worker: ["WORKER PROTOTYPE", "工作人员模式"],
-  demo: ["JURY DEMONSTRATION", "评委演示中心"],
+  demo: ["SCENARIO VALIDATION", "场景验证中心"],
   admin: ["TRUST & GOVERNANCE", "可信治理"],
 };
 
 function navigate(view) {
   if (!pageInfo[view]) view = "overview";
   state.currentView = view;
-  state.currentView = view;
   $$("[data-view]").forEach((section) => section.classList.toggle("active", section.dataset.view === view));
   $$("[data-nav]").forEach((item) => item.classList.toggle("active", item.dataset.nav === view));
   $("#page-eyebrow").textContent = pageInfo[view][0];
   $("#page-title").textContent = pageInfo[view][1];
   $(".sidebar").classList.remove("open");
+  document.body.classList.remove("nav-open");
   $("#mobile-menu").setAttribute("aria-expanded", "false");
   if (location.hash !== `#${view}`) history.replaceState(null, "", `#${view}`);
   window.scrollTo({ top: 0, behavior: "smooth" });
@@ -136,7 +136,12 @@ function setupNavigation() {
   });
   $("#mobile-menu").addEventListener("click", () => {
     const open = $(".sidebar").classList.toggle("open");
+    document.body.classList.toggle("nav-open", open);
     $("#mobile-menu").setAttribute("aria-expanded", String(open));
+  });
+  $("#sidebar-scrim").addEventListener("click", () => navigate(state.currentView));
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape" && $(".sidebar").classList.contains("open")) navigate(state.currentView);
   });
   window.addEventListener("hashchange", () => navigate(location.hash.slice(1)));
   navigate(location.hash.slice(1) || "overview");

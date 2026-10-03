@@ -9,7 +9,7 @@
   <title>惠民智导 · 社会救助智能导办</title>
   <link rel="manifest" href="/static/manifest.webmanifest">
   <link rel="icon" href="/static/icons/app-icon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="/static/css/app.css?v=0.7.0">
+  <link rel="stylesheet" href="/static/css/app.css?v=0.7.1">
 </head>
 <body>
   <a class="skip-link" href="#main-content">跳到主要内容</a>
@@ -31,7 +31,7 @@
       <a href="#documents" class="nav-item" data-nav="documents"><span data-icon="scan"></span><span>材料预检</span></a>
       <a href="#evidence" class="nav-item" data-nav="evidence"><span data-icon="book"></span><span>政策证据</span></a>
       <a href="#worker" class="nav-item" data-nav="worker"><span data-icon="users"></span><span>工作人员模式</span><em>原型</em></a>
-      <a href="#demo" class="nav-item" data-nav="demo"><span data-icon="wand"></span><span>评委演示中心</span></a>
+      <a href="#demo" class="nav-item" data-nav="demo"><span data-icon="wand"></span><span>场景验证中心</span></a>
       <p class="nav-label">治理</p>
       <a href="#admin" class="nav-item" data-nav="admin"><span data-icon="shield"></span><span>可信治理</span></a>
     </nav>
@@ -41,6 +41,7 @@
       <p>辅助导办，不替代行政审批</p>
     </div>
   </aside>
+  <button class="sidebar-scrim" id="sidebar-scrim" type="button" aria-label="关闭导航" tabindex="-1"></button>
 
   <main class="main-shell" id="main-content" tabindex="-1">
     <header class="topbar">
@@ -285,7 +286,7 @@
     </section>
 
     <section class="view" id="view-demo" data-view="demo">
-      <div class="section-intro"><div><p class="eyebrow">JURY DEMONSTRATION</p><h2>六个可复现的评委演示</h2><p>所有人物与材料均为合成案例；每个按钮都调用真实接口或打开真实预检材料，不使用录屏假页面。</p></div><span class="secure-pill"><span data-icon="shield-check"></span>合成案例 · 可重复</span></div>
+      <div class="section-intro"><div><p class="eyebrow">SCENARIO VALIDATION</p><h2>六个可复现的场景验证</h2><p>所有人物与材料均为合成案例；每个按钮都调用真实接口或打开真实预检材料，不使用录屏假页面。</p></div><span class="secure-pill"><span data-icon="shield-check"></span>合成案例 · 可重复</span></div>
       <div class="demo-grid" id="demo-grid">
         <article class="panel demo-case"><span>A</span><h3>收入临界边界</h3><p>验证阈值附近不会给出过度确定结论。</p><button data-demo-case="A" class="outline-button">运行案例</button></article>
         <article class="panel demo-case"><span>B</span><h3>成员范围未知</h3><p>验证UNKNOWN保留和人工核验路径。</p><button data-demo-case="B" class="outline-button">运行案例</button></article>
@@ -336,13 +337,13 @@
         </div>
       </article>
       <article class="panel audit-panel"><div class="panel-heading"><div><p class="eyebrow">RECENT SNAPSHOTS</p><h3>最近预筛快照</h3></div><button class="text-button" id="refresh-admin">刷新</button></div><div class="audit-table" id="audit-table"><div class="empty-state compact"><p>还没有预筛记录。</p></div></div></article>
-      <div class="governance-note"><span data-icon="info"></span><div><strong>国赛演示说明</strong><p>管理端刻意展示“不自动判断”的场景：历史规则未核验、文件超出有效期、复杂比例缺少明确参数时，系统会转人工，而不是用大模型补全事实。</p></div></div>
+      <div class="governance-note"><span data-icon="info"></span><div><strong>可信演示说明</strong><p>管理端刻意展示“不自动判断”的场景：历史规则未核验、文件超出有效期、复杂比例缺少明确参数时，系统会转人工，而不是用大模型补全事实。</p></div></div>
     </section>
   </main>
 
   <div class="toast-region" id="toast-region" aria-live="polite"></div>
   <div class="loading-overlay hidden" id="loading-overlay"><div class="loader"><span></span><span></span><span></span></div><p id="loading-text">正在执行可信推理…</p></div>
 
-  <script src="/static/js/app.js?v=0.7.0" defer></script>
+  <script src="/static/js/app.js?v=0.7.1" defer></script>
 </body>
 </html>

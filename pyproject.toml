@@ -1,6 +1,6 @@
 [project]
 name = "huimin-guide"
-version = "0.7.0"
+version = "0.7.1"
 description = "可信、可解释、可追溯的社会救助智能导办系统"
 requires-python = ">=3.11"
 

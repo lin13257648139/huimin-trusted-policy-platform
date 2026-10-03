@@ -83,7 +83,7 @@ def evaluate(directory: Path) -> dict[str, object]:
             for name, counts in sorted(by_variant.items())
         },
         "details": details,
-        "warning": "全部图片为程序生成的无真实信息材料；正式国赛必须增加独立模板和人工标注图片，不能把该结果写成真实材料准确率。",
+        "warning": "全部图片为程序生成的无真实信息材料；正式对外评测必须增加独立模板和人工标注图片，不能把该结果写成真实材料准确率。",
     }
 
 

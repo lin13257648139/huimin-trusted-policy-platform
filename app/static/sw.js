@@ -1,8 +1,8 @@
-const CACHE_NAME = "huimin-shell-v0.7.0";
+const CACHE_NAME = "huimin-shell-v0.7.1";
 const SHELL_ASSETS = [
   "/",
-  "/static/css/app.css?v=0.7.0",
-  "/static/js/app.js?v=0.7.0",
+  "/static/css/app.css?v=0.7.1",
+  "/static/js/app.js?v=0.7.1",
   "/static/manifest.webmanifest",
   "/static/icons/app-icon.svg",
 ];

@@ -92,7 +92,7 @@ def make_doc() -> None:
     add_run(p, "技术评测与工程佐证材料", bold=True, color=NAVY, size=22)
     p = doc.add_paragraph()
     p.alignment = WD_ALIGN_PARAGRAPH.CENTER
-    add_run(p, "V0.7.0 · 2026-10-03 · AI+软件创新", color=GRAY, size=12)
+    add_run(p, "V0.7.1 · 2026-10-03 · AI+软件创新", color=GRAY, size=12)
     callout(
         doc,
         "材料边界",
