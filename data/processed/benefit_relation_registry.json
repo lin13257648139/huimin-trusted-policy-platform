@@ -1,0 +1,44 @@
+{
+  "registry_version": "2026.10.15.1",
+  "title": "分层分类社会救助事项关系登记表",
+  "region": "广州市",
+  "reviewed_at": "2026-10-15",
+  "relationships": [
+    {
+      "relation_id": "REL-B002-B003",
+      "left_benefit_id": "B002",
+      "right_benefit_id": "B003",
+      "relation_type": "priority_fallback",
+      "activation": "B002状态不是明确不符合",
+      "routing": "先核验B002；B003仅作为B002未获正式确认时的分层转介",
+      "evidence_ids": ["E-GD-002-DIBAO-EXCLUSION"]
+    },
+    {
+      "relation_id": "REL-B002-B004",
+      "left_benefit_id": "B002",
+      "right_benefit_id": "B004",
+      "relation_type": "priority_fallback",
+      "activation": "B002状态不是明确不符合",
+      "routing": "先核验B002；B004仅作为B002未获正式确认时的分层转介",
+      "evidence_ids": ["E-GD-002-DIBAO-EXCLUSION"]
+    },
+    {
+      "relation_id": "REL-B003-B004",
+      "left_benefit_id": "B003",
+      "right_benefit_id": "B004",
+      "relation_type": "parallel_assessment",
+      "activation": "B002明确不符合且B003、B004均有符合线索",
+      "routing": "B003与B004分别认定，可由同一窗口并行核验并复用家庭经济状况材料",
+      "evidence_ids": ["E-GD-002-SEPARATE-RECOGNITION"]
+    },
+    {
+      "relation_id": "REL-B001-CLASSIFIED",
+      "left_benefit_id": "B001",
+      "right_benefit_id": "B002|B003|B004",
+      "relation_type": "monitoring_link",
+      "activation": "B002、B003或B004存在符合、待补充或人工核验线索",
+      "routing": "B001作为低收入人口监测与转介入口，不与具体认定事项竞争主路径",
+      "evidence_ids": ["E-GZ-001-SCOPE"]
+    }
+  ]
+}

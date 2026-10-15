@@ -3,15 +3,19 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="惠民智导——可信、可解释、可追溯的社会救助智能导办系统">
+  <meta name="description" content="惠民智导可信政策智能平台——社会救助首个落地场景">
   <meta name="theme-color" content="#071a1d">
   <meta name="color-scheme" content="light">
-  <title>惠民智导 · 社会救助智能导办</title>
+  <title>惠民智导可信政策智能平台</title>
   <link rel="manifest" href="/static/manifest.webmanifest">
   <link rel="icon" href="/static/icons/app-icon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="/static/css/app.css?v=0.7.1">
+  <link rel="stylesheet" href="/static/css/app.css?v=1.2.0">
 </head>
 <body>
+  <div class="print-safety-block" id="print-safety-block" aria-hidden="true">
+    <h1>安全门未放行，禁止打印或导出</h1>
+    <p>当前页面没有通过完整的安全校验。请返回系统核对输入与政策证据。</p>
+  </div>
   <a class="skip-link" href="#main-content">跳到主要内容</a>
   <div class="ambient ambient-one"></div>
   <div class="ambient ambient-two"></div>
@@ -21,19 +25,28 @@
       <span class="brand-mark" aria-hidden="true">
         <svg viewBox="0 0 40 40"><path d="M20 4 34 12v16L20 36 6 28V12L20 4Z"/><path d="M13 21.5 18 26l9-11"/></svg>
       </span>
-      <span><strong>惠民智导</strong><small>可信社会救助导办</small></span>
+      <span><strong>惠民智导</strong><small>可信政策智能平台</small></span>
     </a>
 
+    <div class="portal-switcher" role="group" aria-label="切换服务端">
+      <button type="button" class="portal-option active" data-portal-role="resident" aria-pressed="true"><span data-icon="heart"></span><span>居民服务</span></button>
+      <button type="button" class="portal-option" data-portal-role="staff" aria-pressed="false"><span data-icon="users"></span><span>工作人员</span></button>
+    </div>
+
     <nav class="nav-stack">
-      <p class="nav-label">工作台</p>
-      <a href="#overview" class="nav-item active" data-nav="overview"><span data-icon="grid"></span><span>项目总览</span></a>
-      <a href="#screening" class="nav-item" data-nav="screening"><span data-icon="spark"></span><span>智能预筛</span><em>核心</em></a>
-      <a href="#documents" class="nav-item" data-nav="documents"><span data-icon="scan"></span><span>材料预检</span></a>
-      <a href="#evidence" class="nav-item" data-nav="evidence"><span data-icon="book"></span><span>政策证据</span></a>
-      <a href="#worker" class="nav-item" data-nav="worker"><span data-icon="users"></span><span>工作人员模式</span><em>原型</em></a>
-      <a href="#demo" class="nav-item" data-nav="demo"><span data-icon="wand"></span><span>场景验证中心</span></a>
-      <p class="nav-label">治理</p>
-      <a href="#admin" class="nav-item" data-nav="admin"><span data-icon="shield"></span><span>可信治理</span></a>
+      <div class="portal-menu" data-portal-menu="resident">
+        <p class="nav-label">居民办事</p>
+        <a href="#overview" class="nav-item active" data-nav="overview"><span data-icon="grid"></span><span>服务首页</span></a>
+        <a href="#screening" class="nav-item" data-nav="screening"><span data-icon="spark"></span><span>智能预筛</span><em>核心</em></a>
+        <a href="#documents" class="nav-item" data-nav="documents"><span data-icon="scan"></span><span>材料预检</span></a>
+        <a href="#evidence" class="nav-item" data-nav="evidence"><span data-icon="book"></span><span>政策依据</span></a>
+      </div>
+      <div class="portal-menu hidden" data-portal-menu="staff">
+        <p class="nav-label">工作人员工作区</p>
+        <a href="#worker" class="nav-item" data-nav="worker"><span data-icon="users"></span><span>咨询工作台</span></a>
+        <a href="#demo" class="nav-item" data-nav="demo"><span data-icon="wand"></span><span>场景验证中心</span></a>
+        <a href="#admin" class="nav-item" data-nav="admin"><span data-icon="shield"></span><span>可信治理</span></a>
+      </div>
     </nav>
 
     <div class="sidebar-foot">
@@ -44,12 +57,8 @@
   <button class="sidebar-scrim" id="sidebar-scrim" type="button" aria-label="关闭导航" tabindex="-1"></button>
 
   <main class="main-shell" id="main-content" tabindex="-1">
-    <header class="topbar">
+    <header class="topbar" aria-label="系统状态与辅助功能">
       <button class="mobile-menu" id="mobile-menu" aria-label="打开导航" aria-controls="main-sidebar" aria-expanded="false"><span data-icon="menu"></span></button>
-      <div>
-        <p class="eyebrow" id="page-eyebrow">可信民生 AI</p>
-        <h1 id="page-title">项目总览</h1>
-      </div>
       <div class="topbar-actions">
         <div class="system-status" id="runtime-status"><span></span>正在核验运行环境</div>
         <button class="icon-button" id="read-page-aloud" aria-label="朗读当前页面重点内容" aria-pressed="false" title="本地朗读"><span data-icon="volume"></span></button>
@@ -110,7 +119,7 @@
         </article>
 
         <article class="panel policy-watch">
-          <div class="panel-heading"><div><p class="eyebrow">POLICY WATCH</p><h3>政策时态雷达</h3></div><button class="text-button" data-go="admin">查看治理台</button></div>
+          <div class="panel-heading"><div><p class="eyebrow">POLICY WATCH</p><h3>政策时态雷达</h3></div><button class="text-button" data-go="evidence">查看政策依据</button></div>
           <div class="timeline-mini" id="policy-watch-list">
             <div class="skeleton-line"></div><div class="skeleton-line"></div><div class="skeleton-line"></div>
           </div>
@@ -126,7 +135,7 @@
 
     <section class="view" id="view-screening" data-view="screening">
       <div class="section-intro">
-        <div><p class="eyebrow">INTELLIGENT PRE-SCREENING</p><h2>一次描述，形成一份可解释导办清单</h2><p>先用自然语言生成草稿，再确认关键字段；资格判断始终由规则引擎完成。</p></div>
+        <div><p class="eyebrow">INTELLIGENT PRE-SCREENING</p><h2>一次描述，形成一份可解释导办清单</h2><p>先用自然语言生成草稿，再确认关键字段；系统按“低保优先、边缘与刚支分别认定”编排路径，资格判断始终由规则引擎完成。</p></div>
         <div class="intro-actions">
           <button class="outline-button care-toggle" id="care-mode-toggle" aria-pressed="false"><span data-icon="heart"></span>开启一步一问</button>
           <button class="outline-button" id="load-demo"><span data-icon="wand"></span>载入演示家庭</button>
@@ -195,7 +204,7 @@
                 </div>
               </div>
 
-              <div class="consent-box"><span data-icon="info"></span><div><p>本系统根据自述信息进行申请前预筛，结果不等于政府审批；无需填写姓名、身份证号或银行卡号。</p><label class="screening-consent"><input type="checkbox" id="screening-consent" required><span>我已理解上述说明，并同意按本页说明处理本次结构化信息。</span></label></div></div>
+              <div class="consent-box"><span data-icon="info"></span><div><p>本系统根据自述信息进行申请前预筛，结果不等于政府审批；无需填写姓名、身份证号或银行卡号。默认只在本次请求中处理，不保存预筛记录。</p><label class="screening-consent"><input type="checkbox" id="screening-consent" required><span>我已理解上述说明，并同意按本页说明处理本次结构化信息。</span></label><label class="screening-consent"><input type="checkbox" id="persist-screening"><span>可选：保存本次结构化预筛记录30天，以便提交反馈或稍后删除；自由叙述不会保存。</span></label></div></div>
               <button type="submit" class="submit-button" id="screen-submit"><span data-icon="spark"></span><span>生成可信导办报告</span><small>规则推理 · 逐条证据 · 材料清单</small></button>
             </article>
           </form>
@@ -211,13 +220,14 @@
       <div class="results-zone hidden" id="results-zone">
         <div class="report-head">
           <div><p class="eyebrow">TRUSTED GUIDANCE REPORT</p><h2>可信导办报告</h2><p id="report-meta"></p></div>
-          <div class="report-actions"><button class="outline-button" id="print-report"><span data-icon="print"></span>打印报告</button><button class="outline-button" id="new-screening">重新预筛</button></div>
+          <div class="report-actions"><button class="outline-button" id="print-report" disabled><span data-icon="print"></span>打印报告</button><button class="outline-button" id="new-screening">重新预筛</button></div>
         </div>
         <div class="warning-stack" id="global-warnings"></div>
         <div class="result-summary" id="result-summary"></div>
         <article class="panel next-step-panel" id="next-step-panel"></article>
         <div class="result-list" id="result-list"></div>
-        <div class="feedback-card" id="feedback-card"><div><strong>这份导办报告有帮助吗？</strong><p>匿名反馈将进入规则复核队列。</p><label class="feedback-detail hidden" id="feedback-detail"><span>哪里需要改进</span><select id="feedback-type"><option value="policy">政策依据</option><option value="reasoning">判断解释</option><option value="usability">操作体验</option><option value="other">其他</option></select><textarea id="feedback-comment" maxlength="1000" placeholder="请勿填写姓名、证件号或病历原文"></textarea><button type="button" id="send-feedback">提交反馈</button></label></div><div><button data-helpful="true">有帮助</button><button data-helpful="false">需要改进</button></div></div>
+        <div class="stateless-notice hidden" id="stateless-notice">本次报告按默认无状态模式生成：服务器未保存结构化预筛记录，也未生成访问凭证。</div>
+        <div class="feedback-card" id="feedback-card"><div><strong>这份导办报告有帮助吗？</strong><p>反馈将进入规则复核队列；文字评论会保存至本记录到期或删除。</p><div class="feedback-detail hidden" id="feedback-detail"><label><span>哪里需要改进</span><select id="feedback-type"><option value="policy">政策依据</option><option value="reasoning">判断解释</option><option value="usability">操作体验</option><option value="other">其他</option></select></label><textarea id="feedback-comment" maxlength="1000" placeholder="请勿填写姓名、证件号或病历原文"></textarea><label><input type="checkbox" id="feedback-consent"> 我同意保存上述文字评论用于规则复核，并可随本次记录立即删除或到期清理</label><button type="button" id="send-feedback">提交反馈</button></div></div><div><button data-helpful="true">有帮助</button><button data-helpful="false">需要改进</button></div></div>
         <div class="data-actions"><span>预筛记录将在 <b id="retention-days">30</b> 天后自动清理。</span><button type="button" class="text-button" id="delete-screening">立即删除本次记录</button></div>
       </div>
     </section>
@@ -233,10 +243,19 @@
             <input type="file" id="document-file" accept=".jpg,.jpeg,.png,.webp,.pdf" multiple>
             <span class="drop-icon"><span data-icon="upload"></span></span>
             <strong>拖拽文件到这里，或点击选择</strong>
-            <p id="selected-file">尚未选择文件</p>
+            <p>支持一次选择多份材料</p>
           </label>
+          <div class="upload-selection empty" id="upload-selection" role="status" aria-live="polite">
+            <span class="upload-selection-icon" id="upload-selection-icon"><span data-icon="upload"></span></span>
+            <div class="upload-selection-copy">
+              <strong id="selected-file-title">尚未选择材料</strong>
+              <p id="selected-file">选择后将在这里显示文件名和大小。</p>
+              <ul class="selected-file-list" id="selected-file-list"></ul>
+            </div>
+            <div class="upload-selection-actions"><span id="selected-file-count">0 份</span><button type="button" class="text-button" id="clear-selected-files" disabled>清空重选</button></div>
+          </div>
           <label class="check-consent"><input type="checkbox" id="document-consent"><span>我同意系统仅在本次请求中处理文件，了解当前版本不保存原件。</span></label>
-          <button class="submit-button compact" id="check-document"><span data-icon="scan"></span><span>检查材料质量和完整性</span></button>
+          <button class="submit-button compact" id="check-document" disabled><span data-icon="scan"></span><span>请先选择材料</span></button>
         </article>
         <div>
           <article class="panel result-placeholder" id="document-result">
@@ -272,17 +291,71 @@
               <label class="field"><span>所在区</span><select id="worker-district" required><option>天河区</option><option>越秀区</option><option>海珠区</option><option>荔湾区</option><option>白云区</option><option>黄埔区</option><option>花都区</option><option>番禺区</option><option>南沙区</option><option>从化区</option><option>增城区</option></select></label>
               <label class="field"><span>共同生活人数</span><input type="number" id="worker-household-size" min="1" max="30" value="3" required></label>
               <label class="field"><span>家庭月总收入</span><input type="number" id="worker-income" min="0" value="3200"></label>
-              <label class="field"><span>成员范围</span><select id="worker-member"><option value="true">已确认</option><option value="">不清楚</option><option value="false">可能不完整</option></select></label>
-              <label class="field"><span>财产线索</span><select id="worker-assets"><option value="true">未发现超标</option><option value="">尚未核对</option><option value="false">可能超标</option></select></label>
-              <label class="field"><span>广州户籍</span><select id="worker-hukou"><option value="true">是</option><option value="false">否</option><option value="">不清楚</option></select></label>
+              <label class="field"><span>成员范围</span><select id="worker-member"><option value="">不清楚</option><option value="true">已确认</option><option value="false">可能不完整</option></select></label>
+              <label class="field"><span>财产线索</span><select id="worker-assets"><option value="">尚未核对</option><option value="true">未发现超标</option><option value="false">可能超标</option></select></label>
+              <label class="field"><span>广州户籍</span><select id="worker-hukou"><option value="">不清楚</option><option value="true">是</option><option value="false">否</option></select></label>
               <label class="field"><span>近12个月刚性支出</span><input type="number" id="worker-expenses" min="0" value="0"></label>
-              <label class="field"><span>急难事件</span><select id="worker-urgent"><option value="false">否</option><option value="true">是</option></select></label>
+              <label class="field"><span>急难事件</span><select id="worker-urgent"><option value="">尚未了解</option><option value="true">是</option><option value="false">否</option></select></label>
             </div>
             <button class="submit-button compact" type="submit"><span data-icon="spark"></span><span>生成工作人员咨询摘要</span></button>
           </form>
         </article>
         <article class="panel worker-output" id="worker-output"><div class="empty-state"><span data-icon="users"></span><h3>等待匿名概况</h3><p>提交后并排显示五类事项、UNKNOWN条件、最小缺口和窗口信息。</p></div></article>
       </div>
+      <article class="panel assessment-lab">
+        <div class="panel-heading"><div><p class="eyebrow">2025 SECOND EDITION · EFFECTIVE 2026-01-01</p><h3>家庭生活状况综合评估计算器</h3><p>按粤民规字〔2025〕5号附件逐项换算D值；这是匿名计算草稿，不是低保审批结论，也不替代核对报告、入户调查和行政审核。</p></div><button type="button" class="outline-button" id="load-assessment-demo">载入合成示例</button></div>
+        <div class="assessment-layout">
+          <form id="living-assessment-form" class="assessment-form">
+            <details class="assessment-section" open><summary>1. 收入口径与共同生活人数</summary><div class="field-grid cols-3">
+              <label class="field"><span>查询日期</span><input type="date" id="assessment-query-date" required></label>
+              <label class="field"><span>共同生活人数</span><input type="number" id="assessment-household-size" min="1" max="30" required></label>
+              <label class="field"><span>劳动者人数</span><input type="number" id="assessment-laborers" min="0" max="30" required></label>
+              <label class="field"><span>月均工资性收入</span><input type="number" id="assessment-wage" min="0" step="0.01" required></label>
+              <label class="field"><span>月均经营净收入</span><input type="number" id="assessment-operating" min="0" step="0.01" required></label>
+              <label class="field"><span>月均财产净收入</span><input type="number" id="assessment-property" min="0" step="0.01" required></label>
+              <label class="field"><span>月均转移净收入</span><input type="number" id="assessment-transfer" min="0" step="0.01" required></label>
+              <label class="field"><span>申报就业成本</span><input type="number" id="assessment-employment-cost" min="0" step="0.01" required></label>
+              <label class="field"><span>已按申请前6个月平均</span><select id="assessment-six-month"><option value="">尚未确认</option><option value="true">是</option><option value="false">否</option></select></label>
+              <label class="field"><span>劳动收入核定已完成</span><select id="assessment-labor-complete"><option value="">尚未确认</option><option value="true">是</option><option value="false">否</option></select></label>
+            </div></details>
+            <details class="assessment-section"><summary>2. 家庭结构：每名成员只选最有利的一档</summary><div class="field-grid cols-3">
+              <label class="field"><span>学龄前儿童（-0.5D）</span><input type="number" id="assessment-preschool" min="0" max="30" placeholder="0"></label>
+              <label class="field"><span>高中至全日制本科学生（-1D）</span><input type="number" id="assessment-student" min="0" max="30" placeholder="0"></label>
+              <label class="field"><span>70至79岁（-0.5D）</span><input type="number" id="assessment-age70" min="0" max="30" placeholder="0"></label>
+              <label class="field"><span>80岁以上（-1D）</span><input type="number" id="assessment-age80" min="0" max="30" placeholder="0"></label>
+              <label class="field"><span>罕见病（-3D）</span><input type="number" id="assessment-rare" min="0" max="30" placeholder="0"></label>
+              <label class="field"><span>重病/失能/重度残疾等（-2D）</span><input type="number" id="assessment-severe" min="0" max="30" placeholder="0"></label>
+              <label class="field"><span>慢性病/半失能/其他残疾（-1D）</span><input type="number" id="assessment-chronic" min="0" max="30" placeholder="0"></label>
+              <label class="field"><span>影响劳动的其他疾病（-0.5D）</span><input type="number" id="assessment-other-disease" min="0" max="30" placeholder="0"></label>
+              <label class="field"><span>现役义务兵本人/直系亲属（-1D）</span><input type="number" id="assessment-conscript" min="0" max="30" placeholder="0"></label>
+              <label class="field"><span>已确认同一成员不叠加</span><select id="assessment-nonstack"><option value="">尚未确认</option><option value="true">是</option><option value="false">否</option></select></label>
+            </div></details>
+            <details class="assessment-section"><summary>3. 非共同生活义务人</summary><div class="field-grid cols-3">
+              <label class="field"><span>履行能力较强（+2D）</span><input type="number" id="assessment-obligor-strong" min="0" max="60" placeholder="0"></label>
+              <label class="field"><span>履行能力一般（+1D）</span><input type="number" id="assessment-obligor-general" min="0" max="60" placeholder="0"></label>
+              <label class="field"><span>履行能力较弱（+0.5D）</span><input type="number" id="assessment-obligor-weak" min="0" max="60" placeholder="0"></label>
+              <label class="field"><span>无履行能力（+0D）</span><input type="number" id="assessment-obligor-none" min="0" max="60" placeholder="0"></label>
+              <label class="field"><span>无法获知且已有书面说明（按+2D）</span><input type="number" id="assessment-obligor-unreachable" min="0" max="60" placeholder="0"></label>
+              <label class="field"><span>义务人信息已核清</span><select id="assessment-obligor-complete"><option value="">尚未确认</option><option value="true">是</option><option value="false">否</option></select></label>
+              <label class="field"><span>司法文书确定金额的义务人数</span><input type="number" id="assessment-judicial-cases" min="0" max="60" placeholder="0"></label>
+              <label class="field"><span>司法金额已计入转移收入</span><select id="assessment-judicial-included"><option value="">不适用/尚未确认</option><option value="true">是</option><option value="false">否</option></select></label>
+              <label class="field"><span>司法文书义务人已排除重复计D</span><select id="assessment-judicial-excluded"><option value="">不适用/尚未确认</option><option value="true">是</option><option value="false">否</option></select></label>
+            </div></details>
+            <details class="assessment-section"><summary>4. 住房、车辆与调查确认</summary><div class="field-grid cols-3">
+              <label class="field"><span>家庭无可居住自有住房</span><select id="assessment-no-housing"><option value="">尚未确认</option><option value="true">是</option><option value="false">否</option></select></label>
+              <label class="field"><span>计入评估的摩托车</span><input type="number" id="assessment-motorcycles" min="0" max="20" placeholder="排除价值≤3000元或超5年车辆"></label>
+              <label class="field"><span>计入评估的电动自行车</span><input type="number" id="assessment-ebikes" min="0" max="30" placeholder="排除价值≤2000元或超5年车辆"></label>
+              <label class="field"><span>车辆价值与年限排除项已核清</span><select id="assessment-vehicle-exclusions"><option value="">尚未确认</option><option value="true">是</option><option value="false">否</option></select></label>
+              <label class="field"><span>核对报告已取得</span><select id="assessment-report"><option value="">尚未确认</option><option value="true">是</option><option value="false">否</option></select></label>
+              <label class="field"><span>入户综合评估已完成</span><select id="assessment-home-visit"><option value="">尚未确认</option><option value="true">是</option><option value="false">否</option></select></label>
+              <label class="field"><span>调查人已确认</span><select id="assessment-investigator"><option value="">尚未确认</option><option value="true">是</option><option value="false">否</option></select></label>
+              <label class="field"><span>被调查人已确认</span><select id="assessment-household-confirm"><option value="">尚未确认</option><option value="true">是</option><option value="false">否</option></select></label>
+            </div></details>
+            <button class="submit-button compact" type="submit"><span data-icon="branch"></span><span>按第二版指标计算</span></button>
+          </form>
+          <div class="assessment-output" id="living-assessment-output"><div class="empty-state"><span data-icon="branch"></span><h3>等待综合评估输入</h3><p>系统将显示D值换算、逐项加减、缺失字段和人工流程完成情况。</p></div></div>
+        </div>
+      </article>
     </section>
 
     <section class="view" id="view-demo" data-view="demo">
@@ -344,6 +417,6 @@
   <div class="toast-region" id="toast-region" aria-live="polite"></div>
   <div class="loading-overlay hidden" id="loading-overlay"><div class="loader"><span></span><span></span><span></span></div><p id="loading-text">正在执行可信推理…</p></div>
 
-  <script src="/static/js/app.js?v=0.7.1" defer></script>
+  <script src="/static/js/app.js?v=1.2.0" defer></script>
 </body>
 </html>

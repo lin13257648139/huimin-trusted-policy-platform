@@ -1,6 +1,6 @@
 {
-  "generated_at": "2026-10-02T15:05:45.529760+00:00",
-  "app_version": "0.7.0",
+  "generated_at": "2026-10-15T09:51:06.177117+00:00",
+  "app_version": "1.2.0",
   "environment": {
     "python": "3.12.14",
     "platform": "Windows-11-10.0.26200-SP0",
@@ -13,9 +13,9 @@
     {
       "name": "health",
       "runs": 25,
-      "p50_ms": 1.516,
-      "p95_ms": 1.94,
-      "max_ms": 2.213,
+      "p50_ms": 1.38,
+      "p95_ms": 1.657,
+      "max_ms": 2.576,
       "threshold_ms": 250,
       "errors": [],
       "passed": true
@@ -23,9 +23,9 @@
     {
       "name": "system_readiness",
       "runs": 25,
-      "p50_ms": 21.846,
-      "p95_ms": 23.497,
-      "max_ms": 24.196,
+      "p50_ms": 21.431,
+      "p95_ms": 22.299,
+      "max_ms": 23.392,
       "threshold_ms": 750,
       "errors": [],
       "passed": true
@@ -33,9 +33,9 @@
     {
       "name": "active_question",
       "runs": 25,
-      "p50_ms": 2.039,
-      "p95_ms": 2.336,
-      "max_ms": 2.341,
+      "p50_ms": 1.823,
+      "p95_ms": 2.14,
+      "max_ms": 2.171,
       "threshold_ms": 500,
       "errors": [],
       "passed": true
@@ -43,9 +43,9 @@
     {
       "name": "evidence_search",
       "runs": 25,
-      "p50_ms": 4.056,
-      "p95_ms": 4.393,
-      "max_ms": 4.454,
+      "p50_ms": 4.809,
+      "p95_ms": 5.16,
+      "max_ms": 5.245,
       "threshold_ms": 750,
       "errors": [],
       "passed": true
@@ -53,13 +53,22 @@
     {
       "name": "screening",
       "runs": 25,
-      "p50_ms": 8.978,
-      "p95_ms": 10.841,
-      "max_ms": 12.134,
+      "p50_ms": 2.977,
+      "p95_ms": 3.314,
+      "max_ms": 3.43,
       "threshold_ms": 1500,
       "errors": [],
       "passed": true
     }
   ],
-  "claim_boundary": "本报告仅证明当前机器上的工程响应时间与无错误运行，不代表生产并发能力，也不代表业务准确率。"
+  "claim_boundary": "本报告仅证明当前机器上的工程响应时间与无错误运行，不代表生产并发能力，也不代表业务准确率。",
+  "engine_version": "rule-engine/0.5.0",
+  "release_metadata": {
+    "release_id": "v1.2.0+source.5fc011cd9986",
+    "app_version": "1.2.0",
+    "engine_version": "rule-engine/0.5.0",
+    "git_commit": "488be3243a196a2331e8f173fe8b75cb91491779",
+    "git_dirty": true,
+    "source_tree_sha256": "5fc011cd9986144f8597a0e87e0ff0a4a9fe15b86f29a797aaf6bf1a34484dd1"
+  }
 }

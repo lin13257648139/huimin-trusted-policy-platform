@@ -9,7 +9,6 @@ from app.domain.models import (
     QuestionOption,
 )
 
-
 BENEFIT_NAMES = {
     "B001": "低收入人口认定与监测",
     "B002": "最低生活保障",
@@ -157,40 +156,84 @@ QUESTIONS = (
 )
 
 
-def _is_relevant(spec: QuestionSpec, draft: GuidanceDraft) -> bool:
+MANDATORY_GUIDANCE_FIELDS = {"district", "household_size"}
+
+
+def _is_relevant(
+    spec: QuestionSpec,
+    draft: GuidanceDraft,
+    candidates: list[str],
+    *,
+    prune_resolved: bool,
+) -> bool:
     if spec.field_id in {"urgent_event_date", "basic_life_interrupted"}:
-        return draft.urgent_event is True
+        conditional = draft.urgent_event is True
+        return conditional and (not prune_resolved or "B005" in candidates)
     if spec.field_id == "residence_proof":
-        return draft.urgent_event is True and draft.is_local_hukou is False
-    return True
+        conditional = draft.urgent_event is True and draft.is_local_hukou is False
+        return conditional and (not prune_resolved or "B005" in candidates)
+    if not prune_resolved or spec.field_id in MANDATORY_GUIDANCE_FIELDS:
+        return True
+    if spec.field_id == "urgent_event":
+        return draft.urgent_event is None
+    return bool(set(spec.affects) & set(candidates))
 
 
 def _is_answered(spec: QuestionSpec, draft: GuidanceDraft) -> bool:
     return getattr(draft, spec.field_id, None) is not None or spec.field_id in draft.skipped_fields
 
 
-def _candidate_ids(draft: GuidanceDraft) -> list[str]:
-    candidates = ["B001", "B002", "B003", "B004"]
-    if draft.urgent_event is not False:
+def _candidate_ids(draft: GuidanceDraft, *, prune_resolved: bool) -> list[str]:
+    core = ["B002", "B003", "B004"]
+    temporary = draft.urgent_event is not False
+    if prune_resolved:
+        if draft.assets_eligible is False or draft.member_scope_confirmed is False:
+            core = []
+        elif draft.rigid_expenses_12m is not None and draft.rigid_expenses_12m <= 0:
+            core.remove("B004")
+        if draft.basic_life_interrupted is False:
+            temporary = False
+    candidates = (["B001"] if core else []) + core
+    if temporary:
         candidates.insert(0, "B005")
     return candidates
 
 
-def next_guidance_question(draft: GuidanceDraft) -> GuidanceResponse:
-    relevant = [spec for spec in QUESTIONS if _is_relevant(spec, draft)]
+def _priority(spec: QuestionSpec, draft: GuidanceDraft, candidates: list[str]) -> float:
+    affected = len(set(spec.affects) & set(candidates))
+    decisive = {
+        "district": 200,
+        "urgent_event": 90,
+        "assets_eligible": 78,
+        "member_scope_confirmed": 72,
+        "rigid_expenses_12m": 30,
+    }.get(spec.field_id, 0)
+    urgency = 60 if spec.field_id == "urgent_event" else 0
+    if draft.urgent_event is True and spec.field_id in {
+        "urgent_event_date",
+        "basic_life_interrupted",
+    }:
+        urgency += 24
+    prerequisite = 12 if spec.field_id in {"district", "household_size"} else 0
+    return round(
+        affected * 12 + urgency + decisive + prerequisite - spec.effort * 4 - spec.sensitivity * 3,
+        2,
+    )
+
+
+def _guidance_response(draft: GuidanceDraft, *, strategy: str) -> GuidanceResponse:
+    prune_resolved = strategy == "information_gain"
+    candidates = _candidate_ids(draft, prune_resolved=prune_resolved)
+    relevant = [
+        spec
+        for spec in QUESTIONS
+        if _is_relevant(spec, draft, candidates, prune_resolved=prune_resolved)
+    ]
     unanswered = [spec for spec in relevant if not _is_answered(spec, draft)]
-    candidates = _candidate_ids(draft)
-
-    def priority(spec: QuestionSpec) -> float:
-        affected = len(set(spec.affects) & set(candidates))
-        # 先定位属地，再尽快筛出可能需要人工快速响应的急难情形。
-        urgency = 60 if spec.field_id == "urgent_event" else 0
-        if draft.urgent_event is True and spec.field_id in {"urgent_event_date", "basic_life_interrupted"}:
-            urgency += 24
-        prerequisite = 12 if spec.field_id in {"district", "household_size"} else 0
-        return round(affected * 12 + urgency + prerequisite - spec.effort * 4 - spec.sensitivity * 3, 2)
-
-    unanswered.sort(key=priority, reverse=True)
+    if strategy == "information_gain":
+        unanswered.sort(key=lambda spec: _priority(spec, draft, candidates), reverse=True)
+    elif strategy != "fixed_order":
+        raise ValueError(f"未知补问策略：{strategy}")
     question = None
     if unanswered:
         spec = unanswered[0]
@@ -203,7 +246,7 @@ def next_guidance_question(draft: GuidanceDraft) -> GuidanceResponse:
             options=[QuestionOption(value=value, label=label) for value, label in spec.options],
             unit=spec.unit,
             affects=[BENEFIT_NAMES[item] for item in spec.affects],
-            priority_score=priority(spec),
+            priority_score=_priority(spec, draft, candidates),
             expected_unknown_reduction=len(set(spec.affects) & set(candidates)),
             sensitivity_level=("high" if spec.sensitivity >= 0.75 else "medium" if spec.sensitivity >= 0.4 else "low"),
             skip_behavior="跳过后相关事项保留“还需确认”，系统不会据此判定不符合。",
@@ -222,3 +265,15 @@ def next_guidance_question(draft: GuidanceDraft) -> GuidanceResponse:
         candidate_benefits=[BENEFIT_NAMES[item] for item in candidates],
         urgent_notice=urgent_notice,
     )
+
+
+def next_guidance_question(draft: GuidanceDraft) -> GuidanceResponse:
+    """Choose the next question with the explainable information-gain policy."""
+
+    return _guidance_response(draft, strategy="information_gain")
+
+
+def next_fixed_guidance_question(draft: GuidanceDraft) -> GuidanceResponse:
+    """Run the real source-order baseline, including conditional relevance."""
+
+    return _guidance_response(draft, strategy="fixed_order")

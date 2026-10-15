@@ -1,8 +1,8 @@
 {
   "report_schema": "ai-experiment/1.0",
-  "generated_at": "2026-10-02T20:34:11.766853+00:00",
+  "generated_at": "2026-10-15T10:37:49.876657+00:00",
   "scope": "internal synthetic benchmark; not real-user effectiveness evidence",
-  "app_version": "0.7.0",
+  "app_version": "1.2.0",
   "environment": {
     "python": "3.12.14",
     "platform": "Windows",
@@ -200,10 +200,10 @@
       },
       "latency_ms": {
         "measured_cases": 40,
-        "mean": 1809.7,
-        "p50": 1611,
-        "p95": 2592,
-        "max": 3287,
+        "mean": 1043.0,
+        "p50": 1141,
+        "p95": 1741,
+        "max": 1862,
         "includes_model_cold_start": true
       },
       "fallbacks": {
@@ -273,18 +273,18 @@
     },
     "configured_pipeline": {
       "queries": 12,
-      "recall_at_1": 0.9167,
+      "recall_at_1": 1.0,
       "recall_at_3": 1.0,
-      "mrr_at_5": 0.9583,
+      "mrr_at_5": 1.0,
       "actual_routes": {
         "rrf(bm25,local-embedding)": 12
       },
       "latency_ms": {
         "measured_queries": 12,
-        "mean": 422.0,
-        "p50": 405,
-        "p95": 430,
-        "max": 628
+        "mean": 762.5,
+        "p50": 732,
+        "p95": 788,
+        "max": 1214
       }
     }
   },
@@ -292,5 +292,14 @@
     "画像基准是内部合成语句，不代表真实困难群众表达分布。",
     "模型未实际运行时不得引用模型指标；报告中的actual_routes是唯一准确信号。",
     "最终资格始终由时态规则与三值逻辑求值，模型输出仅为待确认候选字段。"
-  ]
+  ],
+  "engine_version": "rule-engine/0.5.0",
+  "release_metadata": {
+    "release_id": "v1.2.0+source.5fc011cd9986",
+    "app_version": "1.2.0",
+    "engine_version": "rule-engine/0.5.0",
+    "git_commit": "488be3243a196a2331e8f173fe8b75cb91491779",
+    "git_dirty": true,
+    "source_tree_sha256": "5fc011cd9986144f8597a0e87e0ff0a4a9fe15b86f29a797aaf6bf1a34484dd1"
+  }
 }

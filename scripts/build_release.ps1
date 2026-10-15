@@ -1,20 +1,40 @@
 param(
-    [string]$Version = "0.7.1"
+    [string]$Version = "1.2.0",
+    [switch]$CompetitionRelease
 )
 
 $ErrorActionPreference = "Stop"
 $projectRoot = (Resolve-Path -LiteralPath (Join-Path $PSScriptRoot "..")).Path
 $releaseRoot = Join-Path $projectRoot "release"
 $stamp = Get-Date -Format "yyyyMMdd-HHmmss"
-$releaseName = "惠民智导-v$Version-$stamp"
+$releaseName = "惠民智导可信政策智能平台-v$Version-$stamp"
 $stageRoot = Join-Path $releaseRoot $releaseName
 $zipPath = Join-Path $releaseRoot "$releaseName.zip"
+
+if ($CompetitionRelease) {
+    $dirty = & git -C $projectRoot status --porcelain
+    if ($LASTEXITCODE -ne 0) {
+        throw '正式竞赛发布必须位于可用的Git工作区'
+    }
+    if ($dirty) {
+        throw '正式竞赛发布要求干净Git工作区；请先审查并提交当前改动'
+    }
+    & (Join-Path $PSScriptRoot 'run_quality_gates.ps1') -RequireNativeSemgrep
+    if ($LASTEXITCODE -ne 0) {
+        throw '正式竞赛发布质量门未通过'
+    }
+    $python = Join-Path $projectRoot '.venv\Scripts\python.exe'
+    & $python (Join-Path $PSScriptRoot 'verify_live_ai.py')
+    if ($LASTEXITCODE -ne 0) {
+        throw '正式竞赛发布要求真实对话模型和向量模型冒烟证据'
+    }
+}
 
 New-Item -ItemType Directory -Force -Path $stageRoot | Out-Null
 
 $excludedDirectoryNames = @(
     ".git", ".venv", ".pytest_cache", ".mypy_cache", "__pycache__",
-    "tmp", "logs", "release", "用户试点", "真人试点填写示例_U00_虚构"
+    "tmp", "logs", "release", "deliverables", "最终交付", "用户试点", "真人试点填写示例_U00_虚构"
 )
 $excludedRelativePrefixes = @(
     ".chart-data-",
@@ -76,8 +96,9 @@ $manifestEntries = Get-ChildItem -LiteralPath $stageRoot -Recurse -File | Sort-O
 
 $manifest = [ordered]@{
     schema_version = "release-manifest.v1"
-    project = "惠民智导——可信政策智能软件平台"
+    project = "惠民智导可信政策智能平台"
     version = $Version
+    competition_release_gate = [bool]$CompetitionRelease
     created_at = (Get-Date).ToString("o")
     payload_file_count = $manifestEntries.Count
     exclusions = [ordered]@{
@@ -88,6 +109,7 @@ $manifest = [ordered]@{
         human_pilot_files = $true
         model_weights = $true
         qa_intermediates = $true
+        competition_deliverables = $true
     }
     files = @($manifestEntries)
 }

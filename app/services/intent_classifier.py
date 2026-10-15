@@ -7,10 +7,8 @@ import re
 from collections import Counter, defaultdict
 from dataclasses import dataclass
 from functools import lru_cache
-from pathlib import Path
 
 from app.config import BASE_DIR
-
 
 DATASET_PATH = BASE_DIR / "data" / "ml" / "intent_dataset.json"
 
@@ -79,7 +77,7 @@ class IntentClassifier:
         peak = max(scores.values())
         exponentials = {label: math.exp(score - peak) for label, score in scores.items()}
         total = sum(exponentials.values())
-        ranked = sorted(exponentials, key=exponentials.get, reverse=True)
+        ranked = sorted(exponentials, key=lambda label: exponentials[label], reverse=True)
         if exponentials[ranked[0]] / total < 0.35:
             return []
         return [

@@ -1,8 +1,8 @@
 {
   "schema_version": "1.0",
-  "generated_at": "2026-10-02T10:03:04.592845+00:00",
+  "generated_at": "2026-10-15T09:50:23.526206+00:00",
   "catalog": "data/processed/policy_source_catalog.csv",
-  "catalog_sha256": "859529675f10d4d4b739daf37cedae7ca0b850a636ed2fdb13aed70e24d6f5c7",
+  "catalog_sha256": "df14b4fc9b0ef18ade30035b6d7b0ffcc885a9942c0ee65ce1b2ea801129d31c",
   "path_policy": "all paths are project-relative; no personal absolute path is stored",
   "sources": [
     {
@@ -22,8 +22,8 @@
       "status": "2026-08-01起由穗民规字〔2026〕3号替代；历史快照已核验",
       "local_file": "政策证据包/广州市民政局关于进一步规范最低生活保障工作的通知 - 广州市人民政府门户网站.pdf",
       "availability": "snapshotted",
-      "bytes": 648559,
-      "sha256": "c0407693443e53e0321ccd9e99c92ab28bf81a6e1f0690938a6fdc2796da1669"
+      "bytes": 649704,
+      "sha256": "2ffe88dba4eeac43f29feb2267495d147bd614ce3299d4d2dbab5e6b1a6f0835"
     },
     {
       "source_id": "GZ-002",
@@ -92,12 +92,32 @@
     {
       "source_id": "GD-004",
       "priority": "P0",
-      "source_url": "https://www.gd.gov.cn/attachment/0/600/600853/4811589.pdf",
-      "status": "现行；2026-09-30核验",
-      "local_file": "政策证据包/广东省民政厅关于广东省最低生活保障.pdf",
+      "source_url": "https://smzt.gd.gov.cn/attachment/0/601/601269/4829431.pdf",
+      "status": "现行；2026-10-15核验",
+      "local_file": "data/raw_official/13_广东省最低生活保障家庭经济状况核对和生活状况综合评估办法_2025.pdf",
       "availability": "snapshotted",
-      "bytes": 2778004,
-      "sha256": "a3b496a16f691dd27a3ea935f07d67a9922041ae8371e7826ce7c6f457a8bec6"
+      "bytes": 600129,
+      "sha256": "9c059af17ee9dd0f0ccaf7a7b97f988407639e3abb35695eb1cc950b19309990",
+      "locator": {
+        "pdf_pages": "1-22",
+        "note": "广东省民政厅正式扫描件；共22个PDF页面，含《申请家庭生活状况综合评估指标（第二版）》附件。"
+      }
+    },
+    {
+      "source_id": "GD-004-A",
+      "priority": "P0",
+      "source_url": "https://smzt.gd.gov.cn/mzzx/mzyw/content/post_4809192.html",
+      "status": "GD-004配套附件；2026-10-15逐页核验",
+      "local_file": "data/raw_official/14_申请家庭生活状况综合评估指标_第二版_2025.pdf",
+      "availability": "snapshotted",
+      "bytes": 504294,
+      "sha256": "b4528b168cb32eb4b2ea54c1bbd6b7ed87c2858f252fec5bca51d1a46cfc081c",
+      "locator": {
+        "pdf_pages": "1-8",
+        "note": "GD-004配套可检索附件副本；用于逐字引文与结构化核验，不独立于主文件生效。"
+      },
+      "parent_source_id": "GD-004",
+      "relationship": "official_appendix"
     },
     {
       "source_id": "GZ-008",
@@ -148,6 +168,62 @@
       "availability": "snapshotted",
       "bytes": 28523,
       "sha256": "3e680e9df08393b138890f6ae5634b430ee793b92b44ddd72e3662e18b80e9e8"
+    },
+    {
+      "source_id": "GZ-005-E",
+      "priority": "P0",
+      "source_url": "https://www.gz.gov.cn/zwgk/fggw/sfbgtwj/",
+      "status": "现行延续文件；本地官方PDF已核验",
+      "local_file": "政策证据包/广州市人民政府办公厅关于延长广州市临时救助实施细则有效期的通知.pdf",
+      "availability": "snapshotted",
+      "bytes": 138777,
+      "sha256": "5635c0007fca879169c2c5ac548aec691df7c58a7b0405fa196d2aff79d4b27c",
+      "locator": {
+        "pdf_pages": "1",
+        "note": "官方延续通知；仅变更穗府办规〔2021〕19号有效期至2029-12-06。"
+      },
+      "parent_source_id": "GZ-005",
+      "relationship": "extends_validity"
+    },
+    {
+      "source_id": "CN-002",
+      "priority": "P1",
+      "source_url": "https://www.hunan.gov.cn/zqt/zcsd/202411/t20241104_33491669.html",
+      "status": "现行上位认定办法",
+      "local_file": "政策证据包/民政部关于印发《刚性支出困难家庭认定办法》的通知_国务院部门文件_中国政府网.pdf",
+      "availability": "snapshotted",
+      "bytes": 198664,
+      "sha256": "b00874209dc99aed6d9e085cd21590a461d2a82ed523c77076630df5d66f2cbd"
+    },
+    {
+      "source_id": "CN-003",
+      "priority": "P1",
+      "source_url": "https://www.thnet.gov.cn/thqzdlyxxgkzl/mz/shjzxx/content/post_7829776.html",
+      "status": "现行上位程序办法",
+      "local_file": "政策证据包/民政部关于印发《最低生活保障审核确认办法》的通知_国务院部门文件_中国政府网.pdf",
+      "availability": "snapshotted",
+      "bytes": 300379,
+      "sha256": "85d3ca38085fde551e5de6d2f5a677b39757d1d22e7bd9806171816c1b6b1cfb"
+    },
+    {
+      "source_id": "CN-004",
+      "priority": "P1",
+      "source_url": "https://app.www.gov.cn/govdata/gov/202310/23/508615/article.html",
+      "status": "现行政策意见",
+      "local_file": "政策证据包/国务院办公厅转发民政部等单位《关于加强低收入人口动态监测做好分层分类社会救助工作的意见》的通知 - 中华人民共和国民政部.pdf",
+      "availability": "snapshotted",
+      "bytes": 603525,
+      "sha256": "4c534b0773eecbb97f0f84c5035f789a79b9d2a7c2dbfb2cf8e82b5318f7ad04"
+    },
+    {
+      "source_id": "GD-005",
+      "priority": "P1",
+      "source_url": "https://www.gd.gov.cn/attachment/0/476/476209/2712579.pdf",
+      "status": "现行省级政府规章",
+      "local_file": "政策证据包/广东省最低生活保障制度实施办法  广东省人民政府门户网站.pdf",
+      "availability": "snapshotted",
+      "bytes": 359836,
+      "sha256": "c32700c602670a6033ef2d1a71a97f2efd0b68247e7989bbdf922a346c761327"
     }
   ]
 }

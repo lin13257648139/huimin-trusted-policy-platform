@@ -1,9 +1,8 @@
 from __future__ import annotations
 
+from collections.abc import Iterable
 from decimal import Decimal
-from typing import Iterable
 
-from app.config import settings
 from app.domain.models import (
     BenefitResult,
     ConditionResult,
@@ -11,22 +10,21 @@ from app.domain.models import (
     HouseholdProfile,
     TruthValue,
 )
+from app.services.benefit_relations import apply_combination_plan
 from app.services.catalog import evidence_for
 from app.services.policy_version import (
-    PolicySnapshot,
     TEMPORARY_RESCUE_END,
+    PolicySnapshot,
     select_policy_snapshot,
     temporary_policy_warning,
 )
-from app.services.rule_registry import decimal_parameter, get_rule, get_rule_for_date
+from app.services.rule_registry import decimal_parameter, get_rule_for_date
 
-
+# 仅供健康检查接口展示当前年度参数；历史评估必须从查询日对应规则读取，
+# 禁止使用这两个常量作为历史回退值。
 DIBAO_STANDARD = decimal_parameter("B002", "income_standard_monthly_per_capita")
 EDGE_STANDARD = decimal_parameter("B003", "income_standard_monthly_per_capita")
-RIGID_EXPENSE_RATIO = decimal_parameter("B004", "rigid_expense_ratio")
-RIGID_INCOME_CEILING = decimal_parameter("B004", "income_ceiling_annual_per_capita")
-RIGID_INCOME_REFERENCE_YEAR = int(get_rule("B004").parameters["income_reference_year"])
-ENGINE_VERSION = "rule-engine/0.4.1"
+ENGINE_VERSION = "rule-engine/0.5.0"
 
 
 def _condition(
@@ -337,27 +335,52 @@ def _build_result(
 
 def evaluate_dibao(profile: HouseholdProfile, snapshot: PolicySnapshot) -> BenefitResult:
     dated_rule = get_rule_for_date("B002", profile.query_date)
-    threshold = (
-        Decimal(str(dated_rule.parameters["income_standard_monthly_per_capita"]))
+    threshold_value = (
+        dated_rule.parameters.get("income_standard_monthly_per_capita")
         if dated_rule is not None
-        else DIBAO_STANDARD
+        else None
     )
+    threshold = Decimal(str(threshold_value)) if threshold_value is not None else None
     local_evidence_id = (
-        "E-GZ-009-LEGACY" if dated_rule is not None and dated_rule.version == "v2023.06" else "E-GZ-002-CURRENT"
+        "E-GZ-009-LEGACY"
+        if dated_rule is not None and dated_rule.version in {"v2023.06", "v2026.01"}
+        else "E-GZ-002-CURRENT"
     )
     asset_evidence_id = (
-        "E-GZ-009-ASSET" if dated_rule is not None and dated_rule.version == "v2023.06" else "E-GZ-002-ASSET"
+        "E-GZ-009-ASSET"
+        if dated_rule is not None and dated_rule.version in {"v2023.06", "v2026.01"}
+        else "E-GZ-002-ASSET"
     )
-    conditions = [
-        _household_hukou_condition(profile, ("E-CN-001-DIBAO",)),
-        _income_condition(
+    if threshold is None:
+        income = profile.per_capita_monthly_income
+        income_condition = _condition(
+            code="dibao_income",
+            label="家庭人均月收入",
+            state=TruthValue.UNKNOWN,
+            reason=(
+                "查询年度的低保金额标准尚未登记，系统未套用2026年标准。"
+                if dated_rule is not None
+                else "查询日期未命中已核验的低保规则与年度金额标准。"
+            ),
+            actual=f"{income}元/人/月" if income is not None else None,
+            expected="人工核验查询年度有效的低保金额标准",
+            evidence_ids=(local_evidence_id,),
+            actionable=True,
+            action_hint="请向街镇社会救助窗口核验查询年度适用的低保金额标准。",
+            hard=True,
+        )
+    else:
+        income_condition = _income_condition(
             profile,
             threshold,
             "dibao_income",
             inclusive=False,
             # 共同生活成员范围未确认时，分母不可靠，收入比较只能作为提示。
             hard=profile.member_scope_confirmed is not None,
-        ),
+        )
+    conditions = [
+        _household_hukou_condition(profile, ("E-CN-001-DIBAO",)),
+        income_condition,
         _known_boolean(
             profile.assets_eligible,
             code="assets",
@@ -381,7 +404,7 @@ def evaluate_dibao(profile: HouseholdProfile, snapshot: PolicySnapshot) -> Benef
     ]
     income = profile.per_capita_monthly_income
     other_hard_conditions = [condition for condition in conditions if condition.code != "dibao_income"]
-    exact_boundary_review = income == threshold and all(
+    exact_boundary_review = threshold is not None and income == threshold and all(
         condition.state == TruthValue.TRUE for condition in other_hard_conditions
     )
     force_manual = (
@@ -398,7 +421,7 @@ def evaluate_dibao(profile: HouseholdProfile, snapshot: PolicySnapshot) -> Benef
             "E-CN-001-DIBAO",
             local_evidence_id,
             asset_evidence_id,
-            "E-GZ-003-STANDARD",
+            *(("E-GZ-003-STANDARD",) if threshold is not None else ()),
             "E-GZ-001-DEADLINE",
         ),
         materials=["身份类证明", "家庭经济状况核对授权书", "收入与财产相关证明"],
@@ -411,9 +434,35 @@ def evaluate_dibao(profile: HouseholdProfile, snapshot: PolicySnapshot) -> Benef
 
 
 def evaluate_edge(profile: HouseholdProfile, snapshot: PolicySnapshot) -> BenefitResult:
+    dated_rule = get_rule_for_date("B003", profile.query_date)
+    threshold_value = (
+        dated_rule.parameters.get("income_standard_monthly_per_capita")
+        if dated_rule is not None
+        else None
+    )
+    threshold = Decimal(str(threshold_value)) if threshold_value is not None else None
+    income_condition = (
+        _income_condition(profile, threshold, "edge_income", inclusive=True)
+        if threshold is not None
+        else _condition(
+            code="edge_income",
+            label="家庭人均月收入",
+            state=TruthValue.UNKNOWN,
+            reason="查询年度的低保边缘家庭金额标准尚未登记，系统未套用2026年标准。",
+            actual=(
+                f"{profile.per_capita_monthly_income}元/人/月"
+                if profile.per_capita_monthly_income is not None
+                else None
+            ),
+            expected="人工核验查询年度有效的低保边缘家庭金额标准",
+            evidence_ids=("E-GD-002-EDGE",),
+            actionable=True,
+            action_hint="请向街镇社会救助窗口核验查询年度适用的低保边缘家庭标准。",
+        )
+    )
     conditions = [
         _household_hukou_condition(profile, ("E-GD-002-EDGE",)),
-        _income_condition(profile, EDGE_STANDARD, "edge_income", inclusive=True),
+        income_condition,
         _known_boolean(
             profile.assets_eligible,
             code="assets",
@@ -435,14 +484,18 @@ def evaluate_edge(profile: HouseholdProfile, snapshot: PolicySnapshot) -> Benefi
             action_hint="确认共同生活家庭成员。",
         ),
     ]
-    force_manual = not get_rule("B003").is_effective(profile.query_date)
+    force_manual = (
+        dated_rule is None
+        or dated_rule.manual_review_required
+        or threshold is None
+    )
     return _build_result(
         benefit_id="B003",
         name="最低生活保障边缘家庭认定",
         conditions=conditions,
         evidence_ids=(
             "E-CN-001-EDGE",
-            "E-GZ-003-STANDARD",
+            *(("E-GZ-003-STANDARD",) if threshold is not None else ()),
             "E-GZ-004-EXPENSE",
             "E-GZ-001-DEADLINE",
         ),
@@ -450,12 +503,33 @@ def evaluate_edge(profile: HouseholdProfile, snapshot: PolicySnapshot) -> Benefi
         next_actions=["核对年度收入和财产", "咨询可衔接的医疗、教育、住房等专项救助"],
         deadline="通常34个工作日，以官方受理为准",
         snapshot=snapshot,
-        policy_version="穗民规字〔2022〕3号 + 2026年度标准",
+        policy_version=(
+            "穗民规字〔2022〕3号 + 2026年度标准"
+            if threshold is not None
+            else "历史/未来年度金额参数未登记"
+        ),
         force_manual=force_manual,
     )
 
 
 def evaluate_rigid_expense(profile: HouseholdProfile, snapshot: PolicySnapshot) -> BenefitResult:
+    dated_rule = get_rule_for_date("B004", profile.query_date)
+    parameters = dated_rule.parameters if dated_rule is not None else {}
+    ratio_value = parameters.get("rigid_expense_ratio")
+    ceiling_value = parameters.get("income_ceiling_annual_per_capita")
+    reference_year_value = parameters.get("income_reference_year")
+    ratio_threshold = Decimal(str(ratio_value)) if ratio_value is not None else None
+    income_ceiling = Decimal(str(ceiling_value)) if ceiling_value is not None else None
+    income_reference_year = (
+        int(reference_year_value) if reference_year_value is not None else None
+    )
+    parameter_is_current = (
+        dated_rule is not None
+        and not dated_rule.manual_review_required
+        and income_ceiling is not None
+        and income_reference_year is not None
+        and profile.query_date.year == income_reference_year + 1
+    )
     annual_income = (
         profile.adjusted_monthly_income * Decimal("12")
         if profile.adjusted_monthly_income is not None
@@ -492,9 +566,21 @@ def evaluate_rigid_expense(profile: HouseholdProfile, snapshot: PolicySnapshot) 
             actionable=True,
             action_hint="补充家庭月收入，用于计算近12个月刚性支出比例。",
         )
+    elif ratio_threshold is None:
+        expense_condition = _condition(
+            code="rigid_expense_ratio",
+            label="近12个月刚性支出比例",
+            state=TruthValue.UNKNOWN,
+            reason="查询日期未命中已核验的刚性支出比例参数。",
+            actual=f"{expense}元",
+            expected="人工核验查询年度有效的刚性支出比例",
+            evidence_ids=("E-GD-002-RIGID", "E-GZ-004-EXPENSE"),
+            actionable=True,
+            action_hint="请工作人员核验查询年度适用的刚性支出比例。",
+        )
     else:
         ratio = Decimal("Infinity") if annual_income == 0 else expense / annual_income
-        ratio_ok = ratio >= RIGID_EXPENSE_RATIO
+        ratio_ok = ratio >= ratio_threshold
         expense_condition = _condition(
             code="rigid_expense_ratio",
             label="近12个月刚性支出比例",
@@ -509,7 +595,7 @@ def evaluate_rigid_expense(profile: HouseholdProfile, snapshot: PolicySnapshot) 
                 if ratio.is_infinite()
                 else f"{expense}元，约占家庭年收入{ratio:.1%}"
             ),
-            expected=f"达到或超过{RIGID_EXPENSE_RATIO:.0%}",
+            expected=f"达到或超过{ratio_threshold:.0%}",
             evidence_ids=("E-GD-002-RIGID", "E-GZ-004-EXPENSE"),
         )
 
@@ -518,8 +604,7 @@ def evaluate_rigid_expense(profile: HouseholdProfile, snapshot: PolicySnapshot) 
         if annual_income is None
         else (annual_income / Decimal(profile.household_size)).quantize(Decimal("0.01"))
     )
-    parameter_is_current = profile.query_date.year == RIGID_INCOME_REFERENCE_YEAR + 1
-    if not parameter_is_current:
+    if not parameter_is_current or income_ceiling is None:
         income_ceiling_condition = _condition(
             code="rigid_income_ceiling",
             label="家庭人均年收入上限",
@@ -540,7 +625,7 @@ def evaluate_rigid_expense(profile: HouseholdProfile, snapshot: PolicySnapshot) 
             action_hint="补充家庭收入。",
         )
     else:
-        income_ok = per_capita_annual_income < RIGID_INCOME_CEILING
+        income_ok = per_capita_annual_income < income_ceiling
         income_ceiling_condition = _condition(
             code="rigid_income_ceiling",
             label="家庭人均年收入上限",
@@ -551,7 +636,7 @@ def evaluate_rigid_expense(profile: HouseholdProfile, snapshot: PolicySnapshot) 
                 else "家庭人均年收入未低于2025年广州市城镇居民人均可支配收入。"
             ),
             actual=f"{per_capita_annual_income}元/人/年",
-            expected=f"低于{RIGID_INCOME_CEILING}元/人/年",
+            expected=f"低于{income_ceiling}元/人/年",
             evidence_ids=("E-GZ-008-INCOME", "E-GD-002-RIGID"),
         )
     conditions = [
@@ -587,15 +672,23 @@ def evaluate_rigid_expense(profile: HouseholdProfile, snapshot: PolicySnapshot) 
             "E-CN-001-RIGID",
             "E-GD-002-RIGID",
             "E-GZ-004-EXPENSE",
-            "E-GZ-008-INCOME",
+            *(("E-GZ-008-INCOME",) if parameter_is_current else ()),
             "E-GZ-001-DEADLINE",
         ),
         materials=["身份类证明", "经济状况核对授权书", "近12个月医疗/教育等支出凭据", "收入和财产材料"],
         next_actions=["整理近12个月有效支出凭据", "请街道核定支出范围与比例"],
         deadline="通常34个工作日，以官方受理为准",
         snapshot=snapshot,
-        policy_version="穗民规字〔2022〕3号及省级配套办法",
-        force_manual=not get_rule("B004").is_effective(profile.query_date),
+        policy_version=(
+            "穗民规字〔2022〕3号及省级配套办法（2026参数）"
+            if parameter_is_current
+            else "穗民规字〔2022〕3号（年度收入上限参数待核验）"
+        ),
+        force_manual=(
+            dated_rule is None
+            or dated_rule.manual_review_required
+            or not parameter_is_current
+        ),
         boost=6 if expense and expense > 0 else 0,
     )
 
@@ -603,7 +696,17 @@ def evaluate_rigid_expense(profile: HouseholdProfile, snapshot: PolicySnapshot) 
 def evaluate_temporary(profile: HouseholdProfile, snapshot: PolicySnapshot) -> BenefitResult:
     policy_warning = temporary_policy_warning(profile.query_date)
     event_boundary_review = False
-    if not profile.urgent_event:
+    if profile.urgent_event is None:
+        event_condition = _condition(
+            code="urgent_event",
+            label="急难或突发事件",
+            state=TruthValue.UNKNOWN,
+            reason="尚未说明近期是否发生急难或突发事件，系统不会将未填写视为没有发生。",
+            evidence_ids=("E-GZ-005-URGENT",),
+            actionable=True,
+            action_hint="请确认近期是否发生突发事件、重大疾病或其他临时困难。",
+        )
+    elif profile.urgent_event is False:
         event_condition = _condition(
             code="urgent_event",
             label="急难或突发事件",
@@ -685,7 +788,9 @@ def evaluate_temporary(profile: HouseholdProfile, snapshot: PolicySnapshot) -> B
             (policy_warning is not None and profile.query_date > TEMPORARY_RESCUE_END)
             or boundary_review
         ),
-        boost=18 if profile.urgent_event and profile.basic_life_interrupted else 0,
+        boost=18
+        if profile.urgent_event is True and profile.basic_life_interrupted is True
+        else 0,
     )
 
 
@@ -744,41 +849,6 @@ def evaluate_low_income_monitoring(
     )
 
 
-def _apply_combination_plan(results: list[BenefitResult]) -> list[BenefitResult]:
-    """把单事项资格线索编排为不重复、可执行的组合导办路径。"""
-
-    by_id = {item.benefit_id: item for item in results}
-    dibao_likely = by_id["B002"].status == EligibilityStatus.LIKELY
-    for item in results:
-        if item.status == EligibilityStatus.UNLIKELY:
-            item.plan_role = "not_recommended"
-            item.plan_reason = "当前信息存在不满足项，先核对条件，不列入本次主路径。"
-        elif item.status == EligibilityStatus.MANUAL_REVIEW:
-            item.plan_role = "manual"
-            item.plan_reason = "规则涉及复杂比例或仍需人工裁量，携带材料到窗口核验。"
-        elif item.status == EligibilityStatus.INCOMPLETE:
-            item.plan_role = "alternative"
-            item.plan_reason = "关键资料尚未齐全，补充最小缺口后再决定是否进入主路径。"
-        elif item.benefit_id == "B005":
-            item.plan_role = "primary"
-            item.plan_reason = "存在近期急难且基本生活受影响，按快速响应优先级列为首要路径。"
-        elif item.benefit_id == "B002":
-            item.plan_role = "primary"
-            item.plan_reason = "收入、财产和成员范围线索均通过，列为基本生活救助主路径。"
-        elif item.benefit_id == "B003" and dibao_likely:
-            item.plan_role = "alternative"
-            item.plan_reason = "与低保属于分层认定关系；当前先咨询低保，本事项作为衔接备选，避免重复申请。"
-        elif item.benefit_id == "B001":
-            item.plan_role = "linked"
-            item.plan_reason = "作为低收入人口监测和转介入口，与主救助事项联动办理。"
-        else:
-            item.plan_role = "primary"
-            item.plan_reason = "当前线索支持列入优先咨询路径。"
-
-    role_order = {"primary": 0, "linked": 1, "alternative": 2, "manual": 3, "not_recommended": 4}
-    return sorted(results, key=lambda item: (role_order[item.plan_role], -item.score))
-
-
 def evaluate_profile(profile: HouseholdProfile) -> tuple[PolicySnapshot, list[BenefitResult], list[str]]:
     snapshot = select_policy_snapshot(profile.query_date)
     dibao = evaluate_dibao(profile, snapshot)
@@ -787,7 +857,7 @@ def evaluate_profile(profile: HouseholdProfile) -> tuple[PolicySnapshot, list[Be
     temporary = evaluate_temporary(profile, snapshot)
     low_income = evaluate_low_income_monitoring(profile, snapshot, [dibao, edge, rigid, temporary])
 
-    results = _apply_combination_plan([temporary, dibao, edge, rigid, low_income])
+    results = apply_combination_plan([temporary, dibao, edge, rigid, low_income])
 
     warnings = [
         "系统输出仅用于申请前预筛和导办，不具有行政审批效力。",

@@ -7,7 +7,6 @@ import random
 from collections import defaultdict
 from pathlib import Path
 
-
 ROOT = Path(__file__).resolve().parents[1]
 BENEFIT_IDS = ("B001", "B002", "B003", "B004", "B005")
 

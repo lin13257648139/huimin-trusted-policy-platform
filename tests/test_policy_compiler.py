@@ -6,7 +6,6 @@ from app.domain.models import PolicyCompileRequest
 from app.repositories.database import Database
 from app.services.policy_compiler import analyze_policy_impact, compile_policy
 
-
 POLICY_TEXT = (
     "广州市最低生活保障办法。共同生活家庭成员人均月收入低于本市最低生活保障标准，"
     "且家庭财产状况符合规定的，可以申请最低生活保障。"
@@ -42,6 +41,41 @@ def test_policy_compiler_extracts_temporal_rule_and_keeps_it_unpublished() -> No
     assert result.publishable is False
     assert any("双人" in item for item in result.publish_blockers)
     assert result.version_diff["baseline_version"] == "v2026.08"
+
+
+def test_policy_compiler_returns_unknown_instead_of_default_b001() -> None:
+    result = compile_policy(
+        PolicyCompileRequest(
+            source_id="OTHER-001",
+            title="一般行政通知",
+            source_text="本通知规定会议室设备维护、值班安排和办公用品采购流程，自发布日起执行。",
+            region="广州市",
+            use_llm=False,
+        )
+    )
+    assert result.candidate.benefit_id == "unknown"
+    assert result.candidate.benefit_name == "未识别事项"
+    assert any(item.code == "unknown_benefit" for item in result.validation)
+    assert result.publishable is False
+
+
+def test_policy_compiler_detects_benefit_without_label_hint() -> None:
+    request = _request().model_copy(update={"benefit_hint": None})
+    result = compile_policy(request)
+    assert result.candidate.benefit_id == "B002"
+
+
+def test_policy_compiler_does_not_treat_generic_policy_title_as_benefit() -> None:
+    result = compile_policy(
+        PolicyCompileRequest(
+            source_id="OTHER-002",
+            title="广州市政策文件管理通知",
+            source_text="本通知规定会议室设备维护、值班安排和办公用品采购流程，自发布日起执行。",
+            region="广州市",
+            use_llm=False,
+        )
+    )
+    assert result.candidate.benefit_id == "unknown"
 
 
 def test_policy_impact_reports_changed_synthetic_cases() -> None:

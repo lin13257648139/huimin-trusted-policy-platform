@@ -12,6 +12,7 @@ sys.path.insert(0, str(ROOT))
 
 from app.domain.models import HouseholdProfile  # noqa: E402
 from app.services.rule_engine import evaluate_profile  # noqa: E402
+
 BENEFIT_IDS = ("B001", "B002", "B003", "B004", "B005")
 ALLOWED = {"likely", "unlikely", "incomplete", "manual_review"}
 AUTO_LABELS = {"likely", "unlikely"}

@@ -3,6 +3,7 @@ const $$ = (selector, root = document) => [...root.querySelectorAll(selector)];
 
 const state = {
   currentView: "overview",
+  portalRole: sessionStorage.getItem("huimin-portal-role") === "staff" ? "staff" : "resident",
   screeningId: null,
   screeningToken: null,
   selectedFiles: [],
@@ -15,6 +16,8 @@ const state = {
   readiness: null,
   careMode: false,
   speechActive: false,
+  reportSafetyPassed: false,
+  workerSafetyPassed: false,
 };
 
 const icons = {
@@ -82,8 +85,12 @@ async function api(path, options = {}) {
     const detail = body?.detail;
     const message = Array.isArray(detail)
       ? detail.map((item) => item.msg).join("；")
-      : detail || `请求失败（${response.status}）`;
-    throw new Error(message);
+      : (typeof detail === "object" ? detail?.message : detail) || `请求失败（${response.status}）`;
+    const error = new Error(message);
+    error.status = response.status;
+    error.code = typeof detail === "object" ? detail?.code : null;
+    error.details = typeof detail === "object" ? detail : null;
+    throw error;
   }
   return body;
 }
@@ -102,22 +109,53 @@ function loading(show, text = "正在执行可信推理…") {
 }
 
 const pageInfo = {
-  overview: ["可信民生 AI", "项目总览"],
+  overview: ["居民服务", "服务首页"],
   screening: ["INTELLIGENT GUIDANCE", "智能预筛"],
   documents: ["DOCUMENT ASSURANCE", "材料预检"],
-  evidence: ["TRACEABLE POLICY", "政策证据"],
-  worker: ["WORKER PROTOTYPE", "工作人员模式"],
-  demo: ["SCENARIO VALIDATION", "场景验证中心"],
+  evidence: ["TRACEABLE POLICY", "政策依据"],
+  worker: ["工作人员服务", "咨询工作台"],
+  demo: ["SCENARIO VALIDATION", "场景验证"],
   admin: ["TRUST & GOVERNANCE", "可信治理"],
 };
 
+const pageRoles = {
+  overview: "resident",
+  screening: "resident",
+  documents: "resident",
+  evidence: "resident",
+  worker: "staff",
+  demo: "staff",
+  admin: "staff",
+};
+
+function setPortalRole(role, moveToDefault = false) {
+  const safeRole = role === "staff" ? "staff" : "resident";
+  state.portalRole = safeRole;
+  sessionStorage.setItem("huimin-portal-role", safeRole);
+  document.body.dataset.portalRole = safeRole;
+  $$('[data-portal-role]').forEach((button) => {
+    const active = button.dataset.portalRole === safeRole;
+    button.classList.toggle("active", active);
+    button.setAttribute("aria-pressed", String(active));
+  });
+  $$('[data-portal-menu]').forEach((menu) => {
+    menu.classList.toggle("hidden", menu.dataset.portalMenu !== safeRole);
+  });
+  if (moveToDefault) navigate(safeRole === "staff" ? "worker" : "overview");
+}
+
 function navigate(view) {
-  if (!pageInfo[view]) view = "overview";
+  if (!pageInfo[view]) view = state.portalRole === "staff" ? "worker" : "overview";
+  if (pageRoles[view] !== state.portalRole) setPortalRole(pageRoles[view]);
   state.currentView = view;
   $$("[data-view]").forEach((section) => section.classList.toggle("active", section.dataset.view === view));
-  $$("[data-nav]").forEach((item) => item.classList.toggle("active", item.dataset.nav === view));
-  $("#page-eyebrow").textContent = pageInfo[view][0];
-  $("#page-title").textContent = pageInfo[view][1];
+  $$("[data-nav]").forEach((item) => {
+    const active = item.dataset.nav === view;
+    item.classList.toggle("active", active);
+    if (active) item.setAttribute("aria-current", "page");
+    else item.removeAttribute("aria-current");
+  });
+  document.title = `${pageInfo[view][1]} · 惠民智导`;
   $(".sidebar").classList.remove("open");
   document.body.classList.remove("nav-open");
   $("#mobile-menu").setAttribute("aria-expanded", "false");
@@ -128,6 +166,9 @@ function navigate(view) {
 }
 
 function setupNavigation() {
+  $$('[data-portal-role]').forEach((button) => {
+    button.addEventListener("click", () => setPortalRole(button.dataset.portalRole, true));
+  });
   $$('[data-nav], [data-go]').forEach((element) => {
     element.addEventListener("click", (event) => {
       event.preventDefault();
@@ -144,7 +185,9 @@ function setupNavigation() {
     if (event.key === "Escape" && $(".sidebar").classList.contains("open")) navigate(state.currentView);
   });
   window.addEventListener("hashchange", () => navigate(location.hash.slice(1)));
-  navigate(location.hash.slice(1) || "overview");
+  const initialView = location.hash.slice(1);
+  setPortalRole(pageRoles[initialView] || state.portalRole);
+  navigate(initialView || (state.portalRole === "staff" ? "worker" : "overview"));
 }
 
 function valueOrNull(id) {
@@ -201,8 +244,9 @@ function setupForm() {
   $("#skip-guidance-field").addEventListener("click", skipGuidanceField);
   $("#load-demo").addEventListener("click", loadDemo);
   $("#screening-form").addEventListener("submit", submitScreening);
-  $("#print-report").addEventListener("click", () => window.print());
+  $("#print-report").addEventListener("click", () => printSafeOutput("resident"));
   $("#new-screening").addEventListener("click", () => {
+    resetReportSafety();
     $("#results-zone").classList.add("hidden");
     window.scrollTo({ top: 0, behavior: "smooth" });
   });
@@ -428,19 +472,25 @@ async function submitScreening(event) {
   event.preventDefault();
   const form = event.currentTarget;
   if (!form.reportValidity()) return;
+  resetReportSafety();
   loading(true);
   try {
-    const report = await api("/api/v1/screenings", {
+    const persist = $("#persist-screening").checked;
+    const report = await api(`/api/v1/screenings?persist=${persist}`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(formPayload()),
     });
-    state.screeningId = report.screening_id;
-    renderReport(report);
-    $("#results-zone").classList.remove("hidden");
-    $("#results-zone").scrollIntoView({ behavior: "smooth", block: "start" });
-    toast("可信导办报告已生成。")
-  } catch (error) { toast(error.message, "error"); }
+    if (renderReport(report)) {
+      state.screeningId = report.screening_id;
+      $("#results-zone").classList.remove("hidden");
+      $("#results-zone").scrollIntoView({ behavior: "smooth", block: "start" });
+      toast("可信导办报告已生成。")
+    }
+  } catch (error) {
+    if (error.code === "SAFETY_GATE_BLOCKED") renderSafetyBlock(error.details);
+    else toast(error.message, "error");
+  }
   finally { loading(false); }
 }
 
@@ -466,8 +516,58 @@ const planRoleLabels = {
   not_recommended: "暂不推荐",
 };
 
+const planRelationLabels = {
+  priority_fallback: "分层转介",
+  parallel_assessment: "并行核验",
+  monitoring_link: "监测联动",
+};
+
+function safetyGateAllowsReport(report) {
+  const safety = report?.safety_validation;
+  const enforcement = safety?.enforcement;
+  return safety?.safe === true
+    && safety?.blocked === false
+    && ["api_publish", "persistence", "presentation", "print_export"]
+      .every((action) => enforcement?.[action] === true);
+}
+
+function resetReportSafety() {
+  state.reportSafetyPassed = false;
+  state.screeningId = null;
+  state.screeningToken = null;
+  document.body.dataset.reportSafety = "blocked";
+  document.body.dataset.printAuthorized = "false";
+  $("#print-report").disabled = true;
+}
+
+function renderSafetyBlock(detail = {}) {
+  resetReportSafety();
+  const failed = Array.isArray(detail.failed_check_ids) ? detail.failed_check_ids : [];
+  $("#report-meta").textContent = "本次未生成可信导办报告";
+  $("#global-warnings").innerHTML = `<div class="warning-item safety-block-item">${icons.shield}<span>${escapeHtml(detail.message || "安全校验未通过，结果已阻断。")}</span></div>`;
+  $("#result-summary").innerHTML = "";
+  $("#result-list").innerHTML = "";
+  $("#next-step-panel").innerHTML = `<div class="safety-block-content">${icons.shield}<div><p class="eyebrow">SAFETY GATE BLOCKED</p><h3>结果未发布</h3><p>失败检查：${escapeHtml(failed.join("、") || "安全发布契约")}</p><p>${escapeHtml(detail.next_action || "请核对输入与政策证据；紧急情况请直接联系所在街道或广州12345。")}</p><strong>本次结果未保存，也不能打印或导出。</strong></div></div>`;
+  $("#feedback-card").classList.add("hidden");
+  $(".data-actions").classList.add("hidden");
+  $("#results-zone").classList.remove("hidden");
+  $("#results-zone").scrollIntoView({ behavior: "smooth", block: "start" });
+  toast(detail.message || "安全校验未通过，结果已阻断。", "error");
+}
+
 function renderReport(report) {
-  state.screeningToken = report.screening_token;
+  if (!safetyGateAllowsReport(report)) {
+    renderSafetyBlock({
+      message: "响应未携带完整的安全放行凭据，前端已拒绝展示。",
+      failed_check_ids: report?.safety_validation?.failed_check_ids || [],
+    });
+    return false;
+  }
+  state.reportSafetyPassed = true;
+  document.body.dataset.reportSafety = "passed";
+  $("#print-report").disabled = false;
+  const persisted = report.persisted === true && Boolean(report.screening_token);
+  state.screeningToken = persisted ? report.screening_token : null;
   $("#retention-days").textContent = report.data_retention_days;
   $("#report-meta").textContent = `编号 ${report.screening_id} · ${report.district} · 政策快照 ${report.policy_snapshot}`;
   $("#global-warnings").innerHTML = report.global_warnings
@@ -484,18 +584,30 @@ function renderReport(report) {
   $("#result-list").innerHTML = report.results.map(renderResultCard).join("");
   const office = report.recommended_office;
   const safety = report.safety_validation || {};
-  const safetyText = safety.safe
-    ? `安全验证器已通过 ${safety.checks?.filter((item) => item.passed).length || 0} 项检查`
-    : `安全验证器已阻断：${(safety.failed_check_ids || []).join("、") || "需要人工复核"}`;
+  const safetyText = `安全验证器已通过 ${safety.checks?.filter((item) => item.passed).length || 0} 项检查`;
   $("#next-step-panel").innerHTML = `
-    <div class="panel-heading"><div><p class="eyebrow">ACTION PLAN</p><h3>接下来怎么做</h3><p>${escapeHtml(safetyText)}；验证器只阻断或提示，不改变规则结论。</p></div><span class="soft-tag">人工办理闭环</span></div>
+    <div class="panel-heading"><div><p class="eyebrow">ACTION PLAN</p><h3>接下来怎么做</h3><p>${escapeHtml(safetyText)}；四道安全门均已放行。</p></div><span class="soft-tag">人工办理闭环</span></div>
     <div class="next-step-grid">
       <ol>${report.guidance_summary.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ol>
       ${office ? `<div class="office-card"><strong>${escapeHtml(office.office_name)}</strong><p>${escapeHtml(office.address)}</p><a href="tel:${escapeHtml(office.phone)}">${icons.phone} ${escapeHtml(office.phone)}</a><small>窗口信息最后核验：${escapeHtml(office.last_verified)}；出发前请电话确认。</small></div>` : '<div class="office-card"><strong>暂未匹配到属地窗口</strong><p>请拨打广州12345确认受理地点。</p></div>'}
     </div>`;
-  $("#feedback-card").classList.remove("hidden");
+  $("#feedback-card").classList.toggle("hidden", !persisted);
+  $(".data-actions").classList.toggle("hidden", !persisted);
+  $("#stateless-notice").classList.toggle("hidden", persisted);
   $("#feedback-detail").classList.add("hidden");
   $$("#feedback-card button").forEach((button) => { button.disabled = false; });
+  return true;
+}
+
+function printSafeOutput(scope) {
+  const allowed = scope === "worker" ? state.workerSafetyPassed : state.reportSafetyPassed;
+  if (!allowed) {
+    document.body.dataset.printAuthorized = "false";
+    return toast("安全门未放行，禁止打印或导出本次结果。", "error");
+  }
+  document.body.dataset.printAuthorized = "true";
+  document.body.dataset.printScope = scope;
+  window.print();
 }
 
 function renderResultCard(result) {
@@ -512,6 +624,9 @@ function renderResultCard(result) {
   const minimum = result.minimal_required_inputs?.length
     ? `<div class="minimum-inputs"><strong>最少还需确认</strong><p>${result.minimal_required_inputs.map(escapeHtml).join("、")}</p></div>`
     : `<div class="minimum-inputs complete"><strong>关键预筛信息已齐</strong><p>仍需由受理部门核验原件及家庭经济状况。</p></div>`;
+  const relations = (result.plan_relations || []).length
+    ? `<div class="plan-relations"><strong>事项关系</strong>${result.plan_relations.map((relation) => `<div class="plan-relation ${escapeHtml(relation.relation_type)}"><span>${escapeHtml(planRelationLabels[relation.relation_type] || relation.relation_type)}</span><p>${escapeHtml(relation.related_benefit_id)}：${escapeHtml(relation.reason)}</p><small>${escapeHtml(relation.evidence_ids.join("、"))}</small></div>`).join("")}</div>`
+    : "";
   return `<article class="result-card">
     <div class="result-card-head">
       <span class="status-orb ${result.status}">${statusIcons[result.status]}</span>
@@ -521,6 +636,7 @@ function renderResultCard(result) {
     <div class="result-card-body">
       <div class="condition-list">${conditions}</div>
       ${minimum}
+      ${relations}
       <div class="result-columns"><div class="result-block"><h4>建议准备材料</h4><ul>${materials}</ul></div><div class="result-block"><h4>下一步</h4><ul>${actions}<li>${escapeHtml(result.deadline)}</li></ul></div></div>
       <div class="evidence-chips">${evidence}</div>
     </div>
@@ -548,6 +664,8 @@ async function submitFeedback(event) {
 
 async function sendDetailedFeedback() {
   if (!state.screeningId) return;
+  const comment = $("#feedback-comment").value.trim();
+  if (comment && !$("#feedback-consent").checked) return toast("请先确认同意保存文字评论。", "error");
   try {
     await api("/api/v1/feedback", {
       method: "POST",
@@ -556,7 +674,8 @@ async function sendDetailedFeedback() {
         screening_id: state.screeningId,
         helpful: false,
         issue_type: $("#feedback-type").value,
-        comment: $("#feedback-comment").value.trim() || null,
+        comment: comment || null,
+        consent_to_store_comment: Boolean(comment && $("#feedback-consent").checked),
       }),
     });
     $$("#feedback-card button").forEach((item) => { item.disabled = true; });
@@ -586,15 +705,49 @@ function setupDocuments() {
   ["dragenter", "dragover"].forEach((name) => drop.addEventListener(name, (event) => { event.preventDefault(); drop.classList.add("dragging"); }));
   ["dragleave", "drop"].forEach((name) => drop.addEventListener(name, (event) => { event.preventDefault(); drop.classList.remove("dragging"); }));
   drop.addEventListener("drop", (event) => selectFiles(event.dataTransfer.files));
+  $("#clear-selected-files").addEventListener("click", () => {
+    input.value = "";
+    selectFiles([], false);
+    toast("已清空待预检材料。");
+  });
   $("#check-document").addEventListener("click", checkDocument);
 }
 
-function selectFiles(fileList) {
+function formatFileSize(bytes) {
+  if (bytes < 1024) return `${bytes} B`;
+  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
+  return `${(bytes / 1024 / 1024).toFixed(2)} MB`;
+}
+
+function selectFiles(fileList, announce = true) {
   state.selectedFiles = [...(fileList || [])];
+  const count = state.selectedFiles.length;
   const total = state.selectedFiles.reduce((sum, file) => sum + file.size, 0);
-  $("#selected-file").textContent = state.selectedFiles.length
-    ? `已选择 ${state.selectedFiles.length} 份 · ${(total / 1024 / 1024).toFixed(2)} MB：${state.selectedFiles.map((file) => file.name).join("、")}`
-    : "尚未选择文件";
+  const selection = $("#upload-selection");
+  const list = $("#selected-file-list");
+  const button = $("#check-document");
+  selection.classList.toggle("empty", !count);
+  selection.classList.remove("processed");
+  $("#drop-zone").classList.toggle("has-files", Boolean(count));
+  $("#selected-file-title").textContent = count ? `已成功选择 ${count} 份材料` : "尚未选择材料";
+  $("#selected-file").textContent = count
+    ? `总大小 ${formatFileSize(total)}，可继续勾选同意说明并开始预检。`
+    : "选择后将在这里显示文件名和大小。";
+  $("#selected-file-count").textContent = `${count} 份`;
+  $("#clear-selected-files").disabled = !count;
+  button.disabled = !count;
+  button.querySelector("span:last-child").textContent = count ? `开始预检 ${count} 份材料` : "请先选择材料";
+  $("#upload-selection-icon").innerHTML = count ? icons.check : icons.upload;
+  list.replaceChildren(...state.selectedFiles.map((file) => {
+    const item = document.createElement("li");
+    const name = document.createElement("strong");
+    const size = document.createElement("span");
+    name.textContent = file.name;
+    size.textContent = formatFileSize(file.size);
+    item.append(name, size);
+    return item;
+  }));
+  if (count && announce) toast(`已选择 ${count} 份材料，请勾选同意说明后开始预检。`);
 }
 
 async function checkDocument() {
@@ -608,6 +761,9 @@ async function checkDocument() {
   try {
     const result = await api("/api/v1/documents/package-precheck", { method: "POST", body: data });
     renderDocumentPackage(result);
+    $("#upload-selection").classList.add("processed");
+    $("#selected-file-title").textContent = `${state.selectedFiles.length} 份材料已完成预检`;
+    $("#selected-file").textContent = "预检结果已显示在右侧，可清空后重新选择材料。";
     toast("材料包预检完成。")
   } catch (error) { toast(error.message, "error"); }
   finally { loading(false); }
@@ -864,7 +1020,8 @@ function speakVisiblePage() {
   let source = activeView;
   if (state.currentView === "screening" && state.careMode) source = $("#guidance-card");
   else if (state.currentView === "screening" && reportVisible) source = $("#results-zone");
-  const text = `${$("#page-title").textContent}。${source.innerText}`
+  const heading = source.querySelector("h1, h2, h3")?.textContent || pageInfo[state.currentView][1];
+  const text = `${heading}。${source.innerText}`
     .replace(/\s+/g, " ")
     .trim()
     .slice(0, 5000);
@@ -917,27 +1074,171 @@ function setupWorker() {
   setField("worker-query-date", todayISO());
   $("#worker-form").addEventListener("submit", async (event) => {
     event.preventDefault();
-    const urgent = boolOrNull("worker-urgent") === true;
+    state.workerSafetyPassed = false;
+    document.body.dataset.printAuthorized = "false";
+    const urgent = boolOrNull("worker-urgent");
     const payload = {
       query_date: valueOrNull("worker-query-date"), city: "广州市",
       district: valueOrNull("worker-district"), household_size: numberOrNull("worker-household-size"),
       is_local_hukou: boolOrNull("worker-hukou"), member_scope_confirmed: boolOrNull("worker-member"),
       monthly_income_total: numberOrNull("worker-income"), deductible_monthly_total: 0,
       assets_eligible: boolOrNull("worker-assets"), rigid_expenses_12m: numberOrNull("worker-expenses"),
-      urgent_event: urgent, urgent_event_date: urgent ? valueOrNull("worker-query-date") : null,
-      basic_life_interrupted: urgent ? true : null,
+      urgent_event: urgent, urgent_event_date: urgent === true ? valueOrNull("worker-query-date") : null,
+      basic_life_interrupted: urgent === true ? true : null,
     };
     loading(true, "正在生成匿名工作人员咨询摘要…");
     try {
       const result = await api("/api/v1/screenings", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) });
+      if (!safetyGateAllowsReport(result)) {
+        $("#worker-output").innerHTML = `<div class="safety-block-content">${icons.shield}<div><h3>安全门已阻断</h3><p>响应未携带完整的安全放行凭据，未展示任何咨询结论。</p><strong>禁止打印或导出。</strong></div></div>`;
+        return;
+      }
+      state.workerSafetyPassed = true;
       const rows = result.results.map((item) => {
         const unknown = item.conditions.filter((condition) => condition.state === "unknown");
         return `<div class="worker-row"><strong>${escapeHtml(item.name)}</strong><span class="soft-tag">${escapeHtml(statusLabels[item.status])}</span><small>${escapeHtml(unknown.length ? `还需确认：${unknown.map((condition) => condition.label).join("、")}` : item.plan_reason)}</small></div>`;
       }).join("");
       const office = result.recommended_office;
       $("#worker-output").innerHTML = `<div class="panel-heading"><div><p class="eyebrow">ANONYMOUS SUMMARY</p><h3>五事项并排摘要</h3><p>${escapeHtml(result.policy_snapshot)} · 安全验证${result.safety_validation.safe ? "通过" : "已阻断"}</p></div><button type="button" class="text-button" id="worker-print">打印</button></div><div class="worker-matrix">${rows}</div>${office ? `<div class="office-card"><strong>${escapeHtml(office.office_name)}</strong><p>${escapeHtml(office.address)} · ${escapeHtml(office.phone)}</p></div>` : ""}`;
-      document.getElementById("worker-print").addEventListener("click", () => window.print());
+      document.getElementById("worker-print").addEventListener("click", () => printSafeOutput("worker"));
       toast("工作人员咨询摘要已生成。")
+    } catch (error) {
+      if (error.code === "SAFETY_GATE_BLOCKED") {
+        $("#worker-output").innerHTML = `<div class="safety-block-content">${icons.shield}<div><h3>安全门已阻断</h3><p>${escapeHtml(error.message)}</p><strong>结果未保存、未展示，也不能打印导出。</strong></div></div>`;
+      }
+      toast(error.message, "error");
+    }
+    finally { loading(false); }
+  });
+}
+
+const assessmentFieldLabels = {
+  wage_income_monthly_avg: "月均工资性收入",
+  operating_income_monthly_avg: "月均经营净收入",
+  property_income_monthly_avg: "月均财产净收入",
+  transfer_income_monthly_avg: "月均转移净收入",
+  employment_cost_claimed: "申报就业成本",
+  laborer_count: "劳动者人数",
+  six_month_average_confirmed: "申请前6个月平均口径",
+  labor_income_assessment_complete: "劳动收入核定",
+  member_nonstack_confirmed: "成员最有利单项且不叠加确认",
+  obligor_information_complete: "义务人信息核查",
+  no_usable_owned_housing: "住房情况",
+  counted_motorcycles: "计入评估的摩托车数量",
+  counted_electric_bicycles: "计入评估的电动自行车数量",
+  vehicle_exclusions_confirmed: "车辆价值与年限排除项核查",
+  judicial_support_included_in_transfer_income: "司法文书金额计收入确认",
+  judicial_cases_excluded_from_obligor_counts: "司法文书义务人排除重复计分确认",
+};
+
+function assessmentPayload() {
+  return {
+    query_date: valueOrNull("assessment-query-date"),
+    household_member_count: numberOrNull("assessment-household-size"),
+    wage_income_monthly_avg: numberOrNull("assessment-wage"),
+    operating_income_monthly_avg: numberOrNull("assessment-operating"),
+    property_income_monthly_avg: numberOrNull("assessment-property"),
+    transfer_income_monthly_avg: numberOrNull("assessment-transfer"),
+    employment_cost_claimed: numberOrNull("assessment-employment-cost"),
+    laborer_count: numberOrNull("assessment-laborers"),
+    six_month_average_confirmed: boolOrNull("assessment-six-month"),
+    labor_income_assessment_complete: boolOrNull("assessment-labor-complete"),
+    member_adjustments: {
+      preschool: numberOrNull("assessment-preschool") ?? 0,
+      high_school_or_full_time_college: numberOrNull("assessment-student") ?? 0,
+      age_70_79: numberOrNull("assessment-age70") ?? 0,
+      age_80_plus: numberOrNull("assessment-age80") ?? 0,
+      rare_disease: numberOrNull("assessment-rare") ?? 0,
+      severe_or_disabled: numberOrNull("assessment-severe") ?? 0,
+      chronic_or_half_disabled: numberOrNull("assessment-chronic") ?? 0,
+      other_labor_affecting_disease: numberOrNull("assessment-other-disease") ?? 0,
+    },
+    member_nonstack_confirmed: boolOrNull("assessment-nonstack"),
+    active_duty_conscript_count: numberOrNull("assessment-conscript") ?? 0,
+    obligor_strong_count: numberOrNull("assessment-obligor-strong") ?? 0,
+    obligor_general_count: numberOrNull("assessment-obligor-general") ?? 0,
+    obligor_weak_count: numberOrNull("assessment-obligor-weak") ?? 0,
+    obligor_none_count: numberOrNull("assessment-obligor-none") ?? 0,
+    obligor_unreachable_with_written_explanation_count: numberOrNull("assessment-obligor-unreachable") ?? 0,
+    obligor_information_complete: boolOrNull("assessment-obligor-complete"),
+    judicial_support_cases: numberOrNull("assessment-judicial-cases") ?? 0,
+    judicial_support_included_in_transfer_income: boolOrNull("assessment-judicial-included"),
+    judicial_cases_excluded_from_obligor_counts: boolOrNull("assessment-judicial-excluded"),
+    no_usable_owned_housing: boolOrNull("assessment-no-housing"),
+    counted_motorcycles: numberOrNull("assessment-motorcycles"),
+    counted_electric_bicycles: numberOrNull("assessment-ebikes"),
+    vehicle_exclusions_confirmed: boolOrNull("assessment-vehicle-exclusions"),
+    verification_report_available: boolOrNull("assessment-report"),
+    in_home_assessment_completed: boolOrNull("assessment-home-visit"),
+    investigator_confirmed: boolOrNull("assessment-investigator"),
+    household_confirmed: boolOrNull("assessment-household-confirm"),
+  };
+}
+
+function renderLivingAssessment(result) {
+  const output = $("#living-assessment-output");
+  if (result.calculation_status !== "calculated") {
+    const missing = (result.missing_fields || [])
+      .map((field) => assessmentFieldLabels[field] || field);
+    output.innerHTML = `<div class="assessment-state ${escapeHtml(result.review_state)}"><p class="eyebrow">${escapeHtml(result.calculation_status.toUpperCase())}</p><h3>${result.calculation_status === "not_available" ? "当前查询日不能计算" : "信息尚未齐全"}</h3><p>${escapeHtml(result.warnings.join(" "))}</p>${missing.length ? `<div class="minimum-inputs"><strong>仍需确认</strong><p>${missing.map(escapeHtml).join("、")}</p></div>` : ""}<small>${escapeHtml(result.decision_boundary)}</small></div>`;
+    return;
+  }
+  const comparison = result.threshold_comparison === "below_1d" ? "低于1D" : "达到或高于1D";
+  const lines = result.calculation_lines.length
+    ? result.calculation_lines.map((line) => `<tr><td>${escapeHtml(line.label)}</td><td>${escapeHtml(line.quantity)}</td><td>${escapeHtml(line.coefficient_d)}D</td><td>${escapeHtml(line.subtotal_d)}D</td><td>${escapeHtml(line.evidence_id)}</td></tr>`).join("")
+    : '<tr><td colspan="5">本例没有非零结构或生活状况调整项</td></tr>';
+  output.innerHTML = `
+    <div class="panel-heading"><div><p class="eyebrow">CALCULATION TRACE</p><h3>${escapeHtml(comparison)}</h3><p>${escapeHtml(result.policy_version)} · 查询日D=${escapeHtml(result.d_standard_yuan)}元</p></div><span class="soft-tag ${result.official_process_complete ? "success" : ""}">${result.official_process_complete ? "流程字段已确认" : "仅计算草稿"}</span></div>
+    <div class="assessment-metrics">
+      <div><span>扣减后家庭月收入</span><strong>${escapeHtml(result.base_monthly_income_yuan)}元</strong></div>
+      <div><span>就业成本实际扣减</span><strong>${escapeHtml(result.employment_cost_applied_yuan)}元</strong><small>上限${escapeHtml(result.employment_cost_cap_yuan)}元</small></div>
+      <div><span>家庭结构</span><strong>${escapeHtml(result.structure_adjustment_d)}D</strong></div>
+      <div><span>生活状况</span><strong>${escapeHtml(result.living_adjustment_d)}D</strong></div>
+      <div><span>综合评估后人均</span><strong>${escapeHtml(result.assessed_per_capita_d)}D</strong><small>约${escapeHtml(result.assessed_per_capita_yuan)}元</small></div>
+    </div>
+    <div class="assessment-trace"><table><thead><tr><th>调整项</th><th>数量</th><th>系数</th><th>小计</th><th>证据</th></tr></thead><tbody>${lines}</tbody></table></div>
+    <div class="warning-stack">${result.warnings.map((item) => `<div class="warning-item">${icons.alert}<span>${escapeHtml(item)}</span></div>`).join("")}</div>
+    <div class="assessment-formula"><strong>公式</strong><p>${escapeHtml(result.formula)}</p><small>${escapeHtml(result.decision_boundary)}</small></div>`;
+}
+
+function loadAssessmentDemo() {
+  const demo = {
+    "assessment-query-date": "2026-09-30", "assessment-household-size": 3,
+    "assessment-laborers": 1, "assessment-wage": 3600, "assessment-operating": 0,
+    "assessment-property": 0, "assessment-transfer": 0, "assessment-employment-cost": 600,
+    "assessment-six-month": true, "assessment-labor-complete": true,
+    "assessment-preschool": 1, "assessment-student": 0, "assessment-age70": 0,
+    "assessment-age80": 0, "assessment-rare": 0, "assessment-severe": 0,
+    "assessment-chronic": 0, "assessment-other-disease": 0, "assessment-conscript": 0,
+    "assessment-nonstack": true, "assessment-obligor-strong": 0,
+    "assessment-obligor-general": 0, "assessment-obligor-weak": 0,
+    "assessment-obligor-none": 0, "assessment-obligor-complete": true,
+    "assessment-obligor-unreachable": 0,
+    "assessment-judicial-cases": 0, "assessment-no-housing": false,
+    "assessment-motorcycles": 0, "assessment-ebikes": 1,
+    "assessment-vehicle-exclusions": true, "assessment-report": true,
+    "assessment-home-visit": true, "assessment-investigator": true,
+    "assessment-household-confirm": true,
+  };
+  Object.entries(demo).forEach(([id, value]) => setField(id, value));
+  toast("已载入不含真实个人信息的综合评估示例。")
+}
+
+function setupLivingAssessment() {
+  setField("assessment-query-date", todayISO());
+  $("#load-assessment-demo").addEventListener("click", loadAssessmentDemo);
+  $("#living-assessment-form").addEventListener("submit", async (event) => {
+    event.preventDefault();
+    if (!event.currentTarget.reportValidity()) return;
+    loading(true, "正在按第二版综合评估指标逐项换算…");
+    try {
+      const result = await api("/api/v1/assessments/living-conditions", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(assessmentPayload()),
+      });
+      renderLivingAssessment(result);
+      toast(result.calculation_status === "calculated" ? "综合评估计算草稿已生成。" : "仍有信息需要确认。", result.calculation_status === "calculated" ? "success" : "error");
     } catch (error) { toast(error.message, "error"); }
     finally { loading(false); }
   });
@@ -989,12 +1290,21 @@ function setupDemoCenter() {
 }
 
 function initialize() {
+  resetReportSafety();
+  document.body.dataset.printAuthorized = "false";
+  window.addEventListener("beforeprint", () => {
+    const scope = state.currentView === "worker" ? "worker" : "resident";
+    const allowed = scope === "worker" ? state.workerSafetyPassed : state.reportSafetyPassed;
+    document.body.dataset.printAuthorized = allowed ? "true" : "false";
+    document.body.dataset.printScope = scope;
+  });
   injectIcons();
   setupNavigation();
   setupForm();
   setupDocuments();
   setupEvidence();
   setupWorker();
+  setupLivingAssessment();
   setupDemoCenter();
   setupPolicyCompiler();
   setupUtilities();

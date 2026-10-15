@@ -201,5 +201,15 @@
       "ocr_line_count": 9
     }
   ],
-  "warning": "全部图片为程序生成的无真实信息材料；正式对外评测必须增加独立模板和人工标注图片，不能把该结果写成真实材料准确率。"
+  "warning": "全部图片为程序生成的无真实信息材料；正式对外评测必须增加独立模板和人工标注图片，不能把该结果写成真实材料准确率。",
+  "app_version": "1.2.0",
+  "engine_version": "rule-engine/0.5.0",
+  "release_metadata": {
+    "release_id": "v1.2.0+source.5fc011cd9986",
+    "app_version": "1.2.0",
+    "engine_version": "rule-engine/0.5.0",
+    "git_commit": "488be3243a196a2331e8f173fe8b75cb91491779",
+    "git_dirty": true,
+    "source_tree_sha256": "5fc011cd9986144f8597a0e87e0ff0a4a9fe15b86f29a797aaf6bf1a34484dd1"
+  }
 }

@@ -9,6 +9,7 @@ COPY requirements.lock pyproject.toml ./
 RUN pip install --no-cache-dir -r requirements.lock
 COPY app ./app
 COPY data ./data
+COPY demo_assets ./demo_assets
 COPY 政策证据包 ./政策证据包
 RUN mkdir -p /app/storage/uploads && \
     useradd --create-home --uid 10001 huimin && \

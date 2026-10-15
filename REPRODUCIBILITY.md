@@ -5,7 +5,7 @@
 ## 固定环境
 
 - Python：3.11或3.12，当前冻结环境为3.12.14。
-- 应用版本：`0.7.0`；规则引擎版本由API返回，当前为`rule-engine/0.4.1`。
+- 应用版本：`1.2.0`；规则引擎版本由API返回，当前为`rule-engine/0.5.0`。
 - 依赖：`requirements.lock`固定直接与传递依赖；`requirements.txt`只表达允许升级的开发约束。
 - 政策原件：`data/raw_official/provenance_manifest.json`记录项目相对路径、大小与SHA-256。
 - 随机性：语言模型请求固定temperature=0、seed=20261002；模型名、提示指纹和延迟写入响应或实验报告。
@@ -17,7 +17,7 @@
 .\reproduce_phase12.ps1
 ```
 
-脚本依次重建来源指纹和内部画像基准，运行规则回归、检索评测、Policy2Rule评测、AI主线评测、架构消融、工程检查及全部单元/API测试。任何一步失败都会停止。
+脚本依次重建来源指纹、内部画像基准、合成规则回归集和主动提问决策路径，运行规则回归、检索评测、Policy2Rule双轨评测、AI主线评测、架构消融、安全回归、OCR、接口性能、工程检查及全部单元/API测试。每条外部命令都检查退出码，任何一步失败都会立即停止，不会输出虚假的成功提示。
 
 关键机器可读产物：
 
@@ -25,6 +25,8 @@
 - `data/evaluation/ablation_report.json`
 - `data/evaluation/retrieval_report.json`
 - `data/evaluation/policy_compiler_report.json`
+- `data/evaluation/policy_compiler_real_report.json`
+- `data/evaluation/release_manifest.json`
 - `data/raw_official/provenance_manifest.json`
 
 所有报告仅保存项目相对路径，不保存个人用户名、Python绝对路径或群众原文。

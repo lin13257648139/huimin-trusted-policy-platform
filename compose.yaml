@@ -1,3 +1,5 @@
+name: huimin-guide
+
 services:
   huimin-guide:
     build: .
@@ -5,6 +7,7 @@ services:
       - "8000:8000"
     environment:
       APP_ENV: production
+      DEMO_MODE: "false"
       ADMIN_API_TOKEN: ${ADMIN_API_TOKEN:?请先在.env中设置ADMIN_API_TOKEN}
       DATABASE_PATH: /app/storage/huimin.db
       AI_MODE: ${AI_MODE:-deterministic}
@@ -15,6 +18,12 @@ services:
     volumes:
       - huimin-storage:/app/storage
     restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/api/health', timeout=3).read()"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
     read_only: true
     tmpfs:
       - /tmp

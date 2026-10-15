@@ -4,9 +4,8 @@ import importlib.metadata
 import json
 import platform
 import re
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
-
 
 ROOT = Path(__file__).resolve().parent.parent
 LOCK = ROOT / "requirements.lock"
@@ -50,7 +49,7 @@ def main() -> None:
     report = {
         "bom_format": "project-internal CycloneDX-inspired inventory",
         "spec_note": "不是CycloneDX官方验证输出；用于依赖追溯与赛前许可证复核。",
-        "generated_at": datetime.now(timezone.utc).isoformat(),
+        "generated_at": datetime.now(UTC).isoformat(),
         "runtime": {"python": platform.python_version(), "platform": platform.platform()},
         "source": "requirements.lock",
         "component_count": len(requested),

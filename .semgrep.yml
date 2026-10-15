@@ -1,0 +1,40 @@
+rules:
+  - id: huimin-no-eval-exec
+    languages: [python]
+    message: Dynamic eval/exec is forbidden in policy and document pipelines.
+    severity: ERROR
+    pattern-either:
+      - pattern: eval(...)
+      - pattern: exec(...)
+  - id: huimin-no-shell-true
+    languages: [python]
+    message: shell=True creates command-injection risk.
+    severity: ERROR
+    pattern: subprocess.$FUNC(..., shell=True, ...)
+  - id: huimin-no-unsafe-pickle
+    languages: [python]
+    message: Loading pickle from mutable data is forbidden.
+    severity: ERROR
+    pattern-either:
+      - pattern: pickle.load(...)
+      - pattern: pickle.loads(...)
+  - id: huimin-http-must-have-timeout
+    languages: [python]
+    message: External HTTP requests must declare a timeout.
+    severity: ERROR
+    patterns:
+      - pattern-either:
+          - pattern: requests.get(...)
+          - pattern: requests.post(...)
+          - pattern: requests.put(...)
+          - pattern: requests.patch(...)
+          - pattern: requests.delete(...)
+          - pattern: requests.request(...)
+          - pattern: httpx.get(...)
+          - pattern: httpx.post(...)
+          - pattern: httpx.put(...)
+          - pattern: httpx.patch(...)
+          - pattern: httpx.delete(...)
+          - pattern: httpx.request(...)
+      - pattern-not: requests.$METHOD(..., timeout=..., ...)
+      - pattern-not: httpx.$METHOD(..., timeout=..., ...)

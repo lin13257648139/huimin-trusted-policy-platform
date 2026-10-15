@@ -3,7 +3,6 @@ from __future__ import annotations
 import csv
 import json
 from functools import lru_cache
-from pathlib import Path
 
 from app.config import BASE_DIR, settings
 from app.domain.models import Evidence, Office, PolicySource

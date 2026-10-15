@@ -18,12 +18,11 @@ from app.domain.models import (
     PolicyRuleCandidate,
     PolicyValidationIssue,
 )
-from app.services.rule_registry import registered_rules
 from app.services.ai_runtime import JsonModelResult, ModelRuntimeError, chat_json
-
+from app.services.rule_registry import registered_rules
 
 BENEFITS = {
-    "B001": ("低收入人口认定与监测", ("低收入人口", "低收入监测")),
+    "B001": ("低收入人口认定与监测", ("低收入人口", "低收入监测", "社会救助")),
     "B002": ("最低生活保障", ("最低生活保障", "低保")),
     "B003": ("最低生活保障边缘家庭认定", ("低保边缘", "最低生活保障边缘")),
     "B004": ("刚性支出困难家庭认定", ("刚性支出", "支出型困难")),
@@ -126,13 +125,34 @@ def _extract_dates(text: str) -> tuple[date | None, date | None]:
     return start, end
 
 
-def _detect_benefit(text: str, hint: str | None) -> str:
+def _detect_benefit(text: str, hint: str | None, title: str = "") -> str:
     if hint:
         return hint
+    if "一件事" in title and any(marker in text for marker in ("哪些救助", "低收入人口")):
+        return "B001"
+    if "申请家庭生活状况综合评估指标" in title:
+        return "B002"
+    # Clause-local exact matter names outrank a mixed-document title.  This is
+    # essential for documents whose title contains both edge-family and
+    # expenditure-difficulty matters.
+    if any(marker in text for marker in ("支出型困难", "刚性支出")):
+        return "B004"
+    if any(marker in text for marker in ("低保边缘", "最低生活保障边缘")):
+        return "B003"
+    if any(marker in text for marker in ("临时救助", "急难型")):
+        return "B005"
     scores: dict[str, int] = {}
     for benefit_id, (_, keywords) in BENEFITS.items():
-        scores[benefit_id] = sum(text.count(keyword) * len(keyword) for keyword in keywords)
-    return max(scores, key=scores.get) if any(scores.values()) else "B001"
+        text_score = sum(text.count(keyword) * len(keyword) for keyword in keywords)
+        title_score = sum(title.count(keyword) * len(keyword) * 3 for keyword in keywords)
+        scores[benefit_id] = text_score + title_score
+    # “社会救助”是上位领域词，只能在没有明确具体事项时用于B001；否则它会
+    # 把《社会救助法》中低保边缘、刚性支出、临时救助条款全部吞成B001。
+    if any(scores[item] > 0 for item in ("B002", "B003", "B004", "B005")):
+        generic = text.count("社会救助") * len("社会救助")
+        generic += title.count("社会救助") * len("社会救助") * 3
+        scores["B001"] = max(0, scores["B001"] - generic)
+    return max(scores, key=lambda benefit_id: scores[benefit_id]) if any(scores.values()) else "unknown"
 
 
 def _money_value(raw: str) -> str | None:
@@ -206,13 +226,27 @@ def _extract_conditions(
                 source_quote=_quote_for(text, "元"),
             )
         )
-    elif "人均收入低于" in text and ("保障标准" in text or "人均可支配收入" in text):
+    elif (
+        ("人均收入低于" in text or "人均月收入" in text)
+        and ("保障标准" in text or "人均可支配收入" in text)
+        and ("低于" in text or "以下" in text)
+    ):
         conditions.append(
             CompiledRuleCondition(
-                field=("per_capita_annual_income" if "上年度" in text else "per_capita_monthly_income"),
-                operator="lt",
-                value=("previous_year_local_disposable_income" if "上年度" in text else "local_policy_threshold"),
-                source_quote=_quote_for(text, "人均收入低于"),
+                field=(
+                    "per_capita_annual_income" if "上年度" in text else "per_capita_monthly_income"
+                ),
+                operator="lt" if "低于" in text else "lte",
+                value=(
+                    "previous_year_local_disposable_income"
+                    if "上年度" in text
+                    else (
+                        f"{parameters['income_multiplier']}*local_minimum_living_standard"
+                        if "income_multiplier" in parameters
+                        else "local_policy_threshold"
+                    )
+                ),
+                source_quote=_quote_for(text, "收入"),
             )
         )
     if "财产" in text:
@@ -424,7 +458,7 @@ def _version_diff(candidate: PolicyRuleCandidate) -> dict[str, Any]:
 
 def compile_policy(request: PolicyCompileRequest) -> PolicyCompileResponse:
     start, end = _extract_dates(request.source_text)
-    benefit_id = _detect_benefit(request.source_text, request.benefit_hint)
+    benefit_id = _detect_benefit(request.source_text, request.benefit_hint, request.title)
     parameters = _extract_parameters(request.source_text, benefit_id)
     deterministic = {
         "benefit_id": benefit_id,
@@ -443,7 +477,7 @@ def compile_policy(request: PolicyCompileRequest) -> PolicyCompileResponse:
         if any(marker in sentence for marker in ("不计入", "不得以", "除", "但", "可不"))
     ][:8]
     completeness_parts = [
-        bool(benefit_id),
+        benefit_id != "unknown",
         bool(merged["effective_from"]),
         bool(request.region),
         bool(merged["parameters"]),
@@ -453,7 +487,7 @@ def compile_policy(request: PolicyCompileRequest) -> PolicyCompileResponse:
     candidate = PolicyRuleCandidate(
         candidate_id=f"PCR-{uuid4().hex[:10].upper()}",
         benefit_id=benefit_id,
-        benefit_name=BENEFITS[benefit_id][0],
+        benefit_name=(BENEFITS[benefit_id][0] if benefit_id in BENEFITS else "未识别事项"),
         region=request.region,
         source_id=request.source_id,
         title=request.title,
@@ -476,6 +510,15 @@ def compile_policy(request: PolicyCompileRequest) -> PolicyCompileResponse:
     )
     diff = _version_diff(candidate)
     issues: list[PolicyValidationIssue] = []
+    if candidate.benefit_id == "unknown":
+        issues.append(
+            PolicyValidationIssue(
+                severity="error",
+                code="unknown_benefit",
+                message="无法从原文识别受支持事项，禁止默认映射或发布。",
+                field="benefit_id",
+            )
+        )
     if candidate.effective_from is None:
         issues.append(
             PolicyValidationIssue(

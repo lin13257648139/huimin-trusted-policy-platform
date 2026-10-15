@@ -1,10 +1,10 @@
 {
   "report_schema": "safety-ablation/1.0",
-  "generated_at": "2026-10-02T15:05:43.326215+00:00",
-  "app_version": "0.7.0",
-  "engine_version": "rule-engine/0.4.1",
+  "generated_at": "2026-10-15T09:50:28.866193+00:00",
+  "app_version": "1.2.0",
+  "engine_version": "rule-engine/0.5.0",
   "dataset": "data/processed/synthetic_conformance_cases.jsonl",
-  "dataset_sha256": "377566eaa0667d769187cc51a9c62ad398e5627c6dc3b6f276568d94fbdaf9c0",
+  "dataset_sha256": "415f2151fae319e6553e3926cf8d1493e7d816eebf97b85c3e3ece49d2e5f74f",
   "dataset_role": "engine_conformance_only; labels originate from the deterministic engine",
   "cases": 240,
   "full_system": {
@@ -28,7 +28,7 @@
       "controlled_boundary_probes": [
         {
           "query_date": "2026-07-31",
-          "snapshot": "gz-2026-07-31-v2023.06",
+          "snapshot": "gz-2026-07-31-v2026.01",
           "dibao_version": "穗民规字〔2023〕3号",
           "dibao_status": "likely",
           "warning_count": 2
@@ -64,12 +64,13 @@
       "meaning": "模型与高精度规则冲突时保留规则字段；移除该门会允许冲突值覆盖用户明确事实。"
     },
     "remove_active_questioning": {
-      "extra_questions_vs_information_gain": 2.75,
+      "extra_questions_vs_information_gain": 1.75,
+      "reduction_vs_executed_fixed_order": 0.2059,
       "status_consistency": 1.0,
-      "meaning": "改回固定相关字段顺序会增加的平均问题数；该指标来自合成一致性案例。"
+      "meaning": "动态策略与固定相关字段顺序均真实逐轮运行；该差值只适用于项目组构造的决策路径基准，不外推为真人完成率。"
     },
     "remove_human_publish_gate": {
-      "candidate_auto_publish_attempts_blocked": 11,
+      "candidate_auto_publish_attempts_blocked": 50,
       "meaning": "候选规则默认不可发布；移除人工发布门会把这些项目组标注样本暴露给自动发布风险。"
     },
     "remove_no_answer_gate": {
@@ -78,5 +79,13 @@
       "meaning": "无答案门阻止越域问题获得看似相关但无依据的政策引用。"
     }
   },
-  "claim_boundary": "该报告衡量架构安全属性，不是业务准确率，也不是用户试点。"
+  "claim_boundary": "该报告衡量架构安全属性，不是业务准确率，也不是用户试点。",
+  "release_metadata": {
+    "release_id": "v1.2.0+source.5fc011cd9986",
+    "app_version": "1.2.0",
+    "engine_version": "rule-engine/0.5.0",
+    "git_commit": "488be3243a196a2331e8f173fe8b75cb91491779",
+    "git_dirty": true,
+    "source_tree_sha256": "5fc011cd9986144f8597a0e87e0ff0a4a9fe15b86f29a797aaf6bf1a34484dd1"
+  }
 }

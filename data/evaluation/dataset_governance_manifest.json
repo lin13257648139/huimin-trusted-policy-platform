@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-02T20:47:45.657494+00:00",
+  "generated_at": "2026-10-15T09:51:03.565173+00:00",
   "manifest_version": "1.0",
   "assets": [
     {
@@ -10,7 +10,7 @@
       "contains_personal_data": false,
       "bytes": 204578,
       "records": 240,
-      "sha256": "377566eaa0667d769187cc51a9c62ad398e5627c6dc3b6f276568d94fbdaf9c0"
+      "sha256": "415f2151fae319e6553e3926cf8d1493e7d816eebf97b85c3e3ece49d2e5f74f"
     },
     {
       "path": "data/evaluation/profile_extraction_benchmark.jsonl",
@@ -38,20 +38,9 @@
       "label_origin": "official verbatim clauses with project-authored gold",
       "independent": false,
       "contains_personal_data": false,
-      "bytes": 9798,
-      "records": 11,
-      "sha256": "0f1d689ff7b2fa743ee1288188e9767a0fba4a841fd6bfe48669783f6c6bd2cc"
-    },
-    {
-      "path": "data/evaluation/expert_gold_master.csv",
-      "role": "external_expert_adjudicated_evaluation",
-      "label_origin": "expert A/B review and expert C adjudication",
-      "independent": true,
-      "contains_personal_data": false,
-      "release_note": "去标识化标签集；原始评审表不随源码发布。",
-      "bytes": 243203,
-      "records": 120,
-      "sha256": "7bc82bdd4b18a931610d29635a147ba3419ceb55c56c477eb4268f9c4423e125"
+      "bytes": 45980,
+      "records": 50,
+      "sha256": "d26e0382315eedf66c71ad27bd95068528329f5c65bc38686acfe0c07dc4decb"
     },
     {
       "path": "data/evaluation/ocr_synthetic/manifest.json",
@@ -69,12 +58,30 @@
       "label_origin": "project-authored adversarial and boundary guards",
       "independent": false,
       "contains_personal_data": false,
-      "bytes": 32223,
-      "records": 100,
-      "sha256": "46835bb0bf2f0982fae6e3e753f0d2419455ff131c7bc41c3433c5822f80dc91"
+      "bytes": 37255,
+      "records": 130,
+      "sha256": "17e983319dc0420a14abb0289b330daabc0fb896c926de5e29ca2ee060c0947d"
+    },
+    {
+      "path": "data/evaluation/active_question_decision_cases.jsonl",
+      "role": "synthetic_active_question_decision_paths",
+      "label_origin": "programmatically transformed from synthetic conformance profiles",
+      "independent": false,
+      "contains_personal_data": false,
+      "bytes": 87423,
+      "records": 120,
+      "sha256": "a822d8f685728b0429f4be7d103bb428a47402c5f1ba2b10dc0562d3336e3f89"
     }
   ],
   "missing": [],
-  "claim_boundary": "合成集和项目自编gold只用于回归、消融与可复现工程验证；仅external_expert_adjudicated_evaluation可作为外部标注证据，仍不得外推为真实困难群众使用效果。",
-  "privacy": "清单不包含群众姓名、证件号、电话、地址或自由叙述。"
+  "claim_boundary": "当前资产全部为合成数据或项目组标注，只用于回归、消融与可复现工程验证；项目尚未开展外部专家评测，不得把任何资产表述为独立专家证据，也不得外推为真实困难群众使用效果。",
+  "privacy": "清单不包含群众姓名、证件号、电话、地址或自由叙述。",
+  "release_metadata": {
+    "release_id": "v1.2.0+source.5fc011cd9986",
+    "app_version": "1.2.0",
+    "engine_version": "rule-engine/0.5.0",
+    "git_commit": "488be3243a196a2331e8f173fe8b75cb91491779",
+    "git_dirty": true,
+    "source_tree_sha256": "5fc011cd9986144f8597a0e87e0ff0a4a9fe15b86f29a797aaf6bf1a34484dd1"
+  }
 }

@@ -6,22 +6,21 @@ import platform
 import statistics
 import sys
 from collections import Counter, defaultdict
-from datetime import date, datetime, timezone
+from collections.abc import Callable
+from datetime import UTC, date, datetime
 from pathlib import Path
-from typing import Any, Callable
+from typing import Any
 
 ROOT = Path(__file__).resolve().parent.parent
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from app.config import settings
 from app.domain.models import ParseProfileRequest
 from app.services.ai_runtime import ollama_runtime_status
 from app.services.intent_classifier import DATASET_PATH, classify_intent
 from app.services.profile_parser import parse_profile, parse_profile_deterministic
 from app.services.retrieval import search_evidence, search_evidence_result
 from app.version import APP_VERSION
-
 
 PROFILE_DATASET = ROOT / "data" / "evaluation" / "profile_extraction_benchmark.jsonl"
 RETRIEVAL_DATASET = ROOT / "data" / "evaluation" / "retrieval_benchmark.json"
@@ -224,7 +223,7 @@ def main() -> None:
     deterministic = _evaluate_profile_method(profile_cases, parse_profile_deterministic)
     report: dict[str, Any] = {
         "report_schema": "ai-experiment/1.0",
-        "generated_at": datetime.now(timezone.utc).isoformat(),
+        "generated_at": datetime.now(UTC).isoformat(),
         "scope": "internal synthetic benchmark; not real-user effectiveness evidence",
         "app_version": APP_VERSION,
         "environment": {

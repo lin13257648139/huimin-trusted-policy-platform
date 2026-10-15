@@ -1,22 +1,31 @@
-# 专家评测区
+# 离线评测区
 
-本目录用于建设独立于开发过程的专家金标集。任何空白标注表、合成案例或系统自生成标签都不能写成“专家评测结果”。
+本目录保存可复现的工程评测资产。当前所有基准均为团队自编合成数据，或由项目组依据官方政策原文制作的标注；截至当前版本，项目没有开展外部专家评测、真人试点或独立第三方测评。
 
-## 标准流程
+## 可以引用的结论
 
-1. 运行 `python scripts/build_expert_packet.py`，先按完整画像去重，再生成A、B两份内容相同但不含系统答案、也不暴露合成类别的盲评表。
-2. 两名具有社会工作、公共管理、法律或基层救助经验的人员独立填写，不相互查看答案。
-3. 标签仅允许：`likely`、`unlikely`、`incomplete`、`manual_review`。
-4. 运行 `python scripts/merge_expert_reviews.py`。一致项会自动写入金标，分歧项保持为空。
-5. 第三名人员只裁决分歧项，并在 `adjudicator_comment` 写明依据。不得为了提高系统分数而修改金标。
-6. 全部金标完成后运行 `python scripts/evaluate_expert_gold.py`。脚本按完整画像再次去重，并同时报告严格准确率、自动覆盖率、选择性准确率、弃权率、likely精确率/召回率和高风险假阳性率。
+- 规则回归、证据完整性、安全门、检索、Policy2Rule、OCR和性能结果，只能描述对应冻结数据集与运行环境。
+- 报告必须保留数据来源、样本量、版本、源码指纹、生成时间和限制说明。
+- 官方条款基准中的原文来自政策证据包，但其期望标签由项目组制作，不具有独立专家属性。
 
-## 必须保存的佐证
+## 禁止表述
 
-- 专家身份背景的匿名说明及授权；
-- 标注规范版本、时间、分歧数量和裁决记录；
-- 冻结数据集SHA-256；
-- 评测时的代码版本、规则快照和完整原始报告；
-- 涉及真实咨询时的知情同意与脱敏记录。
+- 不得使用“专家评测”“外部评审”“独立盲评”“第三方验证”等尚未发生的表述。
+- 不得把合成案例上的一致率表述为真实群众业务准确率、政策审核正确率或上线效果。
+- 不得把系统按照自身规则生成的标签用于证明系统优于人工。
 
-当前A/B已完成120条评审记录，专家C已完成6条记录中的10个分歧决定。`expert_gold_master.csv`已冻结，按完整画像去重后为107例、535个事项决定；文件哈希和完整性检查保存在`expert_gold_audit.json`，正式指标保存在`expert_evaluation_report.json`。B002整改后的逐例验证保存在`b002_error_analysis.md`和`B002逐例误差分析.xlsx`。当前规则引擎在该构造专家集上达到100%严格一致、0%高风险假阳性；该结果不能替代真实咨询改写案例、基层试点和用户研究。
+## 未来人工评测工具
+
+`build_expert_packet.py`、`merge_expert_reviews.py`和`evaluate_expert_gold.py`仅是未来工作流工具。只有在评审人员身份、独立填写记录、原始表、裁决记录与授权说明均可核验时，才允许生成专家评测报告。当前发布包不包含专家评测结果。
+
+## 当前主要资产
+
+- `synthetic_conformance_cases.jsonl`：确定性规则的合成边界回归集。
+- `profile_extraction_benchmark.jsonl`：团队自编口语画像抽取集。
+- `retrieval_benchmark.json`：团队自编政策检索问题。
+- `policy_compiler_real_benchmark.jsonl`：官方条款原文与项目组制作的期望标签。
+- `high_risk_safety_benchmark.jsonl`：项目组编写的安全回归案例。
+- `active_question_decision_cases.jsonl`：动态与固定策略逐轮运行的合成决策路径，轨迹保存在`active_question_traces.jsonl`。
+- `ocr_synthetic/`：程序生成的无真实个人信息OCR材料。
+
+机器可读的数据治理边界见 `dataset_governance_manifest.json`。

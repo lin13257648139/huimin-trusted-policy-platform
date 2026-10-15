@@ -1,5 +1,5 @@
-import json
 import io
+import json
 import sqlite3
 from pathlib import Path
 
@@ -81,11 +81,12 @@ def test_screening_returns_office_and_user_can_delete_record(
     monkeypatch.setattr(main, "database", temporary_database)
     statement = "不要把这段自由叙述写入数据库"
     with TestClient(main.app) as client:
-        response = client.post("/api/v1/screenings", json=_profile(statement))
+        response = client.post("/api/v1/screenings?persist=true", json=_profile(statement))
         assert response.status_code == 200
         payload = response.json()
         assert payload["recommended_office"]["region"] == "天河区"
         assert payload["screening_token"]
+        assert payload["persisted"] is True
         assert payload["data_retention_days"] > 0
 
         with temporary_database.connect() as connection:
@@ -113,6 +114,30 @@ def test_screening_returns_office_and_user_can_delete_record(
         )
         assert feedback.status_code == 201
 
+        comment_without_consent = client.post(
+            "/api/v1/feedback",
+            headers={"X-Screening-Token": payload["screening_token"]},
+            json={
+                "screening_id": payload["screening_id"],
+                "helpful": False,
+                "issue_type": "usability",
+                "comment": "按钮说明不够清楚",
+            },
+        )
+        assert comment_without_consent.status_code == 400
+        comment_with_consent = client.post(
+            "/api/v1/feedback",
+            headers={"X-Screening-Token": payload["screening_token"]},
+            json={
+                "screening_id": payload["screening_id"],
+                "helpful": False,
+                "issue_type": "usability",
+                "comment": "按钮说明不够清楚",
+                "consent_to_store_comment": True,
+            },
+        )
+        assert comment_with_consent.status_code == 201
+
         forbidden = client.delete(f"/api/v1/screenings/{payload['screening_id']}")
         assert forbidden.status_code == 403
         deleted = client.delete(
@@ -127,6 +152,22 @@ def test_screening_returns_office_and_user_can_delete_record(
             ).status_code
             == 403
         )
+
+
+def test_screening_is_stateless_by_default(tmp_path: Path, monkeypatch) -> None:
+    import app.main as main
+
+    temporary_database = Database(tmp_path / "screening-stateless.db")
+    monkeypatch.setattr(main, "database", temporary_database)
+    with TestClient(main.app) as client:
+        response = client.post("/api/v1/screenings", json=_profile())
+        assert response.status_code == 200
+        payload = response.json()
+        assert payload["persisted"] is False
+        assert payload["screening_token"] is None
+        assert payload["data_retention_days"] == 0
+        with temporary_database.connect() as connection:
+            assert connection.execute("SELECT COUNT(*) FROM screenings").fetchone()[0] == 0
 
 
 def test_material_package_precheck_detects_minimum_set(
@@ -164,11 +205,29 @@ def test_admin_reports_verifiable_governance_controls(
     with TestClient(main.app) as client:
         response = client.get("/api/v1/admin/dashboard")
         assert response.status_code == 200
-        registry = response.json()["rule_registry"]
+        dashboard = response.json()
+        registry = dashboard["rule_registry"]
         assert registry["registry_sha256_prefix"]
         assert registry["control_summary"]["total"] >= 5
-        assert len(registry["rules"]) == 6
-        assert sum(rule["benefit_id"] == "B002" for rule in registry["rules"]) == 2
+        assert len(registry["rules"]) >= 8
+        assessment = dashboard["living_assessment_model"]
+        assert assessment["registry_version"] == "2025.11-second-edition.1"
+        assert assessment["effective_from"] == "2026-01-01"
+        assert assessment["registry_sha256_prefix"]
+        assert "不可自动替代" in assessment["automation_boundary"]
+        relations = dashboard["benefit_relation_registry"]
+        assert relations["registry_version"] == "2026.10.15.1"
+        assert relations["relationship_count"] == 4
+        assert relations["registry_sha256_prefix"]
+        assert "不会" in relations["routing_boundary"]
+        historical_manual = [
+            item
+            for item in registry["rules"]
+            if item["version"] in {"v2023.06", "v2022.08"}
+        ]
+        assert len(historical_manual) == 2
+        assert all(item["manual_review_required"] for item in historical_manual)
+        assert sum(rule["benefit_id"] == "B002" for rule in registry["rules"]) == 3
 
 
 def test_existing_database_is_migrated_before_expiry_index(tmp_path: Path) -> None:

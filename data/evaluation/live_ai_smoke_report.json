@@ -1,0 +1,57 @@
+{
+  "report_schema": "live-ai-smoke/1.0",
+  "generated_at": "2026-10-15T10:37:39.954311+00:00",
+  "app_version": "1.2.0",
+  "runtime": {
+    "mode": "hybrid",
+    "configured": true,
+    "reachable": true,
+    "chat_model": "qwen3:4b-instruct",
+    "embedding_model": "qwen3-embedding:0.6b",
+    "active_provider": "ollama/qwen3:4b-instruct",
+    "reason": null,
+    "model_present": true,
+    "embedding_model_present": true,
+    "model_digest": "0edcdef34593eac1aa2be9c7d06c432dcf81945adca5eca2f27662c18f168ba0",
+    "model_size_bytes": 2497293803,
+    "model_details": {
+      "parent_model": "",
+      "format": "gguf",
+      "family": "qwen3",
+      "families": [
+        "qwen3"
+      ],
+      "parameter_size": "4.0B",
+      "quantization_level": "Q4_K_M",
+      "context_length": 262144,
+      "embedding_length": 2560
+    }
+  },
+  "chat": {
+    "provider": "ollama-json-schema",
+    "model_id": "qwen3:4b-instruct",
+    "latency_ms": 5849,
+    "prompt_sha256": "09eea7adf048419835f09a3b40f5f9cb48e200a4bbe9bd670dac10736aba687d",
+    "response_sha256": "08e2c358ce13cb67f94ebb35b0f67c8763190a857c0db68da6eb196dfe9da46a",
+    "schema_payload": {
+      "status": "ok"
+    }
+  },
+  "embedding": {
+    "provider": "ollama-embedding",
+    "model_id": "qwen3-embedding:0.6b",
+    "latency_ms": 3076,
+    "vectors": 2,
+    "dimensions": 1024
+  },
+  "claim_boundary": "这只证明本机配置的对话与向量模型在该时间点完成真实推理；不代表业务准确率，完整指标仍以版本化AI评测报告为准。",
+  "engine_version": "rule-engine/0.5.0",
+  "release_metadata": {
+    "release_id": "v1.2.0+source.5fc011cd9986",
+    "app_version": "1.2.0",
+    "engine_version": "rule-engine/0.5.0",
+    "git_commit": "488be3243a196a2331e8f173fe8b75cb91491779",
+    "git_dirty": true,
+    "source_tree_sha256": "5fc011cd9986144f8597a0e87e0ff0a4a9fe15b86f29a797aaf6bf1a34484dd1"
+  }
+}

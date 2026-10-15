@@ -80,7 +80,7 @@ def make_doc() -> None:
 
     header = section.header.paragraphs[0]
     header.alignment = WD_ALIGN_PARAGRAPH.RIGHT
-    add_run(header, "惠民智导 · 国赛佐证材料", color=TEAL, size=8.5)
+    add_run(header, "惠民智导 · 技术评测与工程佐证", color=TEAL, size=8.5)
     add_page_number(section.footer.paragraphs[0])
 
     p = doc.add_paragraph()
@@ -92,7 +92,7 @@ def make_doc() -> None:
     add_run(p, "技术评测与工程佐证材料", bold=True, color=NAVY, size=22)
     p = doc.add_paragraph()
     p.alignment = WD_ALIGN_PARAGRAPH.CENTER
-    add_run(p, "V0.7.1 · 2026-10-03 · AI+软件创新", color=GRAY, size=12)
+    add_run(p, "V1.0.0 · 2026-10-06 · AI+软件创新", color=GRAY, size=12)
     callout(
         doc,
         "材料边界",
@@ -110,7 +110,7 @@ def make_doc() -> None:
             ["本地AI", "Qwen3生成/向量模型冻结评测", "40条画像、12条检索均为内部构造"],
             ["规则评测", "A/B评审+C裁决；107唯一画像", "专家构造金标准，不是真实群众样本"],
             ["安全实验", "八项消融；100条高风险回归", "项目组构造安全案例，不是独立红队"],
-            ["工程质量", "64项测试；并发；SBOM；漏洞审计", "本机回环与扫描时点有效"],
+            ["工程质量", "66项测试；并发；SBOM；漏洞审计", "本机回环与扫描时点有效"],
         ],
         [3.1, 6.0, 7.1],
     )
@@ -119,7 +119,7 @@ def make_doc() -> None:
     bullet(doc, "项目校验：.\\.venv\\Scripts\\python.exe scripts\\check_project.py")
     bullet(doc, "AI评测：设置AI_MODE=hybrid后运行 scripts\\evaluate_ai_pipeline.py")
     bullet(doc, "一键阶段复现：.\\reproduce_phase12.ps1")
-    callout(doc, "当前验收", "64/64自动测试通过；项目校验通过；两套模型在RTX 4060上由ollama ps核验为100% GPU。", MINT)
+    callout(doc, "当前验收", "66/66自动测试通过；项目校验通过；两套模型在RTX 4060上由ollama ps核验为100% GPU。", MINT)
     page_break(doc)
 
     heading(doc, "02 政策来源与逐字证据", 1)
@@ -186,7 +186,7 @@ def make_doc() -> None:
         ],
         [4.0, 4.5, 7.7],
     )
-    body(doc, "流程由专家A、专家B独立填写，专家C完成分歧裁决，随后冻结主表与哈希。报告只称“专家构造案例评测”，不称目标群众真实业务准确率。")
+    body(doc, "当前尚未开展外部专家评测。现有标签均为团队自编或项目组标注，只用于工程回归；不得表述为独立专家证据或真实业务准确率。")
     page_break(doc)
 
     heading(doc, "05 Policy2Rule与主动提问", 1)
@@ -260,13 +260,13 @@ def make_doc() -> None:
     )
     page_break(doc)
 
-    heading(doc, "08 真实性声明与最终人工事项", 1)
+    heading(doc, "08 真实性声明与人工事项", 1)
     callout(doc, "已经证明", "软件闭环可运行；模型真实运行；证据逐字可追溯；内部基准、消融和工程测试可复现。", MINT)
     callout(doc, "尚未证明", "真实群众满意度、真实办事成功率、真实跑腿减少比例、基层实际使用规模和第三方认证。", AMBER)
-    heading(doc, "8.1 必须由真人完成", 2)
+    heading(doc, "8.1 必须由团队或外部参与者完成", 2)
     bullet(doc, "真实参与者可用性试点或诚实标注为未完成；不得使用AI生成记录替代。")
     bullet(doc, "在另一台干净Windows电脑完成第三方安装与复现实验验收并签字。")
-    bullet(doc, "团队真人录制3—5分钟演示视频，检查声音、字幕和隐私遮挡。")
+    bullet(doc, "团队复核现有3—5分钟演示视频的声音、字幕、画面清晰度和隐私遮挡。")
     bullet(doc, "填写最终团队编号、赛题名称、队员/学校信息，完成签字盖章和平台上传。")
     heading(doc, "8.2 文件级复核", 2)
     bullet(doc, "所有正式数字可回链 data/evaluation 下的JSON/CSV和对应脚本。")
@@ -275,7 +275,7 @@ def make_doc() -> None:
 
     doc.core_properties.title = "惠民智导——技术评测与工程佐证材料"
     doc.core_properties.subject = "AI+软件创新赛道佐证材料"
-    doc.core_properties.author = "策马奔腾队"
+    doc.core_properties.author = "策马奔腾"
     doc.core_properties.keywords = "评测,证据链,可信AI,可复现,供应链"
     OUT.parent.mkdir(parents=True, exist_ok=True)
     doc.save(OUT)

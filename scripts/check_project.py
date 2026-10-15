@@ -7,7 +7,6 @@ import re
 import sys
 from pathlib import Path
 
-
 ROOT = Path(__file__).resolve().parent.parent
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
@@ -40,12 +39,19 @@ def main() -> None:
         ROOT / "data" / "evaluation" / "dependency_vulnerability_report.json",
         ROOT / "requirements.lock",
         ROOT / ".env.example",
+        ROOT / "data" / "processed" / "living_assessment_registry.json",
+        ROOT / "data" / "processed" / "benefit_relation_registry.json",
+        ROOT / "data" / "evaluation" / "release_manifest.json",
+        ROOT / "data" / "processed" / "policy_evidence_inventory.json",
     ]
     missing = [path.relative_to(ROOT).as_posix() for path in expected if not path.exists()]
     if missing:
         _fail(f"缺少文件：{missing}")
 
-    for path in [expected[3], expected[4], expected[5], expected[6], expected[7], expected[10], expected[11]]:
+    for path in [
+        expected[3], expected[4], expected[5], expected[6], expected[7],
+        expected[10], expected[11], expected[14], expected[15], expected[16], expected[17],
+    ]:
         with path.open("r", encoding="utf-8-sig") as handle:
             json.load(handle)
 
@@ -60,6 +66,12 @@ def main() -> None:
         _fail("依赖漏洞扫描报告缺失或覆盖不足")
     if known_vulnerabilities:
         _fail(f"依赖漏洞扫描发现已知漏洞：{known_vulnerabilities}")
+
+    release_manifest = json.loads(expected[16].read_text(encoding="utf-8"))
+    if release_manifest.get("app_version") != APP_VERSION:
+        _fail("发布清单版本与app.version不一致")
+    if not re.fullmatch(r"[0-9a-f]{64}", release_manifest.get("source_tree_sha256", "")):
+        _fail("发布清单缺少有效源码树指纹")
 
     catalog_path = expected[0]
     with catalog_path.open("r", encoding="utf-8-sig", newline="") as handle:
@@ -96,6 +108,50 @@ def main() -> None:
             if not item["passed"]
         ]
         _fail(f"逐字证据核验失败：{failures}")
+
+    assessment_registry = json.loads(expected[14].read_text(encoding="utf-8"))
+    evidence_payload = json.loads(expected[6].read_text(encoding="utf-8"))
+    evidence_ids = {item["evidence_id"] for item in evidence_payload}
+    missing_assessment_evidence = set(assessment_registry.get("evidence", {}).values()) - evidence_ids
+    if missing_assessment_evidence:
+        _fail(f"综合评估登记表引用了不存在的证据：{sorted(missing_assessment_evidence)}")
+
+    relation_registry = json.loads(expected[15].read_text(encoding="utf-8"))
+    relation_evidence = {
+        evidence_id
+        for relation in relation_registry.get("relationships", [])
+        for evidence_id in relation.get("evidence_ids", [])
+    }
+    missing_relation_evidence = relation_evidence - evidence_ids
+    if missing_relation_evidence:
+        _fail(f"事项关系登记表引用了不存在的证据：{sorted(missing_relation_evidence)}")
+    relation_ids = [
+        item.get("relation_id") for item in relation_registry.get("relationships", [])
+    ]
+    if not relation_ids or len(relation_ids) != len(set(relation_ids)):
+        _fail("事项关系登记表为空或relation_id重复")
+
+    inventory = json.loads(expected[17].read_text(encoding="utf-8"))
+    inventory_rows = inventory.get("files", [])
+    inventory_names = [item.get("file_name") for item in inventory_rows]
+    actual_pdf_names = sorted(path.name for path in (ROOT / "政策证据包").glob("*.pdf"))
+    if len(inventory_names) != len(set(inventory_names)):
+        _fail("政策证据包清单存在重复文件名")
+    if sorted(inventory_names) != actual_pdf_names:
+        missing_inventory = sorted(set(actual_pdf_names) - set(inventory_names))
+        missing_files = sorted(set(inventory_names) - set(actual_pdf_names))
+        _fail(f"政策PDF未闭环分类：未登记={missing_inventory}，文件缺失={missing_files}")
+    known_source_ids = {row["source_id"] for row in sources}
+    allowed_classifications = {
+        "catalog_primary", "catalog_duplicate_snapshot", "official_supporting",
+        "superseded_legacy", "out_of_scope_context",
+    }
+    for item in inventory_rows:
+        if item.get("classification") not in allowed_classifications:
+            _fail(f"政策PDF分类无效：{item.get('file_name')}")
+        linked = set(item.get("source_ids", []))
+        if not linked or linked - known_source_ids:
+            _fail(f"政策PDF关联未知或空来源编号：{item.get('file_name')}")
 
     pyproject = (ROOT / "pyproject.toml").read_text(encoding="utf-8")
     index_html = (ROOT / "app" / "static" / "index.html").read_text(encoding="utf-8")

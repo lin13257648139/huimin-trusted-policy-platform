@@ -15,6 +15,12 @@ const { resolvePresentationFont, applyPresentationChartFont, finalizePresentatio
 await fs.mkdir(TMP_DIR, { recursive: true });
 await fs.mkdir(path.dirname(FINAL_PPTX), { recursive: true });
 const family = resolvePresentationFont();
+const evaluationDir = path.join(WORKSPACE_DIR, "data", "evaluation");
+const aiReport = JSON.parse(await fs.readFile(path.join(evaluationDir, "ai_pipeline_report.json"), "utf8"));
+const concurrencyReport = JSON.parse(await fs.readFile(path.join(evaluationDir, "http_concurrency_report.json"), "utf8"));
+const aiProfile = aiReport.profile_extraction.schema_constrained_llm_ensemble;
+const aiRetrieval = aiReport.retrieval.configured_pipeline;
+const concurrency30 = concurrencyReport.results.find((item) => item.concurrency === 30);
 
 const W = 1280;
 const H = 720;
@@ -115,8 +121,8 @@ function addNotes(slide, note) {
   textBox(slide, "模型理解 · 规则裁决 · 原文举证 · 人工发布", 66, 318, 900, 42, { size: 22, color: "#B7C7D4" });
   pill(slide, "AI + 软件创新", 66, 404, 180, "#143D42", "#92E6D8");
   pill(slide, "社会救助深度验证", 260, 404, 220, "#143D42", "#92E6D8");
-  textBox(slide, "策马奔腾  ·  广州软件学院  ·  V0.7.1", 66, 590, 850, 28, { size: 15, color: "#9EB2C1" });
-  textBox(slide, "队长 林琪东    队员 罗晓蓝    RTX 4060 单机本地运行", 66, 622, 900, 28, { size: 13, color: "#7F98A6" });
+  textBox(slide, "策马奔腾  ·  V1.0.0", 66, 590, 850, 28, { size: 15, color: "#9EB2C1" });
+  textBox(slide, "RTX 4060 单机本地运行  ·  数据与边界可追溯", 66, 622, 900, 28, { size: 13, color: "#7F98A6" });
   textBox(slide, "可信不是口号，而是每个结论都能回到证据。", 760, 542, 450, 66, { size: 23, bold: true, color: C.white, align: "right" });
   addNotes(slide, "开场：这是一个面向高风险政策服务的可信政策智能软件平台，社会救助是第一个深度验证场景。控制在20秒。数据均来自项目仓库。 ");
 }
@@ -315,9 +321,9 @@ function addNotes(slide, note) {
   textBox(slide, "平均问题数", 190, 550, 290, 28, { size: 14, color: C.gray, align: "center" });
   metric(slide, 650, 184, 250, "提问减少", "51.47%", "相对 17 字段完整表单");
   metric(slide, 930, 184, 250, "安全回归", "100 / 100", "项目内高风险集通过");
-  metric(slide, 650, 344, 250, "并发 30 · P95", "439.8 ms", "本机回环 Uvicorn");
-  metric(slide, 930, 344, 250, "自动测试", "64 项", "全量 Pytest 当前通过");
-  textBox(slide, "Qwen3画像 F1 1.000 · P95 2.592 s\n混合检索 P95 430 ms · 12/12真实路由", 650, 526, 530, 58, { size: 17, bold: true, color: C.ink, fill: C.amberBg, radius: "rounded-xl", align: "center", valign: "middle" });
+  metric(slide, 650, 344, 250, "并发 30 · P95", `${concurrency30.p95_ms.toFixed(1)} ms`, "本机回环 Uvicorn");
+  metric(slide, 930, 344, 250, "自动测试", "66 项", "全量 Pytest 当前通过");
+  textBox(slide, `Qwen3画像 F1 ${aiProfile.field_f1.toFixed(3)} · P95 ${(aiProfile.latency_ms.p95 / 1000).toFixed(3)} s\n混合检索 P95 ${aiRetrieval.latency_ms.p95} ms · 12/12真实路由`, 650, 526, 530, 58, { size: 17, bold: true, color: C.ink, fill: C.amberBg, radius: "rounded-xl", align: "center", valign: "middle" });
   addNotes(slide, "来源：active_question_report.json、high_risk_safety_report.json、http_concurrency_report.json、ai_pipeline_report.json、pytest。画像与检索是项目内构造小样本，不能外推真人效果；并发测试是本机回环，不是生产压测。 ");
 }
 
@@ -375,7 +381,7 @@ function addNotes(slide, note) {
   const slide = baseSlide("ENGINEERING", "单机可运行、可测试、可审计、可打包", 13);
   const cols = [
     ["运行", ["Python 3.12 + FastAPI", "Qwen3 双模型 100% GPU", "PowerShell 一键启停", "模型不可用显式降级"]],
-    ["质量", ["64 项自动测试", "100 条高风险回归", "前端路由契约", "六条演示路径"]],
+    ["质量", ["66 项自动测试", "100 条高风险回归", "前端路由契约", "六条演示路径"]],
     ["供应链", ["46 项锁定依赖", "SBOM 软件物料清单", "已知漏洞 0", "数据与源码哈希"]],
   ];
   cols.forEach((d, i) => {
@@ -395,9 +401,9 @@ function addNotes(slide, note) {
 {
   const slide = baseSlide("HONESTY", "我们明确知道：什么已经证明，什么尚未证明", 14);
   card(slide, 64, 180, 536, 360, "已经可验证", "✓ 可信软件闭环可运行\n✓ 规则与证据逐字追溯\n✓ Qwen3双模型GPU冻结评测\n✓ 高风险输出被工程护栏阻断\n✓ 单机并发与供应链状态可检查", { accent: C.teal, fill: C.mint, titleSize: 26, bodySize: 20 });
-  card(slide, 650, 180, 536, 360, "仍需真人完成", "○ 真实参与者可用性试点\n○ 另一台干净电脑安装验收\n○ 3–5 分钟真人演示视频\n○ 盖章、签字与指定平台提交\n○ 最终平台信息与下载链接", { accent: C.amber, fill: C.amberBg, titleSize: 26, bodySize: 20 });
+  card(slide, 650, 180, 536, 360, "仍需外部验证", "○ 真实参与者可用性试点\n○ 另一台干净电脑安装验收\n○ 基层经办或社工使用反馈\n○ 盖章、签字与指定平台提交\n○ 最终平台信息与下载链接", { accent: C.amber, fill: C.amberBg, titleSize: 26, bodySize: 20 });
   textBox(slide, "不把合成数据写成真人数据，不把导办写成审批，不把内部评测写成第三方认证。", 64, 584, 1122, 54, { size: 21, bold: true, color: C.ink, align: "center", valign: "middle" });
-  addNotes(slide, "这一页主动说明边界。模型实测已完成；真人试点、第三方干净机验收和团队视频仍必须由真实参与者完成。 ");
+  addNotes(slide, "这一页主动说明边界。模型实测与演示视频已完成；真人试点、基层使用反馈和第三方干净机验收仍必须由真实参与者完成。 ");
 }
 
 // 15 Close

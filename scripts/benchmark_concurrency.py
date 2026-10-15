@@ -9,13 +9,12 @@ import socket
 import subprocess
 import sys
 import tempfile
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 from time import perf_counter
 from typing import Any
 
 import httpx
-
 
 ROOT = Path(__file__).resolve().parent.parent
 OUTPUT = ROOT / "data" / "evaluation" / "http_concurrency_report.json"
@@ -68,7 +67,9 @@ async def run_level(base_url: str, concurrency: int) -> dict[str, Any]:
             async with semaphore:
                 started = perf_counter()
                 try:
-                    response = await client.get(f"{base_url}{paths[index % len(paths)]}")
+                    response = await client.get(
+                        f"{base_url}{paths[index % len(paths)]}", timeout=15.0
+                    )
                     if response.status_code != 200:
                         errors.append(f"HTTP {response.status_code}")
                 except Exception as exc:  # pragma: no cover - diagnostic path
@@ -105,6 +106,7 @@ async def benchmark() -> dict[str, Any]:
                 "UPLOAD_DIR": str(temp / "uploads"),
                 "AI_MODE": "deterministic",
                 "APP_ENV": "benchmark",
+                "DEMO_MODE": "true",
             }
         )
         command = [
@@ -140,7 +142,7 @@ async def benchmark() -> dict[str, Any]:
                 process.kill()
                 process.wait(timeout=5)
     return {
-        "generated_at": datetime.now(timezone.utc).isoformat(),
+        "generated_at": datetime.now(UTC).isoformat(),
         "environment": {
             "python": platform.python_version(),
             "platform": platform.platform(),

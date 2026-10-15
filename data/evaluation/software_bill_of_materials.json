@@ -1,7 +1,7 @@
 {
   "bom_format": "project-internal CycloneDX-inspired inventory",
   "spec_note": "不是CycloneDX官方验证输出；用于依赖追溯与赛前许可证复核。",
-  "generated_at": "2026-10-02T20:47:45.998154+00:00",
+  "generated_at": "2026-10-15T09:51:03.904864+00:00",
   "runtime": {
     "python": "3.12.14",
     "platform": "Windows-11-10.0.26200-SP0"
@@ -9,7 +9,7 @@
   "source": "requirements.lock",
   "component_count": 46,
   "all_installed": true,
-  "all_versions_match": true,
+  "all_versions_match": false,
   "missing": [],
   "components": [
     {
@@ -69,8 +69,8 @@
     {
       "name": "click",
       "locked_version": "8.5.0",
-      "installed_version": "8.5.0",
-      "version_matches": true,
+      "installed_version": "8.4.2",
+      "version_matches": false,
       "license_declared": "not-declared",
       "homepage": "not-declared",
       "purl": "pkg:pypi/click@8.5.0"
@@ -231,8 +231,8 @@
     {
       "name": "protobuf",
       "locked_version": "7.36.2",
-      "installed_version": "7.36.2",
-      "version_matches": true,
+      "installed_version": "6.33.6",
+      "version_matches": false,
       "license_declared": "3-Clause BSD License",
       "homepage": "https://developers.google.com/protocol-buffers/",
       "purl": "pkg:pypi/protobuf@7.36.2"

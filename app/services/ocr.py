@@ -11,7 +11,6 @@ from typing import Any
 
 from PIL import Image
 
-
 OCR_MATERIAL_HINTS = {
     "identity": ("居民身份证", "公民身份号码", "身份证"),
     "household_register": ("居民户口簿", "常住人口登记", "户口簿", "户主"),

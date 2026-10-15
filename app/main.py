@@ -1,13 +1,13 @@
 from __future__ import annotations
 
-from contextlib import asynccontextmanager
+import asyncio
 import logging
-import secrets
 import mimetypes
 import re
+import secrets
+from contextlib import asynccontextmanager
+from datetime import UTC, date, datetime
 from time import perf_counter
-from datetime import date, datetime, timezone
-from pathlib import Path
 from typing import Annotated
 from uuid import uuid4
 
@@ -18,10 +18,14 @@ from fastapi.staticfiles import StaticFiles
 
 from app.config import BASE_DIR, settings
 from app.domain.models import (
+    BenefitId,
     FeedbackRequest,
     GuidanceDraft,
     GuidanceResponse,
     HouseholdProfile,
+    LivingAssessmentRequest,
+    LivingAssessmentResponse,
+    MaterialType,
     Office,
     ParseProfileRequest,
     ParseProfileResponse,
@@ -33,25 +37,35 @@ from app.domain.models import (
     ScreeningResponse,
 )
 from app.repositories.database import Database
-from app.services.catalog import load_evidence, load_offices, load_policy_sources
 from app.services.ai_runtime import ollama_runtime_status
+from app.services.benefit_relations import (
+    benefit_relation_governance,
+    load_benefit_relation_registry,
+)
+from app.services.catalog import load_evidence, load_offices, load_policy_sources
 from app.services.document_check import (
     DocumentValidationError,
     check_document,
     check_document_package,
 )
-from app.services.policy_version import CURRENT_DIBAO_END, TEMPORARY_RESCUE_END
-from app.services.policy_compiler import analyze_policy_impact, compile_policy
-from app.services.ocr import ocr_runtime_available
 from app.services.intent_classifier import get_intent_classifier
+from app.services.living_assessment import assessment_model_governance, calculate_living_assessment
+from app.services.ocr import ocr_runtime_available
+from app.services.policy_compiler import analyze_policy_impact, compile_policy
+from app.services.policy_version import CURRENT_DIBAO_END, TEMPORARY_RESCUE_END
 from app.services.profile_parser import parse_profile
 from app.services.question_engine import next_guidance_question
 from app.services.readiness import build_readiness_report
 from app.services.retrieval import search_evidence_result
-from app.services.rule_registry import registry_governance
 from app.services.rule_engine import DIBAO_STANDARD, EDGE_STANDARD, ENGINE_VERSION, evaluate_profile
-from app.services.safety_validator import validate_screening_output
-
+from app.services.rule_registry import registry_governance
+from app.services.safety_validator import safety_gate_passed, validate_screening_output
+from app.services.workload import (
+    WorkloadBusyError,
+    WorkloadTimeoutError,
+    run_bounded,
+    workload_status,
+)
 
 database = Database(settings.database_path)
 logger = logging.getLogger("huimin.request")
@@ -68,14 +82,15 @@ async def lifespan(_: FastAPI):
     database.initialize()
     database.purge_expired(settings.data_retention_days)
     load_evidence()
+    load_benefit_relation_registry()
     load_offices()
     load_policy_sources()
     yield
 
 
 app = FastAPI(
-    title="惠民智导 API",
-    description="可信、可解释、可追溯的社会救助申请前智能导办系统",
+    title="惠民智导可信政策智能平台 API",
+    description="以社会救助为首个场景的可信、可解释、可追溯政策智能平台",
     version=settings.app_version,
     lifespan=lifespan,
     docs_url="/api/docs",
@@ -136,10 +151,21 @@ async def security_headers(request: Request, call_next):
 def require_admin_token(
     x_admin_token: str | None = Header(default=None, alias="X-Admin-Token"),
 ) -> None:
-    if settings.admin_api_token and (
+    if settings.demo_mode:
+        return
+    if not settings.admin_api_token or (
         not x_admin_token or not secrets.compare_digest(x_admin_token, settings.admin_api_token)
     ):
         raise HTTPException(status_code=403, detail="治理接口需要管理员令牌")
+
+
+async def _run_workload(kind, function, *args, timeout: float, **kwargs):
+    try:
+        return await run_bounded(kind, function, *args, timeout=timeout, **kwargs)
+    except WorkloadBusyError as exc:
+        raise HTTPException(status_code=503, detail=str(exc), headers={"Retry-After": "2"}) from exc
+    except WorkloadTimeoutError as exc:
+        raise HTTPException(status_code=504, detail=str(exc)) from exc
 
 
 @app.get("/", include_in_schema=False)
@@ -164,7 +190,7 @@ async def health() -> dict[str, object]:
         "service": settings.app_name,
         "version": settings.app_version,
         "policy_as_of": settings.policy_as_of,
-        "time": datetime.now(timezone.utc).isoformat(),
+        "time": datetime.now(UTC).isoformat(),
     }
 
 
@@ -183,6 +209,7 @@ async def metadata() -> dict[str, object]:
     ]
     return {
         "name": settings.app_name,
+        "runtime_mode": "demo" if settings.demo_mode else "authenticated",
         "version": settings.app_version,
         "region": "广州市",
         "policy_as_of": settings.policy_as_of,
@@ -215,10 +242,12 @@ async def metadata() -> dict[str, object]:
             "版本差异与影响分析",
             "证据链",
             "组合导办",
+            "事项关系图谱与分层转介",
             "本地OCR内容分类与材料质量预检",
         ],
         "data_retention_days": settings.data_retention_days,
-        "admin_protected": bool(settings.admin_api_token),
+        "admin_protected": not settings.demo_mode,
+        "bounded_workloads": workload_status(),
         "ocr": {
             "enabled": settings.ocr_enabled and ocr_runtime_available(),
             "provider": "RapidOCR/ONNX Runtime"
@@ -240,7 +269,12 @@ async def system_readiness() -> dict[str, object]:
 
 @app.post("/api/v1/profile/parse", response_model=ParseProfileResponse)
 async def parse_profile_endpoint(request: ParseProfileRequest) -> ParseProfileResponse:
-    return parse_profile(request)
+    return await _run_workload(
+        "llm",
+        parse_profile,
+        request,
+        timeout=settings.ollama_timeout_seconds + 5,
+    )
 
 
 @app.post("/api/v1/guidance/next-question", response_model=GuidanceResponse)
@@ -248,12 +282,50 @@ async def guidance_next_question(draft: GuidanceDraft) -> GuidanceResponse:
     return next_guidance_question(draft)
 
 
+@app.post(
+    "/api/v1/assessments/living-conditions",
+    response_model=LivingAssessmentResponse,
+)
+async def living_conditions_assessment(
+    request: LivingAssessmentRequest,
+) -> LivingAssessmentResponse:
+    """执行可追溯的第二版综合评估计算，不替代入户调查或行政审核。"""
+
+    return calculate_living_assessment(request)
+
+
 @app.post("/api/v1/screenings", response_model=ScreeningResponse)
-async def create_screening(profile: HouseholdProfile) -> ScreeningResponse:
+async def create_screening(
+    profile: HouseholdProfile,
+    request: Request,
+    persist: bool = Query(
+        default=False,
+        description="用户主动选择保存结构化预筛记录30天；默认无状态。",
+    ),
+) -> ScreeningResponse:
     snapshot, results, warnings = evaluate_profile(profile)
     safety_validation = validate_screening_output(profile, results)
-    if safety_validation["blocked"]:
-        warnings.append("安全验证器发现关键一致性问题，结果已标记为需要人工复核。")
+    if not safety_gate_passed(safety_validation):
+        failed_ids = safety_validation.get("failed_check_ids", [])
+        database.record_audit_event(
+            "screening.safety_blocked",
+            entity_id=None,
+            details={
+                "failed_check_ids": failed_ids,
+                "query_date": profile.query_date.isoformat(),
+                "district": profile.district,
+                "request_id": getattr(request.state, "request_id", None),
+            },
+        )
+        raise HTTPException(
+            status_code=422,
+            detail={
+                "code": "SAFETY_GATE_BLOCKED",
+                "message": "安全校验未通过，本次结果已阻断，未展示、未保存，也不可打印导出。",
+                "failed_check_ids": failed_ids,
+                "next_action": "请核对输入与政策证据；如情况紧急，请直接联系所在街道或广州12345。",
+            },
+        )
     screening_id = f"HM-{uuid4().hex[:12].upper()}"
     office_records = load_offices()
     office = next((item for item in office_records if item.region == profile.district), None)
@@ -261,10 +333,14 @@ async def create_screening(profile: HouseholdProfile) -> ScreeningResponse:
         office = next((item for item in office_records if item.region == "广州市"), None)
     first_actionable = next(
         (item for item in results if item.plan_role == "primary"),
-        results[0],
+        next(
+            (item for item in results if item.plan_role in {"manual", "alternative"}),
+            results[0],
+        ),
     )
+    action_label = "优先查看" if first_actionable.plan_role == "primary" else "优先核验"
     guidance_summary = [
-        f"优先查看：{first_actionable.name}（{first_actionable.summary}）",
+        f"{action_label}：{first_actionable.name}（{first_actionable.summary}）",
         "先补齐报告中的最小必要信息，再携带材料咨询对应窗口。",
         "办理前建议电话确认受理地点、材料版本和服务时间。",
     ]
@@ -272,13 +348,21 @@ async def create_screening(profile: HouseholdProfile) -> ScreeningResponse:
     if alternatives:
         guidance_summary.insert(
             2,
-            f"分层备选：{'、'.join(alternatives)}；由窗口统一核验，避免重复申请。",
+            f"分层备选/转介：{'、'.join(alternatives)}；由窗口统一核验，避免重复申请。",
         )
-    if profile.urgent_event and profile.basic_life_interrupted:
+    parallel_pairs = {
+        tuple(sorted((item.benefit_id, relation.related_benefit_id)))
+        for item in results
+        for relation in item.plan_relations
+        if relation.relation_type == "parallel_assessment"
+    }
+    if parallel_pairs:
+        guidance_summary.insert(1, "低保边缘与刚性支出困难可分别认定：建议同窗并行核验并复用经济状况材料。")
+    if profile.urgent_event is True and profile.basic_life_interrupted is True:
         guidance_summary.insert(0, "基本生活已受严重影响：请优先联系所在街道或广州12345。")
     response = ScreeningResponse(
         screening_id=screening_id,
-        created_at=datetime.now(timezone.utc),
+        created_at=datetime.now(UTC),
         policy_snapshot=snapshot.snapshot_id,
         query_date=profile.query_date,
         district=profile.district,
@@ -300,26 +384,29 @@ async def create_screening(profile: HouseholdProfile) -> ScreeningResponse:
         recommended_office=office.model_dump(mode="json") if office else None,
         guidance_summary=guidance_summary,
         safety_validation=safety_validation,
-        data_retention_days=settings.data_retention_days,
+        persisted=persist,
+        data_retention_days=settings.data_retention_days if persist else 0,
         engine_version=ENGINE_VERSION,
+        combination_plan_version=benefit_relation_governance()["registry_version"],
         disclaimer=(
             "本结果基于用户自述和当前已核验公开政策生成，仅供申请前预筛、备料和咨询参考；"
             "最终资格、金额与材料要求以主管部门审核为准。"
         ),
     )
-    stored_profile = profile.model_dump(mode="json")
-    # 自由文本只用于当次抽取/解释，不进入持久化记录，降低敏感叙述泄露风险。
-    stored_profile["user_statement"] = None
-    manage_token = database.save_screening(
-        screening_id=screening_id,
-        query_date=profile.query_date.isoformat(),
-        district=profile.district,
-        policy_snapshot=snapshot.snapshot_id,
-        request_payload=stored_profile,
-        result_payload=response.model_dump(mode="json"),
-        retention_days=settings.data_retention_days,
-    )
-    response.screening_token = manage_token
+    if persist:
+        stored_profile = profile.model_dump(mode="json")
+        # 自由文本只用于当次抽取/解释，不进入持久化记录，降低敏感叙述泄露风险。
+        stored_profile["user_statement"] = None
+        manage_token = database.save_screening(
+            screening_id=screening_id,
+            query_date=profile.query_date.isoformat(),
+            district=profile.district,
+            policy_snapshot=snapshot.snapshot_id,
+            request_payload=stored_profile,
+            result_payload=response.model_dump(mode="json"),
+            retention_days=settings.data_retention_days,
+        )
+        response.screening_token = manage_token
     return response
 
 
@@ -333,6 +420,14 @@ async def get_screening(
     result = database.get_screening(screening_id, x_screening_token)
     if result is None:
         raise HTTPException(status_code=403, detail="记录不存在或访问凭证无效")
+    if not safety_gate_passed(result.get("safety_validation", {})):
+        raise HTTPException(
+            status_code=409,
+            detail={
+                "code": "STORED_RESULT_SAFETY_BLOCKED",
+                "message": "该历史记录未通过当前安全发布门，禁止重新展示或导出。",
+            },
+        )
     return ScreeningResponse.model_validate(result)
 
 
@@ -351,6 +446,8 @@ async def create_feedback(
     request: FeedbackRequest,
     x_screening_token: str | None = Header(default=None, alias="X-Screening-Token"),
 ) -> dict[str, object]:
+    if request.comment and request.comment.strip() and not request.consent_to_store_comment:
+        raise HTTPException(status_code=400, detail="保存文字反馈前需要明确同意")
     if not x_screening_token or not database.screening_token_valid(
         request.screening_id, x_screening_token
     ):
@@ -384,25 +481,35 @@ async def evidence_search(
     limit: int = Query(default=5, ge=1, le=10),
     as_of: date | None = Query(default=None, description="政策生效日过滤，默认系统政策快照日"),
 ) -> dict[str, object]:
-    return search_evidence_result(q, limit=limit, as_of=as_of)
+    return await _run_workload(
+        "llm",
+        search_evidence_result,
+        q,
+        limit=limit,
+        as_of=as_of,
+        timeout=settings.ollama_timeout_seconds + 5,
+    )
 
 
 @app.post("/api/v1/documents/precheck")
 async def document_precheck(
     file: Annotated[UploadFile, File(description="JPG/PNG/WEBP/PDF，最大8MB")],
-    material_type: Annotated[str, Form()] = "auto",
+    material_type: Annotated[MaterialType, Form()] = MaterialType.AUTO,
     consent: Annotated[bool, Form()] = False,
 ) -> dict[str, object]:
     if not consent:
         raise HTTPException(status_code=400, detail="请先确认同意仅在本次请求中处理文件")
     content = await file.read(settings.max_upload_bytes + 1)
     try:
-        result = check_document(
+        result = await _run_workload(
+            "document",
+            check_document,
             filename=file.filename or "upload",
             content=content,
-            declared_type=material_type,
+            declared_type=material_type.value,
             max_bytes=settings.max_upload_bytes,
             max_image_pixels=settings.max_image_pixels,
+            timeout=settings.document_timeout_seconds,
         )
     except DocumentValidationError as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc
@@ -414,7 +521,7 @@ async def document_precheck(
 @app.post("/api/v1/documents/package-precheck")
 async def document_package_precheck(
     files: Annotated[list[UploadFile], File(description="最多12份JPG/PNG/WEBP/PDF")],
-    benefit_id: Annotated[str, Form()] = "B002",
+    benefit_id: Annotated[BenefitId, Form()] = BenefitId.MINIMUM_LIVING,
     consent: Annotated[bool, Form()] = False,
 ) -> dict[str, object]:
     if not consent:
@@ -424,25 +531,61 @@ async def document_package_precheck(
             status_code=400,
             detail=f"每次需上传1至{settings.max_package_files}份材料",
         )
-    checked = []
+    payloads: list[tuple[str, bytes]] = []
+    total_bytes = 0
     try:
         for upload in files:
             content = await upload.read(settings.max_upload_bytes + 1)
-            checked.append(
-                check_document(
-                    filename=upload.filename or "upload",
-                    content=content,
-                    declared_type=None,
-                    max_bytes=settings.max_upload_bytes,
-                    max_image_pixels=settings.max_image_pixels,
+            if len(content) > settings.max_upload_bytes:
+                raise DocumentValidationError(
+                    f"单个文件超过{settings.max_upload_bytes // 1024 // 1024}MB限制"
                 )
+            total_bytes += len(content)
+            if total_bytes > settings.max_package_bytes:
+                raise DocumentValidationError(
+                    f"材料包总大小超过{settings.max_package_bytes // 1024 // 1024}MB限制"
+                )
+            payloads.append((upload.filename or "upload", content))
+
+        async def check_payloads_in_order():
+            # RapidOCR/ONNX can oversubscribe CPU threads when several pages from
+            # one request start together. Keep a package ordered while the shared
+            # bounded executor still controls concurrency across requests.
+            results = []
+            for filename, content in payloads:
+                results.append(
+                    await _run_workload(
+                        "document",
+                        check_document,
+                        filename=filename,
+                        content=content,
+                        declared_type=None,
+                        max_bytes=settings.max_upload_bytes,
+                        max_image_pixels=settings.max_image_pixels,
+                        timeout=settings.document_timeout_seconds,
+                    )
+                )
+            return results
+
+        checked = await asyncio.wait_for(
+            check_payloads_in_order(), timeout=settings.package_timeout_seconds
+        )
+        total_pages = sum(item.page_count for item in checked)
+        if total_pages > settings.max_package_pages:
+            raise DocumentValidationError(
+                f"材料包总页数超过{settings.max_package_pages}页限制"
             )
+    except TimeoutError as exc:
+        raise HTTPException(
+            status_code=504,
+            detail=f"材料包处理超过{settings.package_timeout_seconds:g}秒限制",
+        ) from exc
     except DocumentValidationError as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc
     finally:
         for upload in files:
             await upload.close()
-    return check_document_package(benefit_id=benefit_id, documents=checked)
+    return check_document_package(benefit_id=benefit_id.value, documents=checked)
 
 
 @app.get("/api/v1/admin/dashboard", dependencies=[Depends(require_admin_token)])
@@ -453,6 +596,8 @@ async def admin_dashboard() -> dict[str, object]:
     return {
         **stats,
         "rule_registry": governance,
+        "benefit_relation_registry": benefit_relation_governance(),
+        "living_assessment_model": assessment_model_governance(),
         "policy_health": {
             "verified_sources": len([item for item in load_policy_sources() if item.priority == "P0"]),
             "total_sources": len(load_policy_sources()),
@@ -466,10 +611,13 @@ async def admin_dashboard() -> dict[str, object]:
         },
         "privacy": {
             "raw_documents_stored": False,
-            "free_text_persisted": False,
+            "user_statement_persisted": False,
+            "feedback_comment_persisted_with_consent": True,
             "audit_enabled": True,
             "retention_days": settings.data_retention_days,
-            "admin_token_required": bool(settings.admin_api_token),
+            "audit_retention_days": settings.data_retention_days,
+            "admin_token_required": not settings.demo_mode,
+            "runtime_mode": "demo" if settings.demo_mode else "authenticated",
         },
         "system_readiness": build_readiness_report(),
     }
@@ -483,7 +631,12 @@ async def admin_dashboard() -> dict[str, object]:
 async def compile_policy_endpoint(request: PolicyCompileRequest) -> PolicyCompileResponse:
     """把政策文本编译为不可直接发布的候选规则，并执行静态校验。"""
 
-    return compile_policy(request)
+    return await _run_workload(
+        "llm",
+        compile_policy,
+        request,
+        timeout=settings.ollama_timeout_seconds + 5,
+    )
 
 
 @app.post(
@@ -494,7 +647,12 @@ async def compile_policy_endpoint(request: PolicyCompileRequest) -> PolicyCompil
 async def policy_impact_endpoint(request: PolicyImpactRequest) -> PolicyImpactResponse:
     """用合成回归案例分析候选阈值变化，不估算真实人群规模。"""
 
-    return analyze_policy_impact(request.candidate)
+    return await _run_workload(
+        "llm",
+        analyze_policy_impact,
+        request.candidate,
+        timeout=settings.ollama_timeout_seconds + 5,
+    )
 
 
 @app.get("/{path:path}", include_in_schema=False)

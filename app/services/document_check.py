@@ -11,8 +11,8 @@ from typing import Any
 from PIL import Image, ImageFilter, ImageStat, UnidentifiedImageError
 
 from app.config import settings
+from app.domain.models import BenefitId, MaterialType
 from app.services.ocr import OCRAnalysis, analyze_image_text
-
 
 ALLOWED_SUFFIXES = {".jpg", ".jpeg", ".png", ".webp", ".pdf"}
 MATERIAL_HINTS = {
@@ -64,6 +64,13 @@ class DocumentCheck:
     warnings: list[str]
     privacy: dict[str, Any]
     ocr: dict[str, Any]
+
+    @property
+    def page_count(self) -> int:
+        for check in self.checks:
+            if check.get("code") == "pdf_pages":
+                return int(check["value"])
+        return 1
 
     def as_dict(self) -> dict[str, Any]:
         return {
@@ -260,6 +267,8 @@ def check_document(
     max_image_pixels: int = 40_000_000,
     ocr_enabled: bool | None = None,
 ) -> DocumentCheck:
+    if declared_type not in {None, *(item.value for item in MaterialType)}:
+        raise DocumentValidationError("材料类型不在允许枚举中")
     suffix = Path(filename).suffix.lower()
     if suffix not in ALLOWED_SUFFIXES:
         raise DocumentValidationError("仅支持JPG、PNG、WEBP和PDF文件")
@@ -318,7 +327,9 @@ def check_document(
 def check_document_package(
     *, benefit_id: str, documents: list[DocumentCheck]
 ) -> dict[str, Any]:
-    required = BENEFIT_REQUIRED_TYPES.get(benefit_id, ())
+    if benefit_id not in {item.value for item in BenefitId}:
+        raise DocumentValidationError("事项编号不在允许枚举中")
+    required = BENEFIT_REQUIRED_TYPES[benefit_id]
     detected = [item.detected_type for item in documents if item.detected_type != "unknown"]
     detected_set = set(detected)
     missing = [item for item in required if item not in detected_set]
@@ -358,6 +369,8 @@ def check_document_package(
     return {
         "benefit_id": benefit_id,
         "files_checked": len(documents),
+        "total_bytes": sum(item.file_size for item in documents),
+        "total_pages": sum(item.page_count for item in documents),
         "documents": [item.as_dict() for item in documents],
         "required_materials": [MATERIAL_LABELS[item] for item in required],
         "detected_materials": [MATERIAL_LABELS.get(item, item) for item in sorted(detected_set)],

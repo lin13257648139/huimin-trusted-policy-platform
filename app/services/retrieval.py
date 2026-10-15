@@ -10,11 +10,96 @@ from app.domain.models import Evidence
 from app.services.ai_runtime import ModelRuntimeError, embed_texts
 from app.services.catalog import load_evidence
 
-
 DOMAIN_ANCHORS = (
     "救助", "低保", "保障", "家庭", "申请", "材料", "办理", "收入", "支出",
     "财产", "户籍", "居住", "急难", "政策", "窗口", "残疾", "医疗", "教育",
 )
+OUT_OF_DOMAIN_ANCHORS = (
+    "量子", "卫星", "轨道", "编程", "代码", "股票", "基金", "彩票", "天气",
+    "菜谱", "游戏", "影视", "足球", "旅游", "景点", "旅游攻略", "数学题",
+)
+GATE_BYPASS_MARKERS = (
+    "忽略领域", "绕过领域", "跳过领域", "无视领域", "强制回答", "取消限制",
+    "无视规则", "绕过限制", "越过限制", "跳过校验", "关闭校验", "解除限制",
+)
+SMUGGLING_CONNECTORS = (
+    "顺便", "附带", "捎带", "只要加上", "同时写上", "但请提到", "硬塞",
+)
+ELIGIBILITY_RELATION_MARKERS = (
+    "是否", "算不算", "计入", "影响", "申报", "核查", "认定", "属于", "资格", "条件",
+)
+ELIGIBILITY_ANCHORS = ("低保", "救助", "保障", "收入", "财产", "资格", "申请")
+UNSUPPORTED_ASSISTANCE_TOPICS = (
+    "住房救助", "教育救助", "就业救助", "特困供养", "流浪乞讨", "孤儿福利",
+)
+
+
+def _is_legitimate_eligibility_relation(compact: str, off_domain: list[str]) -> bool:
+    """Allow domain-external facts only when they are being tested as eligibility facts.
+
+    Words such as “股票” can be a legitimate household-asset question.  Merely
+    placing several policy words next to an unrelated request is not enough: the
+    query must state an eligibility relation and must not use an explicit
+    smuggling connector.
+    """
+
+    if not off_domain or any(marker in compact for marker in SMUGGLING_CONNECTORS):
+        return False
+    has_relation = any(marker in compact for marker in ELIGIBILITY_RELATION_MARKERS)
+    has_eligibility_anchor = any(anchor in compact for anchor in ELIGIBILITY_ANCHORS)
+    return has_relation and has_eligibility_anchor
+
+
+def domain_gate(query: str) -> dict[str, object]:
+    """Deterministic allow/deny gate shared by every retrieval route."""
+
+    compact = re.sub(r"\s+", "", query)
+    matched = sorted({anchor for anchor in DOMAIN_ANCHORS if anchor in compact})
+    off_domain = sorted({anchor for anchor in OUT_OF_DOMAIN_ANCHORS if anchor in compact})
+    bypass = sorted({marker for marker in GATE_BYPASS_MARKERS if marker in compact})
+    if bypass:
+        return {
+            "passed": False,
+            "reason_code": "gate_bypass_attempt",
+            "reason": "检测到要求绕过领域限制的指令，已拒绝检索。",
+            "matched_anchors": matched,
+            "off_domain_anchors": off_domain,
+        }
+    unsupported_topics = sorted(
+        topic for topic in UNSUPPORTED_ASSISTANCE_TOPICS if topic in compact
+    )
+    if unsupported_topics:
+        return {
+            "passed": False,
+            "reason_code": "unsupported_social_assistance_topic",
+            "reason": "问题属于社会救助相关领域，但当前知识库尚未覆盖该具体事项。",
+            "matched_anchors": matched,
+            "off_domain_anchors": off_domain,
+            "unsupported_topics": unsupported_topics,
+        }
+    if not matched:
+        return {
+            "passed": False,
+            "reason_code": "no_social_assistance_anchor",
+            "reason": "问题不属于当前社会救助政策知识域。",
+            "matched_anchors": [],
+            "off_domain_anchors": off_domain,
+        }
+    if off_domain and not _is_legitimate_eligibility_relation(compact, off_domain):
+        return {
+            "passed": False,
+            "reason_code": "off_domain_keyword_smuggling",
+            "reason": "问题主体属于域外内容，附带政策词不能绕过领域限制。",
+            "matched_anchors": matched,
+            "off_domain_anchors": off_domain,
+        }
+    return {
+        "passed": True,
+        "reason_code": "in_domain",
+        "reason": "命中社会救助政策领域锚点。",
+        "matched_anchors": matched,
+        "off_domain_anchors": off_domain,
+    }
 
 
 def _terms(text: str) -> list[str]:
@@ -55,9 +140,9 @@ def search_evidence(
     effective_date = _resolve_as_of(as_of)
     catalog, _ = _temporal_catalog(effective_date)
     query_terms = Counter(_terms(query))
-    if not query_terms or not any(anchor in query for anchor in DOMAIN_ANCHORS):
+    if not query_terms or not domain_gate(query)["passed"]:
         return []
-    doc_terms = []
+    doc_terms: list[Counter[str]] = []
     for item in catalog:
         searchable_quote = item.verbatim_quote or item.excerpt
         weighted = Counter(_terms(searchable_quote))
@@ -68,7 +153,7 @@ def search_evidence(
         weighted.update({term: count * 3 for term, count in Counter(_terms(item.title)).items()})
         weighted.update({term: count * 2 for term, count in Counter(_terms(item.article or "")).items()})
         doc_terms.append(weighted)
-    frequencies = Counter()
+    frequencies: Counter[str] = Counter()
     for terms in doc_terms:
         frequencies.update(terms.keys())
 
@@ -79,7 +164,7 @@ def search_evidence(
     ranked: list[tuple[float, Evidence, list[str]]] = []
     for item, terms, document_length in zip(catalog, doc_terms, document_lengths, strict=True):
         score = 0.0
-        matched_terms = []
+        matched_terms: list[str] = []
         for term, query_count in query_terms.items():
             if term not in terms:
                 continue
@@ -146,11 +231,33 @@ def search_evidence_result(
 
     effective_date = _resolve_as_of(as_of)
     catalog, excluded_count = _temporal_catalog(effective_date)
+    gate = domain_gate(query)
+    if not gate["passed"]:
+        return {
+            "query": query,
+            "as_of": effective_date.isoformat(),
+            "items": [],
+            "domain_gate": gate,
+            "temporal_filter": {
+                "enabled": True,
+                "active_evidence": len(catalog),
+                "excluded_evidence": excluded_count,
+                "rule": "effective_from <= as_of <= effective_to；空边界视为开放区间",
+            },
+            "answerability": {"supported": False, "reason": gate["reason"]},
+            "retriever": {
+                "name": "domain-gate",
+                "semantic_enabled": False,
+                "degraded": False,
+                "reason": "领域门拒绝后未调用BM25或语义模型",
+            },
+        }
     lexical = search_evidence(query, limit=max(limit, 10), as_of=effective_date)
-    base = {
+    base: dict[str, object] = {
         "query": query,
         "as_of": effective_date.isoformat(),
         "items": lexical[:limit],
+        "domain_gate": gate,
         "temporal_filter": {
             "enabled": True,
             "active_evidence": len(catalog),
@@ -170,8 +277,11 @@ def search_evidence_result(
     }
     if settings.ai_mode != "hybrid" or not settings.ollama_embedding_model:
         if settings.ai_mode == "hybrid":
-            base["retriever"]["degraded"] = True
-            base["retriever"]["reason"] = "未配置OLLAMA_EMBED_MODEL，使用BM25"
+            retriever = base["retriever"]
+            if not isinstance(retriever, dict):
+                raise TypeError("retriever metadata must be a mapping")
+            retriever["degraded"] = True
+            retriever["reason"] = "未配置OLLAMA_EMBED_MODEL，使用BM25"
         return base
 
     documents = [
@@ -184,8 +294,11 @@ def search_evidence_result(
     try:
         embedded = embed_texts([query, *documents])
     except ModelRuntimeError as exc:
-        base["retriever"]["degraded"] = True
-        base["retriever"]["reason"] = f"语义模型不可用，使用BM25：{exc}"
+        retriever = base["retriever"]
+        if not isinstance(retriever, dict):
+            raise TypeError("retriever metadata must be a mapping") from exc
+        retriever["degraded"] = True
+        retriever["reason"] = f"语义模型不可用，使用BM25：{exc}"
         return base
 
     semantic_ranked = sorted(
@@ -193,16 +306,21 @@ def search_evidence_result(
         key=lambda pair: pair[2],
         reverse=True,
     )
+    def result_evidence_id(item: dict[str, object]) -> str:
+        evidence = item["evidence"]
+        if not isinstance(evidence, dict):
+            raise TypeError("retrieval item evidence must be a mapping")
+        return str(evidence["evidence_id"])
+
     bm25_rank = {
-        item["evidence"]["evidence_id"]: index
-        for index, item in enumerate(lexical, start=1)
+        result_evidence_id(item): index for index, item in enumerate(lexical, start=1)
     }
     semantic_rank = {
         item.evidence_id: index for index, (item, _, _) in enumerate(semantic_ranked, start=1)
     }
     semantic_similarity = {item.evidence_id: similarity for item, _, similarity in semantic_ranked}
     by_id = {item.evidence_id: item for item in catalog}
-    lexical_by_id = {item["evidence"]["evidence_id"]: item for item in lexical}
+    lexical_by_id = {result_evidence_id(item): item for item in lexical}
     fused: list[tuple[float, str]] = []
     for evidence_id in by_id:
         score = 0.0
@@ -234,6 +352,7 @@ def search_evidence_result(
         "query": query,
         "as_of": effective_date.isoformat(),
         "items": items,
+        "domain_gate": gate,
         "temporal_filter": base["temporal_filter"],
         "answerability": {
             "supported": bool(items),

@@ -4,7 +4,6 @@ from pathlib import Path
 
 from PIL import Image, ImageDraw, ImageFilter, ImageFont
 
-
 ROOT = Path(__file__).resolve().parent.parent
 OUTPUT = ROOT / "demo_assets"
 

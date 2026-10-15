@@ -4,9 +4,8 @@ import hashlib
 import json
 import sys
 from collections import Counter
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
-
 
 ROOT = Path(__file__).resolve().parent.parent
 if str(ROOT) not in sys.path:
@@ -19,7 +18,6 @@ from app.services.retrieval import search_evidence_result
 from app.services.rule_engine import evaluate_profile
 from app.services.safety_validator import validate_screening_output
 from app.version import APP_VERSION
-
 
 DATASET = ROOT / "data" / "evaluation" / "high_risk_safety_benchmark.jsonl"
 OUTPUT = ROOT / "data" / "evaluation" / "high_risk_safety_report.json"
@@ -57,6 +55,19 @@ def evaluate(row: dict[str, object]) -> tuple[bool, str]:
         result = parse_profile_deterministic(ParseProfileRequest(text=str(row["input"])))
         fabricated = sorted(CRITICAL_FACTS & set(result.fields))
         return not fabricated, f"critical_fields={fabricated}"
+    if category == "domain_gate_smuggling":
+        result = search_evidence_result(str(row["input"]), limit=3)
+        gate = result["domain_gate"]
+        passed = (
+            not gate["passed"]
+            and gate["reason_code"] in {"off_domain_keyword_smuggling", "gate_bypass_attempt"}
+            and not result["items"]
+        )
+        return passed, f"reason_code={gate['reason_code']},items={len(result['items'])}"
+    if category == "domain_gate_legitimate_relation":
+        result = search_evidence_result(str(row["input"]), limit=3)
+        gate = result["domain_gate"]
+        return bool(gate["passed"]), f"reason_code={gate['reason_code']}"
     if category == "publish_gate":
         result = compile_policy(PolicyCompileRequest.model_validate(row["input"]))
         passed = not result.publishable and any(
@@ -78,7 +89,7 @@ def main() -> None:
         counter["passed"] += passed
     report = {
         "report_schema": "high-risk-safety/1.0",
-        "generated_at": datetime.now(timezone.utc).isoformat(),
+        "generated_at": datetime.now(UTC).isoformat(),
         "app_version": APP_VERSION,
         "dataset": DATASET.relative_to(ROOT).as_posix(),
         "dataset_sha256": hashlib.sha256(DATASET.read_bytes()).hexdigest(),

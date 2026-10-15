@@ -1,14 +1,14 @@
 from __future__ import annotations
 
-import json
-import sqlite3
-import secrets
 import hashlib
+import json
+import secrets
+import sqlite3
+from collections.abc import Iterator
 from contextlib import contextmanager
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 from pathlib import Path
-from typing import Any, Iterator
-
+from typing import Any
 
 SCHEMA = """
 CREATE TABLE IF NOT EXISTS screenings (
@@ -73,8 +73,8 @@ class Database:
             )
 
     def purge_expired(self, retention_days: int) -> int:
-        cutoff = (datetime.now(timezone.utc) - timedelta(days=retention_days)).isoformat()
-        now = datetime.now(timezone.utc).isoformat()
+        cutoff = (datetime.now(UTC) - timedelta(days=retention_days)).isoformat()
+        now = datetime.now(UTC).isoformat()
         with self.connect() as connection:
             rows = connection.execute(
                 "SELECT id FROM screenings WHERE (expires_at IS NOT NULL AND expires_at < ?) "
@@ -85,10 +85,14 @@ class Database:
             if identifiers:
                 placeholders = ",".join("?" for _ in identifiers)
                 connection.execute(
-                    f"DELETE FROM feedback WHERE screening_id IN ({placeholders})", identifiers
+                    # Placeholder count is derived only from the internal row count;
+                    # all identifiers remain bound parameters.
+                    f"DELETE FROM feedback WHERE screening_id IN ({placeholders})",  # nosec B608
+                    identifiers,
                 )
                 connection.execute(
-                    f"DELETE FROM screenings WHERE id IN ({placeholders})", identifiers
+                    f"DELETE FROM screenings WHERE id IN ({placeholders})",  # nosec B608
+                    identifiers,
                 )
                 connection.execute(
                     "INSERT INTO audit_log(event_type, entity_id, details_json, created_at) "
@@ -100,6 +104,7 @@ class Database:
                         now,
                     ),
                 )
+            connection.execute("DELETE FROM audit_log WHERE created_at < ?", (cutoff,))
         return len(identifiers)
 
     def save_screening(
@@ -113,12 +118,23 @@ class Database:
         result_payload: dict[str, Any],
         retention_days: int,
     ) -> str:
+        safety = result_payload.get("safety_validation")
+        enforcement = safety.get("enforcement") if isinstance(safety, dict) else None
+        required_actions = ("api_publish", "persistence", "presentation", "print_export")
+        if (
+            not isinstance(safety, dict)
+            or safety.get("safe") is not True
+            or safety.get("blocked") is not False
+            or not isinstance(enforcement, dict)
+            or not all(enforcement.get(action) is True for action in required_actions)
+        ):
+            raise ValueError("安全门未明确放行，禁止保存预筛结果")
         safe_request = dict(request_payload)
         if safe_request.get("user_statement"):
             safe_request["user_statement"] = "[已脱敏，不落库]"
-        created_at = datetime.now(timezone.utc).isoformat()
+        created_at = datetime.now(UTC).isoformat()
         expires_at = (
-            datetime.now(timezone.utc) + timedelta(days=retention_days)
+            datetime.now(UTC) + timedelta(days=retention_days)
         ).isoformat()
         manage_token = secrets.token_urlsafe(24)
         stored_token = hashlib.sha256(manage_token.encode("utf-8")).hexdigest()
@@ -148,6 +164,21 @@ class Database:
             )
         return manage_token
 
+    def record_audit_event(
+        self, event_type: str, *, entity_id: str | None, details: dict[str, Any]
+    ) -> None:
+        with self.connect() as connection:
+            connection.execute(
+                "INSERT INTO audit_log(event_type, entity_id, details_json, created_at) "
+                "VALUES (?, ?, ?, ?)",
+                (
+                    event_type,
+                    entity_id,
+                    json.dumps(details, ensure_ascii=False),
+                    datetime.now(UTC).isoformat(),
+                ),
+            )
+
     @staticmethod
     def _token_matches(stored_token: str | None, supplied_token: str) -> bool:
         if not stored_token:
@@ -158,26 +189,34 @@ class Database:
         )
 
     def screening_token_valid(self, screening_id: str, manage_token: str) -> bool:
+        now = datetime.now(UTC).isoformat()
         with self.connect() as connection:
             row = connection.execute(
-                "SELECT manage_token FROM screenings WHERE id = ?", (screening_id,)
+                "SELECT manage_token FROM screenings WHERE id = ? "
+                "AND (expires_at IS NULL OR expires_at >= ?)",
+                (screening_id, now),
             ).fetchone()
         return bool(row and self._token_matches(row["manage_token"], manage_token))
 
     def get_screening(self, screening_id: str, manage_token: str) -> dict[str, Any] | None:
+        now = datetime.now(UTC).isoformat()
         with self.connect() as connection:
             row = connection.execute(
-                "SELECT result_json, manage_token FROM screenings WHERE id = ?", (screening_id,)
+                "SELECT result_json, manage_token FROM screenings WHERE id = ? "
+                "AND (expires_at IS NULL OR expires_at >= ?)",
+                (screening_id, now),
             ).fetchone()
         if not row or not self._token_matches(row["manage_token"], manage_token):
             return None
         return json.loads(row["result_json"])
 
     def save_feedback(self, payload: dict[str, Any]) -> bool:
-        created_at = datetime.now(timezone.utc).isoformat()
+        created_at = datetime.now(UTC).isoformat()
         with self.connect() as connection:
             exists = connection.execute(
-                "SELECT 1 FROM screenings WHERE id = ?", (payload["screening_id"],)
+                "SELECT 1 FROM screenings WHERE id = ? "
+                "AND (expires_at IS NULL OR expires_at >= ?)",
+                (payload["screening_id"], created_at),
             ).fetchone()
             if not exists:
                 return False
@@ -215,7 +254,7 @@ class Database:
                     "screening.deleted",
                     screening_id,
                     json.dumps({"requested_by": "screening_token"}),
-                    datetime.now(timezone.utc).isoformat(),
+                    datetime.now(UTC).isoformat(),
                 ),
             )
         return True

@@ -1,7 +1,7 @@
 {
-  "registry_version": "2026.09.30.3",
+  "registry_version": "2026.10.15.1",
   "region": "广州市",
-  "reviewed_at": "2026-09-30",
+  "reviewed_at": "2026-10-15",
   "release_status": "verified_for_demo",
   "rules": [
     {
@@ -30,20 +30,35 @@
     {
       "benefit_id": "B002",
       "name": "最低生活保障",
+      "version": "v2026.01",
+      "document_no": "穗民规字〔2023〕3号",
+      "effective_from": "2026-01-01",
+      "effective_to": "2026-07-31",
+      "status": "superseded",
+      "source_ids": ["GD-004", "GZ-003", "GZ-009"],
+      "parameters": {"income_standard_monthly_per_capita": 1327},
+      "manual_review_required": false
+    },
+    {
+      "benefit_id": "B002",
+      "name": "最低生活保障",
       "version": "v2023.06",
       "document_no": "穗民规字〔2023〕3号",
       "effective_from": "2023-06-01",
-      "effective_to": "2026-07-31",
-      "status": "superseded",
-      "source_ids": ["CN-001", "GD-004", "GZ-003", "GZ-009"],
-      "parameters": {"income_standard_monthly_per_capita": 1327},
-      "manual_review_required": false
+      "effective_to": "2025-12-31",
+      "status": "superseded_parameter_incomplete",
+      "source_ids": ["GZ-009"],
+      "parameters": {
+        "parameter_status": "historical_annual_standard_not_registered",
+        "required_parameter": "income_standard_monthly_per_capita"
+      },
+      "manual_review_required": true
     },
     {
       "benefit_id": "B003",
       "name": "最低生活保障边缘家庭认定",
       "version": "v2026.01",
-      "effective_from": "2026-06-01",
+      "effective_from": "2026-01-01",
       "effective_to": "2026-12-31",
       "status": "verified",
       "source_ids": ["CN-001", "GD-002", "GZ-003", "GZ-004"],
@@ -53,9 +68,9 @@
     {
       "benefit_id": "B004",
       "name": "刚性支出困难家庭认定",
-      "version": "v2026.09",
-      "effective_from": "2022-08-12",
-      "effective_to": "2027-08-11",
+      "version": "v2026.01",
+      "effective_from": "2026-01-01",
+      "effective_to": "2026-12-31",
       "status": "verified",
       "source_ids": ["CN-001", "GD-002", "GZ-001", "GZ-004", "GZ-008"],
       "parameters": {
@@ -64,6 +79,21 @@
         "income_reference_year": 2025
       },
       "manual_review_required": false
+    },
+    {
+      "benefit_id": "B004",
+      "name": "刚性支出困难家庭认定",
+      "version": "v2022.08",
+      "effective_from": "2022-08-12",
+      "effective_to": "2025-12-31",
+      "status": "superseded_parameter_incomplete",
+      "source_ids": ["GD-002", "GZ-004"],
+      "parameters": {
+        "rigid_expense_ratio": 0.6,
+        "parameter_status": "historical_income_ceiling_not_registered",
+        "required_parameter": "income_ceiling_annual_per_capita"
+      },
+      "manual_review_required": true
     },
     {
       "benefit_id": "B005",

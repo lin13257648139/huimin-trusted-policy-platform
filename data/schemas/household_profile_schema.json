@@ -70,7 +70,10 @@
       "type": "object",
       "required": ["exists"],
       "properties": {
-        "exists": {"type": "boolean"},
+        "exists": {
+          "type": ["boolean", "null"],
+          "description": "null表示尚未确认；不得将缺失或沉默转换为false。"
+        },
         "event_type": {"type": ["string", "null"]},
         "event_date": {"type": ["string", "null"], "format": "date"},
         "estimated_loss": {"type": ["number", "null"], "minimum": 0},

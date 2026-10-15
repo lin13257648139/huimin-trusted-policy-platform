@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-02T14:58:02.983854+00:00",
+  "generated_at": "2026-10-15T09:51:13.332491+00:00",
   "environment": {
     "python": "3.12.14",
     "platform": "Windows-11-10.0.26200-SP0",
@@ -27,10 +27,10 @@
     {
       "concurrency": 1,
       "requests": 60,
-      "p50_ms": 6.501,
-      "p95_ms": 25.603,
-      "max_ms": 31.689,
-      "throughput_rps": 83.03,
+      "p50_ms": 7.933,
+      "p95_ms": 25.792,
+      "max_ms": 26.809,
+      "throughput_rps": 78.82,
       "errors": 0,
       "error_types": [],
       "passed": true
@@ -38,10 +38,10 @@
     {
       "concurrency": 5,
       "requests": 60,
-      "p50_ms": 45.417,
-      "p95_ms": 58.763,
-      "max_ms": 59.332,
-      "throughput_rps": 102.5,
+      "p50_ms": 51.386,
+      "p95_ms": 68.593,
+      "max_ms": 80.09,
+      "throughput_rps": 91.75,
       "errors": 0,
       "error_types": [],
       "passed": true
@@ -49,10 +49,10 @@
     {
       "concurrency": 10,
       "requests": 60,
-      "p50_ms": 119.348,
-      "p95_ms": 201.189,
-      "max_ms": 222.673,
-      "throughput_rps": 77.72,
+      "p50_ms": 150.432,
+      "p95_ms": 254.57,
+      "max_ms": 335.009,
+      "throughput_rps": 57.66,
       "errors": 0,
       "error_types": [],
       "passed": true
@@ -60,10 +60,10 @@
     {
       "concurrency": 20,
       "requests": 60,
-      "p50_ms": 281.646,
-      "p95_ms": 369.008,
-      "max_ms": 491.135,
-      "throughput_rps": 67.73,
+      "p50_ms": 371.596,
+      "p95_ms": 566.154,
+      "max_ms": 627.955,
+      "throughput_rps": 47.04,
       "errors": 0,
       "error_types": [],
       "passed": true
@@ -71,14 +71,24 @@
     {
       "concurrency": 30,
       "requests": 60,
-      "p50_ms": 381.136,
-      "p95_ms": 439.8,
-      "max_ms": 441.303,
-      "throughput_rps": 68.32,
+      "p50_ms": 482.319,
+      "p95_ms": 728.207,
+      "max_ms": 742.888,
+      "throughput_rps": 50.28,
       "errors": 0,
       "error_types": [],
       "passed": true
     }
   ],
-  "claim_boundary": "本报告是当前机器单进程、回环网络、只读混合接口的工程基准；不代表公网生产容量，也不代表包含大模型生成或文件OCR的端到端延迟。"
+  "claim_boundary": "本报告是当前机器单进程、回环网络、只读混合接口的工程基准；不代表公网生产容量，也不代表包含大模型生成或文件OCR的端到端延迟。",
+  "app_version": "1.2.0",
+  "engine_version": "rule-engine/0.5.0",
+  "release_metadata": {
+    "release_id": "v1.2.0+source.5fc011cd9986",
+    "app_version": "1.2.0",
+    "engine_version": "rule-engine/0.5.0",
+    "git_commit": "488be3243a196a2331e8f173fe8b75cb91491779",
+    "git_dirty": true,
+    "source_tree_sha256": "5fc011cd9986144f8597a0e87e0ff0a4a9fe15b86f29a797aaf6bf1a34484dd1"
+  }
 }

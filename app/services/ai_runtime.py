@@ -8,6 +8,7 @@ import urllib.error
 import urllib.request
 from dataclasses import dataclass
 from typing import Any
+from urllib.parse import urlsplit
 
 from app.config import settings
 
@@ -35,6 +36,11 @@ class ModelRuntimeError(RuntimeError):
 
 
 def _request_json(path: str, payload: dict[str, Any] | None, timeout: float) -> dict[str, Any]:
+    parsed = urlsplit(settings.ollama_url)
+    if parsed.scheme not in {"http", "https"} or not parsed.hostname:
+        raise ModelRuntimeError("OLLAMA_URL必须是有效的HTTP(S)地址")
+    if parsed.username or parsed.password:
+        raise ModelRuntimeError("OLLAMA_URL不得包含用户名或密码")
     data = None if payload is None else json.dumps(payload, ensure_ascii=False).encode("utf-8")
     request = urllib.request.Request(
         f"{settings.ollama_url.rstrip('/')}{path}",
@@ -43,7 +49,8 @@ def _request_json(path: str, payload: dict[str, Any] | None, timeout: float) -> 
         method="GET" if payload is None else "POST",
     )
     try:
-        with urllib.request.urlopen(request, timeout=timeout) as response:
+        # URL scheme/host are validated above; path is an internal constant at call sites.
+        with urllib.request.urlopen(request, timeout=timeout) as response:  # nosec B310
             decoded = json.loads(response.read().decode("utf-8"))
     except (urllib.error.URLError, TimeoutError, OSError) as exc:
         raise ModelRuntimeError(f"本地模型服务不可达：{type(exc).__name__}") from exc

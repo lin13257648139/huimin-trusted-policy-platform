@@ -2,10 +2,9 @@ from __future__ import annotations
 
 import hashlib
 import json
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
-
 
 ROOT = Path(__file__).resolve().parent.parent
 OUTPUT = ROOT / "data" / "evaluation" / "dataset_governance_manifest.json"
@@ -40,14 +39,6 @@ DATASETS: tuple[dict[str, Any], ...] = (
         "contains_personal_data": False,
     },
     {
-        "path": "data/evaluation/expert_gold_master.csv",
-        "role": "external_expert_adjudicated_evaluation",
-        "label_origin": "expert A/B review and expert C adjudication",
-        "independent": True,
-        "contains_personal_data": False,
-        "release_note": "去标识化标签集；原始评审表不随源码发布。",
-    },
-    {
         "path": "data/evaluation/ocr_synthetic/manifest.json",
         "role": "synthetic_ocr_robustness_benchmark",
         "label_origin": "programmatically rendered synthetic documents",
@@ -58,6 +49,13 @@ DATASETS: tuple[dict[str, Any], ...] = (
         "path": "data/evaluation/high_risk_safety_benchmark.jsonl",
         "role": "synthetic_high_risk_safety_regression",
         "label_origin": "project-authored adversarial and boundary guards",
+        "independent": False,
+        "contains_personal_data": False,
+    },
+    {
+        "path": "data/evaluation/active_question_decision_cases.jsonl",
+        "role": "synthetic_active_question_decision_paths",
+        "label_origin": "programmatically transformed from synthetic conformance profiles",
         "independent": False,
         "contains_personal_data": False,
     },
@@ -99,14 +97,14 @@ def main() -> None:
             }
         )
     report = {
-        "generated_at": datetime.now(timezone.utc).isoformat(),
+        "generated_at": datetime.now(UTC).isoformat(),
         "manifest_version": "1.0",
         "assets": assets,
         "missing": missing,
         "claim_boundary": (
-            "合成集和项目自编gold只用于回归、消融与可复现工程验证；"
-            "仅external_expert_adjudicated_evaluation可作为外部标注证据，"
-            "仍不得外推为真实困难群众使用效果。"
+            "当前资产全部为合成数据或项目组标注，只用于回归、消融与可复现工程验证；"
+            "项目尚未开展外部专家评测，不得把任何资产表述为独立专家证据，"
+            "也不得外推为真实困难群众使用效果。"
         ),
         "privacy": "清单不包含群众姓名、证件号、电话、地址或自由叙述。",
     }

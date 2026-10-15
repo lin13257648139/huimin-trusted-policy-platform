@@ -1,143 +1,1066 @@
 {
+  "report_schema": "policy2rule-evaluation/2.0",
   "benchmark_role": "real_official_clause_project_authored_gold",
-  "case_count": 11,
-  "providers": {
-    "local-policy-compiler/1.0": 11
-  },
-  "benefit_accuracy": 1.0,
-  "effective_from_accuracy": 1.0,
-  "effective_to_accuracy": 1.0,
-  "missing_date_guard_accuracy": 1.0,
-  "parameter_pair": {
-    "precision": 0.5,
-    "recall": 0.5,
-    "f1": 0.5
-  },
-  "condition_field": {
-    "precision": 0.8571,
-    "recall": 0.6316,
-    "f1": 0.7273
-  },
-  "source_quote_grounding_rate": 1.0,
-  "details": [
-    {
-      "case_id": "PCR-R001",
-      "benefit_match": true,
-      "effective_from_match": true,
-      "effective_to_match": true,
-      "predicted_parameters": {},
-      "predicted_condition_fields": [
-        "assets_eligible"
-      ]
+  "case_count": 50,
+  "unassisted_text_extraction": {
+    "track": "unassisted_text_extraction",
+    "case_count": 50,
+    "providers": {
+      "local-policy-compiler/1.0": 50
     },
-    {
-      "case_id": "PCR-R002",
-      "benefit_match": true,
-      "effective_from_match": true,
-      "effective_to_match": true,
-      "predicted_parameters": {},
-      "predicted_condition_fields": [
-        "assets_eligible"
-      ]
+    "benefit_accuracy": 1.0,
+    "benefit_evaluable_cases": 33,
+    "benefit_context_dependent_cases": 17,
+    "effective_from_accuracy": 1.0,
+    "effective_from_evaluable_cases": 2,
+    "effective_to_accuracy": null,
+    "effective_to_evaluable_cases": 0,
+    "missing_effective_from_guard_accuracy": 1.0,
+    "missing_effective_from_cases": 3,
+    "parameter_pair": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0
     },
-    {
-      "case_id": "PCR-R003",
-      "benefit_match": true,
-      "effective_from_match": true,
-      "effective_to_match": true,
-      "predicted_parameters": {},
-      "predicted_condition_fields": [
-        "assets_eligible",
-        "per_capita_annual_income"
-      ]
+    "condition_field": {
+      "precision": 0.9333,
+      "recall": 0.875,
+      "f1": 0.9032
     },
-    {
-      "case_id": "PCR-R004",
-      "benefit_match": true,
-      "effective_from_match": true,
-      "effective_to_match": true,
-      "predicted_parameters": {},
-      "predicted_condition_fields": [
-        "assets_eligible"
-      ]
-    },
-    {
-      "case_id": "PCR-R005",
-      "benefit_match": true,
-      "effective_from_match": true,
-      "effective_to_match": true,
-      "predicted_parameters": {
-        "edge_standard_monthly_per_capita": "1990.50",
-        "income_multiplier": 1.5
+    "source_quote_grounding_rate": 1.0,
+    "details": [
+      {
+        "case_id": "PCR-R001",
+        "benefit_match": true,
+        "effective_from": null,
+        "effective_to": null,
+        "predicted_parameters": {},
+        "predicted_condition_fields": []
       },
-      "predicted_condition_fields": []
-    },
-    {
-      "case_id": "PCR-R006",
-      "benefit_match": true,
-      "effective_from_match": true,
-      "effective_to_match": true,
-      "predicted_parameters": {},
-      "predicted_condition_fields": []
-    },
-    {
-      "case_id": "PCR-R007",
-      "benefit_match": true,
-      "effective_from_match": true,
-      "effective_to_match": true,
-      "predicted_parameters": {
-        "income_multiplier": 1.5
+      {
+        "case_id": "PCR-R002",
+        "benefit_match": true,
+        "effective_from": null,
+        "effective_to": null,
+        "predicted_parameters": {},
+        "predicted_condition_fields": []
       },
-      "predicted_condition_fields": [
-        "is_local_hukou",
-        "member_scope_confirmed"
-      ]
-    },
-    {
-      "case_id": "PCR-R008",
-      "benefit_match": true,
-      "effective_from_match": true,
-      "effective_to_match": true,
-      "predicted_parameters": {
-        "rigid_expense_income_ratio": 0.6
+      {
+        "case_id": "PCR-R003",
+        "benefit_match": true,
+        "effective_from": null,
+        "effective_to": null,
+        "predicted_parameters": {},
+        "predicted_condition_fields": []
       },
-      "predicted_condition_fields": [
-        "is_local_hukou",
-        "member_scope_confirmed",
-        "per_capita_annual_income",
-        "rigid_expenses_12m"
-      ]
+      {
+        "case_id": "PCR-R004",
+        "benefit_match": true,
+        "effective_from": null,
+        "effective_to": null,
+        "predicted_parameters": {},
+        "predicted_condition_fields": [
+          "assets_eligible",
+          "per_capita_monthly_income"
+        ]
+      },
+      {
+        "case_id": "PCR-R005",
+        "benefit_match": true,
+        "effective_from": null,
+        "effective_to": null,
+        "predicted_parameters": {},
+        "predicted_condition_fields": [
+          "assets_eligible"
+        ]
+      },
+      {
+        "case_id": "PCR-R006",
+        "benefit_match": true,
+        "effective_from": null,
+        "effective_to": null,
+        "predicted_parameters": {},
+        "predicted_condition_fields": [
+          "assets_eligible",
+          "per_capita_annual_income",
+          "rigid_expenses_12m"
+        ]
+      },
+      {
+        "case_id": "PCR-R007",
+        "benefit_match": true,
+        "effective_from": null,
+        "effective_to": null,
+        "predicted_parameters": {},
+        "predicted_condition_fields": []
+      },
+      {
+        "case_id": "PCR-R008",
+        "benefit_match": true,
+        "effective_from": "2026-08-01",
+        "effective_to": "2027-07-31",
+        "predicted_parameters": {},
+        "predicted_condition_fields": []
+      },
+      {
+        "case_id": "PCR-R009",
+        "benefit_match": true,
+        "effective_from": null,
+        "effective_to": null,
+        "predicted_parameters": {},
+        "predicted_condition_fields": []
+      },
+      {
+        "case_id": "PCR-R010",
+        "benefit_match": true,
+        "effective_from": null,
+        "effective_to": null,
+        "predicted_parameters": {},
+        "predicted_condition_fields": []
+      },
+      {
+        "case_id": "PCR-R011",
+        "benefit_match": true,
+        "effective_from": null,
+        "effective_to": null,
+        "predicted_parameters": {},
+        "predicted_condition_fields": [
+          "assets_eligible"
+        ]
+      },
+      {
+        "case_id": "PCR-R012",
+        "benefit_match": true,
+        "effective_from": null,
+        "effective_to": null,
+        "predicted_parameters": {},
+        "predicted_condition_fields": [
+          "assets_eligible"
+        ]
+      },
+      {
+        "case_id": "PCR-R013",
+        "benefit_match": false,
+        "effective_from": null,
+        "effective_to": null,
+        "predicted_parameters": {
+          "income_standard_monthly_per_capita": "1327.00",
+          "edge_standard_monthly_per_capita": "1990.50",
+          "income_multiplier": 1.5
+        },
+        "predicted_condition_fields": [
+          "per_capita_monthly_income"
+        ]
+      },
+      {
+        "case_id": "PCR-R014",
+        "benefit_match": true,
+        "effective_from": null,
+        "effective_to": null,
+        "predicted_parameters": {
+          "edge_standard_monthly_per_capita": "1990.50",
+          "income_multiplier": 1.5
+        },
+        "predicted_condition_fields": [
+          "per_capita_monthly_income"
+        ]
+      },
+      {
+        "case_id": "PCR-R015",
+        "benefit_match": true,
+        "effective_from": null,
+        "effective_to": null,
+        "predicted_parameters": {},
+        "predicted_condition_fields": []
+      },
+      {
+        "case_id": "PCR-R016",
+        "benefit_match": false,
+        "effective_from": null,
+        "effective_to": null,
+        "predicted_parameters": {},
+        "predicted_condition_fields": []
+      },
+      {
+        "case_id": "PCR-R017",
+        "benefit_match": true,
+        "effective_from": null,
+        "effective_to": null,
+        "predicted_parameters": {
+          "income_multiplier": 1.5
+        },
+        "predicted_condition_fields": [
+          "is_local_hukou",
+          "member_scope_confirmed",
+          "per_capita_monthly_income"
+        ]
+      },
+      {
+        "case_id": "PCR-R018",
+        "benefit_match": true,
+        "effective_from": null,
+        "effective_to": null,
+        "predicted_parameters": {
+          "income_multiplier": 1.5
+        },
+        "predicted_condition_fields": [
+          "per_capita_monthly_income"
+        ]
+      },
+      {
+        "case_id": "PCR-R019",
+        "benefit_match": true,
+        "effective_from": null,
+        "effective_to": null,
+        "predicted_parameters": {
+          "rigid_expense_income_ratio": 0.6
+        },
+        "predicted_condition_fields": [
+          "is_local_hukou",
+          "member_scope_confirmed",
+          "per_capita_annual_income",
+          "rigid_expenses_12m"
+        ]
+      },
+      {
+        "case_id": "PCR-R020",
+        "benefit_match": false,
+        "effective_from": null,
+        "effective_to": null,
+        "predicted_parameters": {},
+        "predicted_condition_fields": []
+      },
+      {
+        "case_id": "PCR-R021",
+        "benefit_match": true,
+        "effective_from": null,
+        "effective_to": null,
+        "predicted_parameters": {
+          "rigid_expense_income_ratio": 0.6
+        },
+        "predicted_condition_fields": [
+          "member_scope_confirmed",
+          "rigid_expenses_12m"
+        ]
+      },
+      {
+        "case_id": "PCR-R022",
+        "benefit_match": true,
+        "effective_from": null,
+        "effective_to": null,
+        "predicted_parameters": {
+          "urgent_event_days": 31
+        },
+        "predicted_condition_fields": [
+          "urgent_event",
+          "urgent_event_date"
+        ]
+      },
+      {
+        "case_id": "PCR-R023",
+        "benefit_match": true,
+        "effective_from": null,
+        "effective_to": null,
+        "predicted_parameters": {},
+        "predicted_condition_fields": [
+          "residence_proof"
+        ]
+      },
+      {
+        "case_id": "PCR-R024",
+        "benefit_match": false,
+        "effective_from": null,
+        "effective_to": null,
+        "predicted_parameters": {},
+        "predicted_condition_fields": []
+      },
+      {
+        "case_id": "PCR-R025",
+        "benefit_match": false,
+        "effective_from": null,
+        "effective_to": null,
+        "predicted_parameters": {},
+        "predicted_condition_fields": []
+      },
+      {
+        "case_id": "PCR-R026",
+        "benefit_match": false,
+        "effective_from": null,
+        "effective_to": null,
+        "predicted_parameters": {},
+        "predicted_condition_fields": []
+      },
+      {
+        "case_id": "PCR-R027",
+        "benefit_match": true,
+        "effective_from": "2023-06-01",
+        "effective_to": "2028-05-31",
+        "predicted_parameters": {},
+        "predicted_condition_fields": []
+      },
+      {
+        "case_id": "PCR-R028",
+        "benefit_match": true,
+        "effective_from": null,
+        "effective_to": null,
+        "predicted_parameters": {},
+        "predicted_condition_fields": []
+      },
+      {
+        "case_id": "PCR-R029",
+        "benefit_match": true,
+        "effective_from": null,
+        "effective_to": null,
+        "predicted_parameters": {},
+        "predicted_condition_fields": [
+          "assets_eligible"
+        ]
+      },
+      {
+        "case_id": "PCR-R030",
+        "benefit_match": true,
+        "effective_from": null,
+        "effective_to": null,
+        "predicted_parameters": {},
+        "predicted_condition_fields": [
+          "assets_eligible"
+        ]
+      },
+      {
+        "case_id": "PCR-R031",
+        "benefit_match": true,
+        "effective_from": null,
+        "effective_to": null,
+        "predicted_parameters": {},
+        "predicted_condition_fields": []
+      },
+      {
+        "case_id": "PCR-R032",
+        "benefit_match": true,
+        "effective_from": null,
+        "effective_to": null,
+        "predicted_parameters": {},
+        "predicted_condition_fields": []
+      },
+      {
+        "case_id": "PCR-R033",
+        "benefit_match": true,
+        "effective_from": null,
+        "effective_to": null,
+        "predicted_parameters": {},
+        "predicted_condition_fields": [
+          "per_capita_monthly_income"
+        ]
+      },
+      {
+        "case_id": "PCR-R034",
+        "benefit_match": true,
+        "effective_from": null,
+        "effective_to": null,
+        "predicted_parameters": {},
+        "predicted_condition_fields": [
+          "per_capita_monthly_income"
+        ]
+      },
+      {
+        "case_id": "PCR-R035",
+        "benefit_match": true,
+        "effective_from": null,
+        "effective_to": null,
+        "predicted_parameters": {},
+        "predicted_condition_fields": []
+      },
+      {
+        "case_id": "PCR-R036",
+        "benefit_match": true,
+        "effective_from": null,
+        "effective_to": null,
+        "predicted_parameters": {},
+        "predicted_condition_fields": []
+      },
+      {
+        "case_id": "PCR-R037",
+        "benefit_match": true,
+        "effective_from": null,
+        "effective_to": null,
+        "predicted_parameters": {},
+        "predicted_condition_fields": []
+      },
+      {
+        "case_id": "PCR-R038",
+        "benefit_match": true,
+        "effective_from": null,
+        "effective_to": null,
+        "predicted_parameters": {},
+        "predicted_condition_fields": []
+      },
+      {
+        "case_id": "PCR-R039",
+        "benefit_match": true,
+        "effective_from": null,
+        "effective_to": null,
+        "predicted_parameters": {},
+        "predicted_condition_fields": []
+      },
+      {
+        "case_id": "PCR-R040",
+        "benefit_match": true,
+        "effective_from": null,
+        "effective_to": null,
+        "predicted_parameters": {},
+        "predicted_condition_fields": []
+      },
+      {
+        "case_id": "PCR-R041",
+        "benefit_match": true,
+        "effective_from": null,
+        "effective_to": null,
+        "predicted_parameters": {},
+        "predicted_condition_fields": []
+      },
+      {
+        "case_id": "PCR-R042",
+        "benefit_match": true,
+        "effective_from": null,
+        "effective_to": null,
+        "predicted_parameters": {},
+        "predicted_condition_fields": []
+      },
+      {
+        "case_id": "PCR-R043",
+        "benefit_match": true,
+        "effective_from": null,
+        "effective_to": null,
+        "predicted_parameters": {},
+        "predicted_condition_fields": []
+      },
+      {
+        "case_id": "PCR-R044",
+        "benefit_match": true,
+        "effective_from": null,
+        "effective_to": null,
+        "predicted_parameters": {},
+        "predicted_condition_fields": []
+      },
+      {
+        "case_id": "PCR-R045",
+        "benefit_match": true,
+        "effective_from": null,
+        "effective_to": null,
+        "predicted_parameters": {},
+        "predicted_condition_fields": []
+      },
+      {
+        "case_id": "PCR-R046",
+        "benefit_match": true,
+        "effective_from": null,
+        "effective_to": null,
+        "predicted_parameters": {},
+        "predicted_condition_fields": []
+      },
+      {
+        "case_id": "PCR-R047",
+        "benefit_match": true,
+        "effective_from": null,
+        "effective_to": null,
+        "predicted_parameters": {},
+        "predicted_condition_fields": []
+      },
+      {
+        "case_id": "PCR-R048",
+        "benefit_match": true,
+        "effective_from": null,
+        "effective_to": null,
+        "predicted_parameters": {},
+        "predicted_condition_fields": [
+          "member_scope_confirmed"
+        ]
+      },
+      {
+        "case_id": "PCR-R049",
+        "benefit_match": false,
+        "effective_from": null,
+        "effective_to": null,
+        "predicted_parameters": {},
+        "predicted_condition_fields": [
+          "assets_eligible",
+          "member_scope_confirmed"
+        ]
+      },
+      {
+        "case_id": "PCR-R050",
+        "benefit_match": true,
+        "effective_from": null,
+        "effective_to": null,
+        "predicted_parameters": {},
+        "predicted_condition_fields": []
+      }
+    ]
+  },
+  "metadata_assisted_compilation": {
+    "track": "metadata_assisted_compilation",
+    "case_count": 50,
+    "providers": {
+      "local-policy-compiler/1.0": 50
     },
-    {
-      "case_id": "PCR-R009",
-      "benefit_match": true,
-      "effective_from_match": true,
-      "effective_to_match": true,
-      "predicted_parameters": {},
-      "predicted_condition_fields": [
-        "urgent_event"
-      ]
+    "benefit_accuracy": 1.0,
+    "benefit_evaluable_cases": 50,
+    "benefit_context_dependent_cases": 0,
+    "effective_from_accuracy": 1.0,
+    "effective_from_evaluable_cases": 50,
+    "effective_to_accuracy": 1.0,
+    "effective_to_evaluable_cases": 50,
+    "missing_effective_from_guard_accuracy": 1.0,
+    "missing_effective_from_cases": 3,
+    "parameter_pair": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0
     },
-    {
-      "case_id": "PCR-R010",
-      "benefit_match": true,
-      "effective_from_match": true,
-      "effective_to_match": true,
-      "predicted_parameters": {},
-      "predicted_condition_fields": [
-        "residence_proof"
-      ]
+    "condition_field": {
+      "precision": 0.9355,
+      "recall": 0.9062,
+      "f1": 0.9206
     },
-    {
-      "case_id": "PCR-R011",
-      "benefit_match": true,
-      "effective_from_match": true,
-      "effective_to_match": true,
-      "predicted_parameters": {},
-      "predicted_condition_fields": [
-        "assets_eligible"
-      ]
-    }
-  ],
-  "warning": "本基准标签由项目组从官方条款编制，尚不是独立双人盲标结果；不得包装为外部专家评测。"
+    "source_quote_grounding_rate": 1.0,
+    "details": [
+      {
+        "case_id": "PCR-R001",
+        "benefit_match": true,
+        "effective_from": null,
+        "effective_to": null,
+        "predicted_parameters": {},
+        "predicted_condition_fields": []
+      },
+      {
+        "case_id": "PCR-R002",
+        "benefit_match": true,
+        "effective_from": null,
+        "effective_to": null,
+        "predicted_parameters": {},
+        "predicted_condition_fields": []
+      },
+      {
+        "case_id": "PCR-R003",
+        "benefit_match": true,
+        "effective_from": null,
+        "effective_to": null,
+        "predicted_parameters": {},
+        "predicted_condition_fields": []
+      },
+      {
+        "case_id": "PCR-R004",
+        "benefit_match": true,
+        "effective_from": "2026-07-01",
+        "effective_to": null,
+        "predicted_parameters": {},
+        "predicted_condition_fields": [
+          "assets_eligible",
+          "per_capita_monthly_income"
+        ]
+      },
+      {
+        "case_id": "PCR-R005",
+        "benefit_match": true,
+        "effective_from": "2026-07-01",
+        "effective_to": null,
+        "predicted_parameters": {},
+        "predicted_condition_fields": [
+          "assets_eligible"
+        ]
+      },
+      {
+        "case_id": "PCR-R006",
+        "benefit_match": true,
+        "effective_from": "2026-07-01",
+        "effective_to": null,
+        "predicted_parameters": {},
+        "predicted_condition_fields": [
+          "assets_eligible",
+          "per_capita_annual_income",
+          "rigid_expenses_12m"
+        ]
+      },
+      {
+        "case_id": "PCR-R007",
+        "benefit_match": true,
+        "effective_from": "2026-07-01",
+        "effective_to": null,
+        "predicted_parameters": {},
+        "predicted_condition_fields": []
+      },
+      {
+        "case_id": "PCR-R008",
+        "benefit_match": true,
+        "effective_from": "2026-08-01",
+        "effective_to": "2027-07-31",
+        "predicted_parameters": {},
+        "predicted_condition_fields": []
+      },
+      {
+        "case_id": "PCR-R009",
+        "benefit_match": true,
+        "effective_from": "2026-08-01",
+        "effective_to": "2027-07-31",
+        "predicted_parameters": {},
+        "predicted_condition_fields": []
+      },
+      {
+        "case_id": "PCR-R010",
+        "benefit_match": true,
+        "effective_from": "2026-08-01",
+        "effective_to": "2027-07-31",
+        "predicted_parameters": {},
+        "predicted_condition_fields": []
+      },
+      {
+        "case_id": "PCR-R011",
+        "benefit_match": true,
+        "effective_from": "2026-08-01",
+        "effective_to": "2027-07-31",
+        "predicted_parameters": {},
+        "predicted_condition_fields": [
+          "assets_eligible"
+        ]
+      },
+      {
+        "case_id": "PCR-R012",
+        "benefit_match": true,
+        "effective_from": "2026-08-01",
+        "effective_to": "2027-07-31",
+        "predicted_parameters": {},
+        "predicted_condition_fields": [
+          "assets_eligible"
+        ]
+      },
+      {
+        "case_id": "PCR-R013",
+        "benefit_match": true,
+        "effective_from": "2026-01-01",
+        "effective_to": null,
+        "predicted_parameters": {
+          "income_standard_monthly_per_capita": "1327.00",
+          "edge_standard_monthly_per_capita": "1990.50",
+          "income_multiplier": 1.5
+        },
+        "predicted_condition_fields": [
+          "per_capita_monthly_income"
+        ]
+      },
+      {
+        "case_id": "PCR-R014",
+        "benefit_match": true,
+        "effective_from": "2026-01-01",
+        "effective_to": null,
+        "predicted_parameters": {
+          "edge_standard_monthly_per_capita": "1990.50",
+          "income_multiplier": 1.5
+        },
+        "predicted_condition_fields": [
+          "per_capita_monthly_income"
+        ]
+      },
+      {
+        "case_id": "PCR-R015",
+        "benefit_match": true,
+        "effective_from": "2022-08-12",
+        "effective_to": "2027-08-11",
+        "predicted_parameters": {},
+        "predicted_condition_fields": []
+      },
+      {
+        "case_id": "PCR-R016",
+        "benefit_match": true,
+        "effective_from": "2022-08-12",
+        "effective_to": "2027-08-11",
+        "predicted_parameters": {},
+        "predicted_condition_fields": []
+      },
+      {
+        "case_id": "PCR-R017",
+        "benefit_match": true,
+        "effective_from": "2022-03-01",
+        "effective_to": null,
+        "predicted_parameters": {
+          "income_multiplier": 1.5
+        },
+        "predicted_condition_fields": [
+          "is_local_hukou",
+          "member_scope_confirmed",
+          "per_capita_monthly_income"
+        ]
+      },
+      {
+        "case_id": "PCR-R018",
+        "benefit_match": true,
+        "effective_from": "2022-03-01",
+        "effective_to": null,
+        "predicted_parameters": {
+          "income_multiplier": 1.5
+        },
+        "predicted_condition_fields": [
+          "per_capita_monthly_income"
+        ]
+      },
+      {
+        "case_id": "PCR-R019",
+        "benefit_match": true,
+        "effective_from": "2022-03-01",
+        "effective_to": null,
+        "predicted_parameters": {
+          "rigid_expense_income_ratio": 0.6
+        },
+        "predicted_condition_fields": [
+          "is_local_hukou",
+          "member_scope_confirmed",
+          "per_capita_annual_income",
+          "rigid_expenses_12m"
+        ]
+      },
+      {
+        "case_id": "PCR-R020",
+        "benefit_match": true,
+        "effective_from": "2022-03-01",
+        "effective_to": null,
+        "predicted_parameters": {},
+        "predicted_condition_fields": [
+          "per_capita_annual_income"
+        ]
+      },
+      {
+        "case_id": "PCR-R021",
+        "benefit_match": true,
+        "effective_from": "2022-03-01",
+        "effective_to": null,
+        "predicted_parameters": {
+          "rigid_expense_income_ratio": 0.6
+        },
+        "predicted_condition_fields": [
+          "member_scope_confirmed",
+          "rigid_expenses_12m"
+        ]
+      },
+      {
+        "case_id": "PCR-R022",
+        "benefit_match": true,
+        "effective_from": "2021-12-06",
+        "effective_to": "2029-12-06",
+        "predicted_parameters": {
+          "urgent_event_days": 31
+        },
+        "predicted_condition_fields": [
+          "urgent_event",
+          "urgent_event_date"
+        ]
+      },
+      {
+        "case_id": "PCR-R023",
+        "benefit_match": true,
+        "effective_from": "2021-12-06",
+        "effective_to": "2029-12-06",
+        "predicted_parameters": {},
+        "predicted_condition_fields": [
+          "residence_proof"
+        ]
+      },
+      {
+        "case_id": "PCR-R024",
+        "benefit_match": true,
+        "effective_from": "2026-01-01",
+        "effective_to": "2026-12-31",
+        "predicted_parameters": {},
+        "predicted_condition_fields": []
+      },
+      {
+        "case_id": "PCR-R025",
+        "benefit_match": true,
+        "effective_from": "2026-01-01",
+        "effective_to": "2026-12-31",
+        "predicted_parameters": {},
+        "predicted_condition_fields": []
+      },
+      {
+        "case_id": "PCR-R026",
+        "benefit_match": true,
+        "effective_from": "2026-01-01",
+        "effective_to": "2026-12-31",
+        "predicted_parameters": {},
+        "predicted_condition_fields": []
+      },
+      {
+        "case_id": "PCR-R027",
+        "benefit_match": true,
+        "effective_from": "2023-06-01",
+        "effective_to": "2026-07-31",
+        "predicted_parameters": {},
+        "predicted_condition_fields": []
+      },
+      {
+        "case_id": "PCR-R028",
+        "benefit_match": true,
+        "effective_from": "2023-06-01",
+        "effective_to": "2026-07-31",
+        "predicted_parameters": {},
+        "predicted_condition_fields": []
+      },
+      {
+        "case_id": "PCR-R029",
+        "benefit_match": true,
+        "effective_from": "2023-06-01",
+        "effective_to": "2026-07-31",
+        "predicted_parameters": {},
+        "predicted_condition_fields": [
+          "assets_eligible"
+        ]
+      },
+      {
+        "case_id": "PCR-R030",
+        "benefit_match": true,
+        "effective_from": "2023-06-01",
+        "effective_to": "2026-07-31",
+        "predicted_parameters": {},
+        "predicted_condition_fields": [
+          "assets_eligible"
+        ]
+      },
+      {
+        "case_id": "PCR-R031",
+        "benefit_match": true,
+        "effective_from": "2026-01-01",
+        "effective_to": "2030-12-31",
+        "predicted_parameters": {},
+        "predicted_condition_fields": []
+      },
+      {
+        "case_id": "PCR-R032",
+        "benefit_match": true,
+        "effective_from": "2026-01-01",
+        "effective_to": "2030-12-31",
+        "predicted_parameters": {},
+        "predicted_condition_fields": []
+      },
+      {
+        "case_id": "PCR-R033",
+        "benefit_match": true,
+        "effective_from": "2026-01-01",
+        "effective_to": "2030-12-31",
+        "predicted_parameters": {},
+        "predicted_condition_fields": [
+          "per_capita_monthly_income"
+        ]
+      },
+      {
+        "case_id": "PCR-R034",
+        "benefit_match": true,
+        "effective_from": "2026-01-01",
+        "effective_to": "2030-12-31",
+        "predicted_parameters": {},
+        "predicted_condition_fields": [
+          "per_capita_monthly_income"
+        ]
+      },
+      {
+        "case_id": "PCR-R035",
+        "benefit_match": true,
+        "effective_from": "2026-01-01",
+        "effective_to": "2030-12-31",
+        "predicted_parameters": {},
+        "predicted_condition_fields": []
+      },
+      {
+        "case_id": "PCR-R036",
+        "benefit_match": true,
+        "effective_from": "2026-01-01",
+        "effective_to": "2030-12-31",
+        "predicted_parameters": {},
+        "predicted_condition_fields": []
+      },
+      {
+        "case_id": "PCR-R037",
+        "benefit_match": true,
+        "effective_from": "2026-01-01",
+        "effective_to": "2030-12-31",
+        "predicted_parameters": {},
+        "predicted_condition_fields": []
+      },
+      {
+        "case_id": "PCR-R038",
+        "benefit_match": true,
+        "effective_from": "2026-01-01",
+        "effective_to": "2030-12-31",
+        "predicted_parameters": {},
+        "predicted_condition_fields": []
+      },
+      {
+        "case_id": "PCR-R039",
+        "benefit_match": true,
+        "effective_from": "2026-01-01",
+        "effective_to": "2030-12-31",
+        "predicted_parameters": {},
+        "predicted_condition_fields": []
+      },
+      {
+        "case_id": "PCR-R040",
+        "benefit_match": true,
+        "effective_from": "2026-01-01",
+        "effective_to": "2030-12-31",
+        "predicted_parameters": {},
+        "predicted_condition_fields": []
+      },
+      {
+        "case_id": "PCR-R041",
+        "benefit_match": true,
+        "effective_from": "2026-01-01",
+        "effective_to": "2030-12-31",
+        "predicted_parameters": {},
+        "predicted_condition_fields": []
+      },
+      {
+        "case_id": "PCR-R042",
+        "benefit_match": true,
+        "effective_from": "2026-01-01",
+        "effective_to": "2030-12-31",
+        "predicted_parameters": {},
+        "predicted_condition_fields": []
+      },
+      {
+        "case_id": "PCR-R043",
+        "benefit_match": true,
+        "effective_from": "2026-01-01",
+        "effective_to": "2030-12-31",
+        "predicted_parameters": {},
+        "predicted_condition_fields": []
+      },
+      {
+        "case_id": "PCR-R044",
+        "benefit_match": true,
+        "effective_from": "2026-01-01",
+        "effective_to": "2030-12-31",
+        "predicted_parameters": {},
+        "predicted_condition_fields": []
+      },
+      {
+        "case_id": "PCR-R045",
+        "benefit_match": true,
+        "effective_from": "2026-01-01",
+        "effective_to": "2030-12-31",
+        "predicted_parameters": {},
+        "predicted_condition_fields": []
+      },
+      {
+        "case_id": "PCR-R046",
+        "benefit_match": true,
+        "effective_from": "2026-01-01",
+        "effective_to": "2030-12-31",
+        "predicted_parameters": {},
+        "predicted_condition_fields": []
+      },
+      {
+        "case_id": "PCR-R047",
+        "benefit_match": true,
+        "effective_from": "2026-01-01",
+        "effective_to": "2030-12-31",
+        "predicted_parameters": {},
+        "predicted_condition_fields": []
+      },
+      {
+        "case_id": "PCR-R048",
+        "benefit_match": true,
+        "effective_from": "2026-01-01",
+        "effective_to": "2030-12-31",
+        "predicted_parameters": {},
+        "predicted_condition_fields": [
+          "member_scope_confirmed"
+        ]
+      },
+      {
+        "case_id": "PCR-R049",
+        "benefit_match": true,
+        "effective_from": "2022-03-01",
+        "effective_to": null,
+        "predicted_parameters": {},
+        "predicted_condition_fields": [
+          "assets_eligible",
+          "member_scope_confirmed"
+        ]
+      },
+      {
+        "case_id": "PCR-R050",
+        "benefit_match": true,
+        "effective_from": "2022-03-01",
+        "effective_to": null,
+        "predicted_parameters": {},
+        "predicted_condition_fields": []
+      }
+    ]
+  },
+  "unknown_rejection": {
+    "dataset_origin": "project-authored synthetic out-of-domain negatives",
+    "case_count": 10,
+    "passed": 10,
+    "accuracy": 1.0,
+    "details": [
+      {
+        "case_id": "NEG-001",
+        "passed": true,
+        "predicted_benefit_id": "unknown"
+      },
+      {
+        "case_id": "NEG-002",
+        "passed": true,
+        "predicted_benefit_id": "unknown"
+      },
+      {
+        "case_id": "NEG-003",
+        "passed": true,
+        "predicted_benefit_id": "unknown"
+      },
+      {
+        "case_id": "NEG-004",
+        "passed": true,
+        "predicted_benefit_id": "unknown"
+      },
+      {
+        "case_id": "NEG-005",
+        "passed": true,
+        "predicted_benefit_id": "unknown"
+      },
+      {
+        "case_id": "NEG-006",
+        "passed": true,
+        "predicted_benefit_id": "unknown"
+      },
+      {
+        "case_id": "NEG-007",
+        "passed": true,
+        "predicted_benefit_id": "unknown"
+      },
+      {
+        "case_id": "NEG-008",
+        "passed": true,
+        "predicted_benefit_id": "unknown"
+      },
+      {
+        "case_id": "NEG-009",
+        "passed": true,
+        "predicted_benefit_id": "unknown"
+      },
+      {
+        "case_id": "NEG-010",
+        "passed": true,
+        "predicted_benefit_id": "unknown"
+      }
+    ]
+  },
+  "claim_boundary": "主结果是不给benefit_hint和有效期元数据的原文抽取轨；辅助编译轨单独报告，不得把元数据回填计作模型抽取。标签由项目组按官方条款制作，未做外部双人盲标，且规则开发与本基准来源存在重叠，因此只用于回归验证，不宣称独立泛化性能。",
+  "app_version": "1.2.0",
+  "engine_version": "rule-engine/0.5.0",
+  "release_metadata": {
+    "release_id": "v1.2.0+source.5fc011cd9986",
+    "app_version": "1.2.0",
+    "engine_version": "rule-engine/0.5.0",
+    "git_commit": "488be3243a196a2331e8f173fe8b75cb91491779",
+    "git_dirty": true,
+    "source_tree_sha256": "5fc011cd9986144f8597a0e87e0ff0a4a9fe15b86f29a797aaf6bf1a34484dd1"
+  }
 }

@@ -12,7 +12,6 @@ from app.domain.models import ParseProfileRequest, ParseProfileResponse
 from app.services.ai_runtime import ModelRuntimeError, chat_json
 from app.services.intent_classifier import classify_intent
 
-
 DISTRICTS = [
     "越秀区",
     "海珠区",
@@ -111,6 +110,25 @@ def _money(value: str, unit: str | None) -> Decimal:
     return (Decimal(value) * multiplier).quantize(Decimal("0.01"))
 
 
+def _missing_profile_fields(fields: dict[str, Any]) -> list[str]:
+    """Return unanswered facts without replacing silence with a negative fact."""
+
+    required = [
+        "district",
+        "household_size",
+        "monthly_income_total",
+        "assets_eligible",
+        "member_scope_confirmed",
+        "is_local_hukou",
+        "urgent_event",
+    ]
+    if fields.get("urgent_event") is True:
+        required.extend(["urgent_event_date", "basic_life_interrupted"])
+    if fields.get("is_local_hukou") is False:
+        required.append("residence_proof")
+    return [field for field in required if fields.get(field) is None]
+
+
 def _heuristic_parse(request: ParseProfileRequest) -> ParseProfileResponse:
     text = request.text
     fields: dict[str, Any] = {
@@ -133,13 +151,7 @@ def _heuristic_parse(request: ParseProfileRequest) -> ParseProfileResponse:
         return ParseProfileResponse(
             fields=fields,
             confidence=confidence,
-            missing_fields=[
-                "district",
-                "household_size",
-                "monthly_income_total",
-                "assets_eligible",
-                "member_scope_confirmed",
-            ],
+            missing_fields=_missing_profile_fields(fields),
             warnings=warnings,
             provider="local-safe-parser",
             intent_model=intent_model,
@@ -250,17 +262,7 @@ def _heuristic_parse(request: ParseProfileRequest) -> ParseProfileResponse:
         fields["basic_life_interrupted"] = True
         confidence["basic_life_interrupted"] = 0.86
 
-    missing = [
-        field
-        for field in [
-            "district",
-            "household_size",
-            "monthly_income_total",
-            "assets_eligible",
-            "member_scope_confirmed",
-        ]
-        if field not in fields
-    ]
+    missing = _missing_profile_fields(fields)
     if missing:
         warnings.append("自然语言只生成画像草稿，带金额和资格影响的字段必须由用户确认。")
     intent_model, intent_predictions = classify_intent(text)
@@ -282,6 +284,8 @@ def _ollama_parse(request: ParseProfileRequest) -> tuple[_ProfileExtraction, Any
         "金额统一换算为人民币元。assets_eligible仅在用户明确表示财产状况符合/不符合规定时填写。"
         "member_scope_confirmed仅在用户明确确认共同生活家庭成员范围时填写。"
         "用户表示尚未确认成员范围时，member_scope_confirmed必须为null而不是false。"
+        "urgent_event只有在用户明确说明发生或明确否认发生时才能填写true或false；"
+        "用户未提及急难事件时必须为null，严禁把沉默推断为false。"
     )
     result = chat_json(
         system_prompt=system_prompt,
@@ -324,17 +328,7 @@ def parse_profile(request: ParseProfileRequest) -> ParseProfileResponse:
             baseline.fields[key] = value
             # 这不是校准概率，只是给前端排序用的中性占位值；含义由confidence_basis明确。
             baseline.confidence[key] = 0.5
-    baseline.missing_fields = [
-        field
-        for field in [
-            "district",
-            "household_size",
-            "monthly_income_total",
-            "assets_eligible",
-            "member_scope_confirmed",
-        ]
-        if baseline.fields.get(field) is None
-    ]
+    baseline.missing_fields = _missing_profile_fields(baseline.fields)
     if conflicts:
         baseline.warnings.append(
             f"模型与高精度规则在{len(conflicts)}个字段上冲突，已保留规则结果并要求人工确认。"

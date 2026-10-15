@@ -1,5 +1,5 @@
-from datetime import date
 import json
+from datetime import date
 from types import SimpleNamespace
 
 import pytest
@@ -90,7 +90,24 @@ def test_llm_field_without_source_anchor_is_rejected(
 
 def test_production_requires_admin_token() -> None:
     with pytest.raises(RuntimeError, match="ADMIN_API_TOKEN"):
-        Settings(environment="production", admin_api_token=None).validate_runtime()
+        Settings(
+            environment="production", demo_mode=False, admin_api_token=None
+        ).validate_runtime()
+
+
+def test_development_also_requires_token_unless_demo_is_explicit() -> None:
+    with pytest.raises(RuntimeError, match="ADMIN_API_TOKEN"):
+        Settings(
+            environment="development", demo_mode=False, admin_api_token=None
+        ).validate_runtime()
+    Settings(environment="development", demo_mode=True, admin_api_token=None).validate_runtime()
+
+
+def test_production_rejects_demo_mode_even_with_token() -> None:
+    with pytest.raises(RuntimeError, match="禁止启用DEMO_MODE"):
+        Settings(
+            environment="production", demo_mode=True, admin_api_token="x" * 32
+        ).validate_runtime()
 
 
 def test_intent_model_beats_minimum_frozen_accuracy() -> None:

@@ -11,6 +11,9 @@ release/
 *.py[cod]
 .pytest_cache/
 .ruff_cache/
+.mypy_cache/
+.coverage
+htmlcov/
 .env
 storage/*.db
 storage/*.pid

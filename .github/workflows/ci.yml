@@ -19,8 +19,27 @@ jobs:
           cache: pip
       - name: Install locked dependencies
         run: python -m pip install -r requirements.lock
-      - name: Unit and API tests
-        run: python -m pytest
+      - name: Install quality toolchain
+        run: python -m pip install -r requirements-quality.txt
+      - name: Ruff
+        run: python -m ruff check app scripts tests
+      - name: Type checking
+        run: python -m mypy app
+      - name: Unit, API and coverage gate
+        run: python -m pytest --cov=app --cov-branch --cov-report=term-missing
+      - name: Bandit
+        run: python -m bandit -q -r app
+      - name: Semgrep offline project rules
+        run: semgrep scan --config .semgrep.yml --error --quiet app scripts
+      - name: Independent AST security policy
+        run: python scripts/static_security_policy.py app scripts
+      - name: Secret scan
+        run: |
+          python -m detect_secrets scan --all-files --exclude-lines '"source_sha256"\s*:' \
+            app scripts tests .env.example compose.yaml Dockerfile README.md > secret-scan.json
+          python -c "import json,sys; p=json.load(open('secret-scan.json', encoding='utf-8')); n=sum(map(len,p['results'].values())); print('secret_candidates=',n); sys.exit(n != 0)"
+      - name: Dependency vulnerability audit
+        run: python -m pip_audit -r requirements.lock --no-deps --disable-pip --cache-dir .pip-audit-cache --timeout 10 --progress-spinner off
       - name: Project integrity
         run: python scripts/check_project.py
       - name: Deterministic evaluations
@@ -28,6 +47,7 @@ jobs:
           python scripts/evaluate_conformance.py
           python scripts/evaluate_retrieval.py
           python scripts/evaluate_policy_compiler.py
+          python scripts/build_question_strategy_benchmark.py
           python scripts/evaluate_question_strategy.py
           python scripts/evaluate_ablation.py
       - name: Dependency consistency

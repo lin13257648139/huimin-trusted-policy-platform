@@ -16,6 +16,8 @@ def test_chinese_narrative_extracts_only_explicit_facts() -> None:
     assert result.fields["monthly_income_total"] == "3200.00"
     assert result.fields["medical_expenses_12m"] == "30000.00"
     assert "assets_eligible" in result.missing_fields
+    assert "urgent_event" not in result.fields
+    assert "urgent_event" in result.missing_fields
 
 
 def test_parser_does_not_invent_income() -> None:
@@ -24,4 +26,6 @@ def test_parser_does_not_invent_income() -> None:
     )
     assert result.fields["district"] == "番禺区"
     assert "monthly_income_total" not in result.fields
+    assert "urgent_event" not in result.fields
+    assert "urgent_event" in result.missing_fields
 

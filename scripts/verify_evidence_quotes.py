@@ -6,7 +6,6 @@ import json
 import re
 from pathlib import Path
 
-
 ROOT = Path(__file__).resolve().parent.parent
 EVIDENCE_PATH = ROOT / "app" / "data" / "evidence.json"
 OCR_AUDIT_PATH = ROOT / "data" / "evaluation" / "evidence_quote_audit.json"

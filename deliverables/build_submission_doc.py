@@ -13,7 +13,7 @@ from docx.shared import Cm, Inches, Pt, RGBColor
 
 
 ROOT = Path(__file__).resolve().parents[1]
-OUT = ROOT / "deliverables" / "惠民智导_项目说明书.docx"
+OUT = ROOT / "deliverables" / "惠民智导_作品方案.docx"
 EVAL = ROOT / "data" / "evaluation"
 
 NAVY = "102A43"
@@ -185,6 +185,9 @@ def make_doc() -> None:
     ai = load("ai_pipeline_report.json")
     quotes = load("evidence_quote_audit.json")
     manifest = load("dataset_governance_manifest.json")
+    ai_profile = ai["profile_extraction"]["schema_constrained_llm_ensemble"]
+    ai_retrieval = ai["retrieval"]["configured_pipeline"]
+    concurrency_30 = next(item for item in perf["results"] if item["concurrency"] == 30)
 
     doc = Document()
     sec = doc.sections[0]
@@ -226,22 +229,16 @@ def make_doc() -> None:
     add_run(p, "可信政策智能软件平台", bold=True, color=NAVY, size=24)
     p = doc.add_paragraph()
     p.alignment = WD_ALIGN_PARAGRAPH.CENTER
-    add_run(p, "项目说明书", color=GRAY, size=14)
+    add_run(p, "AI+软件创新 · 作品方案", color=GRAY, size=14)
     p.paragraph_format.space_after = Pt(40)
     callout(doc, "一句话定义", "采用受约束神经符号架构，把本地模型、时态规则、三值逻辑、混合检索、政策编译与独立安全校验组合为可追溯、可拒答、可回归验证的政策智能软件。", BLUE)
     p = doc.add_paragraph()
     p.paragraph_format.space_before = Pt(36)
     p.alignment = WD_ALIGN_PARAGRAPH.CENTER
-    add_run(p, "团队：策马奔腾", bold=True, color=NAVY, size=12)
+    add_run(p, "参赛团队：策马奔腾", bold=True, color=NAVY, size=12)
     p = doc.add_paragraph()
     p.alignment = WD_ALIGN_PARAGRAPH.CENTER
-    add_run(p, "队长：林琪东    队员：罗晓蓝", color=NAVY, size=11)
-    p = doc.add_paragraph()
-    p.alignment = WD_ALIGN_PARAGRAPH.CENTER
-    add_run(p, "学校：广州软件学院", color=NAVY, size=11)
-    p = doc.add_paragraph()
-    p.alignment = WD_ALIGN_PARAGRAPH.CENTER
-    add_run(p, "版本：V0.7.1  |  文档日期：2026-10-03", color=GRAY, size=10)
+    add_run(p, "版本：V1.0.0  |  文档日期：2026-10-06", color=GRAY, size=10)
     p = doc.add_paragraph()
     p.alignment = WD_ALIGN_PARAGRAPH.CENTER
     add_run(p, "数据科学与大数据技术 · 单机 RTX 4060", color=GRAY, size=10)
@@ -250,15 +247,15 @@ def make_doc() -> None:
     heading(doc, "作品摘要", 1)
     body(doc, "社会救助政策专业、分散且持续更新，群众难以判断“当前适用哪一版、还缺什么信息、依据在哪里”，基层人员也面临重复解释、规则维护和错误传播风险。惠民智导将社会救助作为首个深度验证场景，构建政策摄取、Policy2Rule 候选编译、时态规则推理、主动提问、证据检索、材料预检、影响分析与人工发布门的一体化平台。")
     body(doc, "系统坚持“模型理解、规则裁决、原文举证、人工发布”：模型只做意图识别、信息抽取和候选结构化；资格结果由版本化规则与三值逻辑计算；独立校验器阻止无证据结论、越权审批和提示注入；每个结论均回链逐字政策原文。")
-    callout(doc, "可信边界", "本说明书不宣称已取得真实群众应用成效。现有数字来自项目内合成测试、官方条款基准和专家构造金标准；真人试点与第三方证明作为外部验证任务单独管理。", AMBER)
+    callout(doc, "可信边界", "本方案不宣称已取得真实群众应用成效。现有数字来自项目内合成测试、官方条款基准和专家构造金标准；真人试点与第三方证明作为外部验证任务单独管理。", AMBER)
     heading(doc, "核心成果速览", 2)
     table(doc, ["维度", "当前可验证结果", "证据文件"], [
         ["安全", f"高风险集 {safety.get('passed_cases', 100)}/{safety.get('total_cases', 100)} 通过", "high_risk_safety_report.json"],
         ["检索", "内部基准 R@3=1.000，MRR=0.958", "retrieval_report.json"],
         ["主动提问", "240 合成案例；较 17 字段表单减少 51.47%", "active_question_report.json"],
         ["政策编译", "11 条官方条款；原文锚定率 1.000", "policy_compiler_real_report.json"],
-        ["并发", "1/5/10/20/30 并发零错误；30 并发 P95 439.8ms", "http_concurrency_report.json"],
-        ["工程", "64 项自动测试通过；锁定依赖 46 项；已知漏洞 0", "pytest / vulnerability report"],
+        ["并发", f"1/5/10/20/30 并发零错误；30 并发 P95 {concurrency_30['p95_ms']:.1f}ms", "http_concurrency_report.json"],
+        ["工程", "66 项自动测试通过；锁定依赖 46 项；已知漏洞 0", "pytest / vulnerability report"],
     ], [2.2, 8.1, 5.7])
 
     page_break(doc)
@@ -394,8 +391,8 @@ def make_doc() -> None:
         ["MRR", "0.9583", "项目内冻结基准"],
         ["意图分类", "朴素贝叶斯 0.95；关键词 0.75", "20 条内部合成问题"],
         ["证据逐字审计", "18/18", "来源快照逐字子串核验"],
-        ["Qwen3画像字段F1", "1.000；P95 2.592秒", "40条内部合成语句；RTX 4060 GPU"],
-        ["混合检索实际路由", "12/12；P95 430毫秒", "Qwen3 Embedding；项目内问题"],
+        ["Qwen3画像字段F1", f"{ai_profile['field_f1']:.3f}；P95 {ai_profile['latency_ms']['p95'] / 1000:.3f}秒", "40条内部合成语句；RTX 4060 GPU"],
+        ["混合检索实际路由", f"12/12；P95 {ai_retrieval['latency_ms']['p95']}毫秒", "Qwen3 Embedding；项目内问题"],
     ], [4.5, 4.7, 7.0])
     heading(doc, "8.3 主动提问", 2)
     table(doc, ["指标", "主动策略", "对照"], [
@@ -425,7 +422,7 @@ def make_doc() -> None:
         ["前端", "原生模块化 Web UI；响应式导航；离线 Service Worker；无框架锁定"],
         ["存储", "SQLite 本地库；版本化政策、规则、审计事件"],
         ["AI 运行", "Qwen3 4B + Qwen3 Embedding 0.6B 已在 RTX 4060 实测；确定性底座可见降级"],
-        ["测试", "Pytest 64 项；前端路由契约；高风险 100 例；复现脚本"],
+        ["测试", "Pytest 66 项；前端路由契约；高风险 100 例；复现脚本"],
         ["持续集成", "GitHub Actions：依赖安装、测试、项目校验、评测、pip check"],
         ["供应链", "requirements.lock、SBOM、依赖漏洞审计、数据/源码哈希"],
         ["启动停止", "PowerShell 脚本检测端口和 PID，避免重复实例与僵尸进程"],
@@ -439,7 +436,7 @@ def make_doc() -> None:
         ["python scripts/check_project.py", "检查证据、依赖、版本和安全报告完整性"],
     ], [7.0, 9.2])
     heading(doc, "9.2 版本与变更管理", 2)
-    body(doc, "项目已建立 Git 基线，应用、缓存、静态资源和包元数据统一为 V0.7.1。运行数据库、日志、真人数据、专家原表、临时文件和模型权重均由忽略规则隔离，避免误提交。")
+    body(doc, "项目已建立 Git 基线，应用、缓存、静态资源和包元数据统一为 V1.0.0。运行数据库、日志、真人数据、专家原表、临时文件和模型权重均由忽略规则隔离，避免误提交。")
 
     heading(doc, "10  差异化与推广", 1)
     table(doc, ["对比维度", "通用聊天机器人", "惠民智导"], [
@@ -466,10 +463,10 @@ def make_doc() -> None:
 
     heading(doc, "12  团队与实施", 1)
     table(doc, ["角色", "主要职责", "可交叉备份"], [
-        ["林琪东 · 队长", "总体架构、后端与可信推理、本地模型集成、部署验收", "实验复现、现场演示"],
-        ["罗晓蓝 · 队员", "前端交互、数据与政策材料整理、文档与测试", "材料预检、现场演示"],
+        ["队长", "总体架构、后端与可信推理、本地模型集成、部署验收", "实验复现、现场演示"],
+        ["队员", "前端交互、数据与政策材料整理、文档与测试", "材料预检、现场演示"],
     ], [3.5, 8.3, 4.4])
-    body(doc, "团队名称为策马奔腾，学校为广州软件学院。")
+    body(doc, "团队名称为策马奔腾。团队采用交叉复核机制，核心规则、实验结果与演示流程均由不同角色复核。")
     heading(doc, "12.1 交付里程碑", 2)
     table(doc, ["阶段", "完成标准"], [
         ["M1 技术冻结", "模型实测报告、全部测试、项目校验、漏洞扫描通过"],
@@ -496,23 +493,23 @@ def make_doc() -> None:
         ["作品简介", "300 字以内，问题—方案—创新—边界—应用"],
         ["作品方案", "本 DOCX 及导出 PDF；提交前确认小于 10MB"],
         ["答辩材料", "15 页 PPTX，并转换为 PDF 提交"],
-        ["演示视频", "需团队真人录制 3–5 分钟 MP4，建议 1080p，文件不超过 300MB"],
+        ["演示视频", "已形成 3–5 分钟 MP4；提交前由团队复核画面、声音、字幕与匿名信息"],
         ["佐证材料", "评测报告、专家复核、真人试点（若完成）、软件著作或合作证明（若有）合并 PDF"],
         ["源码与模型说明", "发布 ZIP + SHA-256；模型权重不入包，提供官方下载和哈希/版本说明"],
         ["上传文件", "由团队按指定平台的文件命名和大小要求提交"],
     ], [4.2, 12.0])
-    heading(doc, "13.4 当前仍需真人完成", 2)
+    heading(doc, "13.4 当前仍需人工完成", 2)
     bullet(doc, "填写团队编号、正式赛题名称和联系方式等平台专用信息。")
     bullet(doc, "组织真实参与者完成可用性试点并保留知情同意；不能以 AI 生成记录代替。")
-    bullet(doc, "真人录制演示视频、检查声音和隐私遮挡。")
+    bullet(doc, "复核现有演示视频的声音、字幕、画面清晰度和隐私遮挡，并按平台要求上传。")
     bullet(doc, "在另一台干净 Windows 电脑完成第三方安装验收并签字。")
     bullet(doc, "完成最终盖章、签字、文件上传和指定平台提交。")
     heading(doc, "13.5 真实性声明", 2)
     body(doc, "本文引用的实验结果均可由仓库脚本复现，并在文字中标明数据性质。项目未把项目组生成的合成数据描述为真人数据，未把项目组构造的金标准描述为独立第三方评估，未把导办结果描述为行政审批结论。若后续完成真人试点，应以原始记录、统计脚本和问题闭环表更新本节，而不是覆盖现有实验口径。")
-    callout(doc, "结论", "惠民智导已经形成可运行、可解释、可拒答、可审计、可复现的软件内核，本地生成与向量模型均已完成 GPU 冻结评测。项目的核心价值来自高风险政策智能的可信工程方法，而非单一模型规模；外部验证、干净电脑验收与真人视频仍需由团队真实完成。", BLUE)
+    callout(doc, "结论", "惠民智导已经形成可运行、可解释、可拒答、可审计、可复现的软件内核，本地生成与向量模型均已完成 GPU 冻结评测。项目的核心价值来自高风险政策智能的可信工程方法，而非单一模型规模；真实参与者试点、外部应用证明和干净电脑验收仍需由团队真实完成。", BLUE)
 
-    doc.core_properties.title = "惠民智导可信政策智能软件平台项目说明书"
-    doc.core_properties.subject = "社会救助智能导办项目说明书"
+    doc.core_properties.title = "惠民智导可信政策智能平台作品方案"
+    doc.core_properties.subject = "AI加软件创新作品方案"
     doc.core_properties.author = "策马奔腾"
     doc.core_properties.keywords = "可信AI, 政策智能, 神经符号, 社会救助, 时态规则, 三值逻辑"
     OUT.parent.mkdir(parents=True, exist_ok=True)

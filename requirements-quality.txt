@@ -1,0 +1,9 @@
+# Quality/security toolchain verified on Python 3.12 (2026-10-15).
+ruff==0.17.0
+mypy==2.4.0
+bandit==1.9.4
+semgrep==1.181.0
+coverage==7.16.2
+pytest-cov==7.1.0
+detect-secrets==1.5.0
+pip-audit==2.10.1

@@ -3,18 +3,34 @@ from __future__ import annotations
 import csv
 import hashlib
 import json
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
-
 
 ROOT = Path(__file__).resolve().parent.parent
 CATALOG = ROOT / "data" / "processed" / "policy_source_catalog.csv"
 OUTPUT = ROOT / "data" / "raw_official" / "provenance_manifest.json"
 PAGE_LOCATORS = {
+    "GZ-005-E": {
+        "pdf_pages": "1",
+        "note": "官方延续通知；仅变更穗府办规〔2021〕19号有效期至2029-12-06。",
+    },
     "GD-002": {
         "pdf_pages": "12-18",
         "note": "官方附件为广东省政府公报2022年第7期合刊；指定页为本项目使用的完整政策正文。",
-    }
+    },
+    "GD-004": {
+        "pdf_pages": "1-22",
+        "note": "广东省民政厅正式扫描件；共22个PDF页面，含《申请家庭生活状况综合评估指标（第二版）》附件。",
+    },
+    "GD-004-A": {
+        "pdf_pages": "1-8",
+        "note": "GD-004配套可检索附件副本；用于逐字引文与结构化核验，不独立于主文件生效。",
+    },
+}
+
+SOURCE_RELATIONSHIPS = {
+    "GZ-005-E": {"parent_source_id": "GZ-005", "relationship": "extends_validity"},
+    "GD-004-A": {"parent_source_id": "GD-004", "relationship": "official_appendix"},
 }
 
 
@@ -47,10 +63,12 @@ def main() -> None:
             }
         if row["source_id"] in PAGE_LOCATORS:
             item["locator"] = PAGE_LOCATORS[row["source_id"]]
+        if row["source_id"] in SOURCE_RELATIONSHIPS:
+            item.update(SOURCE_RELATIONSHIPS[row["source_id"]])
         sources.append(item)
     manifest = {
         "schema_version": "1.0",
-        "generated_at": datetime.now(timezone.utc).isoformat(),
+        "generated_at": datetime.now(UTC).isoformat(),
         "catalog": "data/processed/policy_source_catalog.csv",
         "catalog_sha256": _sha256(CATALOG),
         "path_policy": "all paths are project-relative; no personal absolute path is stored",

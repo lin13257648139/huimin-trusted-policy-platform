@@ -4,9 +4,12 @@ from pathlib import Path
 import pytest
 from PIL import Image, ImageDraw, ImageFilter
 
-from app.services.document_check import DocumentValidationError, check_document
+from app.services.document_check import (
+    DocumentValidationError,
+    check_document,
+    check_document_package,
+)
 from app.services.ocr import classify_ocr_text, ocr_runtime_available
-
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -95,6 +98,22 @@ def test_disallowed_extension_is_rejected() -> None:
             max_bytes=8 * 1024 * 1024,
             ocr_enabled=False,
         )
+
+
+def test_unknown_declared_material_type_is_rejected() -> None:
+    with pytest.raises(DocumentValidationError, match="材料类型"):
+        check_document(
+            filename="材料.png",
+            content=b"not-needed",
+            declared_type="arbitrary_type",
+            max_bytes=1024,
+            ocr_enabled=False,
+        )
+
+
+def test_unknown_package_benefit_id_is_rejected() -> None:
+    with pytest.raises(DocumentValidationError, match="事项编号"):
+        check_document_package(benefit_id="B999", documents=[])
 
 
 def test_ocr_text_classification_uses_content_keywords() -> None:

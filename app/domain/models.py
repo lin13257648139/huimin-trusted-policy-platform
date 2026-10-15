@@ -2,23 +2,43 @@ from __future__ import annotations
 
 from datetime import date, datetime
 from decimal import Decimal
-from enum import Enum
+from enum import StrEnum
 from typing import Any, Literal
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
 
-class TruthValue(str, Enum):
+class TruthValue(StrEnum):
     TRUE = "true"
     FALSE = "false"
     UNKNOWN = "unknown"
 
 
-class EligibilityStatus(str, Enum):
+class EligibilityStatus(StrEnum):
     LIKELY = "likely"
     UNLIKELY = "unlikely"
     INCOMPLETE = "incomplete"
     MANUAL_REVIEW = "manual_review"
+
+
+class BenefitId(StrEnum):
+    LOW_INCOME_MONITORING = "B001"
+    MINIMUM_LIVING = "B002"
+    EDGE_FAMILY = "B003"
+    RIGID_EXPENSE = "B004"
+    TEMPORARY_RESCUE = "B005"
+
+
+class MaterialType(StrEnum):
+    AUTO = "auto"
+    IDENTITY = "identity"
+    HOUSEHOLD_REGISTER = "household_register"
+    INCOME = "income"
+    MEDICAL_EXPENSE = "medical_expense"
+    MEDICAL_DIAGNOSIS = "medical_diagnosis"
+    EDUCATION_EXPENSE = "education_expense"
+    RESIDENCE = "residence"
+    VERIFICATION_AUTHORIZATION = "verification_authorization"
 
 
 class HouseholdProfile(BaseModel):
@@ -43,7 +63,8 @@ class HouseholdProfile(BaseModel):
     medical_expenses_12m: Decimal | None = Field(default=None, ge=0)
     education_expenses_12m: Decimal | None = Field(default=None, ge=0)
 
-    urgent_event: bool = False
+    # 未填写不是“否”。缺失值必须以 None/UNKNOWN 贯穿解析、规则和展示链路。
+    urgent_event: bool | None = None
     urgent_event_date: date | None = None
     urgent_event_type: str | None = None
     basic_life_interrupted: bool | None = None
@@ -59,8 +80,8 @@ class HouseholdProfile(BaseModel):
         return value
 
     @model_validator(mode="after")
-    def validate_event(self) -> "HouseholdProfile":
-        if self.urgent_event_date and not self.urgent_event:
+    def validate_event(self) -> HouseholdProfile:
+        if self.urgent_event_date and self.urgent_event is not True:
             raise ValueError("填写急难事件日期时，urgent_event必须为true")
         if self.deductible_monthly_total and self.monthly_income_total is not None:
             upper_bound = self.monthly_income_total * Decimal("3")
@@ -206,6 +227,15 @@ class ConditionResult(BaseModel):
     action_hint: str | None = None
 
 
+class AppliedBenefitRelation(BaseModel):
+    relation_id: str
+    relation_type: Literal["priority_fallback", "parallel_assessment", "monitoring_link"]
+    related_benefit_id: str
+    direction: Literal["outgoing", "incoming", "peer"]
+    reason: str
+    evidence_ids: list[str] = Field(default_factory=list)
+
+
 class BenefitResult(BaseModel):
     benefit_id: str
     name: str
@@ -226,6 +256,7 @@ class BenefitResult(BaseModel):
         "alternative"
     )
     plan_reason: str = "等待组合导办规划。"
+    plan_relations: list[AppliedBenefitRelation] = Field(default_factory=list)
 
 
 class ScreeningResponse(BaseModel):
@@ -239,11 +270,115 @@ class ScreeningResponse(BaseModel):
     global_warnings: list[str]
     disclaimer: str
     engine_version: str = "unknown"
+    combination_plan_version: str = "unknown"
     recommended_office: dict[str, Any] | None = None
     guidance_summary: list[str] = Field(default_factory=list)
     safety_validation: dict[str, Any] = Field(default_factory=dict)
     screening_token: str | None = None
-    data_retention_days: int = 30
+    persisted: bool = False
+    data_retention_days: int = Field(default=0, ge=0)
+
+
+class AssessmentMemberAdjustments(BaseModel):
+    """互斥后的成员分类计数；同一成员在3.1至3.3中只能进入最有利的一档。"""
+
+    preschool: int = Field(default=0, ge=0, le=30)
+    high_school_or_full_time_college: int = Field(default=0, ge=0, le=30)
+    age_70_79: int = Field(default=0, ge=0, le=30)
+    age_80_plus: int = Field(default=0, ge=0, le=30)
+    rare_disease: int = Field(default=0, ge=0, le=30)
+    severe_or_disabled: int = Field(default=0, ge=0, le=30)
+    chronic_or_half_disabled: int = Field(default=0, ge=0, le=30)
+    other_labor_affecting_disease: int = Field(default=0, ge=0, le=30)
+
+    @property
+    def classified_count(self) -> int:
+        return sum(self.model_dump().values())
+
+
+class LivingAssessmentRequest(BaseModel):
+    """2025年第二版综合评估指标的匿名计算输入。"""
+
+    query_date: date = Field(default_factory=date.today)
+    household_member_count: int = Field(ge=1, le=30)
+
+    wage_income_monthly_avg: Decimal | None = Field(default=None, ge=0)
+    operating_income_monthly_avg: Decimal | None = Field(default=None, ge=0)
+    property_income_monthly_avg: Decimal | None = Field(default=None, ge=0)
+    transfer_income_monthly_avg: Decimal | None = Field(default=None, ge=0)
+    employment_cost_claimed: Decimal | None = Field(default=None, ge=0)
+    laborer_count: int | None = Field(default=None, ge=0, le=30)
+    six_month_average_confirmed: bool | None = None
+    labor_income_assessment_complete: bool | None = None
+
+    member_adjustments: AssessmentMemberAdjustments = Field(
+        default_factory=AssessmentMemberAdjustments
+    )
+    member_nonstack_confirmed: bool | None = None
+    active_duty_conscript_count: int = Field(default=0, ge=0, le=30)
+
+    obligor_strong_count: int = Field(default=0, ge=0, le=60)
+    obligor_general_count: int = Field(default=0, ge=0, le=60)
+    obligor_weak_count: int = Field(default=0, ge=0, le=60)
+    obligor_none_count: int = Field(default=0, ge=0, le=60)
+    obligor_unreachable_with_written_explanation_count: int = Field(default=0, ge=0, le=60)
+    obligor_information_complete: bool | None = None
+    judicial_support_cases: int = Field(default=0, ge=0, le=60)
+    judicial_support_included_in_transfer_income: bool | None = None
+    judicial_cases_excluded_from_obligor_counts: bool | None = None
+
+    no_usable_owned_housing: bool | None = None
+    counted_motorcycles: int | None = Field(default=None, ge=0, le=20)
+    counted_electric_bicycles: int | None = Field(default=None, ge=0, le=30)
+    vehicle_exclusions_confirmed: bool | None = None
+
+    verification_report_available: bool | None = None
+    in_home_assessment_completed: bool | None = None
+    investigator_confirmed: bool | None = None
+    household_confirmed: bool | None = None
+
+    @model_validator(mode="after")
+    def validate_member_classification(self) -> LivingAssessmentRequest:
+        if self.member_adjustments.classified_count > self.household_member_count:
+            raise ValueError("成员分类计数超过共同生活家庭成员人数；同一成员不得重复计分")
+        if self.laborer_count is not None and self.laborer_count > self.household_member_count:
+            raise ValueError("劳动者人数不能超过共同生活家庭成员人数")
+        return self
+
+
+class AssessmentCalculationLine(BaseModel):
+    code: str
+    label: str
+    quantity: int | float
+    coefficient_d: Decimal
+    subtotal_d: Decimal
+    evidence_id: str
+
+
+class LivingAssessmentResponse(BaseModel):
+    policy_version: str
+    policy_effective_from: date
+    policy_effective_to: date
+    query_date: date
+    calculation_status: Literal["not_available", "incomplete", "calculated"]
+    review_state: Literal["manual_review", "needs_information", "calculation_draft", "ready_for_official_review"]
+    d_standard_yuan: Decimal | None = None
+    base_monthly_income_yuan: Decimal | None = None
+    employment_cost_cap_yuan: Decimal | None = None
+    employment_cost_applied_yuan: Decimal | None = None
+    structure_adjustment_d: Decimal | None = None
+    living_adjustment_d: Decimal | None = None
+    adjusted_family_income_d: Decimal | None = None
+    assessed_per_capita_d: Decimal | None = None
+    assessed_per_capita_yuan: Decimal | None = None
+    threshold_comparison: Literal["below_1d", "at_or_above_1d"] | None = None
+    official_process_complete: bool = False
+    calculation_lines: list[AssessmentCalculationLine] = Field(default_factory=list)
+    missing_fields: list[str] = Field(default_factory=list)
+    warnings: list[str] = Field(default_factory=list)
+    evidence_ids: list[str] = Field(default_factory=list)
+    formula: str
+    decision_boundary: str
 
 
 class Office(BaseModel):
@@ -277,6 +412,7 @@ class FeedbackRequest(BaseModel):
     helpful: bool
     issue_type: Literal["none", "policy", "reasoning", "usability", "other"] = "none"
     comment: str | None = Field(default=None, max_length=1000)
+    consent_to_store_comment: bool = False
 
 
 class PolicyCompileRequest(BaseModel):
@@ -315,7 +451,7 @@ class CompiledRuleCondition(BaseModel):
 
 class PolicyRuleCandidate(BaseModel):
     candidate_id: str
-    benefit_id: Literal["B001", "B002", "B003", "B004", "B005"]
+    benefit_id: Literal["B001", "B002", "B003", "B004", "B005", "unknown"]
     benefit_name: str
     region: str
     source_id: str

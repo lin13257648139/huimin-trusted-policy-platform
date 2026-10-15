@@ -1,0 +1,49 @@
+{
+  "registry_version": "2025.11-second-edition.1",
+  "title": "申请家庭生活状况综合评估指标（第二版）",
+  "document_no": "粤民规字〔2025〕5号附件",
+  "source_ids": ["GD-004", "GD-004-A"],
+  "effective_from": "2026-01-01",
+  "effective_to": "2030-12-31",
+  "income_average_months": 6,
+  "unit": "D",
+  "employment_cost_cap_d_per_laborer": "0.5",
+  "member_adjustments_d": {
+    "preschool": "-0.5",
+    "high_school_or_full_time_college": "-1",
+    "age_70_79": "-0.5",
+    "age_80_plus": "-1",
+    "rare_disease": "-3",
+    "severe_or_disabled": "-2",
+    "chronic_or_half_disabled": "-1",
+    "other_labor_affecting_disease": "-0.5"
+  },
+  "active_duty_conscript_adjustment_d": "-1",
+  "obligor_adjustments_d": {
+    "strong": "2",
+    "general": "1",
+    "weak": "0.5",
+    "none": "0"
+  },
+  "housing_adjustment_d": "-1",
+  "motorcycle_adjustments_d": {
+    "0_or_1": "0",
+    "2": "1",
+    "3_plus": "2"
+  },
+  "electric_bicycle_adjustments_d": {
+    "0_to_2": "0",
+    "3_plus": "1"
+  },
+  "evidence": {
+    "income": "E-GD-004-A-INCOME-DETAIL",
+    "member_nonstack": "E-GD-004-A-NONSTACK",
+    "member_structure": "E-GD-004-A-STRUCTURE",
+    "obligors": "E-GD-004-A-OBLIGORS",
+    "living_assets": "E-GD-004-A-LIVING",
+    "vehicle_exclusions": "E-GD-004-A-VEHICLE-EXCLUSION",
+    "formula": "E-GD-004-A-FORMULA",
+    "threshold": "E-GD-004-A-THRESHOLD",
+    "dual_assessment": "E-GD-004-A-DUAL-ASSESSMENT"
+  }
+}

@@ -11,7 +11,6 @@ sys.path.insert(0, str(ROOT))
 from app.domain.models import HouseholdProfile  # noqa: E402
 from app.services.rule_engine import evaluate_profile  # noqa: E402
 
-
 DATASET = ROOT / "data" / "processed" / "synthetic_conformance_cases.jsonl"
 
 

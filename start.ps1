@@ -3,7 +3,9 @@
     [int]$Port = 8000,
 
     [ValidateSet('auto', 'deterministic', 'ollama', 'hybrid')]
-    [string]$AIMode = 'auto'
+    [string]$AIMode = 'auto',
+
+    [switch]$DemoMode
 )
 
 $ErrorActionPreference = 'Stop'
@@ -14,6 +16,16 @@ $PidFile = Join-Path $StorageDirectory 'server.pid'
 $PortFile = Join-Path $StorageDirectory 'server.port'
 $OutputLog = Join-Path $StorageDirectory 'server.out.log'
 $ErrorLog = Join-Path $StorageDirectory 'server.err.log'
+
+if ($DemoMode) {
+    $env:DEMO_MODE = 'true'
+}
+elseif ([string]::IsNullOrWhiteSpace($env:DEMO_MODE)) {
+    $env:DEMO_MODE = 'false'
+}
+if ($env:DEMO_MODE -ne 'true' -and [string]::IsNullOrWhiteSpace($env:ADMIN_API_TOKEN)) {
+    throw '非演示模式必须设置ADMIN_API_TOKEN；现场展示请显式使用 .\start.ps1 -DemoMode'
+}
 
 # 未显式传入端口时沿用上次记录，避免曾用8010启动后再次执行脚本又在8000启动一份。
 if (-not $PSBoundParameters.ContainsKey('Port') -and (Test-Path -LiteralPath $PortFile)) {
@@ -100,7 +112,7 @@ if (-not (Test-Path -LiteralPath $Python)) {
 New-Item -ItemType Directory -Path $StorageDirectory -Force | Out-Null
 
 if (Test-AppHealth) {
-    Write-Host "惠民智导已在运行，无需重复启动。" -ForegroundColor Green
+    Write-Host "惠民智导可信政策智能平台已在运行，无需重复启动。" -ForegroundColor Green
     Write-Host "访问地址： http://127.0.0.1:$Port"
     Write-Host "停止服务： .\stop.ps1"
     exit 0
@@ -143,10 +155,11 @@ $ServerProcess = Start-Process `
 
 for ($Attempt = 0; $Attempt -lt 60; $Attempt++) {
     if (Test-AppHealth) {
-        Write-Host "惠民智导启动成功。" -ForegroundColor Green
+        Write-Host "惠民智导可信政策智能平台启动成功。" -ForegroundColor Green
         Write-Host "访问地址： http://127.0.0.1:$Port"
         Write-Host "进程 PID： $($ServerProcess.Id)"
         Write-Host "AI 模式： $ResolvedAIMode"
+        Write-Host "运行模式： $(if ($env:DEMO_MODE -eq 'true') { '显式演示模式' } else { '鉴权模式' })"
         Write-Host "查看状态： .\status.ps1"
         Write-Host "查看日志： .\logs.ps1"
         Write-Host "停止服务： .\stop.ps1"

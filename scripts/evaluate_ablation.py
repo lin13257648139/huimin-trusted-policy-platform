@@ -4,24 +4,27 @@ import hashlib
 import json
 import sys
 from collections import Counter
-from datetime import date, datetime, timezone
+from datetime import UTC, date, datetime
 from pathlib import Path
 from types import SimpleNamespace
 
 from pydantic import ValidationError
 
-
 ROOT = Path(__file__).resolve().parent.parent
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from app.domain.models import CompiledRuleCondition, HouseholdProfile, ParseProfileRequest, PolicyCompileRequest
+from app.domain.models import (
+    CompiledRuleCondition,
+    HouseholdProfile,
+    ParseProfileRequest,
+    PolicyCompileRequest,
+)
 from app.services import profile_parser
 from app.services.policy_compiler import compile_policy
 from app.services.retrieval import search_evidence_result
 from app.services.rule_engine import ENGINE_VERSION, evaluate_profile
 from app.version import APP_VERSION
-
 
 DATASET = ROOT / "data" / "processed" / "synthetic_conformance_cases.jsonl"
 OUTPUT = ROOT / "data" / "evaluation" / "ablation_report.json"
@@ -82,7 +85,7 @@ def main() -> None:
 
     report = {
         "report_schema": "safety-ablation/1.0",
-        "generated_at": datetime.now(timezone.utc).isoformat(),
+        "generated_at": datetime.now(UTC).isoformat(),
         "app_version": APP_VERSION,
         "engine_version": ENGINE_VERSION,
         "dataset": DATASET.relative_to(ROOT).as_posix(),
@@ -166,14 +169,21 @@ def main() -> None:
     question_report_path = ROOT / "data" / "evaluation" / "active_question_report.json"
     if question_report_path.is_file():
         question_report = json.loads(question_report_path.read_text(encoding="utf-8"))
+        extra_questions = round(
+            question_report["strategies"]["fixed_order"]["mean_questions"]
+            - question_report["strategies"]["information_gain"]["mean_questions"],
+            3,
+        )
         report["ablations"]["remove_active_questioning"] = {
-            "extra_questions_vs_information_gain": round(
-                question_report["strategies"]["fixed_order_relevant"]["questions_per_case"]
-                - question_report["strategies"]["information_gain"]["mean_questions"],
-                3,
+            "extra_questions_vs_information_gain": extra_questions,
+            "reduction_vs_executed_fixed_order": question_report[
+                "question_reduction_vs_executed_fixed_order"
+            ],
+            "status_consistency": question_report["status_consistency"]["information_gain"],
+            "meaning": (
+                "动态策略与固定相关字段顺序均真实逐轮运行；该差值只适用于项目组构造的"
+                "决策路径基准，不外推为真人完成率。"
             ),
-            "status_consistency": question_report["status_consistency"],
-            "meaning": "改回固定相关字段顺序会增加的平均问题数；该指标来自合成一致性案例。",
         }
 
     real_benchmark = ROOT / "data" / "evaluation" / "policy_compiler_real_benchmark.jsonl"
@@ -181,11 +191,13 @@ def main() -> None:
     if real_benchmark.is_file():
         for line in real_benchmark.read_text(encoding="utf-8").splitlines():
             row = json.loads(line)
+            assisted = row.get("assisted_input", {})
             result = compile_policy(
                 PolicyCompileRequest(
                     source_id=row["source_id"], title=row["title"], source_text=row["text"],
-                    benefit_hint=row["benefit_hint"], effective_from=row.get("effective_from_input"),
-                    effective_to=row.get("effective_to_input"), use_llm=False,
+                    benefit_hint=assisted.get("benefit_hint"),
+                    effective_from=assisted.get("effective_from"),
+                    effective_to=assisted.get("effective_to"), use_llm=False,
                 )
             )
             blocked_candidates += not result.publishable

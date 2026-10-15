@@ -13,7 +13,6 @@ sys.path.insert(0, str(ROOT))
 from app.domain.models import HouseholdProfile  # noqa: E402
 from app.services.rule_engine import DIBAO_STANDARD, EDGE_STANDARD, evaluate_profile  # noqa: E402
 
-
 OUTPUT = ROOT / "data" / "processed" / "synthetic_conformance_cases.jsonl"
 SEED = 20260929
 

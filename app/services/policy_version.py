@@ -31,11 +31,18 @@ def select_policy_snapshot(query_date: date) -> PolicySnapshot:
 
     dated_rule = get_rule_for_date("B002", query_date)
     if dated_rule is not None:
+        requires_review = dated_rule.manual_review_required
         return PolicySnapshot(
             snapshot_id=f"gz-{query_date.isoformat()}-{dated_rule.version}",
             dibao_version=dated_rule.document_no or dated_rule.version,
-            local_rule_available=not dated_rule.manual_review_required,
+            local_rule_available=not requires_review,
             query_date=query_date,
+            warning=(
+                "查询日期命中历史规则文件，但对应年度低保标准尚未登记；"
+                "系统不会套用2026年标准，请人工核验当年参数。"
+                if requires_review
+                else None
+            ),
         )
     if query_date < CURRENT_DIBAO_START:
         return PolicySnapshot(

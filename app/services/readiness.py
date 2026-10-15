@@ -1,17 +1,17 @@
 from __future__ import annotations
 
-import hashlib
 import csv
+import hashlib
 import json
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
 from app.config import BASE_DIR, settings
-from app.services.catalog import load_evidence, load_offices, load_policy_sources
-from app.services.ocr import ocr_runtime_available
 from app.services.ai_runtime import ollama_runtime_status
+from app.services.catalog import load_evidence, load_offices, load_policy_sources
 from app.services.intent_classifier import get_intent_classifier
+from app.services.ocr import ocr_runtime_available
 
 
 def _check(
@@ -63,16 +63,17 @@ def build_readiness_report() -> dict[str, Any]:
         BASE_DIR / "data" / "evaluation" / "retrieval_report.json",
         BASE_DIR / "data" / "evaluation" / "policy_compiler_report.json",
         BASE_DIR / "data" / "evaluation" / "policy_compiler_real_report.json",
-        BASE_DIR / "data" / "evaluation" / "expert_gold_audit.json",
         BASE_DIR / "data" / "evaluation" / "ai_pipeline_report.json",
         BASE_DIR / "data" / "evaluation" / "evidence_quote_audit.json",
         BASE_DIR / "data" / "evaluation" / "active_question_report.json",
+        BASE_DIR / "data" / "evaluation" / "active_question_traces.jsonl",
         BASE_DIR / "data" / "evaluation" / "ablation_report.json",
         BASE_DIR / "data" / "evaluation" / "http_concurrency_report.json",
         BASE_DIR / "data" / "evaluation" / "software_bill_of_materials.json",
         BASE_DIR / "data" / "evaluation" / "dataset_governance_manifest.json",
         BASE_DIR / "data" / "evaluation" / "high_risk_safety_report.json",
         BASE_DIR / "data" / "evaluation" / "dependency_vulnerability_report.json",
+        BASE_DIR / "data" / "evaluation" / "release_manifest.json",
     ]
     evaluation_count = sum(path.is_file() and path.stat().st_size > 0 for path in evaluation_paths)
     ocr_available = settings.ocr_enabled and ocr_runtime_available()
@@ -216,9 +217,13 @@ def build_readiness_report() -> dict[str, Any]:
         _check(
             "admin_access",
             "治理接口访问控制",
-            bool(settings.admin_api_token),
-            "已配置管理员令牌" if settings.admin_api_token else "本地演示未配置令牌，正式部署前必须启用",
-            critical=settings.environment.lower() == "production",
+            bool(settings.admin_api_token) or settings.demo_mode,
+            (
+                "鉴权模式：已配置管理员令牌"
+                if not settings.demo_mode
+                else "显式演示模式：治理接口免令牌；生产环境禁止此模式"
+            ),
+            critical=True,
         ),
     ]
     failed = [item for item in checks if item["status"] == "fail"]
@@ -226,7 +231,7 @@ def build_readiness_report() -> dict[str, Any]:
     return {
         "status": "blocked" if failed else ("ready_with_warnings" if warnings else "ready"),
         "ready": not failed,
-        "checked_at": datetime.now(timezone.utc).isoformat(),
+        "checked_at": datetime.now(UTC).isoformat(),
         "policy_as_of": settings.policy_as_of,
         "app_version": settings.app_version,
         "summary": {

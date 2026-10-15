@@ -1,0 +1,29 @@
+{
+  "schema_version": "1.0",
+  "root": "政策证据包",
+  "classification_policy": "每份PDF必须唯一分类。catalog_primary和catalog_duplicate_snapshot可进入可执行政策链；official_supporting只作上位或流程解释；superseded_legacy不得进入当前规则；out_of_scope_context不得生成资格结论。",
+  "files": [
+    {"file_name": "《广东省最低生活保障边缘家庭和支出型困难家庭救助办法》解读  广东省人民政府门户网站.pdf", "classification": "official_supporting", "source_ids": ["GD-002"], "reason": "官方解读，仅辅助解释，不替代规范文本。"},
+    {"file_name": "附件《申请家庭生活状况综合评估指标（第二版）》.pdf", "classification": "catalog_duplicate_snapshot", "source_ids": ["GD-004-A"], "reason": "GD-004配套附件的证据包副本。"},
+    {"file_name": "刚性支出困难家庭认定办法.pdf", "classification": "official_supporting", "source_ids": ["GZ-004", "CN-002"], "reason": "政务服务事项指南，用于办理流程核对，不单独提供资格参数。"},
+    {"file_name": "广东省民政厅关于广东省最低生活保障.pdf", "classification": "superseded_legacy", "source_ids": ["GD-004"], "reason": "旧版评估认定文件打印件；现行规则以粤民规字〔2025〕5号为准。"},
+    {"file_name": "广东省人民政府办公厅关于印发广东省最低生活保障边缘家庭和支出型困难家庭救助办法的通知.pdf", "classification": "catalog_duplicate_snapshot", "source_ids": ["GD-002"], "reason": "GD-002正文的证据包副本。"},
+    {"file_name": "广东省人民政府办公厅转发省民政厅等单位《关于改革创新体制机制健全社会救助体系的若干措施》的通知.pdf", "classification": "out_of_scope_context", "source_ids": ["GD-003"], "reason": "用于平台价值和协同机制背景，不生成资格结论。"},
+    {"file_name": "广东省社会救助条例（广东省第十二届人民代表大会常务委员会第85号公告）.pdf", "classification": "official_supporting", "source_ids": ["CN-001", "GD-005"], "reason": "省级上位法规，仅用于职责与制度边界。"},
+    {"file_name": "广东省最低生活保障家庭经济状况核对和生活状况评估认定办法.pdf", "classification": "superseded_legacy", "source_ids": ["GD-004"], "reason": "2020版旧办法；2026年起以综合评估办法替代。"},
+    {"file_name": "广东省最低生活保障家庭经济状况核对和生活状况综合评估办法.pdf", "classification": "catalog_duplicate_snapshot", "source_ids": ["GD-004"], "reason": "现行GD-004的证据包副本。"},
+    {"file_name": "广东省最低生活保障制度实施办法  广东省人民政府门户网站.pdf", "classification": "catalog_primary", "source_ids": ["GD-005"], "reason": "省级低保制度上位规则。"},
+    {"file_name": "广州市民政局 广州市财政局关于印发我市2026年最低生活保障及相关社会救助标准的通知.pdf", "classification": "catalog_duplicate_snapshot", "source_ids": ["GZ-003"], "reason": "GZ-003年度标准的PDF副本。"},
+    {"file_name": "广州市民政局关于贯彻落实《广东省最低生活保障家庭经济状况核对和生活状况评估认定办法》有关事项的通知.pdf", "classification": "superseded_legacy", "source_ids": ["GZ-009", "GD-004"], "reason": "依赖旧版省级评估办法，保留作历史版本核验。"},
+    {"file_name": "广州市民政局关于进一步规范最低生活保障工作的通知 - 广州市人民政府门户网站.pdf", "classification": "catalog_primary", "source_ids": ["GZ-009"], "reason": "2023至2026-07-31历史规则快照。"},
+    {"file_name": "广州市民政局关于进一步完善最低生活保障工作的通知（试行）.pdf", "classification": "catalog_duplicate_snapshot", "source_ids": ["GZ-002"], "reason": "现行试行低保通知的PDF副本。"},
+    {"file_name": "广州市民政局关于开展最低生活保障边缘家庭和支出型困难家庭救助工作的通知.pdf", "classification": "catalog_duplicate_snapshot", "source_ids": ["GZ-004"], "reason": "GZ-004本地实施规则的PDF副本。"},
+    {"file_name": "广州市人民政府办公厅关于延长广州市临时救助实施细则有效期的通知.pdf", "classification": "catalog_primary", "source_ids": ["GZ-005-E"], "reason": "证明实施细则延长至2029-12-06。"},
+    {"file_name": "广州市人民政府办公厅关于印发广州市临时救助实施细则的通知 - 广州市人民政府门户网站.pdf", "classification": "catalog_primary", "source_ids": ["GZ-005"], "reason": "临时救助资格与流程主文件。"},
+    {"file_name": "国务院办公厅转发民政部等单位《关于加强低收入人口动态监测做好分层分类社会救助工作的意见》的通知 - 中华人民共和国民政部.pdf", "classification": "catalog_primary", "source_ids": ["CN-004"], "reason": "低收入人口监测与分层分类救助上位政策。"},
+    {"file_name": "民政部关于印发《刚性支出困难家庭认定办法》的通知_国务院部门文件_中国政府网.pdf", "classification": "catalog_primary", "source_ids": ["CN-002"], "reason": "刚性支出困难家庭国家认定框架。"},
+    {"file_name": "民政部关于印发《最低生活保障审核确认办法》的通知_国务院部门文件_中国政府网.pdf", "classification": "catalog_primary", "source_ids": ["CN-003"], "reason": "低保审核确认国家程序规则。"},
+    {"file_name": "社会救助一件事.pdf", "classification": "catalog_duplicate_snapshot", "source_ids": ["GZ-001"], "reason": "GZ-001政务服务指南的PDF副本。"},
+    {"file_name": "中华人民共和国社会救助法.pdf", "classification": "catalog_duplicate_snapshot", "source_ids": ["CN-001"], "reason": "CN-001正式法律文本的PDF副本。"}
+  ]
+}

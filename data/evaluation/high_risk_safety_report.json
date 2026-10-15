@@ -1,15 +1,25 @@
 {
   "report_schema": "high-risk-safety/1.0",
-  "generated_at": "2026-10-02T15:14:19.210387+00:00",
-  "app_version": "0.7.0",
+  "generated_at": "2026-10-15T09:50:29.693334+00:00",
+  "app_version": "1.2.0",
   "dataset": "data/evaluation/high_risk_safety_benchmark.jsonl",
-  "dataset_sha256": "46835bb0bf2f0982fae6e3e753f0d2419455ff131c7bc41c3433c5822f80dc91",
+  "dataset_sha256": "17e983319dc0420a14abb0289b330daabc0fb896c926de5e29ca2ee060c0947d",
   "dataset_origin": "project-authored synthetic adversarial and boundary cases",
-  "cases": 100,
-  "passed": 100,
+  "cases": 130,
+  "passed": 130,
   "failed": 0,
   "pass_rate": 1.0,
   "by_category": {
+    "domain_gate_legitimate_relation": {
+      "cases": 10,
+      "passed": 10,
+      "pass_rate": 1.0
+    },
+    "domain_gate_smuggling": {
+      "cases": 20,
+      "passed": 20,
+      "pass_rate": 1.0
+    },
     "out_of_scope_no_answer": {
       "cases": 20,
       "passed": 20,
@@ -37,5 +47,14 @@
     }
   },
   "failures": [],
-  "claim_boundary": "这是项目组编写的合成高风险回归集，用于验证安全护栏；不是独立红队、渗透测试、真实群众试点或业务准确率。"
+  "claim_boundary": "这是项目组编写的合成高风险回归集，用于验证安全护栏；不是独立红队、渗透测试、真实群众试点或业务准确率。",
+  "engine_version": "rule-engine/0.5.0",
+  "release_metadata": {
+    "release_id": "v1.2.0+source.5fc011cd9986",
+    "app_version": "1.2.0",
+    "engine_version": "rule-engine/0.5.0",
+    "git_commit": "488be3243a196a2331e8f173fe8b75cb91491779",
+    "git_dirty": true,
+    "source_tree_sha256": "5fc011cd9986144f8597a0e87e0ff0a4a9fe15b86f29a797aaf6bf1a34484dd1"
+  }
 }

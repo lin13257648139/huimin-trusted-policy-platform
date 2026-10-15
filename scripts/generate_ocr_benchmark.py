@@ -5,7 +5,6 @@ from pathlib import Path
 
 from PIL import Image, ImageDraw, ImageEnhance, ImageFilter, ImageFont
 
-
 ROOT = Path(__file__).resolve().parents[1]
 OUTPUT = ROOT / "data" / "evaluation" / "ocr_synthetic"
 

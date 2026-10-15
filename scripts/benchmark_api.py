@@ -2,23 +2,25 @@ from __future__ import annotations
 
 import json
 import math
+import os
 import platform
 import sys
 import tempfile
-from datetime import datetime, timezone
+from collections.abc import Callable
+from datetime import UTC, datetime
 from pathlib import Path
 from time import perf_counter
-from typing import Callable
 
 ROOT = Path(__file__).resolve().parent.parent
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
+os.environ.setdefault("DEMO_MODE", "true")
+
 from fastapi.testclient import TestClient
 
 import app.main as main
 from app.repositories.database import Database
-
 
 OUTPUT = ROOT / "data" / "evaluation" / "api_performance_report.json"
 RUNS = 25
@@ -103,7 +105,7 @@ def main_benchmark() -> None:
                 ),
             ]
     report = {
-        "generated_at": datetime.now(timezone.utc).isoformat(),
+        "generated_at": datetime.now(UTC).isoformat(),
         "app_version": main.settings.app_version,
         "environment": {
             "python": platform.python_version(),
