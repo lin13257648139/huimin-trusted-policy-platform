@@ -298,8 +298,8 @@
     "release_id": "v1.2.0+source.5fc011cd9986",
     "app_version": "1.2.0",
     "engine_version": "rule-engine/0.5.0",
-    "git_commit": "488be3243a196a2331e8f173fe8b75cb91491779",
-    "git_dirty": true,
+    "git_commit": "9ec5c9caf8172a7fbb40a90b0a4db4f8e75565f3",
+    "git_dirty": false,
     "source_tree_sha256": "5fc011cd9986144f8597a0e87e0ff0a4a9fe15b86f29a797aaf6bf1a34484dd1"
   }
 }
