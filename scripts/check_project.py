@@ -12,6 +12,7 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from app.version import APP_VERSION
+from scripts.build_release_manifest import source_fingerprint
 from scripts.verify_evidence_quotes import verify_evidence_quotes
 
 
@@ -72,6 +73,26 @@ def main() -> None:
         _fail("发布清单版本与app.version不一致")
     if not re.fullmatch(r"[0-9a-f]{64}", release_manifest.get("source_tree_sha256", "")):
         _fail("发布清单缺少有效源码树指纹")
+    actual_source_digest, actual_source_files = source_fingerprint()
+    if release_manifest.get("source_tree_sha256") != actual_source_digest:
+        _fail("发布清单源码树指纹已过期，请针对当前代码重新生成评测证据")
+    binding = release_manifest.get("source_binding") or {}
+    if binding.get("source_tree_sha256") != actual_source_digest:
+        _fail("发布清单source_binding与当前源码树不一致")
+    if binding.get("source_file_count") != len(actual_source_files):
+        _fail("发布清单source_binding文件数量不一致")
+    expected_release_metadata = {
+        "release_id": release_manifest.get("release_id"),
+        "source_tree_sha256": actual_source_digest,
+    }
+    stamped_reports = list((ROOT / "data" / "evaluation").glob("*_report.json"))
+    stamped_reports.append(ROOT / "data" / "evaluation" / "dataset_governance_manifest.json")
+    for report_path in stamped_reports:
+        payload = json.loads(report_path.read_text(encoding="utf-8-sig"))
+        metadata = payload.get("release_metadata") or {}
+        for key, expected_value in expected_release_metadata.items():
+            if metadata.get(key) != expected_value:
+                _fail(f"评测报告未绑定当前发布证据：{report_path.name} ({key})")
 
     catalog_path = expected[0]
     with catalog_path.open("r", encoding="utf-8-sig", newline="") as handle:

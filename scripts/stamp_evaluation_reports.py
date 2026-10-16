@@ -19,6 +19,8 @@ def main() -> None:
             "git_commit",
             "git_dirty",
             "source_tree_sha256",
+            "source_binding",
+            "artifact_binding",
         )
     }
     stamped = 0

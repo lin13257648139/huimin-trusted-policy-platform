@@ -187,6 +187,46 @@ def test_document_endpoint_requires_consent(tmp_path: Path, monkeypatch) -> None
         assert response.status_code == 400
 
 
+def test_upload_is_rejected_before_multipart_parsing_when_request_is_too_large(
+    tmp_path: Path, monkeypatch
+) -> None:
+    import app.main as main
+
+    monkeypatch.setattr(main, "database", Database(tmp_path / "test-upload-limit.db"))
+    raw_limit = main.settings.max_upload_bytes + main.settings.multipart_overhead_bytes
+    with TestClient(main.app) as client:
+        response = client.post(
+            "/api/v1/documents/precheck",
+            content=b"not-a-multipart-body",
+            headers={
+                "content-type": "multipart/form-data; boundary=unused",
+                "content-length": str(raw_limit + 1),
+            },
+        )
+    assert response.status_code == 413
+    assert response.json()["detail"]["code"] == "REQUEST_BODY_TOO_LARGE"
+    assert response.headers["x-content-type-options"] == "nosniff"
+
+
+def test_upload_rejects_invalid_content_length_before_parsing(
+    tmp_path: Path, monkeypatch
+) -> None:
+    import app.main as main
+
+    monkeypatch.setattr(main, "database", Database(tmp_path / "test-upload-length.db"))
+    with TestClient(main.app) as client:
+        response = client.post(
+            "/api/v1/documents/precheck",
+            content=b"unused",
+            headers={
+                "content-type": "multipart/form-data; boundary=unused",
+                "content-length": "invalid",
+            },
+        )
+    assert response.status_code == 400
+    assert response.json()["detail"]["code"] == "INVALID_CONTENT_LENGTH"
+
+
 def test_living_assessment_api_returns_auditable_calculation(
     tmp_path: Path, monkeypatch
 ) -> None:

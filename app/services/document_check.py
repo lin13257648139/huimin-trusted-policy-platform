@@ -337,7 +337,12 @@ def check_document(
         warnings=warnings,
         privacy={
             "stored": False,
-            "message": "文件仅在内存中完成本次质量预检，未写入磁盘。",
+            "business_storage": False,
+            "transient_upload_handling": "multipart_spooled_temporary_file",
+            "message": (
+                "文件不进入业务数据库或长期存储；上传框架可能使用系统临时文件，"
+                "请求结束关闭并清理。"
+            ),
         },
         ocr=ocr.as_dict(),
     )

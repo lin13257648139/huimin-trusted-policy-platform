@@ -13,7 +13,7 @@ from uuid import uuid4
 
 from fastapi import Depends, FastAPI, File, Form, Header, HTTPException, Query, Request, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 
 from app.config import BASE_DIR, settings
@@ -64,6 +64,8 @@ from app.services.workload import (
     WorkloadBusyError,
     WorkloadTimeoutError,
     run_bounded,
+    shutdown_workloads,
+    start_workloads,
     workload_status,
 )
 
@@ -79,13 +81,17 @@ mimetypes.add_type("text/css", ".css")
 @asynccontextmanager
 async def lifespan(_: FastAPI):
     settings.validate_runtime()
+    start_workloads()
     database.initialize()
     database.purge_expired(settings.data_retention_days)
     load_evidence()
     load_benefit_relation_registry()
     load_offices()
     load_policy_sources()
-    yield
+    try:
+        yield
+    finally:
+        shutdown_workloads(wait=False)
 
 
 app = FastAPI(
@@ -118,7 +124,54 @@ async def security_headers(request: Request, call_next):
     )
     request.state.request_id = request_id
     started = perf_counter()
-    response = await call_next(request)
+    response = None
+    upload_limits = {
+        "/api/v1/documents/precheck": (
+            settings.max_upload_bytes + settings.multipart_overhead_bytes
+        ),
+        "/api/v1/documents/package-precheck": (
+            settings.max_package_bytes + settings.multipart_overhead_bytes
+        ),
+    }
+    if request.method == "POST" and request.url.path in upload_limits:
+        raw_length = request.headers.get("content-length")
+        if raw_length is None:
+            response = JSONResponse(
+                status_code=411,
+                content={
+                    "detail": {
+                        "code": "CONTENT_LENGTH_REQUIRED",
+                        "message": "材料上传必须提供Content-Length，禁止无边界流式请求。",
+                    }
+                },
+            )
+        else:
+            try:
+                content_length = int(raw_length)
+            except ValueError:
+                content_length = -1
+            if content_length < 0:
+                response = JSONResponse(
+                    status_code=400,
+                    content={
+                        "detail": {
+                            "code": "INVALID_CONTENT_LENGTH",
+                            "message": "Content-Length格式无效。",
+                        }
+                    },
+                )
+            elif content_length > upload_limits[request.url.path]:
+                response = JSONResponse(
+                    status_code=413,
+                    content={
+                        "detail": {
+                            "code": "REQUEST_BODY_TOO_LARGE",
+                            "message": "上传请求在解析前已因总大小超限被拒绝。",
+                        }
+                    },
+                )
+    if response is None:
+        response = await call_next(request)
     elapsed_ms = (perf_counter() - started) * 1000
     response.headers["X-Request-ID"] = request_id
     response.headers["Server-Timing"] = f"app;dur={elapsed_ms:.1f}"

@@ -53,6 +53,9 @@ class Settings:
     max_pdf_pages: int = int(os.getenv("MAX_PDF_PAGES", "12"))
     max_package_bytes: int = int(os.getenv("MAX_PACKAGE_BYTES", str(32 * 1024 * 1024)))
     max_package_pages: int = int(os.getenv("MAX_PACKAGE_PAGES", "36"))
+    multipart_overhead_bytes: int = int(
+        os.getenv("MULTIPART_OVERHEAD_BYTES", str(1024 * 1024))
+    )
     document_timeout_seconds: float = float(os.getenv("DOCUMENT_TIMEOUT_SECONDS", "30"))
     package_timeout_seconds: float = float(os.getenv("PACKAGE_TIMEOUT_SECONDS", "60"))
     max_llm_workers: int = int(os.getenv("MAX_LLM_WORKERS", "2"))
@@ -92,6 +95,23 @@ class Settings:
             )
         if self.environment.lower() == "production" and self.demo_mode:
             raise RuntimeError("生产环境禁止启用DEMO_MODE")
+        positive_limits = {
+            "MAX_UPLOAD_BYTES": self.max_upload_bytes,
+            "MAX_IMAGE_PIXELS": self.max_image_pixels,
+            "MAX_PACKAGE_FILES": self.max_package_files,
+            "MAX_PDF_PAGES": self.max_pdf_pages,
+            "MAX_PACKAGE_BYTES": self.max_package_bytes,
+            "MAX_PACKAGE_PAGES": self.max_package_pages,
+            "MULTIPART_OVERHEAD_BYTES": self.multipart_overhead_bytes,
+            "MAX_LLM_WORKERS": self.max_llm_workers,
+            "MAX_DOCUMENT_WORKERS": self.max_document_workers,
+            "MAX_WORK_QUEUE": self.max_work_queue,
+        }
+        invalid = [name for name, value in positive_limits.items() if value <= 0]
+        if invalid:
+            raise RuntimeError(f"资源限制必须为正数：{', '.join(invalid)}")
+        if self.max_package_bytes < self.max_upload_bytes:
+            raise RuntimeError("MAX_PACKAGE_BYTES不得小于MAX_UPLOAD_BYTES")
 
     @property
     def static_dir(self) -> Path:

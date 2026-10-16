@@ -26,7 +26,7 @@ def make_image() -> bytes:
     return buffer.getvalue()
 
 
-def test_image_is_processed_in_memory() -> None:
+def test_image_is_not_persisted_to_business_storage() -> None:
     result = check_document(
         filename="医疗支出凭据.png",
         content=make_image(),
@@ -36,6 +36,9 @@ def test_image_is_processed_in_memory() -> None:
     )
     assert result.detected_type == "medical_expense"
     assert result.privacy["stored"] is False
+    assert result.privacy["business_storage"] is False
+    assert result.privacy["transient_upload_handling"] == "multipart_spooled_temporary_file"
+    assert "未写入磁盘" not in result.privacy["message"]
     assert len(result.checks) == 4
 
 

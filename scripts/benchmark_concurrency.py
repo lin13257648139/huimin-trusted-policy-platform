@@ -107,6 +107,9 @@ async def benchmark() -> dict[str, Any]:
                 "AI_MODE": "deterministic",
                 "APP_ENV": "benchmark",
                 "DEMO_MODE": "true",
+                # This benchmark measures HTTP latency rather than overload rejection.
+                # Queue saturation and Retry-After semantics have separate tests.
+                "MAX_WORK_QUEUE": "64",
             }
         )
         command = [
@@ -149,6 +152,7 @@ async def benchmark() -> dict[str, Any]:
             "processor": platform.processor() or "not-reported",
             "server": "single-process uvicorn over loopback HTTP",
             "mode": "deterministic; isolated temporary SQLite; warm cache",
+            "max_work_queue": 64,
         },
         "workload": {
             "levels": list(CONCURRENCY_LEVELS),
