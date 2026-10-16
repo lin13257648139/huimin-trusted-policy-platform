@@ -66,6 +66,28 @@ def source_files() -> list[Path]:
     return sorted(set(paths), key=lambda path: path.relative_to(ROOT).as_posix())
 
 
+_BINARY_SUFFIXES = {
+    ".gif",
+    ".ico",
+    ".jpeg",
+    ".jpg",
+    ".onnx",
+    ".pdf",
+    ".png",
+    ".webp",
+    ".zip",
+}
+
+
+def canonical_source_bytes(path: Path) -> bytes:
+    """Make text fingerprints stable across Git checkouts with different EOLs."""
+
+    content = path.read_bytes()
+    if path.suffix.lower() not in _BINARY_SUFFIXES:
+        return content.replace(b"\r\n", b"\n")
+    return content
+
+
 def source_fingerprint() -> tuple[str, list[Path]]:
     digest = hashlib.sha256()
     files = source_files()
@@ -73,7 +95,7 @@ def source_fingerprint() -> tuple[str, list[Path]]:
         relative = path.relative_to(ROOT).as_posix()
         digest.update(relative.encode("utf-8"))
         digest.update(b"\0")
-        digest.update(hashlib.sha256(path.read_bytes()).digest())
+        digest.update(hashlib.sha256(canonical_source_bytes(path)).digest())
     return digest.hexdigest(), files
 
 
@@ -114,6 +136,7 @@ def main() -> None:
             "source_tree_sha256": source_digest,
             "source_file_count": len(files),
             "scope": "代码、测试、评测输入、运行和安全配置；生成的评测报告不参与自指纹",
+            "text_normalization": "CRLF和LF统一为LF；二进制文件保持原始字节",
         },
         "artifact_binding": {
             "reports_generated_from_source_sha256": source_digest,
