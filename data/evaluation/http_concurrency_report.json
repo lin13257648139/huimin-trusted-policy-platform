@@ -1,11 +1,12 @@
 {
-  "generated_at": "2026-10-15T09:51:13.332491+00:00",
+  "generated_at": "2026-10-16T03:12:40.151096+00:00",
   "environment": {
     "python": "3.12.14",
     "platform": "Windows-11-10.0.26200-SP0",
     "processor": "Intel64 Family 6 Model 186 Stepping 2, GenuineIntel",
     "server": "single-process uvicorn over loopback HTTP",
-    "mode": "deterministic; isolated temporary SQLite; warm cache"
+    "mode": "deterministic; isolated temporary SQLite; warm cache",
+    "max_work_queue": 64
   },
   "workload": {
     "levels": [
@@ -27,10 +28,10 @@
     {
       "concurrency": 1,
       "requests": 60,
-      "p50_ms": 7.933,
-      "p95_ms": 25.792,
-      "max_ms": 26.809,
-      "throughput_rps": 78.82,
+      "p50_ms": 8.263,
+      "p95_ms": 27.625,
+      "max_ms": 28.499,
+      "throughput_rps": 74.57,
       "errors": 0,
       "error_types": [],
       "passed": true
@@ -38,10 +39,10 @@
     {
       "concurrency": 5,
       "requests": 60,
-      "p50_ms": 51.386,
-      "p95_ms": 68.593,
-      "max_ms": 80.09,
-      "throughput_rps": 91.75,
+      "p50_ms": 46.209,
+      "p95_ms": 96.23,
+      "max_ms": 105.91,
+      "throughput_rps": 92.98,
       "errors": 0,
       "error_types": [],
       "passed": true
@@ -49,10 +50,10 @@
     {
       "concurrency": 10,
       "requests": 60,
-      "p50_ms": 150.432,
-      "p95_ms": 254.57,
-      "max_ms": 335.009,
-      "throughput_rps": 57.66,
+      "p50_ms": 172.76,
+      "p95_ms": 268.623,
+      "max_ms": 284.257,
+      "throughput_rps": 56.85,
       "errors": 0,
       "error_types": [],
       "passed": true
@@ -60,10 +61,10 @@
     {
       "concurrency": 20,
       "requests": 60,
-      "p50_ms": 371.596,
-      "p95_ms": 566.154,
-      "max_ms": 627.955,
-      "throughput_rps": 47.04,
+      "p50_ms": 307.184,
+      "p95_ms": 579.662,
+      "max_ms": 665.395,
+      "throughput_rps": 50.83,
       "errors": 0,
       "error_types": [],
       "passed": true
@@ -71,24 +72,36 @@
     {
       "concurrency": 30,
       "requests": 60,
-      "p50_ms": 482.319,
-      "p95_ms": 728.207,
-      "max_ms": 742.888,
-      "throughput_rps": 50.28,
+      "p50_ms": 466.019,
+      "p95_ms": 670.664,
+      "max_ms": 763.285,
+      "throughput_rps": 49.69,
       "errors": 0,
       "error_types": [],
       "passed": true
     }
   ],
   "claim_boundary": "本报告是当前机器单进程、回环网络、只读混合接口的工程基准；不代表公网生产容量，也不代表包含大模型生成或文件OCR的端到端延迟。",
-  "app_version": "1.2.0",
+  "app_version": "1.2.1",
   "engine_version": "rule-engine/0.5.0",
   "release_metadata": {
-    "release_id": "v1.2.0+source.5fc011cd9986",
-    "app_version": "1.2.0",
+    "release_id": "v1.2.1+source.38e73d42ccee",
+    "app_version": "1.2.1",
     "engine_version": "rule-engine/0.5.0",
-    "git_commit": "9ec5c9caf8172a7fbb40a90b0a4db4f8e75565f3",
-    "git_dirty": false,
-    "source_tree_sha256": "5fc011cd9986144f8597a0e87e0ff0a4a9fe15b86f29a797aaf6bf1a34484dd1"
+    "git_commit": "be05d54bd4ca32115d735ae9aec162aa8825ed05",
+    "git_dirty": true,
+    "source_tree_sha256": "38e73d42ccee255a4e53443fd3002c7efbf4edda429c6b72b38a3ca3c642e407",
+    "source_binding": {
+      "code_commit": "be05d54bd4ca32115d735ae9aec162aa8825ed05",
+      "source_inputs_dirty": false,
+      "source_tree_sha256": "38e73d42ccee255a4e53443fd3002c7efbf4edda429c6b72b38a3ca3c642e407",
+      "source_file_count": 122,
+      "scope": "代码、测试、评测输入、运行和安全配置；生成的评测报告不参与自指纹"
+    },
+    "artifact_binding": {
+      "reports_generated_from_source_sha256": "38e73d42ccee255a4e53443fd3002c7efbf4edda429c6b72b38a3ca3c642e407",
+      "evidence_commit": null,
+      "note": "报告提交后可由正式发布流程填入证据提交；源码绑定以内容指纹为准。"
+    }
   }
 }

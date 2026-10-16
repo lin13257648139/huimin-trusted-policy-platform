@@ -1,7 +1,7 @@
 {
   "report_schema": "live-ai-smoke/1.0",
-  "generated_at": "2026-10-15T17:18:30.537129+00:00",
-  "app_version": "1.2.0",
+  "generated_at": "2026-10-16T03:12:33.069875+00:00",
+  "app_version": "1.2.1",
   "runtime": {
     "mode": "hybrid",
     "configured": true,
@@ -30,7 +30,7 @@
   "chat": {
     "provider": "ollama-json-schema",
     "model_id": "qwen3:4b-instruct",
-    "latency_ms": 10840,
+    "latency_ms": 444,
     "prompt_sha256": "09eea7adf048419835f09a3b40f5f9cb48e200a4bbe9bd670dac10736aba687d",
     "response_sha256": "08e2c358ce13cb67f94ebb35b0f67c8763190a857c0db68da6eb196dfe9da46a",
     "schema_payload": {
@@ -40,9 +40,30 @@
   "embedding": {
     "provider": "ollama-embedding",
     "model_id": "qwen3-embedding:0.6b",
-    "latency_ms": 3147,
+    "latency_ms": 95,
     "vectors": 2,
     "dimensions": 1024
   },
-  "claim_boundary": "这只证明本机配置的对话与向量模型在该时间点完成真实推理；不代表业务准确率，完整指标仍以版本化AI评测报告为准。"
+  "claim_boundary": "这只证明本机配置的对话与向量模型在该时间点完成真实推理；不代表业务准确率，完整指标仍以版本化AI评测报告为准。",
+  "engine_version": "rule-engine/0.5.0",
+  "release_metadata": {
+    "release_id": "v1.2.1+source.38e73d42ccee",
+    "app_version": "1.2.1",
+    "engine_version": "rule-engine/0.5.0",
+    "git_commit": "be05d54bd4ca32115d735ae9aec162aa8825ed05",
+    "git_dirty": true,
+    "source_tree_sha256": "38e73d42ccee255a4e53443fd3002c7efbf4edda429c6b72b38a3ca3c642e407",
+    "source_binding": {
+      "code_commit": "be05d54bd4ca32115d735ae9aec162aa8825ed05",
+      "source_inputs_dirty": false,
+      "source_tree_sha256": "38e73d42ccee255a4e53443fd3002c7efbf4edda429c6b72b38a3ca3c642e407",
+      "source_file_count": 122,
+      "scope": "代码、测试、评测输入、运行和安全配置；生成的评测报告不参与自指纹"
+    },
+    "artifact_binding": {
+      "reports_generated_from_source_sha256": "38e73d42ccee255a4e53443fd3002c7efbf4edda429c6b72b38a3ca3c642e407",
+      "evidence_commit": null,
+      "note": "报告提交后可由正式发布流程填入证据提交；源码绑定以内容指纹为准。"
+    }
+  }
 }

@@ -1,7 +1,7 @@
 {
   "report_schema": "safety-ablation/1.0",
-  "generated_at": "2026-10-15T09:50:28.866193+00:00",
-  "app_version": "1.2.0",
+  "generated_at": "2026-10-16T03:06:32.634805+00:00",
+  "app_version": "1.2.1",
   "engine_version": "rule-engine/0.5.0",
   "dataset": "data/processed/synthetic_conformance_cases.jsonl",
   "dataset_sha256": "415f2151fae319e6553e3926cf8d1493e7d816eebf97b85c3e3ece49d2e5f74f",
@@ -81,11 +81,23 @@
   },
   "claim_boundary": "该报告衡量架构安全属性，不是业务准确率，也不是用户试点。",
   "release_metadata": {
-    "release_id": "v1.2.0+source.5fc011cd9986",
-    "app_version": "1.2.0",
+    "release_id": "v1.2.1+source.38e73d42ccee",
+    "app_version": "1.2.1",
     "engine_version": "rule-engine/0.5.0",
-    "git_commit": "9ec5c9caf8172a7fbb40a90b0a4db4f8e75565f3",
-    "git_dirty": false,
-    "source_tree_sha256": "5fc011cd9986144f8597a0e87e0ff0a4a9fe15b86f29a797aaf6bf1a34484dd1"
+    "git_commit": "be05d54bd4ca32115d735ae9aec162aa8825ed05",
+    "git_dirty": true,
+    "source_tree_sha256": "38e73d42ccee255a4e53443fd3002c7efbf4edda429c6b72b38a3ca3c642e407",
+    "source_binding": {
+      "code_commit": "be05d54bd4ca32115d735ae9aec162aa8825ed05",
+      "source_inputs_dirty": false,
+      "source_tree_sha256": "38e73d42ccee255a4e53443fd3002c7efbf4edda429c6b72b38a3ca3c642e407",
+      "source_file_count": 122,
+      "scope": "代码、测试、评测输入、运行和安全配置；生成的评测报告不参与自指纹"
+    },
+    "artifact_binding": {
+      "reports_generated_from_source_sha256": "38e73d42ccee255a4e53443fd3002c7efbf4edda429c6b72b38a3ca3c642e407",
+      "evidence_commit": null,
+      "note": "报告提交后可由正式发布流程填入证据提交；源码绑定以内容指纹为准。"
+    }
   }
 }

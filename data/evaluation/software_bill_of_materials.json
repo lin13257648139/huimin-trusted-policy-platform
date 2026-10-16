@@ -1,7 +1,7 @@
 {
   "bom_format": "project-internal CycloneDX-inspired inventory",
   "spec_note": "不是CycloneDX官方验证输出；用于依赖追溯与赛前许可证复核。",
-  "generated_at": "2026-10-15T09:51:03.904864+00:00",
+  "generated_at": "2026-10-16T03:08:44.360001+00:00",
   "runtime": {
     "python": "3.12.14",
     "platform": "Windows-11-10.0.26200-SP0"
