@@ -52,22 +52,22 @@
   "claim_boundary": "这只证明本机配置的对话与向量模型在该时间点完成真实推理；不代表业务准确率，完整指标仍以版本化AI评测报告为准。",
   "engine_version": "rule-engine/0.5.0",
   "release_metadata": {
-    "release_id": "v1.4.0+source.44e36254f781",
+    "release_id": "v1.4.0+source.31b820b020a7",
     "app_version": "1.4.0",
     "engine_version": "rule-engine/0.5.0",
-    "git_commit": "bbdd5637264d49aa93f36fac02f1f6e80b7d8fa1",
+    "git_commit": "75a4d9da6d7cb1de0babe707c72fb5427dd21272",
     "git_dirty": false,
-    "source_tree_sha256": "44e36254f781a00ca472c5470e46533b4c9b3639cacba675383ff17a19b41bb5",
+    "source_tree_sha256": "31b820b020a7291b9e8b0ec2324b914d590c54a9189ef18e544f4d4d3a412932",
     "source_binding": {
-      "code_commit": "bbdd5637264d49aa93f36fac02f1f6e80b7d8fa1",
+      "code_commit": "75a4d9da6d7cb1de0babe707c72fb5427dd21272",
       "source_inputs_dirty": false,
-      "source_tree_sha256": "44e36254f781a00ca472c5470e46533b4c9b3639cacba675383ff17a19b41bb5",
+      "source_tree_sha256": "31b820b020a7291b9e8b0ec2324b914d590c54a9189ef18e544f4d4d3a412932",
       "source_file_count": 246,
       "scope": "代码、测试、评测输入、运行和安全配置；生成的评测报告不参与自指纹",
       "text_normalization": "CRLF和LF统一为LF；二进制文件保持原始字节"
     },
     "artifact_binding": {
-      "reports_generated_from_source_sha256": "44e36254f781a00ca472c5470e46533b4c9b3639cacba675383ff17a19b41bb5",
+      "reports_generated_from_source_sha256": "31b820b020a7291b9e8b0ec2324b914d590c54a9189ef18e544f4d4d3a412932",
       "evidence_commit": null,
       "note": "报告提交后可由正式发布流程填入证据提交；源码绑定以内容指纹为准。"
     }
