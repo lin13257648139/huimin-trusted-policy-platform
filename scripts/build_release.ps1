@@ -34,7 +34,9 @@ New-Item -ItemType Directory -Force -Path $stageRoot | Out-Null
 
 $excludedDirectoryNames = @(
     ".git", ".venv", ".pytest_cache", ".mypy_cache", "__pycache__",
-    "tmp", "logs", "release", "deliverables", "最终交付", "用户试点", "真人试点填写示例_U00_虚构"
+    ".npm-cache", ".playwright-browsers", ".ruff_cache", "node_modules",
+    "playwright-report", "test-results", "tmp", "logs", "release",
+    "deliverables", "最终交付", "用户试点", "真人试点填写示例_U00_虚构"
 )
 $excludedRelativePrefixes = @(
     ".chart-data-",
@@ -42,6 +44,7 @@ $excludedRelativePrefixes = @(
     "deliverables\_ppt_build"
 )
 $excludedFileNames = @(
+    ".coverage",
     "app.db", "app.db-shm", "app.db-wal",
     "expert_review_A.csv", "expert_review_B.csv", "expert_review_C.csv",
     "pilot_observations.csv", "pilot_participants.csv",
