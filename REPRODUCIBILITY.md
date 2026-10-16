@@ -5,7 +5,7 @@
 ## 固定环境
 
 - Python：3.11或3.12，当前冻结环境为3.12.14。
-- 应用版本：`1.3.0`；规则引擎版本由API返回，当前为`rule-engine/0.5.0`。
+- 应用版本：`1.4.0`；规则引擎版本由API返回，当前为`rule-engine/0.5.0`。
 - 依赖：`requirements.lock`固定直接与传递依赖；`requirements.txt`只表达允许升级的开发约束。
 - 政策原件：`data/raw_official/provenance_manifest.json`记录项目相对路径、大小与SHA-256。
 - 随机性：语言模型请求固定temperature=0、seed=20261002；模型名、提示指纹和延迟写入响应或实验报告。
