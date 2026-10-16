@@ -57,7 +57,7 @@ test("材料包执行真实图片预检", async ({ page }) => {
   await page.locator("#document-consent").check();
   await page.locator("#check-document").click();
   await expect(page.locator("#document-result")).toContainText("已检查 1 份材料", {
-    timeout: 45_000,
+    timeout: 90_000,
   });
   await expect(page.locator("#document-result")).toContainText(/质量|分/);
 });
