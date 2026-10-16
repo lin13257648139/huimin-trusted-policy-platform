@@ -159,9 +159,8 @@ def build() -> list[dict[str, object]]:
 
 def main() -> None:
     rows = build()
-    OUTPUT.write_text(
-        "\n".join(json.dumps(row, ensure_ascii=False, sort_keys=True) for row in rows) + "\n",
-        encoding="utf-8",
+    OUTPUT.write_bytes(
+        ("\n".join(json.dumps(row, ensure_ascii=False, sort_keys=True) for row in rows) + "\n").encode("utf-8")
     )
     print("SAFETY_BENCHMARK_OK cases=320 origin=project-authored-synthetic")
 

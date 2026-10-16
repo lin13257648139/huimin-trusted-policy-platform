@@ -130,8 +130,8 @@ def main() -> None:
             "冻结仅证明文件级隔离、规模与哈希稳定；内部合成或项目组标签不能替代外部专家标注。"
         ),
     }
-    OUTPUT.write_text(
-        json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+    OUTPUT.write_bytes(
+        (json.dumps(report, ensure_ascii=False, indent=2) + "\n").encode("utf-8")
     )
     print(
         "STAGE2_BENCHMARKS_OK "

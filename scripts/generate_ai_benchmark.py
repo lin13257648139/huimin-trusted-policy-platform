@@ -356,18 +356,17 @@ def build_retrieval_dataset() -> dict[str, Any]:
 
 def main() -> None:
     profiles = build_profile_cases()
-    PROFILE_OUTPUT.write_text(
-        "\n".join(json.dumps(item, ensure_ascii=False, sort_keys=True) for item in profiles)
-        + "\n",
-        encoding="utf-8",
+    PROFILE_OUTPUT.write_bytes(
+        ("\n".join(json.dumps(item, ensure_ascii=False, sort_keys=True) for item in profiles)
+        + "\n").encode("utf-8")
     )
     intent = build_intent_dataset()
-    INTENT_OUTPUT.write_text(
-        json.dumps(intent, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+    INTENT_OUTPUT.write_bytes(
+        (json.dumps(intent, ensure_ascii=False, indent=2) + "\n").encode("utf-8")
     )
     retrieval = build_retrieval_dataset()
-    RETRIEVAL_OUTPUT.write_text(
-        json.dumps(retrieval, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+    RETRIEVAL_OUTPUT.write_bytes(
+        (json.dumps(retrieval, ensure_ascii=False, indent=2) + "\n").encode("utf-8")
     )
     final_retrieval = sum(
         item["split"] == "frozen_final_test" for item in retrieval["queries"]

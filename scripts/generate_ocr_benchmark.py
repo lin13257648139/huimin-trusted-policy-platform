@@ -205,8 +205,8 @@ def main() -> None:
             index += 1
     if len(manifest) != 100 or len({item["layout"] for item in manifest}) != 10:
         raise RuntimeError("OCR冻结集必须为100张且包含10种版式")
-    (OUTPUT / "manifest.json").write_text(
-        json.dumps(manifest, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+    (OUTPUT / "manifest.json").write_bytes(
+        (json.dumps(manifest, ensure_ascii=False, indent=2) + "\n").encode("utf-8")
     )
     print("OCR_SYNTHETIC_CASES=100 layouts=10 degradations=10")
 

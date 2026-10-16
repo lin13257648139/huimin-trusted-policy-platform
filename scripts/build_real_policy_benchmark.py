@@ -315,10 +315,9 @@ def main() -> None:
     final_count = sum(item["split"] == "frozen_final_test" for item in rows)
     if final_count < 120:
         raise RuntimeError(f"Policy2Rule最终冻结集不足120条：{final_count}")
-    OUTPUT.write_text(
-        "\n".join(json.dumps(item, ensure_ascii=False, sort_keys=True) for item in rows)
-        + "\n",
-        encoding="utf-8",
+    OUTPUT.write_bytes(
+        ("\n".join(json.dumps(item, ensure_ascii=False, sort_keys=True) for item in rows)
+        + "\n").encode("utf-8")
     )
     print(
         "REAL_POLICY_BENCHMARK_OK "

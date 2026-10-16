@@ -2,3 +2,13 @@
 # values are recorded in the provenance manifest, so Git must never rewrite
 # line endings when checking them out on another operating system.
 data/raw_official/*.html -text
+
+# Frozen evaluation inputs are verified byte-for-byte against the split
+# manifest. Keep them in LF form on every platform so line-ending conversion
+# cannot masquerade as data drift.
+data/evaluation/profile_extraction_benchmark.jsonl text eol=lf
+data/evaluation/retrieval_benchmark.json text eol=lf
+data/ml/intent_dataset.json text eol=lf
+data/evaluation/policy_compiler_real_benchmark.jsonl text eol=lf
+data/evaluation/high_risk_safety_benchmark.jsonl text eol=lf
+data/evaluation/ocr_synthetic/manifest.json text eol=lf
