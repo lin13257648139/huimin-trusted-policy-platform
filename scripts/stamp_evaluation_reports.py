@@ -25,6 +25,8 @@ def main() -> None:
     }
     stamped = 0
     for path in sorted(EVALUATION.glob("*_report.json")):
+        if path.name == "coverage_report.json":
+            continue
         payload = json.loads(path.read_text(encoding="utf-8-sig"))
         if not isinstance(payload, dict):
             continue

@@ -140,7 +140,11 @@ def main() -> None:
         "release_id": release_manifest.get("release_id"),
         "source_tree_sha256": actual_source_digest,
     }
-    stamped_reports = list((ROOT / "data" / "evaluation").glob("*_report.json"))
+    stamped_reports = [
+        path
+        for path in (ROOT / "data" / "evaluation").glob("*_report.json")
+        if path.name != "coverage_report.json"
+    ]
     stamped_reports.append(ROOT / "data" / "evaluation" / "dataset_governance_manifest.json")
     for report_path in stamped_reports:
         payload = json.loads(report_path.read_text(encoding="utf-8-sig"))
