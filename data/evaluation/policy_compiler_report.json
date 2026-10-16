@@ -1,381 +1,312 @@
 {
-  "report_schema": "policy2rule-evaluation/2.0",
-  "benchmark_role": "internally_curated_policy_compiler_benchmark",
+  "report_schema": "policy2rule-three-track/3.0",
+  "generated_at": "2026-10-16T08:41:31.261646+00:00",
+  "app_version": "1.3.0",
+  "dataset": "data/evaluation/policy_compiler_benchmark.jsonl",
+  "dataset_sha256": "91065e890e504dc60d3543d70f9001f607b82c668c29a88f67b535a4ce439c57",
+  "evaluated_split": "all",
   "case_count": 10,
-  "unassisted_text_extraction": {
-    "track": "unassisted_text_extraction",
-    "case_count": 10,
-    "providers": {
-      "local-policy-compiler/1.0": 10
-    },
-    "benefit_accuracy": 1.0,
-    "benefit_evaluable_cases": 10,
-    "benefit_context_dependent_cases": 0,
-    "effective_from_accuracy": 1.0,
-    "effective_from_evaluable_cases": 9,
-    "effective_to_accuracy": 1.0,
-    "effective_to_evaluable_cases": 2,
-    "missing_effective_from_guard_accuracy": 1.0,
-    "missing_effective_from_cases": 1,
-    "parameter_pair": {
-      "precision": 1.0,
-      "recall": 1.0,
-      "f1": 1.0
-    },
-    "condition_field": {
-      "precision": 1.0,
-      "recall": 1.0,
-      "f1": 1.0
-    },
-    "source_quote_grounding_rate": 1.0,
-    "details": [
-      {
-        "case_id": "PCR-T001",
-        "benefit_match": true,
-        "effective_from": "2026-01-01",
-        "effective_to": null,
-        "predicted_parameters": {
-          "income_standard_monthly_per_capita": "1327.00"
-        },
-        "predicted_condition_fields": [
-          "assets_eligible",
-          "member_scope_confirmed",
-          "per_capita_monthly_income"
-        ]
-      },
-      {
-        "case_id": "PCR-T002",
-        "benefit_match": true,
-        "effective_from": "2026-01-01",
-        "effective_to": "2026-12-31",
-        "predicted_parameters": {
-          "edge_standard_monthly_per_capita": "1990.50"
-        },
-        "predicted_condition_fields": [
-          "assets_eligible",
-          "per_capita_monthly_income"
-        ]
-      },
-      {
-        "case_id": "PCR-T003",
-        "benefit_match": true,
-        "effective_from": "2021-12-06",
-        "effective_to": "2026-12-05",
-        "predicted_parameters": {
-          "urgent_event_days": 31
-        },
-        "predicted_condition_fields": [
-          "basic_life_interrupted",
-          "urgent_event",
-          "urgent_event_date"
-        ]
-      },
-      {
-        "case_id": "PCR-T004",
-        "benefit_match": true,
-        "effective_from": "2026-07-01",
-        "effective_to": null,
-        "predicted_parameters": {},
-        "predicted_condition_fields": [
-          "residence_proof"
-        ]
-      },
-      {
-        "case_id": "PCR-T005",
-        "benefit_match": true,
-        "effective_from": "2022-08-12",
-        "effective_to": null,
-        "predicted_parameters": {},
-        "predicted_condition_fields": [
-          "assets_eligible"
-        ]
-      },
-      {
-        "case_id": "PCR-T006",
-        "benefit_match": true,
-        "effective_from": "2027-08-01",
-        "effective_to": "2028-07-31",
-        "predicted_parameters": {
-          "income_standard_monthly_per_capita": "1400.00"
-        },
-        "predicted_condition_fields": [
-          "assets_eligible",
-          "per_capita_monthly_income"
-        ]
-      },
-      {
-        "case_id": "PCR-T007",
-        "benefit_match": true,
-        "effective_from": "2026-03-01",
-        "effective_to": null,
-        "predicted_parameters": {
-          "income_multiplier": 1.5
-        },
-        "predicted_condition_fields": []
-      },
-      {
-        "case_id": "PCR-T008",
-        "benefit_match": true,
-        "effective_from": "2026-07-01",
-        "effective_to": null,
-        "predicted_parameters": {},
-        "predicted_condition_fields": []
-      },
-      {
-        "case_id": "PCR-T009",
-        "benefit_match": true,
-        "effective_from": null,
-        "effective_to": null,
-        "predicted_parameters": {
-          "income_standard_monthly_per_capita": "1327.00"
-        },
-        "predicted_condition_fields": [
-          "assets_eligible",
-          "per_capita_monthly_income"
-        ]
-      },
-      {
-        "case_id": "PCR-T010",
-        "benefit_match": true,
-        "effective_from": "2027-01-01",
-        "effective_to": null,
-        "predicted_parameters": {
-          "urgent_event_days": 20
-        },
-        "predicted_condition_fields": [
-          "basic_life_interrupted",
-          "urgent_event",
-          "urgent_event_date"
-        ]
-      }
-    ]
+  "dataset_origin": "official verbatim clauses with project-authored labels",
+  "policy_file_isolation": {
+    "development_source_ids": [],
+    "frozen_final_source_ids": [],
+    "overlap": [],
+    "passed": true
   },
-  "metadata_assisted_compilation": {
-    "track": "metadata_assisted_compilation",
-    "case_count": 10,
-    "providers": {
-      "local-policy-compiler/1.0": 10
-    },
-    "benefit_accuracy": 1.0,
-    "benefit_evaluable_cases": 10,
-    "benefit_context_dependent_cases": 0,
-    "effective_from_accuracy": 1.0,
-    "effective_from_evaluable_cases": 10,
-    "effective_to_accuracy": 1.0,
-    "effective_to_evaluable_cases": 10,
-    "missing_effective_from_guard_accuracy": 1.0,
-    "missing_effective_from_cases": 1,
-    "parameter_pair": {
-      "precision": 1.0,
-      "recall": 1.0,
-      "f1": 1.0
-    },
-    "condition_field": {
-      "precision": 1.0,
-      "recall": 1.0,
-      "f1": 1.0
-    },
-    "source_quote_grounding_rate": 1.0,
-    "details": [
-      {
-        "case_id": "PCR-T001",
-        "benefit_match": true,
-        "effective_from": "2026-01-01",
-        "effective_to": null,
-        "predicted_parameters": {
-          "income_standard_monthly_per_capita": "1327.00"
-        },
-        "predicted_condition_fields": [
-          "assets_eligible",
-          "member_scope_confirmed",
-          "per_capita_monthly_income"
-        ]
-      },
-      {
-        "case_id": "PCR-T002",
-        "benefit_match": true,
-        "effective_from": "2026-01-01",
-        "effective_to": "2026-12-31",
-        "predicted_parameters": {
-          "edge_standard_monthly_per_capita": "1990.50"
-        },
-        "predicted_condition_fields": [
-          "assets_eligible",
-          "per_capita_monthly_income"
-        ]
-      },
-      {
-        "case_id": "PCR-T003",
-        "benefit_match": true,
-        "effective_from": "2021-12-06",
-        "effective_to": "2026-12-05",
-        "predicted_parameters": {
-          "urgent_event_days": 31
-        },
-        "predicted_condition_fields": [
-          "basic_life_interrupted",
-          "urgent_event",
-          "urgent_event_date"
-        ]
-      },
-      {
-        "case_id": "PCR-T004",
-        "benefit_match": true,
-        "effective_from": "2026-07-01",
-        "effective_to": null,
-        "predicted_parameters": {},
-        "predicted_condition_fields": [
-          "residence_proof"
-        ]
-      },
-      {
-        "case_id": "PCR-T005",
-        "benefit_match": true,
-        "effective_from": "2022-08-12",
-        "effective_to": null,
-        "predicted_parameters": {},
-        "predicted_condition_fields": [
-          "assets_eligible"
-        ]
-      },
-      {
-        "case_id": "PCR-T006",
-        "benefit_match": true,
-        "effective_from": "2027-08-01",
-        "effective_to": "2028-07-31",
-        "predicted_parameters": {
-          "income_standard_monthly_per_capita": "1400.00"
-        },
-        "predicted_condition_fields": [
-          "assets_eligible",
-          "per_capita_monthly_income"
-        ]
-      },
-      {
-        "case_id": "PCR-T007",
-        "benefit_match": true,
-        "effective_from": "2026-03-01",
-        "effective_to": null,
-        "predicted_parameters": {
-          "income_multiplier": 1.5
-        },
-        "predicted_condition_fields": []
-      },
-      {
-        "case_id": "PCR-T008",
-        "benefit_match": true,
-        "effective_from": "2026-07-01",
-        "effective_to": null,
-        "predicted_parameters": {},
-        "predicted_condition_fields": []
-      },
-      {
-        "case_id": "PCR-T009",
-        "benefit_match": true,
-        "effective_from": null,
-        "effective_to": null,
-        "predicted_parameters": {
-          "income_standard_monthly_per_capita": "1327.00"
-        },
-        "predicted_condition_fields": [
-          "assets_eligible",
-          "per_capita_monthly_income"
-        ]
-      },
-      {
-        "case_id": "PCR-T010",
-        "benefit_match": true,
-        "effective_from": "2027-01-01",
-        "effective_to": null,
-        "predicted_parameters": {
-          "urgent_event_days": 20
-        },
-        "predicted_condition_fields": [
-          "basic_life_interrupted",
-          "urgent_event",
-          "urgent_event_date"
-        ]
-      }
-    ]
+  "ai_runtime": {
+    "mode": "deterministic",
+    "configured": false,
+    "reachable": false,
+    "chat_model": null,
+    "embedding_model": "qwen3-embedding:0.6b",
+    "active_provider": "deterministic-safe-parser",
+    "reason": "AI_MODE未启用本地模型"
   },
-  "unknown_rejection": {
-    "dataset_origin": "project-authored synthetic out-of-domain negatives",
-    "case_count": 10,
-    "passed": 10,
-    "accuracy": 1.0,
-    "details": [
-      {
-        "case_id": "NEG-001",
-        "passed": true,
-        "predicted_benefit_id": "unknown"
+  "tracks": {
+    "deterministic": {
+      "strategy": "deterministic",
+      "metadata_assistance_used": false,
+      "case_count": 10,
+      "providers": {
+        "local-policy-compiler/1.0": 10
       },
-      {
-        "case_id": "NEG-002",
-        "passed": true,
-        "predicted_benefit_id": "unknown"
+      "benefit_accuracy": 1.0,
+      "benefit_accuracy_ci95": {
+        "method": "wilson",
+        "confidence": 0.95,
+        "lower": 0.7225,
+        "upper": 1.0
       },
-      {
-        "case_id": "NEG-003",
-        "passed": true,
-        "predicted_benefit_id": "unknown"
+      "benefit_evaluable_cases": 10,
+      "benefit_context_dependent_cases": 0,
+      "effective_from_accuracy": 1.0,
+      "effective_from_accuracy_ci95": {
+        "method": "wilson",
+        "confidence": 0.95,
+        "lower": 0.7009,
+        "upper": 1.0
       },
-      {
-        "case_id": "NEG-004",
-        "passed": true,
-        "predicted_benefit_id": "unknown"
+      "effective_from_evaluable_cases": 9,
+      "effective_to_accuracy": 1.0,
+      "effective_to_accuracy_ci95": {
+        "method": "wilson",
+        "confidence": 0.95,
+        "lower": 0.3424,
+        "upper": 1.0
       },
-      {
-        "case_id": "NEG-005",
-        "passed": true,
-        "predicted_benefit_id": "unknown"
+      "effective_to_evaluable_cases": 2,
+      "parameter_pair": {
+        "true_positive": 7,
+        "predicted": 7,
+        "gold": 7,
+        "precision": 1.0,
+        "precision_ci95": {
+          "method": "wilson",
+          "confidence": 0.95,
+          "lower": 0.6457,
+          "upper": 1.0
+        },
+        "recall": 1.0,
+        "recall_ci95": {
+          "method": "wilson",
+          "confidence": 0.95,
+          "lower": 0.6457,
+          "upper": 1.0
+        },
+        "f1": 1.0
       },
-      {
-        "case_id": "NEG-006",
-        "passed": true,
-        "predicted_benefit_id": "unknown"
+      "condition_field": {
+        "true_positive": 17,
+        "predicted": 17,
+        "gold": 17,
+        "precision": 1.0,
+        "precision_ci95": {
+          "method": "wilson",
+          "confidence": 0.95,
+          "lower": 0.8157,
+          "upper": 1.0
+        },
+        "recall": 1.0,
+        "recall_ci95": {
+          "method": "wilson",
+          "confidence": 0.95,
+          "lower": 0.8157,
+          "upper": 1.0
+        },
+        "f1": 1.0
       },
-      {
-        "case_id": "NEG-007",
-        "passed": true,
-        "predicted_benefit_id": "unknown"
+      "source_quote_grounding": {
+        "successes": 17,
+        "total": 17,
+        "estimate": 1.0,
+        "ci95": {
+          "method": "wilson",
+          "confidence": 0.95,
+          "lower": 0.8157,
+          "upper": 1.0
+        }
       },
-      {
-        "case_id": "NEG-008",
-        "passed": true,
-        "predicted_benefit_id": "unknown"
+      "end_to_end_latency_ms": {
+        "samples": 10,
+        "p50_ms": 0.162,
+        "p95_ms": 2.938,
+        "max_ms": 2.938,
+        "mean_ms": 0.55
       },
-      {
-        "case_id": "NEG-009",
-        "passed": true,
-        "predicted_benefit_id": "unknown"
+      "model_latency_ms": {
+        "samples": 0,
+        "p50_ms": null,
+        "p95_ms": null,
+        "max_ms": null,
+        "mean_ms": null
       },
-      {
-        "case_id": "NEG-010",
-        "passed": true,
-        "predicted_benefit_id": "unknown"
-      }
-    ]
+      "unknown_rejection": {
+        "cases": 30,
+        "accuracy": 1.0,
+        "accuracy_ci95": {
+          "method": "wilson",
+          "confidence": 0.95,
+          "lower": 0.8865,
+          "upper": 1.0
+        },
+        "latency_ms": {
+          "samples": 30,
+          "p50_ms": 0.083,
+          "p95_ms": 0.106,
+          "max_ms": 0.124,
+          "mean_ms": 0.087
+        },
+        "error_table": []
+      },
+      "by_source": {
+        "GD-T005": {
+          "cases": 1,
+          "benefit_accuracy": {
+            "successes": 1,
+            "total": 1,
+            "estimate": 1.0,
+            "ci95": {
+              "method": "wilson",
+              "confidence": 0.95,
+              "lower": 0.2065,
+              "upper": 1.0
+            }
+          }
+        },
+        "GZ-T001": {
+          "cases": 1,
+          "benefit_accuracy": {
+            "successes": 1,
+            "total": 1,
+            "estimate": 1.0,
+            "ci95": {
+              "method": "wilson",
+              "confidence": 0.95,
+              "lower": 0.2065,
+              "upper": 1.0
+            }
+          }
+        },
+        "GZ-T002": {
+          "cases": 1,
+          "benefit_accuracy": {
+            "successes": 1,
+            "total": 1,
+            "estimate": 1.0,
+            "ci95": {
+              "method": "wilson",
+              "confidence": 0.95,
+              "lower": 0.2065,
+              "upper": 1.0
+            }
+          }
+        },
+        "GZ-T003": {
+          "cases": 1,
+          "benefit_accuracy": {
+            "successes": 1,
+            "total": 1,
+            "estimate": 1.0,
+            "ci95": {
+              "method": "wilson",
+              "confidence": 0.95,
+              "lower": 0.2065,
+              "upper": 1.0
+            }
+          }
+        },
+        "GZ-T004": {
+          "cases": 1,
+          "benefit_accuracy": {
+            "successes": 1,
+            "total": 1,
+            "estimate": 1.0,
+            "ci95": {
+              "method": "wilson",
+              "confidence": 0.95,
+              "lower": 0.2065,
+              "upper": 1.0
+            }
+          }
+        },
+        "GZ-T006": {
+          "cases": 1,
+          "benefit_accuracy": {
+            "successes": 1,
+            "total": 1,
+            "estimate": 1.0,
+            "ci95": {
+              "method": "wilson",
+              "confidence": 0.95,
+              "lower": 0.2065,
+              "upper": 1.0
+            }
+          }
+        },
+        "GZ-T007": {
+          "cases": 1,
+          "benefit_accuracy": {
+            "successes": 1,
+            "total": 1,
+            "estimate": 1.0,
+            "ci95": {
+              "method": "wilson",
+              "confidence": 0.95,
+              "lower": 0.2065,
+              "upper": 1.0
+            }
+          }
+        },
+        "GZ-T008": {
+          "cases": 1,
+          "benefit_accuracy": {
+            "successes": 1,
+            "total": 1,
+            "estimate": 1.0,
+            "ci95": {
+              "method": "wilson",
+              "confidence": 0.95,
+              "lower": 0.2065,
+              "upper": 1.0
+            }
+          }
+        },
+        "GZ-T009": {
+          "cases": 1,
+          "benefit_accuracy": {
+            "successes": 1,
+            "total": 1,
+            "estimate": 1.0,
+            "ci95": {
+              "method": "wilson",
+              "confidence": 0.95,
+              "lower": 0.2065,
+              "upper": 1.0
+            }
+          }
+        },
+        "GZ-T010": {
+          "cases": 1,
+          "benefit_accuracy": {
+            "successes": 1,
+            "total": 1,
+            "estimate": 1.0,
+            "ci95": {
+              "method": "wilson",
+              "confidence": 0.95,
+              "lower": 0.2065,
+              "upper": 1.0
+            }
+          }
+        }
+      },
+      "error_table": []
+    }
   },
-  "claim_boundary": "主结果是不给benefit_hint和有效期元数据的原文抽取轨；辅助编译轨单独报告，不得把元数据回填计作模型抽取。标签由项目组按官方条款制作，未做外部双人盲标，且规则开发与本基准来源存在重叠，因此只用于回归验证，不宣称独立泛化性能。",
-  "app_version": "1.2.1",
+  "claim_boundary": [
+    "三轨均只接收政策原文，不使用benefit_hint或生效日期元数据回填。",
+    "最终测试按完整政策文件隔离，同一source_id不得跨开发集与冻结测试集。",
+    "标签由项目组按公开标注指南制作，尚不是外部专家双人盲标。",
+    "指标及95%置信区间只描述本冻结集，不外推为真实政务业务准确率。"
+  ],
   "engine_version": "rule-engine/0.5.0",
   "release_metadata": {
-    "release_id": "v1.2.1+source.155f7a8c19f0",
-    "app_version": "1.2.1",
+    "release_id": "v1.3.0+source.4bf15869943e",
+    "app_version": "1.3.0",
     "engine_version": "rule-engine/0.5.0",
-    "git_commit": "3ac4b8c1609abd15f376149eb59a741188bd2ee5",
-    "git_dirty": false,
-    "source_tree_sha256": "155f7a8c19f02ee5e752455532ce8d12e4abf0a87006ec94fcbf10c3da04ecfc",
+    "git_commit": "3d44457cec0e50f71418ad28cc704ada6fa3ce5c",
+    "git_dirty": true,
+    "source_tree_sha256": "4bf15869943e7e6400abf126cc4494042555638289301bca6739da13f276ff48",
     "source_binding": {
-      "code_commit": "3ac4b8c1609abd15f376149eb59a741188bd2ee5",
+      "code_commit": "3d44457cec0e50f71418ad28cc704ada6fa3ce5c",
       "source_inputs_dirty": false,
-      "source_tree_sha256": "155f7a8c19f02ee5e752455532ce8d12e4abf0a87006ec94fcbf10c3da04ecfc",
-      "source_file_count": 123,
+      "source_tree_sha256": "4bf15869943e7e6400abf126cc4494042555638289301bca6739da13f276ff48",
+      "source_file_count": 230,
       "scope": "代码、测试、评测输入、运行和安全配置；生成的评测报告不参与自指纹",
       "text_normalization": "CRLF和LF统一为LF；二进制文件保持原始字节"
     },
     "artifact_binding": {
-      "reports_generated_from_source_sha256": "155f7a8c19f02ee5e752455532ce8d12e4abf0a87006ec94fcbf10c3da04ecfc",
+      "reports_generated_from_source_sha256": "4bf15869943e7e6400abf126cc4494042555638289301bca6739da13f276ff48",
       "evidence_commit": null,
       "note": "报告提交后可由正式发布流程填入证据提交；源码绑定以内容指纹为准。"
     }

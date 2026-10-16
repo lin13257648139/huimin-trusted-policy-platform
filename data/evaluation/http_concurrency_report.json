@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-16T03:12:40.151096+00:00",
+  "generated_at": "2026-10-16T08:41:57.388712+00:00",
   "environment": {
     "python": "3.12.14",
     "platform": "Windows-11-10.0.26200-SP0",
@@ -28,10 +28,10 @@
     {
       "concurrency": 1,
       "requests": 60,
-      "p50_ms": 8.263,
-      "p95_ms": 27.625,
-      "max_ms": 28.499,
-      "throughput_rps": 74.57,
+      "p50_ms": 10.155,
+      "p95_ms": 31.888,
+      "max_ms": 39.838,
+      "throughput_rps": 65.12,
       "errors": 0,
       "error_types": [],
       "passed": true
@@ -39,10 +39,10 @@
     {
       "concurrency": 5,
       "requests": 60,
-      "p50_ms": 46.209,
-      "p95_ms": 96.23,
-      "max_ms": 105.91,
-      "throughput_rps": 92.98,
+      "p50_ms": 70.296,
+      "p95_ms": 144.894,
+      "max_ms": 151.225,
+      "throughput_rps": 64.74,
       "errors": 0,
       "error_types": [],
       "passed": true
@@ -50,10 +50,10 @@
     {
       "concurrency": 10,
       "requests": 60,
-      "p50_ms": 172.76,
-      "p95_ms": 268.623,
-      "max_ms": 284.257,
-      "throughput_rps": 56.85,
+      "p50_ms": 175.273,
+      "p95_ms": 256.413,
+      "max_ms": 267.519,
+      "throughput_rps": 58.49,
       "errors": 0,
       "error_types": [],
       "passed": true
@@ -61,10 +61,10 @@
     {
       "concurrency": 20,
       "requests": 60,
-      "p50_ms": 307.184,
-      "p95_ms": 579.662,
-      "max_ms": 665.395,
-      "throughput_rps": 50.83,
+      "p50_ms": 326.297,
+      "p95_ms": 504.131,
+      "max_ms": 670.979,
+      "throughput_rps": 51.91,
       "errors": 0,
       "error_types": [],
       "passed": true
@@ -72,35 +72,35 @@
     {
       "concurrency": 30,
       "requests": 60,
-      "p50_ms": 466.019,
-      "p95_ms": 670.664,
-      "max_ms": 763.285,
-      "throughput_rps": 49.69,
+      "p50_ms": 462.509,
+      "p95_ms": 695.296,
+      "max_ms": 842.031,
+      "throughput_rps": 47.76,
       "errors": 0,
       "error_types": [],
       "passed": true
     }
   ],
   "claim_boundary": "本报告是当前机器单进程、回环网络、只读混合接口的工程基准；不代表公网生产容量，也不代表包含大模型生成或文件OCR的端到端延迟。",
-  "app_version": "1.2.1",
+  "app_version": "1.3.0",
   "engine_version": "rule-engine/0.5.0",
   "release_metadata": {
-    "release_id": "v1.2.1+source.155f7a8c19f0",
-    "app_version": "1.2.1",
+    "release_id": "v1.3.0+source.4bf15869943e",
+    "app_version": "1.3.0",
     "engine_version": "rule-engine/0.5.0",
-    "git_commit": "3ac4b8c1609abd15f376149eb59a741188bd2ee5",
-    "git_dirty": false,
-    "source_tree_sha256": "155f7a8c19f02ee5e752455532ce8d12e4abf0a87006ec94fcbf10c3da04ecfc",
+    "git_commit": "3d44457cec0e50f71418ad28cc704ada6fa3ce5c",
+    "git_dirty": true,
+    "source_tree_sha256": "4bf15869943e7e6400abf126cc4494042555638289301bca6739da13f276ff48",
     "source_binding": {
-      "code_commit": "3ac4b8c1609abd15f376149eb59a741188bd2ee5",
+      "code_commit": "3d44457cec0e50f71418ad28cc704ada6fa3ce5c",
       "source_inputs_dirty": false,
-      "source_tree_sha256": "155f7a8c19f02ee5e752455532ce8d12e4abf0a87006ec94fcbf10c3da04ecfc",
-      "source_file_count": 123,
+      "source_tree_sha256": "4bf15869943e7e6400abf126cc4494042555638289301bca6739da13f276ff48",
+      "source_file_count": 230,
       "scope": "代码、测试、评测输入、运行和安全配置；生成的评测报告不参与自指纹",
       "text_normalization": "CRLF和LF统一为LF；二进制文件保持原始字节"
     },
     "artifact_binding": {
-      "reports_generated_from_source_sha256": "155f7a8c19f02ee5e752455532ce8d12e4abf0a87006ec94fcbf10c3da04ecfc",
+      "reports_generated_from_source_sha256": "4bf15869943e7e6400abf126cc4494042555638289301bca6739da13f276ff48",
       "evidence_commit": null,
       "note": "报告提交后可由正式发布流程填入证据提交；源码绑定以内容指纹为准。"
     }

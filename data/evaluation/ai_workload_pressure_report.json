@@ -1,0 +1,475 @@
+{
+  "report_schema": "real-ai-workload-pressure/1.0",
+  "generated_at": "2026-10-16T08:39:42.494021+00:00",
+  "environment": {
+    "python": "3.12.14",
+    "platform": "Windows-11-10.0.26200-SP0",
+    "processor": "Intel64 Family 6 Model 186 Stepping 2, GenuineIntel",
+    "server": "single-process uvicorn over loopback HTTP",
+    "ai_mode": "hybrid",
+    "llm_workers": 2,
+    "document_workers": 2,
+    "queue_capacity": 16
+  },
+  "ai_runtime": {
+    "mode": "hybrid",
+    "configured": true,
+    "reachable": true,
+    "chat_model": "qwen3:4b-instruct",
+    "embedding_model": "qwen3-embedding:0.6b",
+    "active_provider": "ollama/qwen3:4b-instruct",
+    "reason": null,
+    "model_present": true,
+    "embedding_model_present": true,
+    "model_digest": "0edcdef34593eac1aa2be9c7d06c432dcf81945adca5eca2f27662c18f168ba0",
+    "model_size_bytes": 2497293803,
+    "model_details": {
+      "parent_model": "",
+      "format": "gguf",
+      "family": "qwen3",
+      "families": [
+        "qwen3"
+      ],
+      "parameter_size": "4.0B",
+      "quantization_level": "Q4_K_M",
+      "context_length": 262144,
+      "embedding_length": 2560
+    }
+  },
+  "concurrency_levels": [
+    1,
+    3,
+    5,
+    10
+  ],
+  "results": {
+    "llm_profile": [
+      {
+        "concurrency": 1,
+        "requests": 3,
+        "p50_ms": 1978.65,
+        "p95_ms": 8296.3,
+        "max_ms": 8296.3,
+        "throughput_rps": 0.243,
+        "http_status_counts": {
+          "200": 3
+        },
+        "exception_counts": {},
+        "error_rate": 0.0,
+        "queue_rejection_rate": 0.0,
+        "timeout_rate": 0.0,
+        "route_validation_failures": 0,
+        "server_rss_peak_mb": 63.035
+      },
+      {
+        "concurrency": 3,
+        "requests": 3,
+        "p50_ms": 3826.399,
+        "p95_ms": 5754.294,
+        "max_ms": 5754.294,
+        "throughput_rps": 0.506,
+        "http_status_counts": {
+          "200": 3
+        },
+        "exception_counts": {},
+        "error_rate": 0.0,
+        "queue_rejection_rate": 0.0,
+        "timeout_rate": 0.0,
+        "route_validation_failures": 0,
+        "server_rss_peak_mb": 63.141
+      },
+      {
+        "concurrency": 5,
+        "requests": 5,
+        "p50_ms": 5686.097,
+        "p95_ms": 9237.847,
+        "max_ms": 9237.847,
+        "throughput_rps": 0.531,
+        "http_status_counts": {
+          "200": 5
+        },
+        "exception_counts": {},
+        "error_rate": 0.0,
+        "queue_rejection_rate": 0.0,
+        "timeout_rate": 0.0,
+        "route_validation_failures": 0,
+        "server_rss_peak_mb": 63.426
+      },
+      {
+        "concurrency": 10,
+        "requests": 10,
+        "p50_ms": 10670.707,
+        "p95_ms": 17475.743,
+        "max_ms": 17475.743,
+        "throughput_rps": 0.566,
+        "http_status_counts": {
+          "200": 10
+        },
+        "exception_counts": {},
+        "error_rate": 0.0,
+        "queue_rejection_rate": 0.0,
+        "timeout_rate": 0.0,
+        "route_validation_failures": 0,
+        "server_rss_peak_mb": 64.035
+      }
+    ],
+    "hybrid_retrieval": [
+      {
+        "concurrency": 1,
+        "requests": 3,
+        "p50_ms": 1254.723,
+        "p95_ms": 3713.418,
+        "max_ms": 3713.418,
+        "throughput_rps": 0.475,
+        "http_status_counts": {
+          "200": 3
+        },
+        "exception_counts": {},
+        "error_rate": 0.0,
+        "queue_rejection_rate": 0.0,
+        "timeout_rate": 0.0,
+        "route_validation_failures": 0,
+        "server_rss_peak_mb": 66.219
+      },
+      {
+        "concurrency": 3,
+        "requests": 3,
+        "p50_ms": 2320.476,
+        "p95_ms": 3362.534,
+        "max_ms": 3362.534,
+        "throughput_rps": 0.847,
+        "http_status_counts": {
+          "200": 3
+        },
+        "exception_counts": {},
+        "error_rate": 0.0,
+        "queue_rejection_rate": 0.0,
+        "timeout_rate": 0.0,
+        "route_validation_failures": 0,
+        "server_rss_peak_mb": 66.406
+      },
+      {
+        "concurrency": 5,
+        "requests": 5,
+        "p50_ms": 3352.788,
+        "p95_ms": 4707.317,
+        "max_ms": 4707.317,
+        "throughput_rps": 1.036,
+        "http_status_counts": {
+          "200": 5
+        },
+        "exception_counts": {},
+        "error_rate": 0.0,
+        "queue_rejection_rate": 0.0,
+        "timeout_rate": 0.0,
+        "route_validation_failures": 0,
+        "server_rss_peak_mb": 66.555
+      },
+      {
+        "concurrency": 10,
+        "requests": 10,
+        "p50_ms": 3931.778,
+        "p95_ms": 6541.15,
+        "max_ms": 6541.15,
+        "throughput_rps": 1.496,
+        "http_status_counts": {
+          "200": 10
+        },
+        "exception_counts": {},
+        "error_rate": 0.0,
+        "queue_rejection_rate": 0.0,
+        "timeout_rate": 0.0,
+        "route_validation_failures": 0,
+        "server_rss_peak_mb": 67.027
+      }
+    ],
+    "image_ocr": [
+      {
+        "concurrency": 1,
+        "requests": 3,
+        "p50_ms": 1771.943,
+        "p95_ms": 4373.855,
+        "max_ms": 4373.855,
+        "throughput_rps": 0.378,
+        "http_status_counts": {
+          "200": 3
+        },
+        "exception_counts": {},
+        "error_rate": 0.0,
+        "queue_rejection_rate": 0.0,
+        "timeout_rate": 0.0,
+        "route_validation_failures": 0,
+        "server_rss_peak_mb": 362.523
+      },
+      {
+        "concurrency": 3,
+        "requests": 3,
+        "p50_ms": 3528.374,
+        "p95_ms": 5146.068,
+        "max_ms": 5146.068,
+        "throughput_rps": 0.571,
+        "http_status_counts": {
+          "200": 3
+        },
+        "exception_counts": {},
+        "error_rate": 0.0,
+        "queue_rejection_rate": 0.0,
+        "timeout_rate": 0.0,
+        "route_validation_failures": 0,
+        "server_rss_peak_mb": 345.945
+      },
+      {
+        "concurrency": 5,
+        "requests": 5,
+        "p50_ms": 12362.507,
+        "p95_ms": 28492.088,
+        "max_ms": 28492.088,
+        "throughput_rps": 0.174,
+        "http_status_counts": {
+          "200": 5
+        },
+        "exception_counts": {},
+        "error_rate": 0.0,
+        "queue_rejection_rate": 0.0,
+        "timeout_rate": 0.0,
+        "route_validation_failures": 0,
+        "server_rss_peak_mb": 429.406
+      },
+      {
+        "concurrency": 10,
+        "requests": 10,
+        "p50_ms": 48577.818,
+        "p95_ms": 82428.906,
+        "max_ms": 82428.906,
+        "throughput_rps": 0.121,
+        "http_status_counts": {
+          "200": 10
+        },
+        "exception_counts": {},
+        "error_rate": 0.0,
+        "queue_rejection_rate": 0.0,
+        "timeout_rate": 0.0,
+        "route_validation_failures": 0,
+        "server_rss_peak_mb": 505.184
+      }
+    ],
+    "multipage_pdf": [
+      {
+        "concurrency": 1,
+        "requests": 3,
+        "p50_ms": 40859.89,
+        "p95_ms": 44197.04,
+        "max_ms": 44197.04,
+        "throughput_rps": 0.024,
+        "http_status_counts": {
+          "200": 3
+        },
+        "exception_counts": {},
+        "error_rate": 0.0,
+        "queue_rejection_rate": 0.0,
+        "timeout_rate": 0.0,
+        "route_validation_failures": 0,
+        "server_rss_peak_mb": 823.609
+      },
+      {
+        "concurrency": 3,
+        "requests": 3,
+        "p50_ms": 77888.844,
+        "p95_ms": 116198.637,
+        "max_ms": 116198.637,
+        "throughput_rps": 0.026,
+        "http_status_counts": {
+          "200": 3
+        },
+        "exception_counts": {},
+        "error_rate": 0.0,
+        "queue_rejection_rate": 0.0,
+        "timeout_rate": 0.0,
+        "route_validation_failures": 0,
+        "server_rss_peak_mb": 978.594
+      },
+      {
+        "concurrency": 5,
+        "requests": 5,
+        "p50_ms": 120816.489,
+        "p95_ms": 120882.369,
+        "max_ms": 120882.369,
+        "throughput_rps": 0.041,
+        "http_status_counts": {
+          "200": 2,
+          "504": 3
+        },
+        "exception_counts": {},
+        "error_rate": 0.6,
+        "queue_rejection_rate": 0.0,
+        "timeout_rate": 0.6,
+        "route_validation_failures": 0,
+        "server_rss_peak_mb": 1278.391
+      },
+      {
+        "concurrency": 10,
+        "requests": 10,
+        "p50_ms": 50591.005,
+        "p95_ms": 121422.582,
+        "max_ms": 121422.582,
+        "throughput_rps": 0.082,
+        "http_status_counts": {
+          "200": 9,
+          "504": 1
+        },
+        "exception_counts": {},
+        "error_rate": 0.1,
+        "queue_rejection_rate": 0.0,
+        "timeout_rate": 0.1,
+        "route_validation_failures": 0,
+        "server_rss_peak_mb": 1710.34
+      }
+    ],
+    "material_package": [
+      {
+        "concurrency": 1,
+        "requests": 3,
+        "p50_ms": 24123.21,
+        "p95_ms": 24330.322,
+        "max_ms": 24330.322,
+        "throughput_rps": 0.042,
+        "http_status_counts": {
+          "200": 3
+        },
+        "exception_counts": {},
+        "error_rate": 0.0,
+        "queue_rejection_rate": 0.0,
+        "timeout_rate": 0.0,
+        "route_validation_failures": 0,
+        "server_rss_peak_mb": 1060.445
+      },
+      {
+        "concurrency": 3,
+        "requests": 3,
+        "p50_ms": 63153.067,
+        "p95_ms": 70841.527,
+        "max_ms": 70841.527,
+        "throughput_rps": 0.042,
+        "http_status_counts": {
+          "200": 3
+        },
+        "exception_counts": {},
+        "error_rate": 0.0,
+        "queue_rejection_rate": 0.0,
+        "timeout_rate": 0.0,
+        "route_validation_failures": 0,
+        "server_rss_peak_mb": 520.988
+      },
+      {
+        "concurrency": 5,
+        "requests": 5,
+        "p50_ms": 104136.444,
+        "p95_ms": 120731.045,
+        "max_ms": 120731.045,
+        "throughput_rps": 0.041,
+        "http_status_counts": {
+          "200": 5
+        },
+        "exception_counts": {},
+        "error_rate": 0.0,
+        "queue_rejection_rate": 0.0,
+        "timeout_rate": 0.0,
+        "route_validation_failures": 0,
+        "server_rss_peak_mb": 565.195
+      },
+      {
+        "concurrency": 10,
+        "requests": 10,
+        "p50_ms": 202996.326,
+        "p95_ms": 233666.693,
+        "max_ms": 233666.693,
+        "throughput_rps": 0.043,
+        "http_status_counts": {
+          "200": 10
+        },
+        "exception_counts": {},
+        "error_rate": 0.0,
+        "queue_rejection_rate": 0.0,
+        "timeout_rate": 0.0,
+        "route_validation_failures": 0,
+        "server_rss_peak_mb": 663.949
+      }
+    ]
+  },
+  "timeout_recovery": {
+    "timeout_observed": true,
+    "capacity_released": true,
+    "subsequent_task_succeeded": true,
+    "counters": {
+      "outstanding": 0,
+      "submitted": 2,
+      "completed": 2,
+      "timed_out": 1,
+      "cancel_succeeded": 1
+    }
+  },
+  "final_workload_counters": {
+    "outstanding": {
+      "llm": 0,
+      "document": 0
+    },
+    "workers": {
+      "llm": 2,
+      "document": 2
+    },
+    "queue_limit_per_kind": 16,
+    "executor_running": true,
+    "metrics": {
+      "submitted": {
+        "llm": 44,
+        "document": 105
+      },
+      "completed": {
+        "llm": 44,
+        "document": 105
+      },
+      "rejected": {
+        "llm": 0,
+        "document": 0
+      },
+      "timed_out": {
+        "llm": 0,
+        "document": 4
+      },
+      "cancel_succeeded": {
+        "llm": 0,
+        "document": 4
+      }
+    },
+    "timeout_semantics": "超时会取消尚未开始的任务；已开始的线程调用受底层超时约束，完成后释放容量。"
+  },
+  "claim_boundary": [
+    "这是当前机器、回环HTTP和本地Ollama的端到端工程压力测试，不代表公网生产容量。",
+    "server_rss_peak_mb只统计FastAPI服务进程RSS；独立Ollama进程及GPU显存未计入。",
+    "测试材料为程序生成且不含真实个人信息。",
+    "队列拒绝和超时是容量治理信号，不得删除或改写为成功请求。"
+  ],
+  "app_version": "1.3.0",
+  "engine_version": "rule-engine/0.5.0",
+  "release_metadata": {
+    "release_id": "v1.3.0+source.4bf15869943e",
+    "app_version": "1.3.0",
+    "engine_version": "rule-engine/0.5.0",
+    "git_commit": "3d44457cec0e50f71418ad28cc704ada6fa3ce5c",
+    "git_dirty": true,
+    "source_tree_sha256": "4bf15869943e7e6400abf126cc4494042555638289301bca6739da13f276ff48",
+    "source_binding": {
+      "code_commit": "3d44457cec0e50f71418ad28cc704ada6fa3ce5c",
+      "source_inputs_dirty": false,
+      "source_tree_sha256": "4bf15869943e7e6400abf126cc4494042555638289301bca6739da13f276ff48",
+      "source_file_count": 230,
+      "scope": "代码、测试、评测输入、运行和安全配置；生成的评测报告不参与自指纹",
+      "text_normalization": "CRLF和LF统一为LF；二进制文件保持原始字节"
+    },
+    "artifact_binding": {
+      "reports_generated_from_source_sha256": "4bf15869943e7e6400abf126cc4494042555638289301bca6739da13f276ff48",
+      "evidence_commit": null,
+      "note": "报告提交后可由正式发布流程填入证据提交；源码绑定以内容指纹为准。"
+    }
+  }
+}

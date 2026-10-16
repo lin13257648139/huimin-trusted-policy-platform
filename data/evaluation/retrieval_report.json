@@ -1,188 +1,1989 @@
 {
   "benchmark_role": "internally_curated_retrieval_benchmark",
-  "query_count": 12,
-  "recall_at_1": 0.9167,
-  "recall_at_3": 1.0,
-  "recall_at_5": 1.0,
-  "mrr_at_5": 0.9583,
+  "query_count": 120,
+  "evaluated_split": "frozen_final_test",
+  "recall_at_1": 0.9833,
+  "recall_at_1_ci95": {
+    "method": "wilson",
+    "confidence": 0.95,
+    "lower": 0.9413,
+    "upper": 0.9954
+  },
+  "recall_at_3": 0.9833,
+  "recall_at_3_ci95": {
+    "method": "wilson",
+    "confidence": 0.95,
+    "lower": 0.9413,
+    "upper": 0.9954
+  },
+  "recall_at_5": 0.9833,
+  "recall_at_5_ci95": {
+    "method": "wilson",
+    "confidence": 0.95,
+    "lower": 0.9413,
+    "upper": 0.9954
+  },
+  "mrr_at_5": 0.9833,
   "details": [
     {
-      "query": "社会救助一件事包括哪些事项",
+      "query_id": "RQ-013",
+      "source_id": "CN-001",
+      "query": "最低生活保障同时审查家庭人均收入和财产状况，对应哪条政策证据？",
       "relevant_ids": [
-        "E-GZ-001-SCOPE"
+        "E-CN-001-DIBAO"
       ],
       "ranked_ids": [
-        "E-GZ-001-SCOPE",
-        "E-GZ-001-MATERIALS",
-        "E-GZ-001-DEADLINE",
-        "E-CN-001-PRIVACY",
-        "E-CN-001-EDGE"
-      ],
-      "first_relevant_rank": 1
-    },
-    {
-      "query": "申请低保一般要准备什么材料",
-      "relevant_ids": [
-        "E-GZ-001-MATERIALS"
-      ],
-      "ranked_ids": [
-        "E-GZ-001-MATERIALS"
-      ],
-      "first_relevant_rank": 1
-    },
-    {
-      "query": "低保办理通常需要多少个工作日",
-      "relevant_ids": [
-        "E-GZ-001-DEADLINE"
-      ],
-      "ranked_ids": [
-        "E-GZ-001-DEADLINE",
-        "E-GZ-005-RESIDENCE",
-        "E-GZ-001-MATERIALS"
-      ],
-      "first_relevant_rank": 1
-    },
-    {
-      "query": "最低生活保障是否同时审查收入和财产",
-      "relevant_ids": [
         "E-CN-001-DIBAO",
-        "E-GZ-002-ASSET"
+        "E-CN-001-EDGE",
+        "E-CN-001-RIGID",
+        "E-GD-004-A-THRESHOLD",
+        "E-GD-002-EDGE"
+      ],
+      "first_relevant_rank": 1
+    },
+    {
+      "query_id": "RQ-014",
+      "source_id": "CN-001",
+      "query": "请查询第十八条中关于最低生活保障同时审查家庭人均收入和财产状况的规定。",
+      "relevant_ids": [
+        "E-CN-001-DIBAO"
       ],
       "ranked_ids": [
-        "E-GZ-002-ASSET",
+        "E-CN-001-DIBAO",
         "E-CN-001-EDGE",
         "E-GZ-002-CURRENT",
-        "E-CN-001-DIBAO",
+        "E-CN-001-RIGID",
         "E-GD-002-RIGID"
       ],
       "first_relevant_rank": 1
     },
     {
-      "query": "低保边缘家庭需要检查财产吗",
+      "query_id": "RQ-015",
+      "source_id": "CN-001",
+      "query": "社会救助办理时，最低生活保障同时审查家庭人均收入和财产状况有何依据？",
+      "relevant_ids": [
+        "E-CN-001-DIBAO"
+      ],
+      "ranked_ids": [
+        "E-CN-001-DIBAO",
+        "E-CN-001-EDGE",
+        "E-CN-001-RIGID",
+        "E-GD-002-SEPARATE-RECOGNITION",
+        "E-GD-002-EDGE"
+      ],
+      "first_relevant_rank": 1
+    },
+    {
+      "query_id": "RQ-016",
+      "source_id": "CN-001",
+      "query": "广州救助政策是否明确：最低生活保障同时审查家庭人均收入和财产状况？",
+      "relevant_ids": [
+        "E-CN-001-DIBAO"
+      ],
+      "ranked_ids": [
+        "E-CN-001-DIBAO",
+        "E-CN-001-EDGE",
+        "E-CN-001-RIGID",
+        "E-GZ-004-EXPENSE",
+        "E-GZ-002-CURRENT"
+      ],
+      "first_relevant_rank": 1
+    },
+    {
+      "query_id": "RQ-017",
+      "source_id": "CN-001",
+      "query": "申请前想核实最低生活保障同时审查家庭人均收入和财产状况，请给官方条款。",
+      "relevant_ids": [
+        "E-CN-001-DIBAO"
+      ],
+      "ranked_ids": [
+        "E-CN-001-DIBAO",
+        "E-CN-001-EDGE",
+        "E-CN-001-RIGID",
+        "E-GZ-004-EXPENSE",
+        "E-GD-004-A-THRESHOLD"
+      ],
+      "first_relevant_rank": 1
+    },
+    {
+      "query_id": "RQ-018",
+      "source_id": "CN-001",
+      "query": "关于家庭救助，怎样理解最低生活保障同时审查家庭人均收入和财产状况？",
+      "relevant_ids": [
+        "E-CN-001-DIBAO"
+      ],
+      "ranked_ids": [
+        "E-CN-001-DIBAO",
+        "E-CN-001-EDGE",
+        "E-GZ-004-EXPENSE",
+        "E-CN-001-RIGID",
+        "E-GD-002-SEPARATE-RECOGNITION"
+      ],
+      "first_relevant_rank": 1
+    },
+    {
+      "query_id": "RQ-019",
+      "source_id": "CN-001",
+      "query": "低保边缘家庭同时审查收入和财产，并可衔接医疗、教育、住房、就业等专项救助，对应哪条政策证据？",
       "relevant_ids": [
         "E-CN-001-EDGE"
       ],
       "ranked_ids": [
-        "E-GD-002-EDGE",
         "E-CN-001-EDGE",
-        "E-GZ-004-EXPENSE",
+        "E-CN-001-DIBAO",
+        "E-CN-001-RIGID",
         "E-GD-002-RIGID",
-        "E-GZ-001-SCOPE"
+        "E-GD-002-SEPARATE-RECOGNITION"
       ],
-      "first_relevant_rank": 2
+      "first_relevant_rank": 1
     },
     {
-      "query": "刚性支出困难家庭是否考虑医疗和教育费用",
+      "query_id": "RQ-020",
+      "source_id": "CN-001",
+      "query": "请查询第二十一条中关于低保边缘家庭同时审查收入和财产，并可衔接医疗、教育、住房、就业等专项救助的规定。",
+      "relevant_ids": [
+        "E-CN-001-EDGE"
+      ],
+      "ranked_ids": [
+        "E-CN-001-EDGE",
+        "E-CN-001-RIGID",
+        "E-CN-001-DIBAO",
+        "E-GD-002-RIGID",
+        "E-GD-002-EDGE"
+      ],
+      "first_relevant_rank": 1
+    },
+    {
+      "query_id": "RQ-021",
+      "source_id": "CN-001",
+      "query": "社会救助办理时，低保边缘家庭同时审查收入和财产，并可衔接医疗、教育、住房、就业等专项救助有何依据？",
+      "relevant_ids": [
+        "E-CN-001-EDGE"
+      ],
+      "ranked_ids": [
+        "E-CN-001-EDGE",
+        "E-CN-001-DIBAO",
+        "E-CN-001-RIGID",
+        "E-GD-002-RIGID",
+        "E-GD-002-SEPARATE-RECOGNITION"
+      ],
+      "first_relevant_rank": 1
+    },
+    {
+      "query_id": "RQ-022",
+      "source_id": "CN-001",
+      "query": "广州救助政策是否明确：低保边缘家庭同时审查收入和财产，并可衔接医疗、教育、住房、就业等专项救助？",
+      "relevant_ids": [
+        "E-CN-001-EDGE"
+      ],
+      "ranked_ids": [
+        "E-CN-001-EDGE",
+        "E-CN-001-DIBAO",
+        "E-CN-001-RIGID",
+        "E-GD-002-RIGID",
+        "E-GD-002-SEPARATE-RECOGNITION"
+      ],
+      "first_relevant_rank": 1
+    },
+    {
+      "query_id": "RQ-023",
+      "source_id": "CN-001",
+      "query": "申请前想核实低保边缘家庭同时审查收入和财产，并可衔接医疗、教育、住房、就业等专项救助，请给官方条款。",
+      "relevant_ids": [
+        "E-CN-001-EDGE"
+      ],
+      "ranked_ids": [
+        "E-CN-001-EDGE",
+        "E-CN-001-DIBAO",
+        "E-CN-001-RIGID",
+        "E-GD-002-RIGID",
+        "E-GD-002-DIBAO-EXCLUSION"
+      ],
+      "first_relevant_rank": 1
+    },
+    {
+      "query_id": "RQ-024",
+      "source_id": "CN-001",
+      "query": "关于家庭救助，怎样理解低保边缘家庭同时审查收入和财产，并可衔接医疗、教育、住房、就业等专项救助？",
+      "relevant_ids": [
+        "E-CN-001-EDGE"
+      ],
+      "ranked_ids": [
+        "E-CN-001-EDGE",
+        "E-CN-001-DIBAO",
+        "E-CN-001-RIGID",
+        "E-GD-002-RIGID",
+        "E-GD-002-SEPARATE-RECOGNITION"
+      ],
+      "first_relevant_rank": 1
+    },
+    {
+      "query_id": "RQ-025",
+      "source_id": "CN-001",
+      "query": "刚性支出困难家庭需综合审查人均收入、财产及医疗教育等必需支出比例，对应哪条政策证据？",
       "relevant_ids": [
         "E-CN-001-RIGID"
       ],
       "ranked_ids": [
         "E-CN-001-RIGID",
         "E-GD-002-RIGID",
-        "E-GZ-004-EXPENSE",
-        "E-GD-002-EDGE",
+        "E-CN-001-EDGE",
+        "E-GD-002-SEPARATE-RECOGNITION",
         "E-GZ-001-SCOPE"
       ],
       "first_relevant_rank": 1
     },
     {
-      "query": "社会救助个人信息处理要遵循什么原则",
+      "query_id": "RQ-026",
+      "source_id": "CN-001",
+      "query": "请查询第二十二条中关于刚性支出困难家庭需综合审查人均收入、财产及医疗教育等必需支出比例的规定。",
       "relevant_ids": [
-        "E-CN-001-PRIVACY"
+        "E-CN-001-RIGID"
       ],
       "ranked_ids": [
-        "E-CN-001-PRIVACY",
+        "E-CN-001-RIGID",
+        "E-CN-001-EDGE",
+        "E-GD-002-RIGID",
+        "E-GD-002-SEPARATE-RECOGNITION",
+        "E-GZ-001-SCOPE"
+      ],
+      "first_relevant_rank": 1
+    },
+    {
+      "query_id": "RQ-027",
+      "source_id": "CN-001",
+      "query": "社会救助办理时，刚性支出困难家庭需综合审查人均收入、财产及医疗教育等必需支出比例有何依据？",
+      "relevant_ids": [
+        "E-CN-001-RIGID"
+      ],
+      "ranked_ids": [
+        "E-CN-001-RIGID",
+        "E-GD-002-RIGID",
         "E-CN-001-EDGE",
         "E-GZ-001-SCOPE",
-        "E-CN-001-RIGID",
-        "E-GZ-001-MATERIALS"
-      ],
-      "first_relevant_rank": 1
-    },
-    {
-      "query": "广州新低保通知从什么时候开始试行",
-      "relevant_ids": [
-        "E-GZ-002-CURRENT"
-      ],
-      "ranked_ids": [
-        "E-GZ-002-CURRENT",
-        "E-GZ-002-ASSET"
-      ],
-      "first_relevant_rank": 1
-    },
-    {
-      "query": "2026年广州低保每人每月多少钱",
-      "relevant_ids": [
-        "E-GZ-003-STANDARD"
-      ],
-      "ranked_ids": [
-        "E-GZ-003-STANDARD",
-        "E-GZ-008-INCOME",
-        "E-GZ-002-CURRENT"
-      ],
-      "first_relevant_rank": 1
-    },
-    {
-      "query": "支出型困难家庭收入按多长时间计算",
-      "relevant_ids": [
-        "E-GZ-004-EXPENSE"
-      ],
-      "ranked_ids": [
-        "E-GZ-004-EXPENSE",
-        "E-GD-002-RIGID",
-        "E-GD-002-EDGE",
-        "E-CN-001-RIGID",
         "E-GZ-001-DEADLINE"
       ],
       "first_relevant_rank": 1
     },
     {
-      "query": "临时救助的急难事件要求发生在多久以内",
+      "query_id": "RQ-028",
+      "source_id": "CN-001",
+      "query": "广州救助政策是否明确：刚性支出困难家庭需综合审查人均收入、财产及医疗教育等必需支出比例？",
+      "relevant_ids": [
+        "E-CN-001-RIGID"
+      ],
+      "ranked_ids": [
+        "E-CN-001-RIGID",
+        "E-GD-002-RIGID",
+        "E-CN-001-EDGE",
+        "E-GZ-001-SCOPE",
+        "E-GZ-001-DEADLINE"
+      ],
+      "first_relevant_rank": 1
+    },
+    {
+      "query_id": "RQ-029",
+      "source_id": "CN-001",
+      "query": "申请前想核实刚性支出困难家庭需综合审查人均收入、财产及医疗教育等必需支出比例，请给官方条款。",
+      "relevant_ids": [
+        "E-CN-001-RIGID"
+      ],
+      "ranked_ids": [
+        "E-CN-001-RIGID",
+        "E-GD-002-RIGID",
+        "E-CN-001-EDGE",
+        "E-GD-002-SEPARATE-RECOGNITION",
+        "E-GZ-001-SCOPE"
+      ],
+      "first_relevant_rank": 1
+    },
+    {
+      "query_id": "RQ-030",
+      "source_id": "CN-001",
+      "query": "关于家庭救助，怎样理解刚性支出困难家庭需综合审查人均收入、财产及医疗教育等必需支出比例？",
+      "relevant_ids": [
+        "E-CN-001-RIGID"
+      ],
+      "ranked_ids": [
+        "E-CN-001-RIGID",
+        "E-GD-002-RIGID",
+        "E-CN-001-EDGE",
+        "E-GD-002-SEPARATE-RECOGNITION",
+        "E-GZ-004-EXPENSE"
+      ],
+      "first_relevant_rank": 1
+    },
+    {
+      "query_id": "RQ-031",
+      "source_id": "CN-001",
+      "query": "系统只应收集导办必需信息，并采取安全措施和保密管理，对应哪条政策证据？",
+      "relevant_ids": [
+        "E-CN-001-PRIVACY"
+      ],
+      "ranked_ids": [
+        "E-CN-001-PRIVACY"
+      ],
+      "first_relevant_rank": 1
+    },
+    {
+      "query_id": "RQ-032",
+      "source_id": "CN-001",
+      "query": "请查询第十一条中关于系统只应收集导办必需信息，并采取安全措施和保密管理的规定。",
+      "relevant_ids": [
+        "E-CN-001-PRIVACY"
+      ],
+      "ranked_ids": [],
+      "first_relevant_rank": null
+    },
+    {
+      "query_id": "RQ-033",
+      "source_id": "CN-001",
+      "query": "社会救助办理时，系统只应收集导办必需信息，并采取安全措施和保密管理有何依据？",
+      "relevant_ids": [
+        "E-CN-001-PRIVACY"
+      ],
+      "ranked_ids": [
+        "E-CN-001-PRIVACY",
+        "E-CN-001-RIGID",
+        "E-GZ-001-MATERIALS",
+        "E-GZ-001-DEADLINE",
+        "E-CN-001-EDGE"
+      ],
+      "first_relevant_rank": 1
+    },
+    {
+      "query_id": "RQ-034",
+      "source_id": "CN-001",
+      "query": "广州救助政策是否明确：系统只应收集导办必需信息，并采取安全措施和保密管理？",
+      "relevant_ids": [
+        "E-CN-001-PRIVACY"
+      ],
+      "ranked_ids": [
+        "E-CN-001-PRIVACY",
+        "E-CN-001-RIGID",
+        "E-GZ-001-DEADLINE",
+        "E-GZ-002-CURRENT",
+        "E-GZ-001-MATERIALS"
+      ],
+      "first_relevant_rank": 1
+    },
+    {
+      "query_id": "RQ-035",
+      "source_id": "CN-001",
+      "query": "申请前想核实系统只应收集导办必需信息，并采取安全措施和保密管理，请给官方条款。",
+      "relevant_ids": [
+        "E-CN-001-PRIVACY"
+      ],
+      "ranked_ids": [
+        "E-CN-001-PRIVACY",
+        "E-GD-002-DIBAO-EXCLUSION",
+        "E-GZ-004-EXPENSE"
+      ],
+      "first_relevant_rank": 1
+    },
+    {
+      "query_id": "RQ-036",
+      "source_id": "CN-001",
+      "query": "关于家庭救助，怎样理解系统只应收集导办必需信息，并采取安全措施和保密管理？",
+      "relevant_ids": [
+        "E-CN-001-PRIVACY"
+      ],
+      "ranked_ids": [
+        "E-CN-001-PRIVACY",
+        "E-GZ-004-EXPENSE",
+        "E-CN-001-RIGID",
+        "E-GD-002-DIBAO-EXCLUSION",
+        "E-GD-004-A-DUAL-ASSESSMENT"
+      ],
+      "first_relevant_rank": 1
+    },
+    {
+      "query_id": "RQ-053",
+      "source_id": "GD-002",
+      "query": "省级办法规定低保边缘家庭需满足当地户籍，以及人均月收入不高于低保标准1.5倍且不超过当地月最低工资标准，对应哪条政策证据？",
+      "relevant_ids": [
+        "E-GD-002-EDGE"
+      ],
+      "ranked_ids": [
+        "E-GD-002-EDGE",
+        "E-GD-002-RIGID",
+        "E-GZ-003-STANDARD",
+        "E-GD-004-A-THRESHOLD",
+        "E-CN-001-EDGE"
+      ],
+      "first_relevant_rank": 1
+    },
+    {
+      "query_id": "RQ-054",
+      "source_id": "GD-002",
+      "query": "请查询第九条中关于省级办法规定低保边缘家庭需满足当地户籍，以及人均月收入不高于低保标准1.5倍且不超过当地月最低工资标准的规定。",
+      "relevant_ids": [
+        "E-GD-002-EDGE"
+      ],
+      "ranked_ids": [
+        "E-GD-002-EDGE",
+        "E-GZ-003-STANDARD",
+        "E-GD-002-RIGID",
+        "E-GD-004-A-THRESHOLD",
+        "E-CN-001-EDGE"
+      ],
+      "first_relevant_rank": 1
+    },
+    {
+      "query_id": "RQ-055",
+      "source_id": "GD-002",
+      "query": "社会救助办理时，省级办法规定低保边缘家庭需满足当地户籍，以及人均月收入不高于低保标准1.5倍且不超过当地月最低工资标准有何依据？",
+      "relevant_ids": [
+        "E-GD-002-EDGE"
+      ],
+      "ranked_ids": [
+        "E-GD-002-EDGE",
+        "E-GD-002-RIGID",
+        "E-GZ-003-STANDARD",
+        "E-GD-004-A-THRESHOLD",
+        "E-CN-001-EDGE"
+      ],
+      "first_relevant_rank": 1
+    },
+    {
+      "query_id": "RQ-056",
+      "source_id": "GD-002",
+      "query": "广州救助政策是否明确：省级办法规定低保边缘家庭需满足当地户籍，以及人均月收入不高于低保标准1.5倍且不超过当地月最低工资标准？",
+      "relevant_ids": [
+        "E-GD-002-EDGE"
+      ],
+      "ranked_ids": [
+        "E-GD-002-EDGE",
+        "E-GD-002-RIGID",
+        "E-GZ-003-STANDARD",
+        "E-GD-004-A-THRESHOLD",
+        "E-CN-001-EDGE"
+      ],
+      "first_relevant_rank": 1
+    },
+    {
+      "query_id": "RQ-057",
+      "source_id": "GD-002",
+      "query": "申请前想核实省级办法规定低保边缘家庭需满足当地户籍，以及人均月收入不高于低保标准1.5倍且不超过当地月最低工资标准，请给官方条款。",
+      "relevant_ids": [
+        "E-GD-002-EDGE"
+      ],
+      "ranked_ids": [
+        "E-GD-002-EDGE",
+        "E-GD-002-RIGID",
+        "E-GZ-003-STANDARD",
+        "E-GD-004-A-THRESHOLD",
+        "E-GD-002-DIBAO-EXCLUSION"
+      ],
+      "first_relevant_rank": 1
+    },
+    {
+      "query_id": "RQ-058",
+      "source_id": "GD-002",
+      "query": "关于家庭救助，怎样理解省级办法规定低保边缘家庭需满足当地户籍，以及人均月收入不高于低保标准1.5倍且不超过当地月最低工资标准？",
+      "relevant_ids": [
+        "E-GD-002-EDGE"
+      ],
+      "ranked_ids": [
+        "E-GD-002-EDGE",
+        "E-GD-002-RIGID",
+        "E-GZ-003-STANDARD",
+        "E-GD-004-A-THRESHOLD",
+        "E-CN-001-EDGE"
+      ],
+      "first_relevant_rank": 1
+    },
+    {
+      "query_id": "RQ-059",
+      "source_id": "GD-002",
+      "query": "省级办法要求支出型困难家庭同时满足当地户籍、收入上限及刚性支出达到家庭年收入60%等条件，对应哪条政策证据？",
+      "relevant_ids": [
+        "E-GD-002-RIGID"
+      ],
+      "ranked_ids": [
+        "E-GD-002-RIGID",
+        "E-GD-002-EDGE",
+        "E-GD-002-SEPARATE-RECOGNITION",
+        "E-GZ-004-EXPENSE",
+        "E-GD-002-DIBAO-EXCLUSION"
+      ],
+      "first_relevant_rank": 1
+    },
+    {
+      "query_id": "RQ-060",
+      "source_id": "GD-002",
+      "query": "请查询第十条中关于省级办法要求支出型困难家庭同时满足当地户籍、收入上限及刚性支出达到家庭年收入60%等条件的规定。",
+      "relevant_ids": [
+        "E-GD-002-RIGID"
+      ],
+      "ranked_ids": [
+        "E-GD-002-RIGID",
+        "E-GD-002-EDGE",
+        "E-GD-002-SEPARATE-RECOGNITION",
+        "E-GZ-004-EXPENSE",
+        "E-CN-001-RIGID"
+      ],
+      "first_relevant_rank": 1
+    },
+    {
+      "query_id": "RQ-061",
+      "source_id": "GD-002",
+      "query": "社会救助办理时，省级办法要求支出型困难家庭同时满足当地户籍、收入上限及刚性支出达到家庭年收入60%等条件有何依据？",
+      "relevant_ids": [
+        "E-GD-002-RIGID"
+      ],
+      "ranked_ids": [
+        "E-GD-002-RIGID",
+        "E-GD-002-EDGE",
+        "E-GD-002-SEPARATE-RECOGNITION",
+        "E-CN-001-RIGID",
+        "E-GD-002-DIBAO-EXCLUSION"
+      ],
+      "first_relevant_rank": 1
+    },
+    {
+      "query_id": "RQ-062",
+      "source_id": "GD-002",
+      "query": "广州救助政策是否明确：省级办法要求支出型困难家庭同时满足当地户籍、收入上限及刚性支出达到家庭年收入60%等条件？",
+      "relevant_ids": [
+        "E-GD-002-RIGID"
+      ],
+      "ranked_ids": [
+        "E-GD-002-RIGID",
+        "E-GD-002-EDGE",
+        "E-GD-002-SEPARATE-RECOGNITION",
+        "E-GZ-004-EXPENSE",
+        "E-GD-002-DIBAO-EXCLUSION"
+      ],
+      "first_relevant_rank": 1
+    },
+    {
+      "query_id": "RQ-063",
+      "source_id": "GD-002",
+      "query": "申请前想核实省级办法要求支出型困难家庭同时满足当地户籍、收入上限及刚性支出达到家庭年收入60%等条件，请给官方条款。",
+      "relevant_ids": [
+        "E-GD-002-RIGID"
+      ],
+      "ranked_ids": [
+        "E-GD-002-RIGID",
+        "E-GD-002-EDGE",
+        "E-GZ-004-EXPENSE",
+        "E-GD-002-SEPARATE-RECOGNITION",
+        "E-GD-002-DIBAO-EXCLUSION"
+      ],
+      "first_relevant_rank": 1
+    },
+    {
+      "query_id": "RQ-064",
+      "source_id": "GD-002",
+      "query": "关于家庭救助，怎样理解省级办法要求支出型困难家庭同时满足当地户籍、收入上限及刚性支出达到家庭年收入60%等条件？",
+      "relevant_ids": [
+        "E-GD-002-RIGID"
+      ],
+      "ranked_ids": [
+        "E-GD-002-RIGID",
+        "E-GD-002-EDGE",
+        "E-GZ-004-EXPENSE",
+        "E-GD-002-SEPARATE-RECOGNITION",
+        "E-GD-002-DIBAO-EXCLUSION"
+      ],
+      "first_relevant_rank": 1
+    },
+    {
+      "query_id": "RQ-069",
+      "source_id": "GZ-005",
+      "query": "急难型临时救助通常要求相关突发事由发生在申请日前1个月内，对应哪条政策证据？",
       "relevant_ids": [
         "E-GZ-005-URGENT"
       ],
       "ranked_ids": [
         "E-GZ-005-URGENT",
         "E-GZ-005-RESIDENCE",
-        "E-GZ-001-SCOPE"
+        "E-GZ-001-SCOPE",
+        "E-GD-004-A-THRESHOLD",
+        "E-GZ-001-MATERIALS"
       ],
       "first_relevant_rank": 1
     },
     {
-      "query": "外地户籍申请临时救助是否要广州居住证",
+      "query_id": "RQ-070",
+      "source_id": "GZ-005",
+      "query": "请查询第五条中关于急难型临时救助通常要求相关突发事由发生在申请日前1个月内的规定。",
+      "relevant_ids": [
+        "E-GZ-005-URGENT"
+      ],
+      "ranked_ids": [
+        "E-GZ-005-URGENT",
+        "E-GZ-005-RESIDENCE",
+        "E-GZ-004-EXPENSE",
+        "E-GZ-001-SCOPE",
+        "E-GD-004-A-THRESHOLD"
+      ],
+      "first_relevant_rank": 1
+    },
+    {
+      "query_id": "RQ-071",
+      "source_id": "GZ-005",
+      "query": "社会救助办理时，急难型临时救助通常要求相关突发事由发生在申请日前1个月内有何依据？",
+      "relevant_ids": [
+        "E-GZ-005-URGENT"
+      ],
+      "ranked_ids": [
+        "E-GZ-005-URGENT",
+        "E-GZ-005-RESIDENCE",
+        "E-GZ-001-MATERIALS",
+        "E-GZ-001-SCOPE",
+        "E-GZ-001-DEADLINE"
+      ],
+      "first_relevant_rank": 1
+    },
+    {
+      "query_id": "RQ-072",
+      "source_id": "GZ-005",
+      "query": "广州救助政策是否明确：急难型临时救助通常要求相关突发事由发生在申请日前1个月内？",
+      "relevant_ids": [
+        "E-GZ-005-URGENT"
+      ],
+      "ranked_ids": [
+        "E-GZ-005-URGENT",
+        "E-GZ-005-RESIDENCE",
+        "E-GZ-001-SCOPE",
+        "E-GZ-001-MATERIALS",
+        "E-GZ-004-EXPENSE"
+      ],
+      "first_relevant_rank": 1
+    },
+    {
+      "query_id": "RQ-073",
+      "source_id": "GZ-005",
+      "query": "申请前想核实急难型临时救助通常要求相关突发事由发生在申请日前1个月内，请给官方条款。",
+      "relevant_ids": [
+        "E-GZ-005-URGENT"
+      ],
+      "ranked_ids": [
+        "E-GZ-005-URGENT",
+        "E-GZ-005-RESIDENCE",
+        "E-GD-004-A-INCOME",
+        "E-GZ-004-EXPENSE",
+        "E-GD-004-A-THRESHOLD"
+      ],
+      "first_relevant_rank": 1
+    },
+    {
+      "query_id": "RQ-074",
+      "source_id": "GZ-005",
+      "query": "关于家庭救助，怎样理解急难型临时救助通常要求相关突发事由发生在申请日前1个月内？",
+      "relevant_ids": [
+        "E-GZ-005-URGENT"
+      ],
+      "ranked_ids": [
+        "E-GZ-005-URGENT",
+        "E-GZ-005-RESIDENCE",
+        "E-GZ-004-EXPENSE",
+        "E-GZ-001-SCOPE",
+        "E-GZ-001-MATERIALS"
+      ],
+      "first_relevant_rank": 1
+    },
+    {
+      "query_id": "RQ-075",
+      "source_id": "GZ-005",
+      "query": "在非户籍所在地申请临时救助，通常需提供广州有效居住证或连续居住一年以上的有效材料，对应哪条政策证据？",
       "relevant_ids": [
         "E-GZ-005-RESIDENCE"
       ],
       "ranked_ids": [
         "E-GZ-005-RESIDENCE",
         "E-GZ-005-URGENT",
-        "E-GZ-001-SCOPE",
         "E-GZ-001-MATERIALS",
+        "E-GZ-001-SCOPE",
+        "E-GZ-002-CURRENT"
+      ],
+      "first_relevant_rank": 1
+    },
+    {
+      "query_id": "RQ-076",
+      "source_id": "GZ-005",
+      "query": "请查询第六条中关于在非户籍所在地申请临时救助，通常需提供广州有效居住证或连续居住一年以上的有效材料的规定。",
+      "relevant_ids": [
+        "E-GZ-005-RESIDENCE"
+      ],
+      "ranked_ids": [
+        "E-GZ-005-RESIDENCE",
+        "E-GZ-005-URGENT",
+        "E-GZ-001-MATERIALS",
+        "E-GZ-002-CURRENT",
+        "E-GZ-001-SCOPE"
+      ],
+      "first_relevant_rank": 1
+    },
+    {
+      "query_id": "RQ-077",
+      "source_id": "GZ-005",
+      "query": "社会救助办理时，在非户籍所在地申请临时救助，通常需提供广州有效居住证或连续居住一年以上的有效材料有何依据？",
+      "relevant_ids": [
+        "E-GZ-005-RESIDENCE"
+      ],
+      "ranked_ids": [
+        "E-GZ-005-RESIDENCE",
+        "E-GZ-001-MATERIALS",
+        "E-GZ-005-URGENT",
+        "E-GZ-001-SCOPE",
+        "E-CN-001-RIGID"
+      ],
+      "first_relevant_rank": 1
+    },
+    {
+      "query_id": "RQ-078",
+      "source_id": "GZ-005",
+      "query": "广州救助政策是否明确：在非户籍所在地申请临时救助，通常需提供广州有效居住证或连续居住一年以上的有效材料？",
+      "relevant_ids": [
+        "E-GZ-005-RESIDENCE"
+      ],
+      "ranked_ids": [
+        "E-GZ-005-RESIDENCE",
+        "E-GZ-005-URGENT",
+        "E-GZ-001-MATERIALS",
+        "E-GZ-002-CURRENT",
+        "E-GZ-001-SCOPE"
+      ],
+      "first_relevant_rank": 1
+    },
+    {
+      "query_id": "RQ-079",
+      "source_id": "GZ-005",
+      "query": "申请前想核实在非户籍所在地申请临时救助，通常需提供广州有效居住证或连续居住一年以上的有效材料，请给官方条款。",
+      "relevant_ids": [
+        "E-GZ-005-RESIDENCE"
+      ],
+      "ranked_ids": [
+        "E-GZ-005-RESIDENCE",
+        "E-GZ-005-URGENT",
+        "E-GZ-001-MATERIALS",
+        "E-GZ-001-SCOPE",
+        "E-GZ-002-CURRENT"
+      ],
+      "first_relevant_rank": 1
+    },
+    {
+      "query_id": "RQ-080",
+      "source_id": "GZ-005",
+      "query": "关于家庭救助，怎样理解在非户籍所在地申请临时救助，通常需提供广州有效居住证或连续居住一年以上的有效材料？",
+      "relevant_ids": [
+        "E-GZ-005-RESIDENCE"
+      ],
+      "ranked_ids": [
+        "E-GZ-005-RESIDENCE",
+        "E-GZ-005-URGENT",
+        "E-GZ-001-MATERIALS",
+        "E-GZ-002-CURRENT",
+        "E-GZ-001-SCOPE"
+      ],
+      "first_relevant_rank": 1
+    },
+    {
+      "query_id": "RQ-089",
+      "source_id": "GD-004-A",
+      "query": "低保认定必须把信息核对与入户综合评估结合起来，不能只凭核对报告直接作出不符合结论，对应哪条政策证据？",
+      "relevant_ids": [
+        "E-GD-004-A-DUAL-ASSESSMENT"
+      ],
+      "ranked_ids": [
+        "E-GD-004-A-DUAL-ASSESSMENT",
+        "E-GZ-002-ASSET",
+        "E-GD-004-A-VEHICLE-EXCLUSION",
+        "E-GD-004-A-LIVING",
+        "E-GD-004-A-OBLIGORS"
+      ],
+      "first_relevant_rank": 1
+    },
+    {
+      "query_id": "RQ-090",
+      "source_id": "GD-004-A",
+      "query": "请查询附件说明中关于低保认定必须把信息核对与入户综合评估结合起来，不能只凭核对报告直接作出不符合结论的规定。",
+      "relevant_ids": [
+        "E-GD-004-A-DUAL-ASSESSMENT"
+      ],
+      "ranked_ids": [
+        "E-GD-004-A-DUAL-ASSESSMENT",
+        "E-GD-004-A-THRESHOLD",
+        "E-GZ-002-ASSET",
+        "E-GD-004-A-OBLIGORS",
+        "E-GD-004-A-VEHICLE-EXCLUSION"
+      ],
+      "first_relevant_rank": 1
+    },
+    {
+      "query_id": "RQ-091",
+      "source_id": "GD-004-A",
+      "query": "社会救助办理时，低保认定必须把信息核对与入户综合评估结合起来，不能只凭核对报告直接作出不符合结论有何依据？",
+      "relevant_ids": [
+        "E-GD-004-A-DUAL-ASSESSMENT"
+      ],
+      "ranked_ids": [
+        "E-GD-004-A-DUAL-ASSESSMENT",
+        "E-GZ-001-MATERIALS",
+        "E-GZ-002-ASSET",
+        "E-GZ-001-DEADLINE",
+        "E-CN-001-PRIVACY"
+      ],
+      "first_relevant_rank": 1
+    },
+    {
+      "query_id": "RQ-092",
+      "source_id": "GD-004-A",
+      "query": "广州救助政策是否明确：低保认定必须把信息核对与入户综合评估结合起来，不能只凭核对报告直接作出不符合结论？",
+      "relevant_ids": [
+        "E-GD-004-A-DUAL-ASSESSMENT"
+      ],
+      "ranked_ids": [
+        "E-GD-004-A-DUAL-ASSESSMENT",
+        "E-GZ-002-ASSET",
+        "E-GZ-001-MATERIALS",
+        "E-GD-004-A-VEHICLE-EXCLUSION",
+        "E-GD-004-A-LIVING"
+      ],
+      "first_relevant_rank": 1
+    },
+    {
+      "query_id": "RQ-093",
+      "source_id": "GD-004-A",
+      "query": "申请前想核实低保认定必须把信息核对与入户综合评估结合起来，不能只凭核对报告直接作出不符合结论，请给官方条款。",
+      "relevant_ids": [
+        "E-GD-004-A-DUAL-ASSESSMENT"
+      ],
+      "ranked_ids": [
+        "E-GD-004-A-DUAL-ASSESSMENT",
+        "E-GZ-002-ASSET",
+        "E-GZ-001-MATERIALS",
+        "E-GD-004-A-INCOME",
+        "E-GD-004-A-OBLIGORS"
+      ],
+      "first_relevant_rank": 1
+    },
+    {
+      "query_id": "RQ-094",
+      "source_id": "GD-004-A",
+      "query": "关于家庭救助，怎样理解低保认定必须把信息核对与入户综合评估结合起来，不能只凭核对报告直接作出不符合结论？",
+      "relevant_ids": [
+        "E-GD-004-A-DUAL-ASSESSMENT"
+      ],
+      "ranked_ids": [
+        "E-GD-004-A-DUAL-ASSESSMENT",
+        "E-GZ-002-ASSET",
+        "E-GZ-001-MATERIALS",
+        "E-GD-002-SEPARATE-RECOGNITION",
+        "E-GD-004-A-OBLIGORS"
+      ],
+      "first_relevant_rank": 1
+    },
+    {
+      "query_id": "RQ-095",
+      "source_id": "GD-004-A",
+      "query": "综合评估以当地月低保标准D为统一计量单位，最终按综合评估后的家庭月人均收入与1D比较，对应哪条政策证据？",
+      "relevant_ids": [
+        "E-GD-004-A-THRESHOLD"
+      ],
+      "ranked_ids": [
+        "E-GD-004-A-THRESHOLD",
+        "E-GD-004-A-FORMULA",
+        "E-GD-004-A-STRUCTURE",
+        "E-GD-004-A-LIVING",
+        "E-GD-004-A-OBLIGORS"
+      ],
+      "first_relevant_rank": 1
+    },
+    {
+      "query_id": "RQ-096",
+      "source_id": "GD-004-A",
+      "query": "请查询附件说明中关于综合评估以当地月低保标准D为统一计量单位，最终按综合评估后的家庭月人均收入与1D比较的规定。",
+      "relevant_ids": [
+        "E-GD-004-A-THRESHOLD"
+      ],
+      "ranked_ids": [
+        "E-GD-004-A-THRESHOLD",
+        "E-GD-004-A-FORMULA",
+        "E-GD-004-A-DUAL-ASSESSMENT",
+        "E-GD-004-A-STRUCTURE",
+        "E-GD-004-A-LIVING"
+      ],
+      "first_relevant_rank": 1
+    },
+    {
+      "query_id": "RQ-097",
+      "source_id": "GD-004-A",
+      "query": "社会救助办理时，综合评估以当地月低保标准D为统一计量单位，最终按综合评估后的家庭月人均收入与1D比较有何依据？",
+      "relevant_ids": [
+        "E-GD-004-A-THRESHOLD"
+      ],
+      "ranked_ids": [
+        "E-GD-004-A-THRESHOLD",
+        "E-GD-004-A-FORMULA",
+        "E-GD-004-A-STRUCTURE",
+        "E-GD-004-A-LIVING",
+        "E-GD-002-EDGE"
+      ],
+      "first_relevant_rank": 1
+    },
+    {
+      "query_id": "RQ-098",
+      "source_id": "GD-004-A",
+      "query": "广州救助政策是否明确：综合评估以当地月低保标准D为统一计量单位，最终按综合评估后的家庭月人均收入与1D比较？",
+      "relevant_ids": [
+        "E-GD-004-A-THRESHOLD"
+      ],
+      "ranked_ids": [
+        "E-GD-004-A-THRESHOLD",
+        "E-GD-004-A-FORMULA",
+        "E-GD-004-A-STRUCTURE",
+        "E-GD-004-A-LIVING",
+        "E-GD-004-A-OBLIGORS"
+      ],
+      "first_relevant_rank": 1
+    },
+    {
+      "query_id": "RQ-099",
+      "source_id": "GD-004-A",
+      "query": "申请前想核实综合评估以当地月低保标准D为统一计量单位，最终按综合评估后的家庭月人均收入与1D比较，请给官方条款。",
+      "relevant_ids": [
+        "E-GD-004-A-THRESHOLD"
+      ],
+      "ranked_ids": [
+        "E-GD-004-A-THRESHOLD",
+        "E-GD-004-A-FORMULA",
+        "E-GD-004-A-STRUCTURE",
+        "E-GD-004-A-LIVING",
+        "E-GD-004-A-OBLIGORS"
+      ],
+      "first_relevant_rank": 1
+    },
+    {
+      "query_id": "RQ-100",
+      "source_id": "GD-004-A",
+      "query": "关于家庭救助，怎样理解综合评估以当地月低保标准D为统一计量单位，最终按综合评估后的家庭月人均收入与1D比较？",
+      "relevant_ids": [
+        "E-GD-004-A-THRESHOLD"
+      ],
+      "ranked_ids": [
+        "E-GD-004-A-THRESHOLD",
+        "E-GD-004-A-FORMULA",
+        "E-GD-004-A-STRUCTURE",
+        "E-GD-004-A-LIVING",
+        "E-GD-002-EDGE"
+      ],
+      "first_relevant_rank": 1
+    },
+    {
+      "query_id": "RQ-101",
+      "source_id": "GD-004-A",
+      "query": "收入口径不是只看申请当月，而是采用申请前6个月的平均值，对应哪条政策证据？",
+      "relevant_ids": [
+        "E-GD-004-A-INCOME"
+      ],
+      "ranked_ids": [
+        "E-GD-004-A-INCOME",
+        "E-GZ-004-EXPENSE",
+        "E-GD-004-A-THRESHOLD",
+        "E-GZ-001-DEADLINE",
+        "E-GZ-001-SCOPE"
+      ],
+      "first_relevant_rank": 1
+    },
+    {
+      "query_id": "RQ-102",
+      "source_id": "GD-004-A",
+      "query": "请查询第2项家庭每月总收入中关于收入口径不是只看申请当月，而是采用申请前6个月的平均值的规定。",
+      "relevant_ids": [
+        "E-GD-004-A-INCOME"
+      ],
+      "ranked_ids": [
+        "E-GD-004-A-INCOME",
+        "E-GD-004-A-INCOME-DETAIL",
+        "E-GZ-004-EXPENSE",
+        "E-GD-004-A-FORMULA",
+        "E-GD-004-A-VEHICLE-EXCLUSION"
+      ],
+      "first_relevant_rank": 1
+    },
+    {
+      "query_id": "RQ-103",
+      "source_id": "GD-004-A",
+      "query": "社会救助办理时，收入口径不是只看申请当月，而是采用申请前6个月的平均值有何依据？",
+      "relevant_ids": [
+        "E-GD-004-A-INCOME"
+      ],
+      "ranked_ids": [
+        "E-GD-004-A-INCOME",
+        "E-GZ-004-EXPENSE",
+        "E-GZ-001-DEADLINE",
+        "E-GZ-001-SCOPE",
+        "E-GZ-001-MATERIALS"
+      ],
+      "first_relevant_rank": 1
+    },
+    {
+      "query_id": "RQ-104",
+      "source_id": "GD-004-A",
+      "query": "广州救助政策是否明确：收入口径不是只看申请当月，而是采用申请前6个月的平均值？",
+      "relevant_ids": [
+        "E-GD-004-A-INCOME"
+      ],
+      "ranked_ids": [
+        "E-GD-004-A-INCOME",
+        "E-GZ-004-EXPENSE",
+        "E-GZ-001-DEADLINE",
+        "E-GZ-001-SCOPE",
+        "E-GZ-005-URGENT"
+      ],
+      "first_relevant_rank": 1
+    },
+    {
+      "query_id": "RQ-105",
+      "source_id": "GD-004-A",
+      "query": "申请前想核实收入口径不是只看申请当月，而是采用申请前6个月的平均值，请给官方条款。",
+      "relevant_ids": [
+        "E-GD-004-A-INCOME"
+      ],
+      "ranked_ids": [
+        "E-GD-004-A-INCOME",
+        "E-GZ-004-EXPENSE",
+        "E-GD-004-A-THRESHOLD",
+        "E-GZ-001-SCOPE"
+      ],
+      "first_relevant_rank": 1
+    },
+    {
+      "query_id": "RQ-106",
+      "source_id": "GD-004-A",
+      "query": "关于家庭救助，怎样理解收入口径不是只看申请当月，而是采用申请前6个月的平均值？",
+      "relevant_ids": [
+        "E-GD-004-A-INCOME"
+      ],
+      "ranked_ids": [
+        "E-GD-004-A-INCOME",
+        "E-GZ-004-EXPENSE",
+        "E-GZ-001-SCOPE",
+        "E-GD-002-DIBAO-EXCLUSION",
+        "E-GZ-002-CURRENT"
+      ],
+      "first_relevant_rank": 1
+    },
+    {
+      "query_id": "RQ-107",
+      "source_id": "GD-004-A",
+      "query": "同一家庭成员兼有学生、年龄、残疾或疾病等多种情况时，只取最有利的一项扣减，不能重复叠加，对应哪条政策证据？",
+      "relevant_ids": [
+        "E-GD-004-A-NONSTACK"
+      ],
+      "ranked_ids": [
+        "E-GD-004-A-NONSTACK",
+        "E-GD-004-A-STRUCTURE",
+        "E-GZ-001-DEADLINE",
+        "E-GD-002-RIGID",
+        "E-GZ-002-ASSET"
+      ],
+      "first_relevant_rank": 1
+    },
+    {
+      "query_id": "RQ-108",
+      "source_id": "GD-004-A",
+      "query": "请查询第3项家庭结构中关于同一家庭成员兼有学生、年龄、残疾或疾病等多种情况时，只取最有利的一项扣减，不能重复叠加的规定。",
+      "relevant_ids": [
+        "E-GD-004-A-NONSTACK"
+      ],
+      "ranked_ids": [
+        "E-GD-004-A-NONSTACK",
+        "E-GD-004-A-STRUCTURE",
+        "E-GZ-002-ASSET",
+        "E-GD-004-A-FORMULA",
+        "E-GD-004-A-INCOME-DETAIL"
+      ],
+      "first_relevant_rank": 1
+    },
+    {
+      "query_id": "RQ-109",
+      "source_id": "GD-004-A",
+      "query": "社会救助办理时，同一家庭成员兼有学生、年龄、残疾或疾病等多种情况时，只取最有利的一项扣减，不能重复叠加有何依据？",
+      "relevant_ids": [
+        "E-GD-004-A-NONSTACK"
+      ],
+      "ranked_ids": [
+        "E-GD-004-A-NONSTACK",
+        "E-GD-004-A-STRUCTURE",
+        "E-GZ-001-DEADLINE",
+        "E-GD-002-RIGID",
+        "E-GZ-001-MATERIALS"
+      ],
+      "first_relevant_rank": 1
+    },
+    {
+      "query_id": "RQ-110",
+      "source_id": "GD-004-A",
+      "query": "广州救助政策是否明确：同一家庭成员兼有学生、年龄、残疾或疾病等多种情况时，只取最有利的一项扣减，不能重复叠加？",
+      "relevant_ids": [
+        "E-GD-004-A-NONSTACK"
+      ],
+      "ranked_ids": [
+        "E-GD-004-A-NONSTACK",
+        "E-GD-004-A-STRUCTURE",
+        "E-GZ-001-DEADLINE",
+        "E-GZ-002-ASSET",
+        "E-GD-002-RIGID"
+      ],
+      "first_relevant_rank": 1
+    },
+    {
+      "query_id": "RQ-111",
+      "source_id": "GD-004-A",
+      "query": "申请前想核实同一家庭成员兼有学生、年龄、残疾或疾病等多种情况时，只取最有利的一项扣减，不能重复叠加，请给官方条款。",
+      "relevant_ids": [
+        "E-GD-004-A-NONSTACK"
+      ],
+      "ranked_ids": [
+        "E-GD-004-A-NONSTACK",
+        "E-GD-004-A-STRUCTURE",
+        "E-GD-002-RIGID",
+        "E-GZ-002-ASSET",
+        "E-GD-004-A-INCOME-DETAIL"
+      ],
+      "first_relevant_rank": 1
+    },
+    {
+      "query_id": "RQ-112",
+      "source_id": "GD-004-A",
+      "query": "关于家庭救助，怎样理解同一家庭成员兼有学生、年龄、残疾或疾病等多种情况时，只取最有利的一项扣减，不能重复叠加？",
+      "relevant_ids": [
+        "E-GD-004-A-NONSTACK"
+      ],
+      "ranked_ids": [
+        "E-GD-004-A-NONSTACK",
+        "E-GD-004-A-STRUCTURE",
+        "E-GZ-002-ASSET",
+        "E-GZ-004-EXPENSE",
+        "E-GD-002-RIGID"
+      ],
+      "first_relevant_rank": 1
+    },
+    {
+      "query_id": "RQ-113",
+      "source_id": "GD-004-A",
+      "query": "就业成本按实际申报，但每名劳动者每月最多扣减0.5D，并且从工资性收入中扣减，对应哪条政策证据？",
+      "relevant_ids": [
+        "E-GD-004-A-INCOME-DETAIL"
+      ],
+      "ranked_ids": [
+        "E-GD-004-A-INCOME-DETAIL",
+        "E-GD-004-A-STRUCTURE",
+        "E-GD-002-EDGE",
+        "E-CN-001-EDGE",
+        "E-GD-004-A-FORMULA"
+      ],
+      "first_relevant_rank": 1
+    },
+    {
+      "query_id": "RQ-114",
+      "source_id": "GD-004-A",
+      "query": "请查询第2项家庭每月总收入中关于就业成本按实际申报，但每名劳动者每月最多扣减0.5D，并且从工资性收入中扣减的规定。",
+      "relevant_ids": [
+        "E-GD-004-A-INCOME-DETAIL"
+      ],
+      "ranked_ids": [
+        "E-GD-004-A-INCOME-DETAIL",
+        "E-GD-004-A-INCOME",
+        "E-GD-004-A-FORMULA",
+        "E-GD-004-A-STRUCTURE",
+        "E-GD-004-A-NONSTACK"
+      ],
+      "first_relevant_rank": 1
+    },
+    {
+      "query_id": "RQ-115",
+      "source_id": "GD-004-A",
+      "query": "社会救助办理时，就业成本按实际申报，但每名劳动者每月最多扣减0.5D，并且从工资性收入中扣减有何依据？",
+      "relevant_ids": [
+        "E-GD-004-A-INCOME-DETAIL"
+      ],
+      "ranked_ids": [
+        "E-GD-004-A-INCOME-DETAIL",
+        "E-CN-001-EDGE",
+        "E-GD-004-A-STRUCTURE",
+        "E-GD-002-EDGE",
+        "E-GZ-001-DEADLINE"
+      ],
+      "first_relevant_rank": 1
+    },
+    {
+      "query_id": "RQ-116",
+      "source_id": "GD-004-A",
+      "query": "广州救助政策是否明确：就业成本按实际申报，但每名劳动者每月最多扣减0.5D，并且从工资性收入中扣减？",
+      "relevant_ids": [
+        "E-GD-004-A-INCOME-DETAIL"
+      ],
+      "ranked_ids": [
+        "E-GD-004-A-INCOME-DETAIL",
+        "E-GD-004-A-STRUCTURE",
+        "E-CN-001-EDGE",
+        "E-GD-002-EDGE",
+        "E-GZ-003-STANDARD"
+      ],
+      "first_relevant_rank": 1
+    },
+    {
+      "query_id": "RQ-117",
+      "source_id": "GD-004-A",
+      "query": "申请前想核实就业成本按实际申报，但每名劳动者每月最多扣减0.5D，并且从工资性收入中扣减，请给官方条款。",
+      "relevant_ids": [
+        "E-GD-004-A-INCOME-DETAIL"
+      ],
+      "ranked_ids": [
+        "E-GD-004-A-INCOME-DETAIL",
+        "E-GD-004-A-STRUCTURE",
+        "E-GD-004-A-NONSTACK",
+        "E-GD-004-A-INCOME",
+        "E-GD-002-EDGE"
+      ],
+      "first_relevant_rank": 1
+    },
+    {
+      "query_id": "RQ-118",
+      "source_id": "GD-004-A",
+      "query": "关于家庭救助，怎样理解就业成本按实际申报，但每名劳动者每月最多扣减0.5D，并且从工资性收入中扣减？",
+      "relevant_ids": [
+        "E-GD-004-A-INCOME-DETAIL"
+      ],
+      "ranked_ids": [
+        "E-GD-004-A-INCOME-DETAIL",
+        "E-GD-004-A-STRUCTURE",
+        "E-GD-004-A-NONSTACK",
+        "E-GD-002-EDGE",
+        "E-CN-001-EDGE"
+      ],
+      "first_relevant_rank": 1
+    },
+    {
+      "query_id": "RQ-119",
+      "source_id": "GD-004-A",
+      "query": "家庭结构调整以D为单位；成员在3.1至3.3中只取最有利的一档，义务兵项目另按人数计算，对应哪条政策证据？",
+      "relevant_ids": [
+        "E-GD-004-A-STRUCTURE"
+      ],
+      "ranked_ids": [
+        "E-GD-004-A-STRUCTURE",
+        "E-GD-004-A-NONSTACK",
+        "E-GD-004-A-FORMULA",
+        "E-GD-004-A-OBLIGORS",
+        "E-GD-004-A-THRESHOLD"
+      ],
+      "first_relevant_rank": 1
+    },
+    {
+      "query_id": "RQ-120",
+      "source_id": "GD-004-A",
+      "query": "请查询第3.1至3.4项家庭结构中关于家庭结构调整以D为单位；成员在3.1至3.3中只取最有利的一档，义务兵项目另按人数计算的规定。",
+      "relevant_ids": [
+        "E-GD-004-A-STRUCTURE"
+      ],
+      "ranked_ids": [
+        "E-GD-004-A-STRUCTURE",
+        "E-GD-004-A-NONSTACK",
+        "E-GD-004-A-FORMULA",
+        "E-GD-004-A-OBLIGORS",
+        "E-GD-004-A-LIVING"
+      ],
+      "first_relevant_rank": 1
+    },
+    {
+      "query_id": "RQ-121",
+      "source_id": "GD-004-A",
+      "query": "社会救助办理时，家庭结构调整以D为单位；成员在3.1至3.3中只取最有利的一档，义务兵项目另按人数计算有何依据？",
+      "relevant_ids": [
+        "E-GD-004-A-STRUCTURE"
+      ],
+      "ranked_ids": [
+        "E-GD-004-A-STRUCTURE",
+        "E-GD-004-A-NONSTACK",
+        "E-GD-004-A-FORMULA",
+        "E-GD-004-A-OBLIGORS",
+        "E-GZ-001-DEADLINE"
+      ],
+      "first_relevant_rank": 1
+    },
+    {
+      "query_id": "RQ-122",
+      "source_id": "GD-004-A",
+      "query": "广州救助政策是否明确：家庭结构调整以D为单位；成员在3.1至3.3中只取最有利的一档，义务兵项目另按人数计算？",
+      "relevant_ids": [
+        "E-GD-004-A-STRUCTURE"
+      ],
+      "ranked_ids": [
+        "E-GD-004-A-STRUCTURE",
+        "E-GD-004-A-NONSTACK",
+        "E-GD-004-A-FORMULA",
+        "E-GD-004-A-OBLIGORS",
+        "E-GZ-002-CURRENT"
+      ],
+      "first_relevant_rank": 1
+    },
+    {
+      "query_id": "RQ-123",
+      "source_id": "GD-004-A",
+      "query": "申请前想核实家庭结构调整以D为单位；成员在3.1至3.3中只取最有利的一档，义务兵项目另按人数计算，请给官方条款。",
+      "relevant_ids": [
+        "E-GD-004-A-STRUCTURE"
+      ],
+      "ranked_ids": [
+        "E-GD-004-A-STRUCTURE",
+        "E-GD-004-A-NONSTACK",
+        "E-GD-004-A-FORMULA",
+        "E-GD-004-A-OBLIGORS",
+        "E-GD-004-A-INCOME"
+      ],
+      "first_relevant_rank": 1
+    },
+    {
+      "query_id": "RQ-124",
+      "source_id": "GD-004-A",
+      "query": "关于家庭救助，怎样理解家庭结构调整以D为单位；成员在3.1至3.3中只取最有利的一档，义务兵项目另按人数计算？",
+      "relevant_ids": [
+        "E-GD-004-A-STRUCTURE"
+      ],
+      "ranked_ids": [
+        "E-GD-004-A-STRUCTURE",
+        "E-GD-004-A-NONSTACK",
+        "E-GD-004-A-FORMULA",
+        "E-GD-004-A-OBLIGORS",
         "E-GZ-004-EXPENSE"
+      ],
+      "first_relevant_rank": 1
+    },
+    {
+      "query_id": "RQ-125",
+      "source_id": "GD-004-A",
+      "query": "义务人按履行能力增加D值；确实无法获知时必须有书面说明并按较强档处理，系统不能自行猜测，对应哪条政策证据？",
+      "relevant_ids": [
+        "E-GD-004-A-OBLIGORS"
+      ],
+      "ranked_ids": [
+        "E-GD-004-A-OBLIGORS",
+        "E-GD-004-A-LIVING",
+        "E-GD-004-A-VEHICLE-EXCLUSION",
+        "E-GD-004-A-DUAL-ASSESSMENT"
+      ],
+      "first_relevant_rank": 1
+    },
+    {
+      "query_id": "RQ-126",
+      "source_id": "GD-004-A",
+      "query": "请查询第3.5项赡养、抚养、扶养义务人中关于义务人按履行能力增加D值；确实无法获知时必须有书面说明并按较强档处理，系统不能自行猜测的规定。",
+      "relevant_ids": [
+        "E-GD-004-A-OBLIGORS"
+      ],
+      "ranked_ids": [],
+      "first_relevant_rank": null
+    },
+    {
+      "query_id": "RQ-127",
+      "source_id": "GD-004-A",
+      "query": "社会救助办理时，义务人按履行能力增加D值；确实无法获知时必须有书面说明并按较强档处理，系统不能自行猜测有何依据？",
+      "relevant_ids": [
+        "E-GD-004-A-OBLIGORS"
+      ],
+      "ranked_ids": [
+        "E-GD-004-A-OBLIGORS",
+        "E-CN-001-PRIVACY",
+        "E-GZ-001-DEADLINE",
+        "E-GZ-001-MATERIALS",
+        "E-GD-004-A-DUAL-ASSESSMENT"
+      ],
+      "first_relevant_rank": 1
+    },
+    {
+      "query_id": "RQ-128",
+      "source_id": "GD-004-A",
+      "query": "广州救助政策是否明确：义务人按履行能力增加D值；确实无法获知时必须有书面说明并按较强档处理，系统不能自行猜测？",
+      "relevant_ids": [
+        "E-GD-004-A-OBLIGORS"
+      ],
+      "ranked_ids": [
+        "E-GD-004-A-OBLIGORS",
+        "E-GD-004-A-LIVING",
+        "E-GD-004-A-DUAL-ASSESSMENT",
+        "E-GD-004-A-VEHICLE-EXCLUSION",
+        "E-CN-001-PRIVACY"
+      ],
+      "first_relevant_rank": 1
+    },
+    {
+      "query_id": "RQ-129",
+      "source_id": "GD-004-A",
+      "query": "申请前想核实义务人按履行能力增加D值；确实无法获知时必须有书面说明并按较强档处理，系统不能自行猜测，请给官方条款。",
+      "relevant_ids": [
+        "E-GD-004-A-OBLIGORS"
+      ],
+      "ranked_ids": [
+        "E-GD-004-A-OBLIGORS",
+        "E-GD-004-A-DUAL-ASSESSMENT",
+        "E-GD-004-A-LIVING",
+        "E-GD-004-A-VEHICLE-EXCLUSION",
+        "E-GD-004-A-THRESHOLD"
+      ],
+      "first_relevant_rank": 1
+    },
+    {
+      "query_id": "RQ-130",
+      "source_id": "GD-004-A",
+      "query": "关于家庭救助，怎样理解义务人按履行能力增加D值；确实无法获知时必须有书面说明并按较强档处理，系统不能自行猜测？",
+      "relevant_ids": [
+        "E-GD-004-A-OBLIGORS"
+      ],
+      "ranked_ids": [
+        "E-GD-004-A-OBLIGORS",
+        "E-GD-004-A-DUAL-ASSESSMENT",
+        "E-GD-004-A-LIVING",
+        "E-CN-001-PRIVACY",
+        "E-GZ-004-EXPENSE"
+      ],
+      "first_relevant_rank": 1
+    },
+    {
+      "query_id": "RQ-131",
+      "source_id": "GD-004-A",
+      "query": "住房和主要能耗资产按第二版分档调整D值；车辆数量应先排除政策规定的不计入车辆，对应哪条政策证据？",
+      "relevant_ids": [
+        "E-GD-004-A-LIVING"
+      ],
+      "ranked_ids": [
+        "E-GD-004-A-LIVING",
+        "E-GD-004-A-VEHICLE-EXCLUSION",
+        "E-CN-001-EDGE",
+        "E-GD-004-A-FORMULA",
+        "E-GZ-002-ASSET"
+      ],
+      "first_relevant_rank": 1
+    },
+    {
+      "query_id": "RQ-132",
+      "source_id": "GD-004-A",
+      "query": "请查询第4项生活状况中关于住房和主要能耗资产按第二版分档调整D值；车辆数量应先排除政策规定的不计入车辆的规定。",
+      "relevant_ids": [
+        "E-GD-004-A-LIVING"
+      ],
+      "ranked_ids": [
+        "E-GD-004-A-LIVING",
+        "E-GD-004-A-VEHICLE-EXCLUSION",
+        "E-GD-004-A-STRUCTURE",
+        "E-GD-004-A-FORMULA",
+        "E-GZ-002-ASSET"
+      ],
+      "first_relevant_rank": 1
+    },
+    {
+      "query_id": "RQ-133",
+      "source_id": "GD-004-A",
+      "query": "社会救助办理时，住房和主要能耗资产按第二版分档调整D值；车辆数量应先排除政策规定的不计入车辆有何依据？",
+      "relevant_ids": [
+        "E-GD-004-A-LIVING"
+      ],
+      "ranked_ids": [
+        "E-GD-004-A-LIVING",
+        "E-GD-004-A-VEHICLE-EXCLUSION",
+        "E-CN-001-EDGE",
+        "E-GZ-001-DEADLINE",
+        "E-GD-002-DIBAO-EXCLUSION"
+      ],
+      "first_relevant_rank": 1
+    },
+    {
+      "query_id": "RQ-134",
+      "source_id": "GD-004-A",
+      "query": "广州救助政策是否明确：住房和主要能耗资产按第二版分档调整D值；车辆数量应先排除政策规定的不计入车辆？",
+      "relevant_ids": [
+        "E-GD-004-A-LIVING"
+      ],
+      "ranked_ids": [
+        "E-GD-004-A-LIVING",
+        "E-GD-004-A-VEHICLE-EXCLUSION",
+        "E-GZ-001-DEADLINE",
+        "E-CN-001-EDGE",
+        "E-GZ-002-ASSET"
+      ],
+      "first_relevant_rank": 1
+    },
+    {
+      "query_id": "RQ-135",
+      "source_id": "GD-004-A",
+      "query": "申请前想核实住房和主要能耗资产按第二版分档调整D值；车辆数量应先排除政策规定的不计入车辆，请给官方条款。",
+      "relevant_ids": [
+        "E-GD-004-A-LIVING"
+      ],
+      "ranked_ids": [
+        "E-GD-004-A-LIVING",
+        "E-GD-004-A-VEHICLE-EXCLUSION",
+        "E-GD-004-A-FORMULA",
+        "E-CN-001-EDGE",
+        "E-GD-002-DIBAO-EXCLUSION"
+      ],
+      "first_relevant_rank": 1
+    },
+    {
+      "query_id": "RQ-136",
+      "source_id": "GD-004-A",
+      "query": "关于家庭救助，怎样理解住房和主要能耗资产按第二版分档调整D值；车辆数量应先排除政策规定的不计入车辆？",
+      "relevant_ids": [
+        "E-GD-004-A-LIVING"
+      ],
+      "ranked_ids": [
+        "E-GD-004-A-LIVING",
+        "E-GD-004-A-VEHICLE-EXCLUSION",
+        "E-GZ-002-ASSET",
+        "E-CN-001-EDGE",
+        "E-GD-002-DIBAO-EXCLUSION"
+      ],
+      "first_relevant_rank": 1
+    },
+    {
+      "query_id": "RQ-137",
+      "source_id": "GD-004-A",
+      "query": "车辆数量必须先排除政策规定的低价车辆和车龄超过5年的车辆，再进入分档计算，对应哪条政策证据？",
+      "relevant_ids": [
+        "E-GD-004-A-VEHICLE-EXCLUSION"
+      ],
+      "ranked_ids": [
+        "E-GD-004-A-VEHICLE-EXCLUSION",
+        "E-GD-004-A-LIVING",
+        "E-GD-004-A-OBLIGORS"
+      ],
+      "first_relevant_rank": 1
+    },
+    {
+      "query_id": "RQ-138",
+      "source_id": "GD-004-A",
+      "query": "请查询第4.2项家庭主要能耗资产注释中关于车辆数量必须先排除政策规定的低价车辆和车龄超过5年的车辆，再进入分档计算的规定。",
+      "relevant_ids": [
+        "E-GD-004-A-VEHICLE-EXCLUSION"
+      ],
+      "ranked_ids": [
+        "E-GD-004-A-VEHICLE-EXCLUSION",
+        "E-GD-004-A-LIVING",
+        "E-GD-004-A-INCOME",
+        "E-GD-004-A-INCOME-DETAIL",
+        "E-GZ-002-ASSET"
+      ],
+      "first_relevant_rank": 1
+    },
+    {
+      "query_id": "RQ-139",
+      "source_id": "GD-004-A",
+      "query": "社会救助办理时，车辆数量必须先排除政策规定的低价车辆和车龄超过5年的车辆，再进入分档计算有何依据？",
+      "relevant_ids": [
+        "E-GD-004-A-VEHICLE-EXCLUSION"
+      ],
+      "ranked_ids": [
+        "E-GD-004-A-VEHICLE-EXCLUSION",
+        "E-GD-004-A-LIVING",
+        "E-GZ-001-DEADLINE",
+        "E-CN-001-RIGID",
+        "E-CN-001-DIBAO"
+      ],
+      "first_relevant_rank": 1
+    },
+    {
+      "query_id": "RQ-140",
+      "source_id": "GD-004-A",
+      "query": "广州救助政策是否明确：车辆数量必须先排除政策规定的低价车辆和车龄超过5年的车辆，再进入分档计算？",
+      "relevant_ids": [
+        "E-GD-004-A-VEHICLE-EXCLUSION"
+      ],
+      "ranked_ids": [
+        "E-GD-004-A-VEHICLE-EXCLUSION",
+        "E-GD-004-A-LIVING",
+        "E-GZ-001-DEADLINE",
+        "E-GD-004-A-OBLIGORS",
+        "E-GZ-001-SCOPE"
+      ],
+      "first_relevant_rank": 1
+    },
+    {
+      "query_id": "RQ-141",
+      "source_id": "GD-004-A",
+      "query": "申请前想核实车辆数量必须先排除政策规定的低价车辆和车龄超过5年的车辆，再进入分档计算，请给官方条款。",
+      "relevant_ids": [
+        "E-GD-004-A-VEHICLE-EXCLUSION"
+      ],
+      "ranked_ids": [
+        "E-GD-004-A-VEHICLE-EXCLUSION",
+        "E-GD-004-A-LIVING",
+        "E-GD-004-A-INCOME",
+        "E-GD-004-A-OBLIGORS",
+        "E-GD-002-EDGE"
+      ],
+      "first_relevant_rank": 1
+    },
+    {
+      "query_id": "RQ-142",
+      "source_id": "GD-004-A",
+      "query": "关于家庭救助，怎样理解车辆数量必须先排除政策规定的低价车辆和车龄超过5年的车辆，再进入分档计算？",
+      "relevant_ids": [
+        "E-GD-004-A-VEHICLE-EXCLUSION"
+      ],
+      "ranked_ids": [
+        "E-GD-004-A-VEHICLE-EXCLUSION",
+        "E-GD-004-A-LIVING",
+        "E-GZ-004-EXPENSE",
+        "E-GD-002-EDGE",
+        "E-GD-002-SEPARATE-RECOGNITION"
+      ],
+      "first_relevant_rank": 1
+    },
+    {
+      "query_id": "RQ-143",
+      "source_id": "GD-004-A",
+      "query": "先把收入换算为D并加上结构、生活状况调整，再除以共同生活人数；结果保留两位小数，对应哪条政策证据？",
+      "relevant_ids": [
+        "E-GD-004-A-FORMULA"
+      ],
+      "ranked_ids": [
+        "E-GD-004-A-FORMULA",
+        "E-GD-004-A-STRUCTURE",
+        "E-GD-004-A-LIVING",
+        "E-GD-004-A-INCOME-DETAIL",
+        "E-GD-002-RIGID"
+      ],
+      "first_relevant_rank": 1
+    },
+    {
+      "query_id": "RQ-144",
+      "source_id": "GD-004-A",
+      "query": "请查询第7页总计公式中关于先把收入换算为D并加上结构、生活状况调整，再除以共同生活人数；结果保留两位小数的规定。",
+      "relevant_ids": [
+        "E-GD-004-A-FORMULA"
+      ],
+      "ranked_ids": [
+        "E-GD-004-A-FORMULA",
+        "E-GD-004-A-STRUCTURE",
+        "E-GD-004-A-LIVING",
+        "E-GD-004-A-INCOME-DETAIL",
+        "E-GD-002-RIGID"
+      ],
+      "first_relevant_rank": 1
+    },
+    {
+      "query_id": "RQ-145",
+      "source_id": "GD-004-A",
+      "query": "社会救助办理时，先把收入换算为D并加上结构、生活状况调整，再除以共同生活人数；结果保留两位小数有何依据？",
+      "relevant_ids": [
+        "E-GD-004-A-FORMULA"
+      ],
+      "ranked_ids": [
+        "E-GD-004-A-FORMULA",
+        "E-GD-004-A-STRUCTURE",
+        "E-GD-002-RIGID",
+        "E-GZ-001-DEADLINE",
+        "E-GD-002-SEPARATE-RECOGNITION"
+      ],
+      "first_relevant_rank": 1
+    },
+    {
+      "query_id": "RQ-146",
+      "source_id": "GD-004-A",
+      "query": "广州救助政策是否明确：先把收入换算为D并加上结构、生活状况调整，再除以共同生活人数；结果保留两位小数？",
+      "relevant_ids": [
+        "E-GD-004-A-FORMULA"
+      ],
+      "ranked_ids": [
+        "E-GD-004-A-FORMULA",
+        "E-GD-004-A-STRUCTURE",
+        "E-GD-004-A-LIVING",
+        "E-GD-002-RIGID",
+        "E-GD-004-A-INCOME-DETAIL"
+      ],
+      "first_relevant_rank": 1
+    },
+    {
+      "query_id": "RQ-147",
+      "source_id": "GD-004-A",
+      "query": "申请前想核实先把收入换算为D并加上结构、生活状况调整，再除以共同生活人数；结果保留两位小数，请给官方条款。",
+      "relevant_ids": [
+        "E-GD-004-A-FORMULA"
+      ],
+      "ranked_ids": [
+        "E-GD-004-A-FORMULA",
+        "E-GD-004-A-STRUCTURE",
+        "E-GD-004-A-INCOME",
+        "E-GD-004-A-LIVING",
+        "E-GD-004-A-INCOME-DETAIL"
+      ],
+      "first_relevant_rank": 1
+    },
+    {
+      "query_id": "RQ-148",
+      "source_id": "GD-004-A",
+      "query": "关于家庭救助，怎样理解先把收入换算为D并加上结构、生活状况调整，再除以共同生活人数；结果保留两位小数？",
+      "relevant_ids": [
+        "E-GD-004-A-FORMULA"
+      ],
+      "ranked_ids": [
+        "E-GD-004-A-FORMULA",
+        "E-GD-004-A-STRUCTURE",
+        "E-GD-002-RIGID",
+        "E-GD-002-SEPARATE-RECOGNITION",
+        "E-GZ-004-EXPENSE"
+      ],
+      "first_relevant_rank": 1
+    },
+    {
+      "query_id": "RQ-149",
+      "source_id": "GD-002",
+      "query": "低保边缘家庭与支出型困难家庭是分别认定的两类对象；在未被低保优先路径排除时，两类条件可以并行核验，不能简单互相覆盖，对应哪条政策证据？",
+      "relevant_ids": [
+        "E-GD-002-SEPARATE-RECOGNITION"
+      ],
+      "ranked_ids": [
+        "E-GD-002-SEPARATE-RECOGNITION",
+        "E-GD-002-DIBAO-EXCLUSION",
+        "E-GD-002-EDGE",
+        "E-GD-002-RIGID",
+        "E-GZ-001-SCOPE"
+      ],
+      "first_relevant_rank": 1
+    },
+    {
+      "query_id": "RQ-150",
+      "source_id": "GD-002",
+      "query": "请查询第二条中关于低保边缘家庭与支出型困难家庭是分别认定的两类对象；在未被低保优先路径排除时，两类条件可以并行核验，不能简单互相覆盖的规定。",
+      "relevant_ids": [
+        "E-GD-002-SEPARATE-RECOGNITION"
+      ],
+      "ranked_ids": [
+        "E-GD-002-SEPARATE-RECOGNITION",
+        "E-GD-002-DIBAO-EXCLUSION",
+        "E-GD-002-EDGE",
+        "E-GZ-004-EXPENSE",
+        "E-GD-002-RIGID"
+      ],
+      "first_relevant_rank": 1
+    },
+    {
+      "query_id": "RQ-151",
+      "source_id": "GD-002",
+      "query": "社会救助办理时，低保边缘家庭与支出型困难家庭是分别认定的两类对象；在未被低保优先路径排除时，两类条件可以并行核验，不能简单互相覆盖有何依据？",
+      "relevant_ids": [
+        "E-GD-002-SEPARATE-RECOGNITION"
+      ],
+      "ranked_ids": [
+        "E-GD-002-SEPARATE-RECOGNITION",
+        "E-GD-002-DIBAO-EXCLUSION",
+        "E-GD-002-EDGE",
+        "E-GZ-001-SCOPE",
+        "E-GD-002-RIGID"
+      ],
+      "first_relevant_rank": 1
+    },
+    {
+      "query_id": "RQ-152",
+      "source_id": "GD-002",
+      "query": "广州救助政策是否明确：低保边缘家庭与支出型困难家庭是分别认定的两类对象；在未被低保优先路径排除时，两类条件可以并行核验，不能简单互相覆盖？",
+      "relevant_ids": [
+        "E-GD-002-SEPARATE-RECOGNITION"
+      ],
+      "ranked_ids": [
+        "E-GD-002-SEPARATE-RECOGNITION",
+        "E-GD-002-DIBAO-EXCLUSION",
+        "E-GZ-001-SCOPE",
+        "E-GD-002-EDGE",
+        "E-GD-002-RIGID"
+      ],
+      "first_relevant_rank": 1
+    },
+    {
+      "query_id": "RQ-153",
+      "source_id": "GD-002",
+      "query": "申请前想核实低保边缘家庭与支出型困难家庭是分别认定的两类对象；在未被低保优先路径排除时，两类条件可以并行核验，不能简单互相覆盖，请给官方条款。",
+      "relevant_ids": [
+        "E-GD-002-SEPARATE-RECOGNITION"
+      ],
+      "ranked_ids": [
+        "E-GD-002-SEPARATE-RECOGNITION",
+        "E-GD-002-DIBAO-EXCLUSION",
+        "E-GD-002-EDGE",
+        "E-GD-002-RIGID",
+        "E-GZ-001-SCOPE"
+      ],
+      "first_relevant_rank": 1
+    },
+    {
+      "query_id": "RQ-154",
+      "source_id": "GD-002",
+      "query": "关于家庭救助，怎样理解低保边缘家庭与支出型困难家庭是分别认定的两类对象；在未被低保优先路径排除时，两类条件可以并行核验，不能简单互相覆盖？",
+      "relevant_ids": [
+        "E-GD-002-SEPARATE-RECOGNITION"
+      ],
+      "ranked_ids": [
+        "E-GD-002-SEPARATE-RECOGNITION",
+        "E-GD-002-DIBAO-EXCLUSION",
+        "E-GD-002-EDGE",
+        "E-GZ-004-EXPENSE",
+        "E-GD-002-RIGID"
+      ],
+      "first_relevant_rank": 1
+    },
+    {
+      "query_id": "RQ-155",
+      "source_id": "GD-002",
+      "query": "正式纳入低保后，不再按本办法重复认定低保边缘家庭或支出型困难家庭；申请前导办应先核验低保，再把另外两类作为未获低保确，对应哪条政策证据？",
+      "relevant_ids": [
+        "E-GD-002-DIBAO-EXCLUSION"
+      ],
+      "ranked_ids": [
+        "E-GD-002-DIBAO-EXCLUSION",
+        "E-GD-002-SEPARATE-RECOGNITION",
+        "E-GD-002-EDGE",
+        "E-GZ-004-EXPENSE",
+        "E-GD-002-RIGID"
+      ],
+      "first_relevant_rank": 1
+    },
+    {
+      "query_id": "RQ-156",
+      "source_id": "GD-002",
+      "query": "请查询第三十九条中关于正式纳入低保后，不再按本办法重复认定低保边缘家庭或支出型困难家庭；申请前导办应先核验低保，再把另外两类作为未获低保确的规定。",
+      "relevant_ids": [
+        "E-GD-002-DIBAO-EXCLUSION"
+      ],
+      "ranked_ids": [
+        "E-GD-002-DIBAO-EXCLUSION",
+        "E-GD-002-SEPARATE-RECOGNITION",
+        "E-GD-002-EDGE",
+        "E-GZ-004-EXPENSE",
+        "E-GD-002-RIGID"
+      ],
+      "first_relevant_rank": 1
+    },
+    {
+      "query_id": "RQ-157",
+      "source_id": "GD-002",
+      "query": "社会救助办理时，正式纳入低保后，不再按本办法重复认定低保边缘家庭或支出型困难家庭；申请前导办应先核验低保，再把另外两类作为未获低保确有何依据？",
+      "relevant_ids": [
+        "E-GD-002-DIBAO-EXCLUSION"
+      ],
+      "ranked_ids": [
+        "E-GD-002-DIBAO-EXCLUSION",
+        "E-GD-002-SEPARATE-RECOGNITION",
+        "E-GD-002-EDGE",
+        "E-GD-002-RIGID",
+        "E-GZ-004-EXPENSE"
+      ],
+      "first_relevant_rank": 1
+    },
+    {
+      "query_id": "RQ-158",
+      "source_id": "GD-002",
+      "query": "广州救助政策是否明确：正式纳入低保后，不再按本办法重复认定低保边缘家庭或支出型困难家庭；申请前导办应先核验低保，再把另外两类作为未获低保确？",
+      "relevant_ids": [
+        "E-GD-002-DIBAO-EXCLUSION"
+      ],
+      "ranked_ids": [
+        "E-GD-002-DIBAO-EXCLUSION",
+        "E-GD-002-SEPARATE-RECOGNITION",
+        "E-GD-002-EDGE",
+        "E-GZ-004-EXPENSE",
+        "E-GD-002-RIGID"
+      ],
+      "first_relevant_rank": 1
+    },
+    {
+      "query_id": "RQ-159",
+      "source_id": "GD-002",
+      "query": "申请前想核实正式纳入低保后，不再按本办法重复认定低保边缘家庭或支出型困难家庭；申请前导办应先核验低保，再把另外两类作为未获低保确，请给官方条款。",
+      "relevant_ids": [
+        "E-GD-002-DIBAO-EXCLUSION"
+      ],
+      "ranked_ids": [
+        "E-GD-002-DIBAO-EXCLUSION",
+        "E-GD-002-SEPARATE-RECOGNITION",
+        "E-GD-002-EDGE",
+        "E-GZ-004-EXPENSE",
+        "E-GD-002-RIGID"
+      ],
+      "first_relevant_rank": 1
+    },
+    {
+      "query_id": "RQ-160",
+      "source_id": "GD-002",
+      "query": "关于家庭救助，怎样理解正式纳入低保后，不再按本办法重复认定低保边缘家庭或支出型困难家庭；申请前导办应先核验低保，再把另外两类作为未获低保确？",
+      "relevant_ids": [
+        "E-GD-002-DIBAO-EXCLUSION"
+      ],
+      "ranked_ids": [
+        "E-GD-002-DIBAO-EXCLUSION",
+        "E-GD-002-SEPARATE-RECOGNITION",
+        "E-GZ-004-EXPENSE",
+        "E-GD-002-EDGE",
+        "E-GD-002-RIGID"
       ],
       "first_relevant_rank": 1
     }
   ],
-  "warning": "该结果只评价当前16条证据片段的检索，不等于业务资格判断准确率。",
-  "app_version": "1.2.1",
+  "error_table": [
+    {
+      "query_id": "RQ-032",
+      "source_id": "CN-001",
+      "query": "请查询第十一条中关于系统只应收集导办必需信息，并采取安全措施和保密管理的规定。",
+      "relevant_ids": [
+        "E-CN-001-PRIVACY"
+      ],
+      "ranked_ids": [],
+      "first_relevant_rank": null
+    },
+    {
+      "query_id": "RQ-126",
+      "source_id": "GD-004-A",
+      "query": "请查询第3.5项赡养、抚养、扶养义务人中关于义务人按履行能力增加D值；确实无法获知时必须有书面说明并按较强档处理，系统不能自行猜测的规定。",
+      "relevant_ids": [
+        "E-GD-004-A-OBLIGORS"
+      ],
+      "ranked_ids": [],
+      "first_relevant_rank": null
+    }
+  ],
+  "policy_file_isolation": {
+    "development_source_ids": [
+      "GZ-001",
+      "GZ-002",
+      "GZ-003",
+      "GZ-004",
+      "GZ-008",
+      "GZ-009"
+    ],
+    "frozen_final_source_ids": [
+      "CN-001",
+      "GD-002",
+      "GD-004-A",
+      "GZ-005"
+    ],
+    "disjoint": true,
+    "rule": "同一source_id及其全部条款改写只能进入一个分组"
+  },
+  "warning": "该结果只评价当前30条证据片段的检索，不等于业务资格判断准确率。",
+  "app_version": "1.3.0",
   "engine_version": "rule-engine/0.5.0",
   "release_metadata": {
-    "release_id": "v1.2.1+source.155f7a8c19f0",
-    "app_version": "1.2.1",
+    "release_id": "v1.3.0+source.4bf15869943e",
+    "app_version": "1.3.0",
     "engine_version": "rule-engine/0.5.0",
-    "git_commit": "3ac4b8c1609abd15f376149eb59a741188bd2ee5",
-    "git_dirty": false,
-    "source_tree_sha256": "155f7a8c19f02ee5e752455532ce8d12e4abf0a87006ec94fcbf10c3da04ecfc",
+    "git_commit": "3d44457cec0e50f71418ad28cc704ada6fa3ce5c",
+    "git_dirty": true,
+    "source_tree_sha256": "4bf15869943e7e6400abf126cc4494042555638289301bca6739da13f276ff48",
     "source_binding": {
-      "code_commit": "3ac4b8c1609abd15f376149eb59a741188bd2ee5",
+      "code_commit": "3d44457cec0e50f71418ad28cc704ada6fa3ce5c",
       "source_inputs_dirty": false,
-      "source_tree_sha256": "155f7a8c19f02ee5e752455532ce8d12e4abf0a87006ec94fcbf10c3da04ecfc",
-      "source_file_count": 123,
+      "source_tree_sha256": "4bf15869943e7e6400abf126cc4494042555638289301bca6739da13f276ff48",
+      "source_file_count": 230,
       "scope": "代码、测试、评测输入、运行和安全配置；生成的评测报告不参与自指纹",
       "text_normalization": "CRLF和LF统一为LF；二进制文件保持原始字节"
     },
     "artifact_binding": {
-      "reports_generated_from_source_sha256": "155f7a8c19f02ee5e752455532ce8d12e4abf0a87006ec94fcbf10c3da04ecfc",
+      "reports_generated_from_source_sha256": "4bf15869943e7e6400abf126cc4494042555638289301bca6739da13f276ff48",
       "evidence_commit": null,
       "note": "报告提交后可由正式发布流程填入证据提交；源码绑定以内容指纹为准。"
     }

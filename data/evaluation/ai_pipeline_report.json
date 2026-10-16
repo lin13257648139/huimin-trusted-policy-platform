@@ -1,8 +1,8 @@
 {
   "report_schema": "ai-experiment/1.0",
-  "generated_at": "2026-10-16T03:10:03.615047+00:00",
+  "generated_at": "2026-10-16T07:32:54.603779+00:00",
   "scope": "internal synthetic benchmark; not real-user effectiveness evidence",
-  "app_version": "1.2.1",
+  "app_version": "1.3.0",
   "environment": {
     "python": "3.12.14",
     "platform": "Windows",
@@ -12,15 +12,35 @@
   "datasets": {
     "profile": {
       "path": "data/evaluation/profile_extraction_benchmark.jsonl",
-      "sha256": "d71d8664e9838cb68b9aa55a4f0bc8ed4535e412cafcb4061d5b60329c412659",
-      "cases": 40,
+      "sha256": "4feb3471a0d6bb772f11fe4b1c8777b35528b429e234a1aa3a88c977d925198f",
+      "cases": 300,
       "origin": "team-authored synthetic utterances"
     },
     "retrieval": {
       "path": "data/evaluation/retrieval_benchmark.json",
-      "sha256": "8ddd4584d953fb12fdfcf01d46a533fc7d348191497b738c9dd7e92f24555b29",
-      "queries": 12,
-      "origin": "internal policy retrieval questions"
+      "sha256": "b0ccd57c23cdf90aa3bb653ea9b41f481398e55003a5e6d9e65ff9a90f862a99",
+      "queries": 160,
+      "development_queries": 40,
+      "frozen_final_queries": 120,
+      "origin": "internal policy retrieval questions",
+      "policy_file_isolation": {
+        "development_source_ids": [
+          "GZ-001",
+          "GZ-002",
+          "GZ-003",
+          "GZ-004",
+          "GZ-008",
+          "GZ-009"
+        ],
+        "frozen_final_source_ids": [
+          "CN-001",
+          "GD-002",
+          "GD-004-A",
+          "GZ-005"
+        ],
+        "disjoint": true,
+        "rule": "同一source_id及其全部条款改写只能进入一个分组"
+      }
     }
   },
   "ai_runtime": {
@@ -50,87 +70,625 @@
   },
   "intent_classification": {
     "dataset": "data/ml/intent_dataset.json",
-    "dataset_sha256": "9c5ef0ffc6144fd1deda734df860753086e06715962c5e519d06a7a5b281d039",
-    "origin": "team-authored synthetic utterances; no real people or service records",
+    "dataset_sha256": "60a7fded87ea2c4d31675c9fbfd0a89daaef82e45f3c41c277861bef2f377122",
+    "origin": "programmatically rendered project-authored synthetic utterances; no real records",
     "keyword_baseline": {
-      "cases": 20,
-      "accuracy": 0.75,
-      "macro_f1": 0.7048,
-      "per_label": {
-        "B001": {
-          "precision": 1.0,
-          "recall": 0.75,
-          "f1": 0.8571
-        },
-        "B002": {
-          "precision": 0.5,
-          "recall": 1.0,
-          "f1": 0.6667
-        },
-        "B003": {
-          "precision": 0.0,
-          "recall": 0.0,
-          "f1": 0.0
-        },
-        "B004": {
-          "precision": 1.0,
-          "recall": 1.0,
-          "f1": 1.0
-        },
-        "B005": {
-          "precision": 1.0,
-          "recall": 1.0,
-          "f1": 1.0
-        }
-      }
-    },
-    "char_ngram_naive_bayes": {
-      "model_version": "intent-nb/9c5ef0ffc614",
-      "cases": 20,
-      "accuracy": 0.95,
-      "macro_f1": 0.9492,
+      "cases": 250,
+      "accuracy": 0.716,
+      "accuracy_ci95": {
+        "method": "wilson",
+        "confidence": 0.95,
+        "lower": 0.6572,
+        "upper": 0.7683
+      },
+      "macro_f1": 0.7177,
       "per_label": {
         "B001": {
           "precision": 1.0,
           "recall": 1.0,
-          "f1": 1.0
+          "f1": 1.0,
+          "recall_ci95": {
+            "method": "wilson",
+            "confidence": 0.95,
+            "lower": 0.9287,
+            "upper": 1.0
+          }
         },
         "B002": {
-          "precision": 1.0,
+          "precision": 0.5747,
           "recall": 1.0,
-          "f1": 1.0
+          "f1": 0.7299,
+          "recall_ci95": {
+            "method": "wilson",
+            "confidence": 0.95,
+            "lower": 0.9287,
+            "upper": 1.0
+          }
         },
         "B003": {
-          "precision": 0.8,
-          "recall": 1.0,
-          "f1": 0.8889
+          "precision": 1.0,
+          "recall": 0.08,
+          "f1": 0.1481,
+          "recall_ci95": {
+            "method": "wilson",
+            "confidence": 0.95,
+            "lower": 0.0315,
+            "upper": 0.1884
+          }
         },
         "B004": {
           "precision": 1.0,
-          "recall": 0.75,
-          "f1": 0.8571
+          "recall": 0.82,
+          "f1": 0.9011,
+          "recall_ci95": {
+            "method": "wilson",
+            "confidence": 0.95,
+            "lower": 0.692,
+            "upper": 0.9023
+          }
         },
         "B005": {
           "precision": 1.0,
-          "recall": 1.0,
-          "f1": 1.0
+          "recall": 0.68,
+          "f1": 0.8095,
+          "recall_ci95": {
+            "method": "wilson",
+            "confidence": 0.95,
+            "lower": 0.5419,
+            "upper": 0.7924
+          }
         }
       },
+      "confusion_matrix": {
+        "B001": {
+          "B001": 50,
+          "B002": 0,
+          "B003": 0,
+          "B004": 0,
+          "B005": 0,
+          "abstain": 0
+        },
+        "B002": {
+          "B001": 0,
+          "B002": 50,
+          "B003": 0,
+          "B004": 0,
+          "B005": 0,
+          "abstain": 0
+        },
+        "B003": {
+          "B001": 0,
+          "B002": 37,
+          "B003": 4,
+          "B004": 0,
+          "B005": 0,
+          "abstain": 9
+        },
+        "B004": {
+          "B001": 0,
+          "B002": 0,
+          "B003": 0,
+          "B004": 41,
+          "B005": 0,
+          "abstain": 9
+        },
+        "B005": {
+          "B001": 0,
+          "B002": 0,
+          "B003": 0,
+          "B004": 0,
+          "B005": 34,
+          "abstain": 16
+        }
+      },
+      "error_table": [
+        {
+          "gold": "B003",
+          "predicted": "B002",
+          "text": "街道让我了解低保边缘家庭，具体条件是什么？"
+        },
+        {
+          "gold": "B003",
+          "predicted": "B002",
+          "text": "我们家想衔接其他救助，是否属于低保边缘家庭范围？"
+        },
+        {
+          "gold": "B003",
+          "predicted": "B002",
+          "text": "想去窗口问低保边缘家庭，要先准备什么？"
+        },
+        {
+          "gold": "B003",
+          "predicted": "B002",
+          "text": "网上怎样查询低保边缘家庭的办理进度？"
+        },
+        {
+          "gold": "B003",
+          "predicted": "B002",
+          "text": "如果不够低保但仍困难，能不能走低保边缘家庭流程？"
+        },
+        {
+          "gold": "B003",
+          "predicted": "B002",
+          "text": "请说明低保边缘家庭的收入和财产核查要求。"
+        },
+        {
+          "gold": "B003",
+          "predicted": "B002",
+          "text": "家人让我问问低保边缘家庭由哪个部门受理。"
+        },
+        {
+          "gold": "B003",
+          "predicted": "B002",
+          "text": "关于低保边缘家庭，申请后一般如何调查？"
+        },
+        {
+          "gold": "B003",
+          "predicted": "B002",
+          "text": "我需要一份低保边缘家庭的申请前导办说明。"
+        },
+        {
+          "gold": "B003",
+          "predicted": "B002",
+          "text": "因为想衔接其他救助，我该怎样申请低保边缘认定？"
+        },
+        {
+          "gold": "B003",
+          "predicted": "B002",
+          "text": "街道让我了解低保边缘认定，具体条件是什么？"
+        },
+        {
+          "gold": "B003",
+          "predicted": "B002",
+          "text": "想去窗口问低保边缘认定，要先准备什么？"
+        },
+        {
+          "gold": "B003",
+          "predicted": "B002",
+          "text": "网上怎样查询低保边缘认定的办理进度？"
+        },
+        {
+          "gold": "B003",
+          "predicted": "B002",
+          "text": "如果需要边缘资格认定，能不能走低保边缘认定流程？"
+        },
+        {
+          "gold": "B003",
+          "predicted": "B002",
+          "text": "请说明低保边缘认定的收入和财产核查要求。"
+        },
+        {
+          "gold": "B003",
+          "predicted": "B002",
+          "text": "家人让我问问低保边缘认定由哪个部门受理。"
+        },
+        {
+          "gold": "B003",
+          "predicted": "B002",
+          "text": "关于低保边缘认定，申请后一般如何调查？"
+        },
+        {
+          "gold": "B003",
+          "predicted": "B002",
+          "text": "我需要一份低保边缘认定的申请前导办说明。"
+        },
+        {
+          "gold": "B003",
+          "predicted": "B002",
+          "text": "街道让我了解低保边缘对象，具体条件是什么？"
+        },
+        {
+          "gold": "B003",
+          "predicted": "B002",
+          "text": "我们家想衔接其他救助，是否属于低保边缘对象范围？"
+        },
+        {
+          "gold": "B003",
+          "predicted": "B002",
+          "text": "想去窗口问低保边缘对象，要先准备什么？"
+        },
+        {
+          "gold": "B003",
+          "predicted": "B002",
+          "text": "网上怎样查询低保边缘对象的办理进度？"
+        },
+        {
+          "gold": "B003",
+          "predicted": "B002",
+          "text": "如果不够低保但仍困难，能不能走低保边缘对象流程？"
+        },
+        {
+          "gold": "B003",
+          "predicted": "B002",
+          "text": "请说明低保边缘对象的收入和财产核查要求。"
+        },
+        {
+          "gold": "B003",
+          "predicted": "B002",
+          "text": "家人让我问问低保边缘对象由哪个部门受理。"
+        },
+        {
+          "gold": "B003",
+          "predicted": "B002",
+          "text": "关于低保边缘对象，申请后一般如何调查？"
+        },
+        {
+          "gold": "B003",
+          "predicted": "B002",
+          "text": "我需要一份低保边缘对象的申请前导办说明。"
+        },
+        {
+          "gold": "B003",
+          "predicted": "abstain",
+          "text": "因为想衔接其他救助，我该怎样申请边缘家庭救助？"
+        },
+        {
+          "gold": "B003",
+          "predicted": "abstain",
+          "text": "街道让我了解边缘家庭救助，具体条件是什么？"
+        },
+        {
+          "gold": "B003",
+          "predicted": "B002",
+          "text": "我们家收入刚超过低保线，是否属于边缘家庭救助范围？"
+        },
+        {
+          "gold": "B003",
+          "predicted": "abstain",
+          "text": "想去窗口问边缘家庭救助，要先准备什么？"
+        },
+        {
+          "gold": "B003",
+          "predicted": "abstain",
+          "text": "网上怎样查询边缘家庭救助的办理进度？"
+        },
+        {
+          "gold": "B003",
+          "predicted": "abstain",
+          "text": "如果需要边缘资格认定，能不能走边缘家庭救助流程？"
+        },
+        {
+          "gold": "B003",
+          "predicted": "abstain",
+          "text": "请说明边缘家庭救助的收入和财产核查要求。"
+        },
+        {
+          "gold": "B003",
+          "predicted": "abstain",
+          "text": "家人让我问问边缘家庭救助由哪个部门受理。"
+        },
+        {
+          "gold": "B003",
+          "predicted": "abstain",
+          "text": "关于边缘家庭救助，申请后一般如何调查？"
+        },
+        {
+          "gold": "B003",
+          "predicted": "abstain",
+          "text": "我需要一份边缘家庭救助的申请前导办说明。"
+        },
+        {
+          "gold": "B003",
+          "predicted": "B002",
+          "text": "街道让我了解低保边缘家庭，具体条件是什么？"
+        },
+        {
+          "gold": "B003",
+          "predicted": "B002",
+          "text": "我们家想衔接其他救助，是否属于低保边缘家庭范围？"
+        },
+        {
+          "gold": "B003",
+          "predicted": "B002",
+          "text": "想去窗口问低保边缘家庭，要先准备什么？"
+        },
+        {
+          "gold": "B003",
+          "predicted": "B002",
+          "text": "网上怎样查询低保边缘家庭的办理进度？"
+        },
+        {
+          "gold": "B003",
+          "predicted": "B002",
+          "text": "如果不够低保但仍困难，能不能走低保边缘家庭流程？"
+        },
+        {
+          "gold": "B003",
+          "predicted": "B002",
+          "text": "请说明低保边缘家庭的收入和财产核查要求。"
+        },
+        {
+          "gold": "B003",
+          "predicted": "B002",
+          "text": "家人让我问问低保边缘家庭由哪个部门受理。"
+        },
+        {
+          "gold": "B003",
+          "predicted": "B002",
+          "text": "关于低保边缘家庭，申请后一般如何调查？"
+        },
+        {
+          "gold": "B003",
+          "predicted": "B002",
+          "text": "我需要一份低保边缘家庭的申请前导办说明。"
+        },
+        {
+          "gold": "B004",
+          "predicted": "abstain",
+          "text": "因为扣除必需支出后困难，我该怎样申请支出型困难认定？"
+        },
+        {
+          "gold": "B004",
+          "predicted": "abstain",
+          "text": "街道让我了解支出型困难认定，具体条件是什么？"
+        },
+        {
+          "gold": "B004",
+          "predicted": "abstain",
+          "text": "想去窗口问支出型困难认定，要先准备什么？"
+        },
+        {
+          "gold": "B004",
+          "predicted": "abstain",
+          "text": "网上怎样查询支出型困难认定的办理进度？"
+        },
+        {
+          "gold": "B004",
+          "predicted": "abstain",
+          "text": "如果长期治疗费用高，能不能走支出型困难认定流程？"
+        },
+        {
+          "gold": "B004",
+          "predicted": "abstain",
+          "text": "请说明支出型困难认定的收入和财产核查要求。"
+        },
+        {
+          "gold": "B004",
+          "predicted": "abstain",
+          "text": "家人让我问问支出型困难认定由哪个部门受理。"
+        },
+        {
+          "gold": "B004",
+          "predicted": "abstain",
+          "text": "关于支出型困难认定，申请后一般如何调查？"
+        },
+        {
+          "gold": "B004",
+          "predicted": "abstain",
+          "text": "我需要一份支出型困难认定的申请前导办说明。"
+        },
+        {
+          "gold": "B005",
+          "predicted": "abstain",
+          "text": "街道让我了解突发事件救助，具体条件是什么？"
+        },
+        {
+          "gold": "B005",
+          "predicted": "abstain",
+          "text": "我们家突发急病断了生活费，是否属于突发事件救助范围？"
+        },
+        {
+          "gold": "B005",
+          "predicted": "abstain",
+          "text": "想去窗口问突发事件救助，要先准备什么？"
+        },
+        {
+          "gold": "B005",
+          "predicted": "abstain",
+          "text": "网上怎样查询突发事件救助的办理进度？"
+        },
+        {
+          "gold": "B005",
+          "predicted": "abstain",
+          "text": "请说明突发事件救助的收入和财产核查要求。"
+        },
+        {
+          "gold": "B005",
+          "predicted": "abstain",
+          "text": "家人让我问问突发事件救助由哪个部门受理。"
+        },
+        {
+          "gold": "B005",
+          "predicted": "abstain",
+          "text": "关于突发事件救助，申请后一般如何调查？"
+        },
+        {
+          "gold": "B005",
+          "predicted": "abstain",
+          "text": "我需要一份突发事件救助的申请前导办说明。"
+        },
+        {
+          "gold": "B005",
+          "predicted": "abstain",
+          "text": "因为突发急病断了生活费，我该怎样申请紧急生活救助？"
+        },
+        {
+          "gold": "B005",
+          "predicted": "abstain",
+          "text": "街道让我了解紧急生活救助，具体条件是什么？"
+        },
+        {
+          "gold": "B005",
+          "predicted": "abstain",
+          "text": "想去窗口问紧急生活救助，要先准备什么？"
+        },
+        {
+          "gold": "B005",
+          "predicted": "abstain",
+          "text": "网上怎样查询紧急生活救助的办理进度？"
+        },
+        {
+          "gold": "B005",
+          "predicted": "abstain",
+          "text": "请说明紧急生活救助的收入和财产核查要求。"
+        },
+        {
+          "gold": "B005",
+          "predicted": "abstain",
+          "text": "家人让我问问紧急生活救助由哪个部门受理。"
+        },
+        {
+          "gold": "B005",
+          "predicted": "abstain",
+          "text": "关于紧急生活救助，申请后一般如何调查？"
+        },
+        {
+          "gold": "B005",
+          "predicted": "abstain",
+          "text": "我需要一份紧急生活救助的申请前导办说明。"
+        }
+      ]
+    },
+    "char_ngram_naive_bayes": {
+      "model_version": "intent-nb/60a7fded87ea",
+      "cases": 250,
+      "accuracy": 1.0,
+      "accuracy_ci95": {
+        "method": "wilson",
+        "confidence": 0.95,
+        "lower": 0.9849,
+        "upper": 1.0
+      },
+      "macro_f1": 1.0,
+      "per_label": {
+        "B001": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "recall_ci95": {
+            "method": "wilson",
+            "confidence": 0.95,
+            "lower": 0.9287,
+            "upper": 1.0
+          }
+        },
+        "B002": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "recall_ci95": {
+            "method": "wilson",
+            "confidence": 0.95,
+            "lower": 0.9287,
+            "upper": 1.0
+          }
+        },
+        "B003": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "recall_ci95": {
+            "method": "wilson",
+            "confidence": 0.95,
+            "lower": 0.9287,
+            "upper": 1.0
+          }
+        },
+        "B004": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "recall_ci95": {
+            "method": "wilson",
+            "confidence": 0.95,
+            "lower": 0.9287,
+            "upper": 1.0
+          }
+        },
+        "B005": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "recall_ci95": {
+            "method": "wilson",
+            "confidence": 0.95,
+            "lower": 0.9287,
+            "upper": 1.0
+          }
+        }
+      },
+      "confusion_matrix": {
+        "B001": {
+          "B001": 50,
+          "B002": 0,
+          "B003": 0,
+          "B004": 0,
+          "B005": 0,
+          "abstain": 0
+        },
+        "B002": {
+          "B001": 0,
+          "B002": 50,
+          "B003": 0,
+          "B004": 0,
+          "B005": 0,
+          "abstain": 0
+        },
+        "B003": {
+          "B001": 0,
+          "B002": 0,
+          "B003": 50,
+          "B004": 0,
+          "B005": 0,
+          "abstain": 0
+        },
+        "B004": {
+          "B001": 0,
+          "B002": 0,
+          "B003": 0,
+          "B004": 50,
+          "B005": 0,
+          "abstain": 0
+        },
+        "B005": {
+          "B001": 0,
+          "B002": 0,
+          "B003": 0,
+          "B004": 0,
+          "B005": 50,
+          "abstain": 0
+        }
+      },
+      "error_table": [],
       "role": "只排序可能关注事项，不参与资格结论",
       "score_note": "归一化排序分数，未做概率校准"
     }
   },
   "profile_extraction": {
     "deterministic_baseline": {
-      "cases": 40,
+      "cases": 300,
       "field_precision": 1.0,
+      "field_precision_ci95": {
+        "method": "wilson",
+        "confidence": 0.95,
+        "lower": 0.9956,
+        "upper": 1.0
+      },
       "field_recall": 1.0,
+      "field_recall_ci95": {
+        "method": "wilson",
+        "confidence": 0.95,
+        "lower": 0.9956,
+        "upper": 1.0
+      },
       "field_f1": 1.0,
       "case_exact_match": 1.0,
+      "case_exact_match_ci95": {
+        "method": "wilson",
+        "confidence": 0.95,
+        "lower": 0.9874,
+        "upper": 1.0
+      },
       "hallucination_case_rate": 0.0,
+      "hallucination_case_rate_ci95": {
+        "method": "wilson",
+        "confidence": 0.95,
+        "lower": 0.0,
+        "upper": 0.0126
+      },
       "hallucination_case_ids": [],
       "routes": {
-        "deterministic": 40
+        "deterministic": 300
       },
       "latency_ms": {
         "measured_cases": 0,
@@ -146,64 +704,149 @@
       },
       "by_category": {
         "asset_negative": {
-          "cases": 1,
-          "exact_match": 1.0
+          "cases": 30,
+          "exact_match": 1.0,
+          "exact_match_ci95": {
+            "method": "wilson",
+            "confidence": 0.95,
+            "lower": 0.8865,
+            "upper": 1.0
+          }
+        },
+        "combined_expense": {
+          "cases": 30,
+          "exact_match": 1.0,
+          "exact_match_ci95": {
+            "method": "wilson",
+            "confidence": 0.95,
+            "lower": 0.8865,
+            "upper": 1.0
+          }
+        },
+        "explicit_negation": {
+          "cases": 30,
+          "exact_match": 1.0,
+          "exact_match_ci95": {
+            "method": "wilson",
+            "confidence": 0.95,
+            "lower": 0.8865,
+            "upper": 1.0
+          }
         },
         "governance_fields": {
-          "cases": 11,
-          "exact_match": 1.0
+          "cases": 30,
+          "exact_match": 1.0,
+          "exact_match_ci95": {
+            "method": "wilson",
+            "confidence": 0.95,
+            "lower": 0.8865,
+            "upper": 1.0
+          }
         },
         "income_basic": {
-          "cases": 11,
-          "exact_match": 1.0
+          "cases": 30,
+          "exact_match": 1.0,
+          "exact_match_ci95": {
+            "method": "wilson",
+            "confidence": 0.95,
+            "lower": 0.8865,
+            "upper": 1.0
+          }
         },
-        "member_unknown": {
-          "cases": 1,
-          "exact_match": 1.0
+        "instruction_attack": {
+          "cases": 30,
+          "exact_match": 1.0,
+          "exact_match_ci95": {
+            "method": "wilson",
+            "confidence": 0.95,
+            "lower": 0.8865,
+            "upper": 1.0
+          }
         },
-        "missing": {
-          "cases": 1,
-          "exact_match": 1.0
+        "missing_unknown": {
+          "cases": 30,
+          "exact_match": 1.0,
+          "exact_match_ci95": {
+            "method": "wilson",
+            "confidence": 0.95,
+            "lower": 0.8865,
+            "upper": 1.0
+          }
         },
-        "negation": {
-          "cases": 1,
-          "exact_match": 1.0
-        },
-        "privacy_attack": {
-          "cases": 1,
-          "exact_match": 1.0
-        },
-        "residence": {
-          "cases": 1,
-          "exact_match": 1.0
+        "nonlocal_residence": {
+          "cases": 30,
+          "exact_match": 1.0,
+          "exact_match_ci95": {
+            "method": "wilson",
+            "confidence": 0.95,
+            "lower": 0.8865,
+            "upper": 1.0
+          }
         },
         "unit_conversion": {
-          "cases": 1,
-          "exact_match": 1.0
+          "cases": 30,
+          "exact_match": 1.0,
+          "exact_match_ci95": {
+            "method": "wilson",
+            "confidence": 0.95,
+            "lower": 0.8865,
+            "upper": 1.0
+          }
         },
-        "urgent_expense": {
-          "cases": 11,
-          "exact_match": 1.0
+        "urgent_medical": {
+          "cases": 30,
+          "exact_match": 1.0,
+          "exact_match_ci95": {
+            "method": "wilson",
+            "confidence": 0.95,
+            "lower": 0.8865,
+            "upper": 1.0
+          }
         }
-      }
+      },
+      "error_table": []
     },
     "schema_constrained_llm_ensemble": {
-      "cases": 40,
+      "cases": 300,
       "field_precision": 1.0,
+      "field_precision_ci95": {
+        "method": "wilson",
+        "confidence": 0.95,
+        "lower": 0.9956,
+        "upper": 1.0
+      },
       "field_recall": 1.0,
+      "field_recall_ci95": {
+        "method": "wilson",
+        "confidence": 0.95,
+        "lower": 0.9956,
+        "upper": 1.0
+      },
       "field_f1": 1.0,
       "case_exact_match": 1.0,
+      "case_exact_match_ci95": {
+        "method": "wilson",
+        "confidence": 0.95,
+        "lower": 0.9874,
+        "upper": 1.0
+      },
       "hallucination_case_rate": 0.0,
+      "hallucination_case_rate_ci95": {
+        "method": "wilson",
+        "confidence": 0.95,
+        "lower": 0.0,
+        "upper": 0.0126
+      },
       "hallucination_case_ids": [],
       "routes": {
-        "llm_assisted": 40
+        "llm_assisted": 300
       },
       "latency_ms": {
-        "measured_cases": 40,
-        "mean": 1779.2,
-        "p50": 1794,
-        "p95": 2856,
-        "max": 8051,
+        "measured_cases": 300,
+        "mean": 1291.0,
+        "p50": 1196,
+        "p95": 2016,
+        "max": 7163,
         "includes_model_cold_start": true
       },
       "fallbacks": {
@@ -212,79 +855,841 @@
       },
       "by_category": {
         "asset_negative": {
-          "cases": 1,
-          "exact_match": 1.0
+          "cases": 30,
+          "exact_match": 1.0,
+          "exact_match_ci95": {
+            "method": "wilson",
+            "confidence": 0.95,
+            "lower": 0.8865,
+            "upper": 1.0
+          }
+        },
+        "combined_expense": {
+          "cases": 30,
+          "exact_match": 1.0,
+          "exact_match_ci95": {
+            "method": "wilson",
+            "confidence": 0.95,
+            "lower": 0.8865,
+            "upper": 1.0
+          }
+        },
+        "explicit_negation": {
+          "cases": 30,
+          "exact_match": 1.0,
+          "exact_match_ci95": {
+            "method": "wilson",
+            "confidence": 0.95,
+            "lower": 0.8865,
+            "upper": 1.0
+          }
         },
         "governance_fields": {
-          "cases": 11,
-          "exact_match": 1.0
+          "cases": 30,
+          "exact_match": 1.0,
+          "exact_match_ci95": {
+            "method": "wilson",
+            "confidence": 0.95,
+            "lower": 0.8865,
+            "upper": 1.0
+          }
         },
         "income_basic": {
-          "cases": 11,
-          "exact_match": 1.0
+          "cases": 30,
+          "exact_match": 1.0,
+          "exact_match_ci95": {
+            "method": "wilson",
+            "confidence": 0.95,
+            "lower": 0.8865,
+            "upper": 1.0
+          }
         },
-        "member_unknown": {
-          "cases": 1,
-          "exact_match": 1.0
+        "instruction_attack": {
+          "cases": 30,
+          "exact_match": 1.0,
+          "exact_match_ci95": {
+            "method": "wilson",
+            "confidence": 0.95,
+            "lower": 0.8865,
+            "upper": 1.0
+          }
         },
-        "missing": {
-          "cases": 1,
-          "exact_match": 1.0
+        "missing_unknown": {
+          "cases": 30,
+          "exact_match": 1.0,
+          "exact_match_ci95": {
+            "method": "wilson",
+            "confidence": 0.95,
+            "lower": 0.8865,
+            "upper": 1.0
+          }
         },
-        "negation": {
-          "cases": 1,
-          "exact_match": 1.0
-        },
-        "privacy_attack": {
-          "cases": 1,
-          "exact_match": 1.0
-        },
-        "residence": {
-          "cases": 1,
-          "exact_match": 1.0
+        "nonlocal_residence": {
+          "cases": 30,
+          "exact_match": 1.0,
+          "exact_match_ci95": {
+            "method": "wilson",
+            "confidence": 0.95,
+            "lower": 0.8865,
+            "upper": 1.0
+          }
         },
         "unit_conversion": {
-          "cases": 1,
-          "exact_match": 1.0
+          "cases": 30,
+          "exact_match": 1.0,
+          "exact_match_ci95": {
+            "method": "wilson",
+            "confidence": 0.95,
+            "lower": 0.8865,
+            "upper": 1.0
+          }
         },
-        "urgent_expense": {
-          "cases": 11,
-          "exact_match": 1.0
+        "urgent_medical": {
+          "cases": 30,
+          "exact_match": 1.0,
+          "exact_match_ci95": {
+            "method": "wilson",
+            "confidence": 0.95,
+            "lower": 0.8865,
+            "upper": 1.0
+          }
         }
-      }
+      },
+      "error_table": []
     }
   },
   "retrieval": {
-    "bm25_baseline": {
-      "queries": 12,
-      "recall_at_1": 0.9167,
-      "recall_at_3": 1.0,
-      "mrr_at_5": 0.9583,
-      "actual_routes": {
-        "field-weighted-bm25": 12
+    "development": {
+      "bm25_baseline": {
+        "queries": 40,
+        "recall_at_1": 0.65,
+        "recall_at_1_ci95": {
+          "method": "wilson",
+          "confidence": 0.95,
+          "lower": 0.4951,
+          "upper": 0.7787
+        },
+        "recall_at_3": 0.65,
+        "recall_at_3_ci95": {
+          "method": "wilson",
+          "confidence": 0.95,
+          "lower": 0.4951,
+          "upper": 0.7787
+        },
+        "mrr_at_5": 0.65,
+        "actual_routes": {
+          "field-weighted-bm25": 40
+        },
+        "latency_ms": {
+          "measured_queries": 0,
+          "mean": null,
+          "p50": null,
+          "p95": null,
+          "max": null
+        },
+        "by_source": {
+          "GZ-001": {
+            "successes": 8,
+            "total": 12,
+            "estimate": 0.6667,
+            "ci95": {
+              "method": "wilson",
+              "confidence": 0.95,
+              "lower": 0.3906,
+              "upper": 0.8619
+            }
+          },
+          "GZ-002": {
+            "successes": 6,
+            "total": 8,
+            "estimate": 0.75,
+            "ci95": {
+              "method": "wilson",
+              "confidence": 0.95,
+              "lower": 0.4093,
+              "upper": 0.9285
+            }
+          },
+          "GZ-003": {
+            "successes": 4,
+            "total": 4,
+            "estimate": 1.0,
+            "ci95": {
+              "method": "wilson",
+              "confidence": 0.95,
+              "lower": 0.5101,
+              "upper": 1.0
+            }
+          },
+          "GZ-004": {
+            "successes": 4,
+            "total": 4,
+            "estimate": 1.0,
+            "ci95": {
+              "method": "wilson",
+              "confidence": 0.95,
+              "lower": 0.5101,
+              "upper": 1.0
+            }
+          },
+          "GZ-008": {
+            "successes": 4,
+            "total": 4,
+            "estimate": 1.0,
+            "ci95": {
+              "method": "wilson",
+              "confidence": 0.95,
+              "lower": 0.5101,
+              "upper": 1.0
+            }
+          },
+          "GZ-009": {
+            "successes": 0,
+            "total": 8,
+            "estimate": 0.0,
+            "ci95": {
+              "method": "wilson",
+              "confidence": 0.95,
+              "lower": 0.0,
+              "upper": 0.3244
+            }
+          }
+        },
+        "error_table": [
+          {
+            "query_id": "RQ-001",
+            "source_id": "GZ-001",
+            "rank": null,
+            "expected_ids": [
+              "E-GZ-001-SCOPE"
+            ],
+            "returned_ids": []
+          },
+          {
+            "query_id": "RQ-002",
+            "source_id": "GZ-001",
+            "rank": null,
+            "expected_ids": [
+              "E-GZ-001-SCOPE"
+            ],
+            "returned_ids": []
+          },
+          {
+            "query_id": "RQ-003",
+            "source_id": "GZ-001",
+            "rank": null,
+            "expected_ids": [
+              "E-GZ-001-SCOPE"
+            ],
+            "returned_ids": []
+          },
+          {
+            "query_id": "RQ-004",
+            "source_id": "GZ-001",
+            "rank": null,
+            "expected_ids": [
+              "E-GZ-001-SCOPE"
+            ],
+            "returned_ids": []
+          },
+          {
+            "query_id": "RQ-038",
+            "source_id": "GZ-002",
+            "rank": null,
+            "expected_ids": [
+              "E-GZ-002-CURRENT"
+            ],
+            "returned_ids": []
+          },
+          {
+            "query_id": "RQ-042",
+            "source_id": "GZ-002",
+            "rank": null,
+            "expected_ids": [
+              "E-GZ-002-ASSET"
+            ],
+            "returned_ids": []
+          },
+          {
+            "query_id": "RQ-081",
+            "source_id": "GZ-009",
+            "rank": null,
+            "expected_ids": [
+              "E-GZ-009-LEGACY"
+            ],
+            "returned_ids": [
+              "E-GZ-002-CURRENT",
+              "E-GZ-003-STANDARD",
+              "E-GZ-008-INCOME",
+              "E-GD-004-A-VEHICLE-EXCLUSION"
+            ]
+          },
+          {
+            "query_id": "RQ-082",
+            "source_id": "GZ-009",
+            "rank": null,
+            "expected_ids": [
+              "E-GZ-009-LEGACY"
+            ],
+            "returned_ids": []
+          },
+          {
+            "query_id": "RQ-083",
+            "source_id": "GZ-009",
+            "rank": null,
+            "expected_ids": [
+              "E-GZ-009-LEGACY"
+            ],
+            "returned_ids": [
+              "E-GZ-002-CURRENT",
+              "E-GZ-003-STANDARD",
+              "E-GZ-008-INCOME",
+              "E-CN-001-PRIVACY",
+              "E-GZ-001-DEADLINE"
+            ]
+          },
+          {
+            "query_id": "RQ-084",
+            "source_id": "GZ-009",
+            "rank": null,
+            "expected_ids": [
+              "E-GZ-009-LEGACY"
+            ],
+            "returned_ids": [
+              "E-GZ-002-CURRENT",
+              "E-GZ-003-STANDARD",
+              "E-GZ-008-INCOME",
+              "E-GD-004-A-VEHICLE-EXCLUSION",
+              "E-GZ-005-RESIDENCE"
+            ]
+          },
+          {
+            "query_id": "RQ-085",
+            "source_id": "GZ-009",
+            "rank": null,
+            "expected_ids": [
+              "E-GZ-009-ASSET"
+            ],
+            "returned_ids": []
+          },
+          {
+            "query_id": "RQ-086",
+            "source_id": "GZ-009",
+            "rank": null,
+            "expected_ids": [
+              "E-GZ-009-ASSET"
+            ],
+            "returned_ids": [
+              "E-GZ-002-CURRENT"
+            ]
+          },
+          {
+            "query_id": "RQ-087",
+            "source_id": "GZ-009",
+            "rank": null,
+            "expected_ids": [
+              "E-GZ-009-ASSET"
+            ],
+            "returned_ids": [
+              "E-GZ-001-DEADLINE",
+              "E-CN-001-EDGE",
+              "E-CN-001-DIBAO",
+              "E-GZ-001-MATERIALS",
+              "E-CN-001-PRIVACY"
+            ]
+          },
+          {
+            "query_id": "RQ-088",
+            "source_id": "GZ-009",
+            "rank": null,
+            "expected_ids": [
+              "E-GZ-009-ASSET"
+            ],
+            "returned_ids": [
+              "E-GZ-002-CURRENT",
+              "E-GZ-005-RESIDENCE",
+              "E-GZ-001-DEADLINE",
+              "E-GZ-002-ASSET"
+            ]
+          }
+        ]
       },
-      "latency_ms": {
-        "measured_queries": 0,
-        "mean": null,
-        "p50": null,
-        "p95": null,
-        "max": null
+      "configured_pipeline": {
+        "queries": 40,
+        "recall_at_1": 0.65,
+        "recall_at_1_ci95": {
+          "method": "wilson",
+          "confidence": 0.95,
+          "lower": 0.4951,
+          "upper": 0.7787
+        },
+        "recall_at_3": 0.65,
+        "recall_at_3_ci95": {
+          "method": "wilson",
+          "confidence": 0.95,
+          "lower": 0.4951,
+          "upper": 0.7787
+        },
+        "mrr_at_5": 0.65,
+        "actual_routes": {
+          "domain-gate": 7,
+          "rrf(bm25,local-embedding)": 33
+        },
+        "latency_ms": {
+          "measured_queries": 33,
+          "mean": 1090.5,
+          "p50": 1140,
+          "p95": 1203,
+          "max": 3617
+        },
+        "by_source": {
+          "GZ-001": {
+            "successes": 8,
+            "total": 12,
+            "estimate": 0.6667,
+            "ci95": {
+              "method": "wilson",
+              "confidence": 0.95,
+              "lower": 0.3906,
+              "upper": 0.8619
+            }
+          },
+          "GZ-002": {
+            "successes": 6,
+            "total": 8,
+            "estimate": 0.75,
+            "ci95": {
+              "method": "wilson",
+              "confidence": 0.95,
+              "lower": 0.4093,
+              "upper": 0.9285
+            }
+          },
+          "GZ-003": {
+            "successes": 4,
+            "total": 4,
+            "estimate": 1.0,
+            "ci95": {
+              "method": "wilson",
+              "confidence": 0.95,
+              "lower": 0.5101,
+              "upper": 1.0
+            }
+          },
+          "GZ-004": {
+            "successes": 4,
+            "total": 4,
+            "estimate": 1.0,
+            "ci95": {
+              "method": "wilson",
+              "confidence": 0.95,
+              "lower": 0.5101,
+              "upper": 1.0
+            }
+          },
+          "GZ-008": {
+            "successes": 4,
+            "total": 4,
+            "estimate": 1.0,
+            "ci95": {
+              "method": "wilson",
+              "confidence": 0.95,
+              "lower": 0.5101,
+              "upper": 1.0
+            }
+          },
+          "GZ-009": {
+            "successes": 0,
+            "total": 8,
+            "estimate": 0.0,
+            "ci95": {
+              "method": "wilson",
+              "confidence": 0.95,
+              "lower": 0.0,
+              "upper": 0.3244
+            }
+          }
+        },
+        "error_table": [
+          {
+            "query_id": "RQ-001",
+            "source_id": "GZ-001",
+            "rank": null,
+            "expected_ids": [
+              "E-GZ-001-SCOPE"
+            ],
+            "returned_ids": []
+          },
+          {
+            "query_id": "RQ-002",
+            "source_id": "GZ-001",
+            "rank": null,
+            "expected_ids": [
+              "E-GZ-001-SCOPE"
+            ],
+            "returned_ids": []
+          },
+          {
+            "query_id": "RQ-003",
+            "source_id": "GZ-001",
+            "rank": null,
+            "expected_ids": [
+              "E-GZ-001-SCOPE"
+            ],
+            "returned_ids": []
+          },
+          {
+            "query_id": "RQ-004",
+            "source_id": "GZ-001",
+            "rank": null,
+            "expected_ids": [
+              "E-GZ-001-SCOPE"
+            ],
+            "returned_ids": []
+          },
+          {
+            "query_id": "RQ-038",
+            "source_id": "GZ-002",
+            "rank": null,
+            "expected_ids": [
+              "E-GZ-002-CURRENT"
+            ],
+            "returned_ids": []
+          },
+          {
+            "query_id": "RQ-042",
+            "source_id": "GZ-002",
+            "rank": null,
+            "expected_ids": [
+              "E-GZ-002-ASSET"
+            ],
+            "returned_ids": []
+          },
+          {
+            "query_id": "RQ-081",
+            "source_id": "GZ-009",
+            "rank": null,
+            "expected_ids": [
+              "E-GZ-009-LEGACY"
+            ],
+            "returned_ids": [
+              "E-GZ-002-CURRENT",
+              "E-GD-004-A-VEHICLE-EXCLUSION",
+              "E-GZ-003-STANDARD",
+              "E-GZ-008-INCOME"
+            ]
+          },
+          {
+            "query_id": "RQ-082",
+            "source_id": "GZ-009",
+            "rank": null,
+            "expected_ids": [
+              "E-GZ-009-LEGACY"
+            ],
+            "returned_ids": []
+          },
+          {
+            "query_id": "RQ-083",
+            "source_id": "GZ-009",
+            "rank": null,
+            "expected_ids": [
+              "E-GZ-009-LEGACY"
+            ],
+            "returned_ids": [
+              "E-GZ-002-CURRENT",
+              "E-CN-001-PRIVACY",
+              "E-GZ-001-DEADLINE",
+              "E-GZ-001-MATERIALS",
+              "E-GZ-001-SCOPE"
+            ]
+          },
+          {
+            "query_id": "RQ-084",
+            "source_id": "GZ-009",
+            "rank": null,
+            "expected_ids": [
+              "E-GZ-009-LEGACY"
+            ],
+            "returned_ids": [
+              "E-GZ-002-CURRENT",
+              "E-GZ-005-RESIDENCE",
+              "E-GZ-003-STANDARD",
+              "E-GZ-008-INCOME",
+              "E-GZ-001-DEADLINE"
+            ]
+          },
+          {
+            "query_id": "RQ-085",
+            "source_id": "GZ-009",
+            "rank": null,
+            "expected_ids": [
+              "E-GZ-009-ASSET"
+            ],
+            "returned_ids": []
+          },
+          {
+            "query_id": "RQ-086",
+            "source_id": "GZ-009",
+            "rank": null,
+            "expected_ids": [
+              "E-GZ-009-ASSET"
+            ],
+            "returned_ids": [
+              "E-GZ-002-CURRENT"
+            ]
+          },
+          {
+            "query_id": "RQ-087",
+            "source_id": "GZ-009",
+            "rank": null,
+            "expected_ids": [
+              "E-GZ-009-ASSET"
+            ],
+            "returned_ids": [
+              "E-CN-001-RIGID",
+              "E-CN-001-EDGE",
+              "E-CN-001-PRIVACY",
+              "E-GZ-001-DEADLINE",
+              "E-CN-001-DIBAO"
+            ]
+          },
+          {
+            "query_id": "RQ-088",
+            "source_id": "GZ-009",
+            "rank": null,
+            "expected_ids": [
+              "E-GZ-009-ASSET"
+            ],
+            "returned_ids": [
+              "E-GZ-002-CURRENT",
+              "E-GZ-005-RESIDENCE",
+              "E-GZ-002-ASSET",
+              "E-GZ-001-DEADLINE",
+              "E-GZ-001-SCOPE"
+            ]
+          }
+        ]
       }
     },
-    "configured_pipeline": {
-      "queries": 12,
-      "recall_at_1": 1.0,
-      "recall_at_3": 1.0,
-      "mrr_at_5": 1.0,
-      "actual_routes": {
-        "rrf(bm25,local-embedding)": 12
+    "frozen_final_test": {
+      "bm25_baseline": {
+        "queries": 120,
+        "recall_at_1": 0.9833,
+        "recall_at_1_ci95": {
+          "method": "wilson",
+          "confidence": 0.95,
+          "lower": 0.9413,
+          "upper": 0.9954
+        },
+        "recall_at_3": 0.9833,
+        "recall_at_3_ci95": {
+          "method": "wilson",
+          "confidence": 0.95,
+          "lower": 0.9413,
+          "upper": 0.9954
+        },
+        "mrr_at_5": 0.9833,
+        "actual_routes": {
+          "field-weighted-bm25": 120
+        },
+        "latency_ms": {
+          "measured_queries": 0,
+          "mean": null,
+          "p50": null,
+          "p95": null,
+          "max": null
+        },
+        "by_source": {
+          "CN-001": {
+            "successes": 23,
+            "total": 24,
+            "estimate": 0.9583,
+            "ci95": {
+              "method": "wilson",
+              "confidence": 0.95,
+              "lower": 0.7976,
+              "upper": 0.9926
+            }
+          },
+          "GD-002": {
+            "successes": 24,
+            "total": 24,
+            "estimate": 1.0,
+            "ci95": {
+              "method": "wilson",
+              "confidence": 0.95,
+              "lower": 0.862,
+              "upper": 1.0
+            }
+          },
+          "GD-004-A": {
+            "successes": 59,
+            "total": 60,
+            "estimate": 0.9833,
+            "ci95": {
+              "method": "wilson",
+              "confidence": 0.95,
+              "lower": 0.9114,
+              "upper": 0.9971
+            }
+          },
+          "GZ-005": {
+            "successes": 12,
+            "total": 12,
+            "estimate": 1.0,
+            "ci95": {
+              "method": "wilson",
+              "confidence": 0.95,
+              "lower": 0.7575,
+              "upper": 1.0
+            }
+          }
+        },
+        "error_table": [
+          {
+            "query_id": "RQ-032",
+            "source_id": "CN-001",
+            "rank": null,
+            "expected_ids": [
+              "E-CN-001-PRIVACY"
+            ],
+            "returned_ids": []
+          },
+          {
+            "query_id": "RQ-126",
+            "source_id": "GD-004-A",
+            "rank": null,
+            "expected_ids": [
+              "E-GD-004-A-OBLIGORS"
+            ],
+            "returned_ids": []
+          }
+        ]
       },
-      "latency_ms": {
-        "measured_queries": 12,
-        "mean": 1587.7,
-        "p50": 1262,
-        "p95": 1370,
-        "max": 5289
+      "configured_pipeline": {
+        "queries": 120,
+        "recall_at_1": 0.9667,
+        "recall_at_1_ci95": {
+          "method": "wilson",
+          "confidence": 0.95,
+          "lower": 0.9174,
+          "upper": 0.987
+        },
+        "recall_at_3": 0.9667,
+        "recall_at_3_ci95": {
+          "method": "wilson",
+          "confidence": 0.95,
+          "lower": 0.9174,
+          "upper": 0.987
+        },
+        "mrr_at_5": 0.9708,
+        "actual_routes": {
+          "rrf(bm25,local-embedding)": 118,
+          "domain-gate": 2
+        },
+        "latency_ms": {
+          "measured_queries": 118,
+          "mean": 1127.2,
+          "p50": 1123,
+          "p95": 1175,
+          "max": 1200
+        },
+        "by_source": {
+          "CN-001": {
+            "successes": 23,
+            "total": 24,
+            "estimate": 0.9583,
+            "ci95": {
+              "method": "wilson",
+              "confidence": 0.95,
+              "lower": 0.7976,
+              "upper": 0.9926
+            }
+          },
+          "GD-002": {
+            "successes": 24,
+            "total": 24,
+            "estimate": 1.0,
+            "ci95": {
+              "method": "wilson",
+              "confidence": 0.95,
+              "lower": 0.862,
+              "upper": 1.0
+            }
+          },
+          "GD-004-A": {
+            "successes": 57,
+            "total": 60,
+            "estimate": 0.95,
+            "ci95": {
+              "method": "wilson",
+              "confidence": 0.95,
+              "lower": 0.863,
+              "upper": 0.9829
+            }
+          },
+          "GZ-005": {
+            "successes": 12,
+            "total": 12,
+            "estimate": 1.0,
+            "ci95": {
+              "method": "wilson",
+              "confidence": 0.95,
+              "lower": 0.7575,
+              "upper": 1.0
+            }
+          }
+        },
+        "error_table": [
+          {
+            "query_id": "RQ-032",
+            "source_id": "CN-001",
+            "rank": null,
+            "expected_ids": [
+              "E-CN-001-PRIVACY"
+            ],
+            "returned_ids": []
+          },
+          {
+            "query_id": "RQ-104",
+            "source_id": "GD-004-A",
+            "rank": 4,
+            "expected_ids": [
+              "E-GD-004-A-INCOME"
+            ],
+            "returned_ids": [
+              "E-GZ-004-EXPENSE",
+              "E-GZ-002-CURRENT",
+              "E-GZ-001-SCOPE",
+              "E-GD-004-A-INCOME",
+              "E-GZ-005-RESIDENCE"
+            ]
+          },
+          {
+            "query_id": "RQ-126",
+            "source_id": "GD-004-A",
+            "rank": null,
+            "expected_ids": [
+              "E-GD-004-A-OBLIGORS"
+            ],
+            "returned_ids": []
+          },
+          {
+            "query_id": "RQ-140",
+            "source_id": "GD-004-A",
+            "rank": 4,
+            "expected_ids": [
+              "E-GD-004-A-VEHICLE-EXCLUSION"
+            ],
+            "returned_ids": [
+              "E-GZ-002-CURRENT",
+              "E-GZ-001-SCOPE",
+              "E-GZ-001-DEADLINE",
+              "E-GD-004-A-VEHICLE-EXCLUSION",
+              "E-GD-004-A-LIVING"
+            ]
+          }
+        ]
       }
     }
   },
@@ -295,22 +1700,22 @@
   ],
   "engine_version": "rule-engine/0.5.0",
   "release_metadata": {
-    "release_id": "v1.2.1+source.155f7a8c19f0",
-    "app_version": "1.2.1",
+    "release_id": "v1.3.0+source.4bf15869943e",
+    "app_version": "1.3.0",
     "engine_version": "rule-engine/0.5.0",
-    "git_commit": "3ac4b8c1609abd15f376149eb59a741188bd2ee5",
-    "git_dirty": false,
-    "source_tree_sha256": "155f7a8c19f02ee5e752455532ce8d12e4abf0a87006ec94fcbf10c3da04ecfc",
+    "git_commit": "3d44457cec0e50f71418ad28cc704ada6fa3ce5c",
+    "git_dirty": true,
+    "source_tree_sha256": "4bf15869943e7e6400abf126cc4494042555638289301bca6739da13f276ff48",
     "source_binding": {
-      "code_commit": "3ac4b8c1609abd15f376149eb59a741188bd2ee5",
+      "code_commit": "3d44457cec0e50f71418ad28cc704ada6fa3ce5c",
       "source_inputs_dirty": false,
-      "source_tree_sha256": "155f7a8c19f02ee5e752455532ce8d12e4abf0a87006ec94fcbf10c3da04ecfc",
-      "source_file_count": 123,
+      "source_tree_sha256": "4bf15869943e7e6400abf126cc4494042555638289301bca6739da13f276ff48",
+      "source_file_count": 230,
       "scope": "代码、测试、评测输入、运行和安全配置；生成的评测报告不参与自指纹",
       "text_normalization": "CRLF和LF统一为LF；二进制文件保持原始字节"
     },
     "artifact_binding": {
-      "reports_generated_from_source_sha256": "155f7a8c19f02ee5e752455532ce8d12e4abf0a87006ec94fcbf10c3da04ecfc",
+      "reports_generated_from_source_sha256": "4bf15869943e7e6400abf126cc4494042555638289301bca6739da13f276ff48",
       "evidence_commit": null,
       "note": "报告提交后可由正式发布流程填入证据提交；源码绑定以内容指纹为准。"
     }

@@ -1,1077 +1,2717 @@
 {
-  "report_schema": "policy2rule-evaluation/2.0",
-  "benchmark_role": "real_official_clause_project_authored_gold",
-  "case_count": 50,
-  "unassisted_text_extraction": {
-    "track": "unassisted_text_extraction",
-    "case_count": 50,
-    "providers": {
-      "local-policy-compiler/1.0": 50
-    },
-    "benefit_accuracy": 1.0,
-    "benefit_evaluable_cases": 33,
-    "benefit_context_dependent_cases": 17,
-    "effective_from_accuracy": 1.0,
-    "effective_from_evaluable_cases": 2,
-    "effective_to_accuracy": null,
-    "effective_to_evaluable_cases": 0,
-    "missing_effective_from_guard_accuracy": 1.0,
-    "missing_effective_from_cases": 3,
-    "parameter_pair": {
-      "precision": 1.0,
-      "recall": 1.0,
-      "f1": 1.0
-    },
-    "condition_field": {
-      "precision": 0.9333,
-      "recall": 0.875,
-      "f1": 0.9032
-    },
-    "source_quote_grounding_rate": 1.0,
-    "details": [
-      {
-        "case_id": "PCR-R001",
-        "benefit_match": true,
-        "effective_from": null,
-        "effective_to": null,
-        "predicted_parameters": {},
-        "predicted_condition_fields": []
-      },
-      {
-        "case_id": "PCR-R002",
-        "benefit_match": true,
-        "effective_from": null,
-        "effective_to": null,
-        "predicted_parameters": {},
-        "predicted_condition_fields": []
-      },
-      {
-        "case_id": "PCR-R003",
-        "benefit_match": true,
-        "effective_from": null,
-        "effective_to": null,
-        "predicted_parameters": {},
-        "predicted_condition_fields": []
-      },
-      {
-        "case_id": "PCR-R004",
-        "benefit_match": true,
-        "effective_from": null,
-        "effective_to": null,
-        "predicted_parameters": {},
-        "predicted_condition_fields": [
-          "assets_eligible",
-          "per_capita_monthly_income"
-        ]
-      },
-      {
-        "case_id": "PCR-R005",
-        "benefit_match": true,
-        "effective_from": null,
-        "effective_to": null,
-        "predicted_parameters": {},
-        "predicted_condition_fields": [
-          "assets_eligible"
-        ]
-      },
-      {
-        "case_id": "PCR-R006",
-        "benefit_match": true,
-        "effective_from": null,
-        "effective_to": null,
-        "predicted_parameters": {},
-        "predicted_condition_fields": [
-          "assets_eligible",
-          "per_capita_annual_income",
-          "rigid_expenses_12m"
-        ]
-      },
-      {
-        "case_id": "PCR-R007",
-        "benefit_match": true,
-        "effective_from": null,
-        "effective_to": null,
-        "predicted_parameters": {},
-        "predicted_condition_fields": []
-      },
-      {
-        "case_id": "PCR-R008",
-        "benefit_match": true,
-        "effective_from": "2026-08-01",
-        "effective_to": "2027-07-31",
-        "predicted_parameters": {},
-        "predicted_condition_fields": []
-      },
-      {
-        "case_id": "PCR-R009",
-        "benefit_match": true,
-        "effective_from": null,
-        "effective_to": null,
-        "predicted_parameters": {},
-        "predicted_condition_fields": []
-      },
-      {
-        "case_id": "PCR-R010",
-        "benefit_match": true,
-        "effective_from": null,
-        "effective_to": null,
-        "predicted_parameters": {},
-        "predicted_condition_fields": []
-      },
-      {
-        "case_id": "PCR-R011",
-        "benefit_match": true,
-        "effective_from": null,
-        "effective_to": null,
-        "predicted_parameters": {},
-        "predicted_condition_fields": [
-          "assets_eligible"
-        ]
-      },
-      {
-        "case_id": "PCR-R012",
-        "benefit_match": true,
-        "effective_from": null,
-        "effective_to": null,
-        "predicted_parameters": {},
-        "predicted_condition_fields": [
-          "assets_eligible"
-        ]
-      },
-      {
-        "case_id": "PCR-R013",
-        "benefit_match": false,
-        "effective_from": null,
-        "effective_to": null,
-        "predicted_parameters": {
-          "income_standard_monthly_per_capita": "1327.00",
-          "edge_standard_monthly_per_capita": "1990.50",
-          "income_multiplier": 1.5
-        },
-        "predicted_condition_fields": [
-          "per_capita_monthly_income"
-        ]
-      },
-      {
-        "case_id": "PCR-R014",
-        "benefit_match": true,
-        "effective_from": null,
-        "effective_to": null,
-        "predicted_parameters": {
-          "edge_standard_monthly_per_capita": "1990.50",
-          "income_multiplier": 1.5
-        },
-        "predicted_condition_fields": [
-          "per_capita_monthly_income"
-        ]
-      },
-      {
-        "case_id": "PCR-R015",
-        "benefit_match": true,
-        "effective_from": null,
-        "effective_to": null,
-        "predicted_parameters": {},
-        "predicted_condition_fields": []
-      },
-      {
-        "case_id": "PCR-R016",
-        "benefit_match": false,
-        "effective_from": null,
-        "effective_to": null,
-        "predicted_parameters": {},
-        "predicted_condition_fields": []
-      },
-      {
-        "case_id": "PCR-R017",
-        "benefit_match": true,
-        "effective_from": null,
-        "effective_to": null,
-        "predicted_parameters": {
-          "income_multiplier": 1.5
-        },
-        "predicted_condition_fields": [
-          "is_local_hukou",
-          "member_scope_confirmed",
-          "per_capita_monthly_income"
-        ]
-      },
-      {
-        "case_id": "PCR-R018",
-        "benefit_match": true,
-        "effective_from": null,
-        "effective_to": null,
-        "predicted_parameters": {
-          "income_multiplier": 1.5
-        },
-        "predicted_condition_fields": [
-          "per_capita_monthly_income"
-        ]
-      },
-      {
-        "case_id": "PCR-R019",
-        "benefit_match": true,
-        "effective_from": null,
-        "effective_to": null,
-        "predicted_parameters": {
-          "rigid_expense_income_ratio": 0.6
-        },
-        "predicted_condition_fields": [
-          "is_local_hukou",
-          "member_scope_confirmed",
-          "per_capita_annual_income",
-          "rigid_expenses_12m"
-        ]
-      },
-      {
-        "case_id": "PCR-R020",
-        "benefit_match": false,
-        "effective_from": null,
-        "effective_to": null,
-        "predicted_parameters": {},
-        "predicted_condition_fields": []
-      },
-      {
-        "case_id": "PCR-R021",
-        "benefit_match": true,
-        "effective_from": null,
-        "effective_to": null,
-        "predicted_parameters": {
-          "rigid_expense_income_ratio": 0.6
-        },
-        "predicted_condition_fields": [
-          "member_scope_confirmed",
-          "rigid_expenses_12m"
-        ]
-      },
-      {
-        "case_id": "PCR-R022",
-        "benefit_match": true,
-        "effective_from": null,
-        "effective_to": null,
-        "predicted_parameters": {
-          "urgent_event_days": 31
-        },
-        "predicted_condition_fields": [
-          "urgent_event",
-          "urgent_event_date"
-        ]
-      },
-      {
-        "case_id": "PCR-R023",
-        "benefit_match": true,
-        "effective_from": null,
-        "effective_to": null,
-        "predicted_parameters": {},
-        "predicted_condition_fields": [
-          "residence_proof"
-        ]
-      },
-      {
-        "case_id": "PCR-R024",
-        "benefit_match": false,
-        "effective_from": null,
-        "effective_to": null,
-        "predicted_parameters": {},
-        "predicted_condition_fields": []
-      },
-      {
-        "case_id": "PCR-R025",
-        "benefit_match": false,
-        "effective_from": null,
-        "effective_to": null,
-        "predicted_parameters": {},
-        "predicted_condition_fields": []
-      },
-      {
-        "case_id": "PCR-R026",
-        "benefit_match": false,
-        "effective_from": null,
-        "effective_to": null,
-        "predicted_parameters": {},
-        "predicted_condition_fields": []
-      },
-      {
-        "case_id": "PCR-R027",
-        "benefit_match": true,
-        "effective_from": "2023-06-01",
-        "effective_to": "2028-05-31",
-        "predicted_parameters": {},
-        "predicted_condition_fields": []
-      },
-      {
-        "case_id": "PCR-R028",
-        "benefit_match": true,
-        "effective_from": null,
-        "effective_to": null,
-        "predicted_parameters": {},
-        "predicted_condition_fields": []
-      },
-      {
-        "case_id": "PCR-R029",
-        "benefit_match": true,
-        "effective_from": null,
-        "effective_to": null,
-        "predicted_parameters": {},
-        "predicted_condition_fields": [
-          "assets_eligible"
-        ]
-      },
-      {
-        "case_id": "PCR-R030",
-        "benefit_match": true,
-        "effective_from": null,
-        "effective_to": null,
-        "predicted_parameters": {},
-        "predicted_condition_fields": [
-          "assets_eligible"
-        ]
-      },
-      {
-        "case_id": "PCR-R031",
-        "benefit_match": true,
-        "effective_from": null,
-        "effective_to": null,
-        "predicted_parameters": {},
-        "predicted_condition_fields": []
-      },
-      {
-        "case_id": "PCR-R032",
-        "benefit_match": true,
-        "effective_from": null,
-        "effective_to": null,
-        "predicted_parameters": {},
-        "predicted_condition_fields": []
-      },
-      {
-        "case_id": "PCR-R033",
-        "benefit_match": true,
-        "effective_from": null,
-        "effective_to": null,
-        "predicted_parameters": {},
-        "predicted_condition_fields": [
-          "per_capita_monthly_income"
-        ]
-      },
-      {
-        "case_id": "PCR-R034",
-        "benefit_match": true,
-        "effective_from": null,
-        "effective_to": null,
-        "predicted_parameters": {},
-        "predicted_condition_fields": [
-          "per_capita_monthly_income"
-        ]
-      },
-      {
-        "case_id": "PCR-R035",
-        "benefit_match": true,
-        "effective_from": null,
-        "effective_to": null,
-        "predicted_parameters": {},
-        "predicted_condition_fields": []
-      },
-      {
-        "case_id": "PCR-R036",
-        "benefit_match": true,
-        "effective_from": null,
-        "effective_to": null,
-        "predicted_parameters": {},
-        "predicted_condition_fields": []
-      },
-      {
-        "case_id": "PCR-R037",
-        "benefit_match": true,
-        "effective_from": null,
-        "effective_to": null,
-        "predicted_parameters": {},
-        "predicted_condition_fields": []
-      },
-      {
-        "case_id": "PCR-R038",
-        "benefit_match": true,
-        "effective_from": null,
-        "effective_to": null,
-        "predicted_parameters": {},
-        "predicted_condition_fields": []
-      },
-      {
-        "case_id": "PCR-R039",
-        "benefit_match": true,
-        "effective_from": null,
-        "effective_to": null,
-        "predicted_parameters": {},
-        "predicted_condition_fields": []
-      },
-      {
-        "case_id": "PCR-R040",
-        "benefit_match": true,
-        "effective_from": null,
-        "effective_to": null,
-        "predicted_parameters": {},
-        "predicted_condition_fields": []
-      },
-      {
-        "case_id": "PCR-R041",
-        "benefit_match": true,
-        "effective_from": null,
-        "effective_to": null,
-        "predicted_parameters": {},
-        "predicted_condition_fields": []
-      },
-      {
-        "case_id": "PCR-R042",
-        "benefit_match": true,
-        "effective_from": null,
-        "effective_to": null,
-        "predicted_parameters": {},
-        "predicted_condition_fields": []
-      },
-      {
-        "case_id": "PCR-R043",
-        "benefit_match": true,
-        "effective_from": null,
-        "effective_to": null,
-        "predicted_parameters": {},
-        "predicted_condition_fields": []
-      },
-      {
-        "case_id": "PCR-R044",
-        "benefit_match": true,
-        "effective_from": null,
-        "effective_to": null,
-        "predicted_parameters": {},
-        "predicted_condition_fields": []
-      },
-      {
-        "case_id": "PCR-R045",
-        "benefit_match": true,
-        "effective_from": null,
-        "effective_to": null,
-        "predicted_parameters": {},
-        "predicted_condition_fields": []
-      },
-      {
-        "case_id": "PCR-R046",
-        "benefit_match": true,
-        "effective_from": null,
-        "effective_to": null,
-        "predicted_parameters": {},
-        "predicted_condition_fields": []
-      },
-      {
-        "case_id": "PCR-R047",
-        "benefit_match": true,
-        "effective_from": null,
-        "effective_to": null,
-        "predicted_parameters": {},
-        "predicted_condition_fields": []
-      },
-      {
-        "case_id": "PCR-R048",
-        "benefit_match": true,
-        "effective_from": null,
-        "effective_to": null,
-        "predicted_parameters": {},
-        "predicted_condition_fields": [
-          "member_scope_confirmed"
-        ]
-      },
-      {
-        "case_id": "PCR-R049",
-        "benefit_match": false,
-        "effective_from": null,
-        "effective_to": null,
-        "predicted_parameters": {},
-        "predicted_condition_fields": [
-          "assets_eligible",
-          "member_scope_confirmed"
-        ]
-      },
-      {
-        "case_id": "PCR-R050",
-        "benefit_match": true,
-        "effective_from": null,
-        "effective_to": null,
-        "predicted_parameters": {},
-        "predicted_condition_fields": []
-      }
-    ]
+  "report_schema": "policy2rule-three-track/3.0",
+  "generated_at": "2026-10-16T07:59:02.722132+00:00",
+  "app_version": "1.3.0",
+  "dataset": "data/evaluation/policy_compiler_real_benchmark.jsonl",
+  "dataset_sha256": "65773d242ab179d8796809c8a4e1942a97f17691e9f47559cb19a01d57ac0ddc",
+  "evaluated_split": "frozen_final_test",
+  "case_count": 120,
+  "dataset_origin": "official verbatim clauses with project-authored labels",
+  "policy_file_isolation": {
+    "development_source_ids": [
+      "CN-001",
+      "GD-002",
+      "GD-004-A",
+      "GZ-001",
+      "GZ-002",
+      "GZ-003",
+      "GZ-004",
+      "GZ-005",
+      "GZ-008",
+      "GZ-009"
+    ],
+    "frozen_final_source_ids": [
+      "CN-002",
+      "CN-003",
+      "CN-004",
+      "GD-005"
+    ],
+    "overlap": [],
+    "passed": true
   },
-  "metadata_assisted_compilation": {
-    "track": "metadata_assisted_compilation",
-    "case_count": 50,
-    "providers": {
-      "local-policy-compiler/1.0": 50
-    },
-    "benefit_accuracy": 1.0,
-    "benefit_evaluable_cases": 50,
-    "benefit_context_dependent_cases": 0,
-    "effective_from_accuracy": 1.0,
-    "effective_from_evaluable_cases": 50,
-    "effective_to_accuracy": 1.0,
-    "effective_to_evaluable_cases": 50,
-    "missing_effective_from_guard_accuracy": 1.0,
-    "missing_effective_from_cases": 3,
-    "parameter_pair": {
-      "precision": 1.0,
-      "recall": 1.0,
-      "f1": 1.0
-    },
-    "condition_field": {
-      "precision": 0.9355,
-      "recall": 0.9062,
-      "f1": 0.9206
-    },
-    "source_quote_grounding_rate": 1.0,
-    "details": [
-      {
-        "case_id": "PCR-R001",
-        "benefit_match": true,
-        "effective_from": null,
-        "effective_to": null,
-        "predicted_parameters": {},
-        "predicted_condition_fields": []
-      },
-      {
-        "case_id": "PCR-R002",
-        "benefit_match": true,
-        "effective_from": null,
-        "effective_to": null,
-        "predicted_parameters": {},
-        "predicted_condition_fields": []
-      },
-      {
-        "case_id": "PCR-R003",
-        "benefit_match": true,
-        "effective_from": null,
-        "effective_to": null,
-        "predicted_parameters": {},
-        "predicted_condition_fields": []
-      },
-      {
-        "case_id": "PCR-R004",
-        "benefit_match": true,
-        "effective_from": "2026-07-01",
-        "effective_to": null,
-        "predicted_parameters": {},
-        "predicted_condition_fields": [
-          "assets_eligible",
-          "per_capita_monthly_income"
-        ]
-      },
-      {
-        "case_id": "PCR-R005",
-        "benefit_match": true,
-        "effective_from": "2026-07-01",
-        "effective_to": null,
-        "predicted_parameters": {},
-        "predicted_condition_fields": [
-          "assets_eligible"
-        ]
-      },
-      {
-        "case_id": "PCR-R006",
-        "benefit_match": true,
-        "effective_from": "2026-07-01",
-        "effective_to": null,
-        "predicted_parameters": {},
-        "predicted_condition_fields": [
-          "assets_eligible",
-          "per_capita_annual_income",
-          "rigid_expenses_12m"
-        ]
-      },
-      {
-        "case_id": "PCR-R007",
-        "benefit_match": true,
-        "effective_from": "2026-07-01",
-        "effective_to": null,
-        "predicted_parameters": {},
-        "predicted_condition_fields": []
-      },
-      {
-        "case_id": "PCR-R008",
-        "benefit_match": true,
-        "effective_from": "2026-08-01",
-        "effective_to": "2027-07-31",
-        "predicted_parameters": {},
-        "predicted_condition_fields": []
-      },
-      {
-        "case_id": "PCR-R009",
-        "benefit_match": true,
-        "effective_from": "2026-08-01",
-        "effective_to": "2027-07-31",
-        "predicted_parameters": {},
-        "predicted_condition_fields": []
-      },
-      {
-        "case_id": "PCR-R010",
-        "benefit_match": true,
-        "effective_from": "2026-08-01",
-        "effective_to": "2027-07-31",
-        "predicted_parameters": {},
-        "predicted_condition_fields": []
-      },
-      {
-        "case_id": "PCR-R011",
-        "benefit_match": true,
-        "effective_from": "2026-08-01",
-        "effective_to": "2027-07-31",
-        "predicted_parameters": {},
-        "predicted_condition_fields": [
-          "assets_eligible"
-        ]
-      },
-      {
-        "case_id": "PCR-R012",
-        "benefit_match": true,
-        "effective_from": "2026-08-01",
-        "effective_to": "2027-07-31",
-        "predicted_parameters": {},
-        "predicted_condition_fields": [
-          "assets_eligible"
-        ]
-      },
-      {
-        "case_id": "PCR-R013",
-        "benefit_match": true,
-        "effective_from": "2026-01-01",
-        "effective_to": null,
-        "predicted_parameters": {
-          "income_standard_monthly_per_capita": "1327.00",
-          "edge_standard_monthly_per_capita": "1990.50",
-          "income_multiplier": 1.5
-        },
-        "predicted_condition_fields": [
-          "per_capita_monthly_income"
-        ]
-      },
-      {
-        "case_id": "PCR-R014",
-        "benefit_match": true,
-        "effective_from": "2026-01-01",
-        "effective_to": null,
-        "predicted_parameters": {
-          "edge_standard_monthly_per_capita": "1990.50",
-          "income_multiplier": 1.5
-        },
-        "predicted_condition_fields": [
-          "per_capita_monthly_income"
-        ]
-      },
-      {
-        "case_id": "PCR-R015",
-        "benefit_match": true,
-        "effective_from": "2022-08-12",
-        "effective_to": "2027-08-11",
-        "predicted_parameters": {},
-        "predicted_condition_fields": []
-      },
-      {
-        "case_id": "PCR-R016",
-        "benefit_match": true,
-        "effective_from": "2022-08-12",
-        "effective_to": "2027-08-11",
-        "predicted_parameters": {},
-        "predicted_condition_fields": []
-      },
-      {
-        "case_id": "PCR-R017",
-        "benefit_match": true,
-        "effective_from": "2022-03-01",
-        "effective_to": null,
-        "predicted_parameters": {
-          "income_multiplier": 1.5
-        },
-        "predicted_condition_fields": [
-          "is_local_hukou",
-          "member_scope_confirmed",
-          "per_capita_monthly_income"
-        ]
-      },
-      {
-        "case_id": "PCR-R018",
-        "benefit_match": true,
-        "effective_from": "2022-03-01",
-        "effective_to": null,
-        "predicted_parameters": {
-          "income_multiplier": 1.5
-        },
-        "predicted_condition_fields": [
-          "per_capita_monthly_income"
-        ]
-      },
-      {
-        "case_id": "PCR-R019",
-        "benefit_match": true,
-        "effective_from": "2022-03-01",
-        "effective_to": null,
-        "predicted_parameters": {
-          "rigid_expense_income_ratio": 0.6
-        },
-        "predicted_condition_fields": [
-          "is_local_hukou",
-          "member_scope_confirmed",
-          "per_capita_annual_income",
-          "rigid_expenses_12m"
-        ]
-      },
-      {
-        "case_id": "PCR-R020",
-        "benefit_match": true,
-        "effective_from": "2022-03-01",
-        "effective_to": null,
-        "predicted_parameters": {},
-        "predicted_condition_fields": [
-          "per_capita_annual_income"
-        ]
-      },
-      {
-        "case_id": "PCR-R021",
-        "benefit_match": true,
-        "effective_from": "2022-03-01",
-        "effective_to": null,
-        "predicted_parameters": {
-          "rigid_expense_income_ratio": 0.6
-        },
-        "predicted_condition_fields": [
-          "member_scope_confirmed",
-          "rigid_expenses_12m"
-        ]
-      },
-      {
-        "case_id": "PCR-R022",
-        "benefit_match": true,
-        "effective_from": "2021-12-06",
-        "effective_to": "2029-12-06",
-        "predicted_parameters": {
-          "urgent_event_days": 31
-        },
-        "predicted_condition_fields": [
-          "urgent_event",
-          "urgent_event_date"
-        ]
-      },
-      {
-        "case_id": "PCR-R023",
-        "benefit_match": true,
-        "effective_from": "2021-12-06",
-        "effective_to": "2029-12-06",
-        "predicted_parameters": {},
-        "predicted_condition_fields": [
-          "residence_proof"
-        ]
-      },
-      {
-        "case_id": "PCR-R024",
-        "benefit_match": true,
-        "effective_from": "2026-01-01",
-        "effective_to": "2026-12-31",
-        "predicted_parameters": {},
-        "predicted_condition_fields": []
-      },
-      {
-        "case_id": "PCR-R025",
-        "benefit_match": true,
-        "effective_from": "2026-01-01",
-        "effective_to": "2026-12-31",
-        "predicted_parameters": {},
-        "predicted_condition_fields": []
-      },
-      {
-        "case_id": "PCR-R026",
-        "benefit_match": true,
-        "effective_from": "2026-01-01",
-        "effective_to": "2026-12-31",
-        "predicted_parameters": {},
-        "predicted_condition_fields": []
-      },
-      {
-        "case_id": "PCR-R027",
-        "benefit_match": true,
-        "effective_from": "2023-06-01",
-        "effective_to": "2026-07-31",
-        "predicted_parameters": {},
-        "predicted_condition_fields": []
-      },
-      {
-        "case_id": "PCR-R028",
-        "benefit_match": true,
-        "effective_from": "2023-06-01",
-        "effective_to": "2026-07-31",
-        "predicted_parameters": {},
-        "predicted_condition_fields": []
-      },
-      {
-        "case_id": "PCR-R029",
-        "benefit_match": true,
-        "effective_from": "2023-06-01",
-        "effective_to": "2026-07-31",
-        "predicted_parameters": {},
-        "predicted_condition_fields": [
-          "assets_eligible"
-        ]
-      },
-      {
-        "case_id": "PCR-R030",
-        "benefit_match": true,
-        "effective_from": "2023-06-01",
-        "effective_to": "2026-07-31",
-        "predicted_parameters": {},
-        "predicted_condition_fields": [
-          "assets_eligible"
-        ]
-      },
-      {
-        "case_id": "PCR-R031",
-        "benefit_match": true,
-        "effective_from": "2026-01-01",
-        "effective_to": "2030-12-31",
-        "predicted_parameters": {},
-        "predicted_condition_fields": []
-      },
-      {
-        "case_id": "PCR-R032",
-        "benefit_match": true,
-        "effective_from": "2026-01-01",
-        "effective_to": "2030-12-31",
-        "predicted_parameters": {},
-        "predicted_condition_fields": []
-      },
-      {
-        "case_id": "PCR-R033",
-        "benefit_match": true,
-        "effective_from": "2026-01-01",
-        "effective_to": "2030-12-31",
-        "predicted_parameters": {},
-        "predicted_condition_fields": [
-          "per_capita_monthly_income"
-        ]
-      },
-      {
-        "case_id": "PCR-R034",
-        "benefit_match": true,
-        "effective_from": "2026-01-01",
-        "effective_to": "2030-12-31",
-        "predicted_parameters": {},
-        "predicted_condition_fields": [
-          "per_capita_monthly_income"
-        ]
-      },
-      {
-        "case_id": "PCR-R035",
-        "benefit_match": true,
-        "effective_from": "2026-01-01",
-        "effective_to": "2030-12-31",
-        "predicted_parameters": {},
-        "predicted_condition_fields": []
-      },
-      {
-        "case_id": "PCR-R036",
-        "benefit_match": true,
-        "effective_from": "2026-01-01",
-        "effective_to": "2030-12-31",
-        "predicted_parameters": {},
-        "predicted_condition_fields": []
-      },
-      {
-        "case_id": "PCR-R037",
-        "benefit_match": true,
-        "effective_from": "2026-01-01",
-        "effective_to": "2030-12-31",
-        "predicted_parameters": {},
-        "predicted_condition_fields": []
-      },
-      {
-        "case_id": "PCR-R038",
-        "benefit_match": true,
-        "effective_from": "2026-01-01",
-        "effective_to": "2030-12-31",
-        "predicted_parameters": {},
-        "predicted_condition_fields": []
-      },
-      {
-        "case_id": "PCR-R039",
-        "benefit_match": true,
-        "effective_from": "2026-01-01",
-        "effective_to": "2030-12-31",
-        "predicted_parameters": {},
-        "predicted_condition_fields": []
-      },
-      {
-        "case_id": "PCR-R040",
-        "benefit_match": true,
-        "effective_from": "2026-01-01",
-        "effective_to": "2030-12-31",
-        "predicted_parameters": {},
-        "predicted_condition_fields": []
-      },
-      {
-        "case_id": "PCR-R041",
-        "benefit_match": true,
-        "effective_from": "2026-01-01",
-        "effective_to": "2030-12-31",
-        "predicted_parameters": {},
-        "predicted_condition_fields": []
-      },
-      {
-        "case_id": "PCR-R042",
-        "benefit_match": true,
-        "effective_from": "2026-01-01",
-        "effective_to": "2030-12-31",
-        "predicted_parameters": {},
-        "predicted_condition_fields": []
-      },
-      {
-        "case_id": "PCR-R043",
-        "benefit_match": true,
-        "effective_from": "2026-01-01",
-        "effective_to": "2030-12-31",
-        "predicted_parameters": {},
-        "predicted_condition_fields": []
-      },
-      {
-        "case_id": "PCR-R044",
-        "benefit_match": true,
-        "effective_from": "2026-01-01",
-        "effective_to": "2030-12-31",
-        "predicted_parameters": {},
-        "predicted_condition_fields": []
-      },
-      {
-        "case_id": "PCR-R045",
-        "benefit_match": true,
-        "effective_from": "2026-01-01",
-        "effective_to": "2030-12-31",
-        "predicted_parameters": {},
-        "predicted_condition_fields": []
-      },
-      {
-        "case_id": "PCR-R046",
-        "benefit_match": true,
-        "effective_from": "2026-01-01",
-        "effective_to": "2030-12-31",
-        "predicted_parameters": {},
-        "predicted_condition_fields": []
-      },
-      {
-        "case_id": "PCR-R047",
-        "benefit_match": true,
-        "effective_from": "2026-01-01",
-        "effective_to": "2030-12-31",
-        "predicted_parameters": {},
-        "predicted_condition_fields": []
-      },
-      {
-        "case_id": "PCR-R048",
-        "benefit_match": true,
-        "effective_from": "2026-01-01",
-        "effective_to": "2030-12-31",
-        "predicted_parameters": {},
-        "predicted_condition_fields": [
-          "member_scope_confirmed"
-        ]
-      },
-      {
-        "case_id": "PCR-R049",
-        "benefit_match": true,
-        "effective_from": "2022-03-01",
-        "effective_to": null,
-        "predicted_parameters": {},
-        "predicted_condition_fields": [
-          "assets_eligible",
-          "member_scope_confirmed"
-        ]
-      },
-      {
-        "case_id": "PCR-R050",
-        "benefit_match": true,
-        "effective_from": "2022-03-01",
-        "effective_to": null,
-        "predicted_parameters": {},
-        "predicted_condition_fields": []
-      }
-    ]
+  "ai_runtime": {
+    "mode": "hybrid",
+    "configured": true,
+    "reachable": true,
+    "chat_model": "qwen3:4b-instruct",
+    "embedding_model": "qwen3-embedding:0.6b",
+    "active_provider": "ollama/qwen3:4b-instruct",
+    "reason": null,
+    "model_present": true,
+    "embedding_model_present": true,
+    "model_digest": "0edcdef34593eac1aa2be9c7d06c432dcf81945adca5eca2f27662c18f168ba0",
+    "model_size_bytes": 2497293803,
+    "model_details": {
+      "parent_model": "",
+      "format": "gguf",
+      "family": "qwen3",
+      "families": [
+        "qwen3"
+      ],
+      "parameter_size": "4.0B",
+      "quantization_level": "Q4_K_M",
+      "context_length": 262144,
+      "embedding_length": 2560
+    }
   },
-  "unknown_rejection": {
-    "dataset_origin": "project-authored synthetic out-of-domain negatives",
-    "case_count": 10,
-    "passed": 10,
-    "accuracy": 1.0,
-    "details": [
-      {
-        "case_id": "NEG-001",
-        "passed": true,
-        "predicted_benefit_id": "unknown"
+  "tracks": {
+    "deterministic": {
+      "strategy": "deterministic",
+      "metadata_assistance_used": false,
+      "case_count": 120,
+      "providers": {
+        "local-policy-compiler/1.0": 120
       },
-      {
-        "case_id": "NEG-002",
-        "passed": true,
-        "predicted_benefit_id": "unknown"
+      "benefit_accuracy": 1.0,
+      "benefit_accuracy_ci95": {
+        "method": "wilson",
+        "confidence": 0.95,
+        "lower": 0.93,
+        "upper": 1.0
       },
-      {
-        "case_id": "NEG-003",
-        "passed": true,
-        "predicted_benefit_id": "unknown"
+      "benefit_evaluable_cases": 51,
+      "benefit_context_dependent_cases": 69,
+      "effective_from_accuracy": 0.5,
+      "effective_from_accuracy_ci95": {
+        "method": "wilson",
+        "confidence": 0.95,
+        "lower": 0.0945,
+        "upper": 0.9055
       },
-      {
-        "case_id": "NEG-004",
-        "passed": true,
-        "predicted_benefit_id": "unknown"
+      "effective_from_evaluable_cases": 2,
+      "effective_to_accuracy": null,
+      "effective_to_accuracy_ci95": {
+        "method": "wilson",
+        "confidence": 0.95,
+        "lower": null,
+        "upper": null
       },
-      {
-        "case_id": "NEG-005",
-        "passed": true,
-        "predicted_benefit_id": "unknown"
+      "effective_to_evaluable_cases": 0,
+      "parameter_pair": {
+        "true_positive": 2,
+        "predicted": 2,
+        "gold": 2,
+        "precision": 1.0,
+        "precision_ci95": {
+          "method": "wilson",
+          "confidence": 0.95,
+          "lower": 0.3424,
+          "upper": 1.0
+        },
+        "recall": 1.0,
+        "recall_ci95": {
+          "method": "wilson",
+          "confidence": 0.95,
+          "lower": 0.3424,
+          "upper": 1.0
+        },
+        "f1": 1.0
       },
-      {
-        "case_id": "NEG-006",
-        "passed": true,
-        "predicted_benefit_id": "unknown"
+      "condition_field": {
+        "true_positive": 32,
+        "predicted": 39,
+        "gold": 55,
+        "precision": 0.8205,
+        "precision_ci95": {
+          "method": "wilson",
+          "confidence": 0.95,
+          "lower": 0.6733,
+          "upper": 0.9102
+        },
+        "recall": 0.5818,
+        "recall_ci95": {
+          "method": "wilson",
+          "confidence": 0.95,
+          "lower": 0.4503,
+          "upper": 0.7026
+        },
+        "f1": 0.6809
       },
-      {
-        "case_id": "NEG-007",
-        "passed": true,
-        "predicted_benefit_id": "unknown"
+      "source_quote_grounding": {
+        "successes": 41,
+        "total": 41,
+        "estimate": 1.0,
+        "ci95": {
+          "method": "wilson",
+          "confidence": 0.95,
+          "lower": 0.9143,
+          "upper": 1.0
+        }
       },
-      {
-        "case_id": "NEG-008",
-        "passed": true,
-        "predicted_benefit_id": "unknown"
+      "end_to_end_latency_ms": {
+        "samples": 120,
+        "p50_ms": 0.104,
+        "p95_ms": 0.187,
+        "max_ms": 3.377,
+        "mean_ms": 0.142
       },
-      {
-        "case_id": "NEG-009",
-        "passed": true,
-        "predicted_benefit_id": "unknown"
+      "model_latency_ms": {
+        "samples": 0,
+        "p50_ms": null,
+        "p95_ms": null,
+        "max_ms": null,
+        "mean_ms": null
       },
-      {
-        "case_id": "NEG-010",
-        "passed": true,
-        "predicted_benefit_id": "unknown"
-      }
-    ]
+      "unknown_rejection": {
+        "cases": 30,
+        "accuracy": 1.0,
+        "accuracy_ci95": {
+          "method": "wilson",
+          "confidence": 0.95,
+          "lower": 0.8865,
+          "upper": 1.0
+        },
+        "latency_ms": {
+          "samples": 30,
+          "p50_ms": 0.085,
+          "p95_ms": 0.107,
+          "max_ms": 0.128,
+          "mean_ms": 0.089
+        },
+        "error_table": []
+      },
+      "by_source": {
+        "CN-002": {
+          "cases": 30,
+          "benefit_accuracy": {
+            "successes": 15,
+            "total": 15,
+            "estimate": 1.0,
+            "ci95": {
+              "method": "wilson",
+              "confidence": 0.95,
+              "lower": 0.7961,
+              "upper": 1.0
+            }
+          }
+        },
+        "CN-003": {
+          "cases": 30,
+          "benefit_accuracy": {
+            "successes": 4,
+            "total": 4,
+            "estimate": 1.0,
+            "ci95": {
+              "method": "wilson",
+              "confidence": 0.95,
+              "lower": 0.5101,
+              "upper": 1.0
+            }
+          }
+        },
+        "CN-004": {
+          "cases": 30,
+          "benefit_accuracy": {
+            "successes": 28,
+            "total": 28,
+            "estimate": 1.0,
+            "ci95": {
+              "method": "wilson",
+              "confidence": 0.95,
+              "lower": 0.8794,
+              "upper": 1.0
+            }
+          }
+        },
+        "GD-005": {
+          "cases": 30,
+          "benefit_accuracy": {
+            "successes": 4,
+            "total": 4,
+            "estimate": 1.0,
+            "ci95": {
+              "method": "wilson",
+              "confidence": 0.95,
+              "lower": 0.5101,
+              "upper": 1.0
+            }
+          }
+        }
+      },
+      "error_table": [
+        {
+          "case_id": "PCR-F001",
+          "source_id": "CN-002",
+          "locator": "PDF第1页",
+          "wrong_dimensions": [
+            "condition_fields"
+          ],
+          "expected_benefit_id": "B004",
+          "predicted_benefit_id": "B004",
+          "expected_parameters": {},
+          "predicted_parameters": {},
+          "expected_condition_fields": [
+            "rigid_expenses_12m"
+          ],
+          "predicted_condition_fields": []
+        },
+        {
+          "case_id": "PCR-F002",
+          "source_id": "CN-002",
+          "locator": "PDF第1页",
+          "wrong_dimensions": [
+            "effective_from",
+            "condition_fields"
+          ],
+          "expected_benefit_id": "B004",
+          "predicted_benefit_id": "B004",
+          "expected_parameters": {},
+          "predicted_parameters": {},
+          "expected_condition_fields": [
+            "rigid_expenses_12m"
+          ],
+          "predicted_condition_fields": []
+        },
+        {
+          "case_id": "PCR-F003",
+          "source_id": "CN-002",
+          "locator": "PDF第1页",
+          "wrong_dimensions": [
+            "condition_fields"
+          ],
+          "expected_benefit_id": "B004",
+          "predicted_benefit_id": "B004",
+          "expected_parameters": {},
+          "predicted_parameters": {},
+          "expected_condition_fields": [
+            "rigid_expenses_12m"
+          ],
+          "predicted_condition_fields": []
+        },
+        {
+          "case_id": "PCR-F004",
+          "source_id": "CN-002",
+          "locator": "PDF第2页",
+          "wrong_dimensions": [
+            "condition_fields"
+          ],
+          "expected_benefit_id": "B004",
+          "predicted_benefit_id": "B004",
+          "expected_parameters": {},
+          "predicted_parameters": {},
+          "expected_condition_fields": [
+            "rigid_expenses_12m"
+          ],
+          "predicted_condition_fields": []
+        },
+        {
+          "case_id": "PCR-F006",
+          "source_id": "CN-002",
+          "locator": "PDF第2页",
+          "wrong_dimensions": [
+            "condition_fields"
+          ],
+          "expected_benefit_id": "B004",
+          "predicted_benefit_id": "B004",
+          "expected_parameters": {},
+          "predicted_parameters": {},
+          "expected_condition_fields": [
+            "rigid_expenses_12m"
+          ],
+          "predicted_condition_fields": []
+        },
+        {
+          "case_id": "PCR-F007",
+          "source_id": "CN-002",
+          "locator": "PDF第2页",
+          "wrong_dimensions": [
+            "condition_fields"
+          ],
+          "expected_benefit_id": "B004",
+          "predicted_benefit_id": "B004",
+          "expected_parameters": {},
+          "predicted_parameters": {},
+          "expected_condition_fields": [
+            "member_scope_confirmed",
+            "per_capita_monthly_income"
+          ],
+          "predicted_condition_fields": [
+            "member_scope_confirmed",
+            "per_capita_annual_income"
+          ]
+        },
+        {
+          "case_id": "PCR-F008",
+          "source_id": "CN-002",
+          "locator": "PDF第2页",
+          "wrong_dimensions": [
+            "condition_fields"
+          ],
+          "expected_benefit_id": "B004",
+          "predicted_benefit_id": "B004",
+          "expected_parameters": {},
+          "predicted_parameters": {},
+          "expected_condition_fields": [
+            "rigid_expenses_12m"
+          ],
+          "predicted_condition_fields": []
+        },
+        {
+          "case_id": "PCR-F010",
+          "source_id": "CN-002",
+          "locator": "PDF第2页",
+          "wrong_dimensions": [
+            "condition_fields"
+          ],
+          "expected_benefit_id": "B004",
+          "predicted_benefit_id": "B004",
+          "expected_parameters": {},
+          "predicted_parameters": {},
+          "expected_condition_fields": [
+            "assets_eligible",
+            "rigid_expenses_12m"
+          ],
+          "predicted_condition_fields": [
+            "assets_eligible"
+          ]
+        },
+        {
+          "case_id": "PCR-F012",
+          "source_id": "CN-002",
+          "locator": "PDF第2页",
+          "wrong_dimensions": [
+            "condition_fields"
+          ],
+          "expected_benefit_id": "B004",
+          "predicted_benefit_id": "B004",
+          "expected_parameters": {},
+          "predicted_parameters": {},
+          "expected_condition_fields": [
+            "rigid_expenses_12m"
+          ],
+          "predicted_condition_fields": []
+        },
+        {
+          "case_id": "PCR-F019",
+          "source_id": "CN-002",
+          "locator": "PDF第3页",
+          "wrong_dimensions": [
+            "condition_fields"
+          ],
+          "expected_benefit_id": "B004",
+          "predicted_benefit_id": "B004",
+          "expected_parameters": {},
+          "predicted_parameters": {},
+          "expected_condition_fields": [
+            "member_scope_confirmed",
+            "rigid_expenses_12m"
+          ],
+          "predicted_condition_fields": [
+            "member_scope_confirmed"
+          ]
+        },
+        {
+          "case_id": "PCR-F021",
+          "source_id": "CN-002",
+          "locator": "PDF第4页",
+          "wrong_dimensions": [
+            "condition_fields"
+          ],
+          "expected_benefit_id": "B004",
+          "predicted_benefit_id": "B004",
+          "expected_parameters": {},
+          "predicted_parameters": {},
+          "expected_condition_fields": [
+            "rigid_expenses_12m"
+          ],
+          "predicted_condition_fields": []
+        },
+        {
+          "case_id": "PCR-F025",
+          "source_id": "CN-002",
+          "locator": "PDF第4页",
+          "wrong_dimensions": [
+            "condition_fields"
+          ],
+          "expected_benefit_id": "B004",
+          "predicted_benefit_id": "B004",
+          "expected_parameters": {},
+          "predicted_parameters": {},
+          "expected_condition_fields": [],
+          "predicted_condition_fields": [
+            "basic_life_interrupted"
+          ]
+        },
+        {
+          "case_id": "PCR-F026",
+          "source_id": "CN-002",
+          "locator": "PDF第4页",
+          "wrong_dimensions": [
+            "condition_fields"
+          ],
+          "expected_benefit_id": "B004",
+          "predicted_benefit_id": "B004",
+          "expected_parameters": {},
+          "predicted_parameters": {},
+          "expected_condition_fields": [
+            "rigid_expenses_12m"
+          ],
+          "predicted_condition_fields": []
+        },
+        {
+          "case_id": "PCR-F027",
+          "source_id": "CN-002",
+          "locator": "PDF第4页",
+          "wrong_dimensions": [
+            "condition_fields"
+          ],
+          "expected_benefit_id": "B004",
+          "predicted_benefit_id": "B004",
+          "expected_parameters": {},
+          "predicted_parameters": {},
+          "expected_condition_fields": [
+            "rigid_expenses_12m"
+          ],
+          "predicted_condition_fields": []
+        },
+        {
+          "case_id": "PCR-F028",
+          "source_id": "CN-002",
+          "locator": "PDF第4页",
+          "wrong_dimensions": [
+            "condition_fields"
+          ],
+          "expected_benefit_id": "B004",
+          "predicted_benefit_id": "B004",
+          "expected_parameters": {},
+          "predicted_parameters": {},
+          "expected_condition_fields": [
+            "rigid_expenses_12m"
+          ],
+          "predicted_condition_fields": []
+        },
+        {
+          "case_id": "PCR-F030",
+          "source_id": "CN-002",
+          "locator": "PDF第4页",
+          "wrong_dimensions": [
+            "condition_fields"
+          ],
+          "expected_benefit_id": "B004",
+          "predicted_benefit_id": "B004",
+          "expected_parameters": {},
+          "predicted_parameters": {},
+          "expected_condition_fields": [
+            "rigid_expenses_12m"
+          ],
+          "predicted_condition_fields": []
+        },
+        {
+          "case_id": "PCR-F036",
+          "source_id": "CN-003",
+          "locator": "PDF第2页",
+          "wrong_dimensions": [
+            "condition_fields"
+          ],
+          "expected_benefit_id": "B002",
+          "predicted_benefit_id": "B002",
+          "expected_parameters": {},
+          "predicted_parameters": {},
+          "expected_condition_fields": [
+            "is_local_hukou",
+            "member_scope_confirmed"
+          ],
+          "predicted_condition_fields": [
+            "member_scope_confirmed"
+          ]
+        },
+        {
+          "case_id": "PCR-F038",
+          "source_id": "CN-003",
+          "locator": "PDF第2页",
+          "wrong_dimensions": [
+            "condition_fields"
+          ],
+          "expected_benefit_id": "B002",
+          "predicted_benefit_id": "B002",
+          "expected_parameters": {},
+          "predicted_parameters": {},
+          "expected_condition_fields": [
+            "is_local_hukou",
+            "member_scope_confirmed"
+          ],
+          "predicted_condition_fields": [
+            "member_scope_confirmed"
+          ]
+        },
+        {
+          "case_id": "PCR-F039",
+          "source_id": "CN-003",
+          "locator": "PDF第2页",
+          "wrong_dimensions": [
+            "condition_fields"
+          ],
+          "expected_benefit_id": "B002",
+          "predicted_benefit_id": "B002",
+          "expected_parameters": {},
+          "predicted_parameters": {},
+          "expected_condition_fields": [
+            "is_local_hukou",
+            "member_scope_confirmed"
+          ],
+          "predicted_condition_fields": [
+            "member_scope_confirmed"
+          ]
+        },
+        {
+          "case_id": "PCR-F041",
+          "source_id": "CN-003",
+          "locator": "PDF第2页",
+          "wrong_dimensions": [
+            "condition_fields"
+          ],
+          "expected_benefit_id": "B002",
+          "predicted_benefit_id": "B002",
+          "expected_parameters": {},
+          "predicted_parameters": {},
+          "expected_condition_fields": [
+            "is_local_hukou",
+            "member_scope_confirmed"
+          ],
+          "predicted_condition_fields": [
+            "member_scope_confirmed"
+          ]
+        },
+        {
+          "case_id": "PCR-F042",
+          "source_id": "CN-003",
+          "locator": "PDF第3页",
+          "wrong_dimensions": [
+            "condition_fields"
+          ],
+          "expected_benefit_id": "B002",
+          "predicted_benefit_id": "B002",
+          "expected_parameters": {},
+          "predicted_parameters": {},
+          "expected_condition_fields": [],
+          "predicted_condition_fields": [
+            "residence_proof"
+          ]
+        },
+        {
+          "case_id": "PCR-F064",
+          "source_id": "CN-004",
+          "locator": "PDF第1页",
+          "wrong_dimensions": [
+            "condition_fields"
+          ],
+          "expected_benefit_id": "B001",
+          "predicted_benefit_id": "B001",
+          "expected_parameters": {},
+          "predicted_parameters": {},
+          "expected_condition_fields": [],
+          "predicted_condition_fields": [
+            "basic_life_interrupted"
+          ]
+        },
+        {
+          "case_id": "PCR-F065",
+          "source_id": "CN-004",
+          "locator": "PDF第1页",
+          "wrong_dimensions": [
+            "condition_fields"
+          ],
+          "expected_benefit_id": "B004",
+          "predicted_benefit_id": "B004",
+          "expected_parameters": {},
+          "predicted_parameters": {},
+          "expected_condition_fields": [
+            "rigid_expenses_12m"
+          ],
+          "predicted_condition_fields": [
+            "basic_life_interrupted"
+          ]
+        },
+        {
+          "case_id": "PCR-F070",
+          "source_id": "CN-004",
+          "locator": "PDF第2页",
+          "wrong_dimensions": [
+            "condition_fields"
+          ],
+          "expected_benefit_id": "B004",
+          "predicted_benefit_id": "B004",
+          "expected_parameters": {},
+          "predicted_parameters": {},
+          "expected_condition_fields": [
+            "assets_eligible",
+            "per_capita_monthly_income",
+            "rigid_expenses_12m"
+          ],
+          "predicted_condition_fields": [
+            "assets_eligible",
+            "per_capita_annual_income",
+            "rigid_expenses_12m"
+          ]
+        },
+        {
+          "case_id": "PCR-F087",
+          "source_id": "CN-004",
+          "locator": "PDF第2页",
+          "wrong_dimensions": [
+            "condition_fields"
+          ],
+          "expected_benefit_id": "B001",
+          "predicted_benefit_id": "B001",
+          "expected_parameters": {},
+          "predicted_parameters": {},
+          "expected_condition_fields": [],
+          "predicted_condition_fields": [
+            "basic_life_interrupted"
+          ]
+        },
+        {
+          "case_id": "PCR-F094",
+          "source_id": "GD-005",
+          "locator": "PDF第2页",
+          "wrong_dimensions": [
+            "condition_fields"
+          ],
+          "expected_benefit_id": "B002",
+          "predicted_benefit_id": "B002",
+          "expected_parameters": {},
+          "predicted_parameters": {},
+          "expected_condition_fields": [
+            "assets_eligible",
+            "is_local_hukou",
+            "member_scope_confirmed"
+          ],
+          "predicted_condition_fields": [
+            "assets_eligible",
+            "member_scope_confirmed"
+          ]
+        },
+        {
+          "case_id": "PCR-F105",
+          "source_id": "GD-005",
+          "locator": "PDF第2页",
+          "wrong_dimensions": [
+            "condition_fields"
+          ],
+          "expected_benefit_id": "B002",
+          "predicted_benefit_id": "B002",
+          "expected_parameters": {},
+          "predicted_parameters": {},
+          "expected_condition_fields": [
+            "assets_eligible",
+            "is_local_hukou"
+          ],
+          "predicted_condition_fields": [
+            "assets_eligible"
+          ]
+        }
+      ]
+    },
+    "llm_only": {
+      "strategy": "llm_only",
+      "metadata_assistance_used": false,
+      "case_count": 120,
+      "providers": {
+        "ollama/qwen3:4b-instruct+allowlist-validation/llm-only": 120
+      },
+      "benefit_accuracy": 0.0,
+      "benefit_accuracy_ci95": {
+        "method": "wilson",
+        "confidence": 0.95,
+        "lower": 0.0,
+        "upper": 0.07
+      },
+      "benefit_evaluable_cases": 51,
+      "benefit_context_dependent_cases": 69,
+      "effective_from_accuracy": 0.5,
+      "effective_from_accuracy_ci95": {
+        "method": "wilson",
+        "confidence": 0.95,
+        "lower": 0.0945,
+        "upper": 0.9055
+      },
+      "effective_from_evaluable_cases": 2,
+      "effective_to_accuracy": null,
+      "effective_to_accuracy_ci95": {
+        "method": "wilson",
+        "confidence": 0.95,
+        "lower": null,
+        "upper": null
+      },
+      "effective_to_evaluable_cases": 0,
+      "parameter_pair": {
+        "true_positive": 0,
+        "predicted": 0,
+        "gold": 2,
+        "precision": null,
+        "precision_ci95": {
+          "method": "wilson",
+          "confidence": 0.95,
+          "lower": null,
+          "upper": null
+        },
+        "recall": 0.0,
+        "recall_ci95": {
+          "method": "wilson",
+          "confidence": 0.95,
+          "lower": 0.0,
+          "upper": 0.6576
+        },
+        "f1": null
+      },
+      "condition_field": {
+        "true_positive": 9,
+        "predicted": 11,
+        "gold": 55,
+        "precision": 0.8182,
+        "precision_ci95": {
+          "method": "wilson",
+          "confidence": 0.95,
+          "lower": 0.523,
+          "upper": 0.9486
+        },
+        "recall": 0.1636,
+        "recall_ci95": {
+          "method": "wilson",
+          "confidence": 0.95,
+          "lower": 0.0886,
+          "upper": 0.2826
+        },
+        "f1": 0.2727
+      },
+      "source_quote_grounding": {
+        "successes": 11,
+        "total": 11,
+        "estimate": 1.0,
+        "ci95": {
+          "method": "wilson",
+          "confidence": 0.95,
+          "lower": 0.7412,
+          "upper": 1.0
+        }
+      },
+      "end_to_end_latency_ms": {
+        "samples": 120,
+        "p50_ms": 666.693,
+        "p95_ms": 1093.689,
+        "max_ms": 3727.384,
+        "mean_ms": 777.281
+      },
+      "model_latency_ms": {
+        "samples": 120,
+        "p50_ms": 666.0,
+        "p95_ms": 1093.0,
+        "max_ms": 3727.0,
+        "mean_ms": 776.675
+      },
+      "unknown_rejection": {
+        "cases": 30,
+        "accuracy": 1.0,
+        "accuracy_ci95": {
+          "method": "wilson",
+          "confidence": 0.95,
+          "lower": 0.8865,
+          "upper": 1.0
+        },
+        "latency_ms": {
+          "samples": 30,
+          "p50_ms": 661.193,
+          "p95_ms": 678.897,
+          "max_ms": 686.97,
+          "mean_ms": 661.575
+        },
+        "error_table": []
+      },
+      "by_source": {
+        "CN-002": {
+          "cases": 30,
+          "benefit_accuracy": {
+            "successes": 0,
+            "total": 15,
+            "estimate": 0.0,
+            "ci95": {
+              "method": "wilson",
+              "confidence": 0.95,
+              "lower": 0.0,
+              "upper": 0.2039
+            }
+          }
+        },
+        "CN-003": {
+          "cases": 30,
+          "benefit_accuracy": {
+            "successes": 0,
+            "total": 4,
+            "estimate": 0.0,
+            "ci95": {
+              "method": "wilson",
+              "confidence": 0.95,
+              "lower": 0.0,
+              "upper": 0.4899
+            }
+          }
+        },
+        "CN-004": {
+          "cases": 30,
+          "benefit_accuracy": {
+            "successes": 0,
+            "total": 28,
+            "estimate": 0.0,
+            "ci95": {
+              "method": "wilson",
+              "confidence": 0.95,
+              "lower": 0.0,
+              "upper": 0.1206
+            }
+          }
+        },
+        "GD-005": {
+          "cases": 30,
+          "benefit_accuracy": {
+            "successes": 0,
+            "total": 4,
+            "estimate": 0.0,
+            "ci95": {
+              "method": "wilson",
+              "confidence": 0.95,
+              "lower": 0.0,
+              "upper": 0.4899
+            }
+          }
+        }
+      },
+      "error_table": [
+        {
+          "case_id": "PCR-F001",
+          "source_id": "CN-002",
+          "locator": "PDF第1页",
+          "wrong_dimensions": [
+            "benefit_id",
+            "condition_fields"
+          ],
+          "expected_benefit_id": "B004",
+          "predicted_benefit_id": "unknown",
+          "expected_parameters": {},
+          "predicted_parameters": {},
+          "expected_condition_fields": [
+            "rigid_expenses_12m"
+          ],
+          "predicted_condition_fields": []
+        },
+        {
+          "case_id": "PCR-F002",
+          "source_id": "CN-002",
+          "locator": "PDF第1页",
+          "wrong_dimensions": [
+            "benefit_id",
+            "effective_from",
+            "condition_fields"
+          ],
+          "expected_benefit_id": "B004",
+          "predicted_benefit_id": "unknown",
+          "expected_parameters": {},
+          "predicted_parameters": {},
+          "expected_condition_fields": [
+            "rigid_expenses_12m"
+          ],
+          "predicted_condition_fields": []
+        },
+        {
+          "case_id": "PCR-F003",
+          "source_id": "CN-002",
+          "locator": "PDF第1页",
+          "wrong_dimensions": [
+            "benefit_id",
+            "condition_fields"
+          ],
+          "expected_benefit_id": "B004",
+          "predicted_benefit_id": "unknown",
+          "expected_parameters": {},
+          "predicted_parameters": {},
+          "expected_condition_fields": [
+            "rigid_expenses_12m"
+          ],
+          "predicted_condition_fields": []
+        },
+        {
+          "case_id": "PCR-F004",
+          "source_id": "CN-002",
+          "locator": "PDF第2页",
+          "wrong_dimensions": [
+            "benefit_id",
+            "condition_fields"
+          ],
+          "expected_benefit_id": "B004",
+          "predicted_benefit_id": "unknown",
+          "expected_parameters": {},
+          "predicted_parameters": {},
+          "expected_condition_fields": [
+            "rigid_expenses_12m"
+          ],
+          "predicted_condition_fields": []
+        },
+        {
+          "case_id": "PCR-F006",
+          "source_id": "CN-002",
+          "locator": "PDF第2页",
+          "wrong_dimensions": [
+            "benefit_id",
+            "condition_fields"
+          ],
+          "expected_benefit_id": "B004",
+          "predicted_benefit_id": "unknown",
+          "expected_parameters": {},
+          "predicted_parameters": {},
+          "expected_condition_fields": [
+            "rigid_expenses_12m"
+          ],
+          "predicted_condition_fields": []
+        },
+        {
+          "case_id": "PCR-F007",
+          "source_id": "CN-002",
+          "locator": "PDF第2页",
+          "wrong_dimensions": [
+            "condition_fields"
+          ],
+          "expected_benefit_id": "B004",
+          "predicted_benefit_id": "unknown",
+          "expected_parameters": {},
+          "predicted_parameters": {},
+          "expected_condition_fields": [
+            "member_scope_confirmed",
+            "per_capita_monthly_income"
+          ],
+          "predicted_condition_fields": [
+            "per_capita_monthly_income"
+          ]
+        },
+        {
+          "case_id": "PCR-F008",
+          "source_id": "CN-002",
+          "locator": "PDF第2页",
+          "wrong_dimensions": [
+            "benefit_id"
+          ],
+          "expected_benefit_id": "B004",
+          "predicted_benefit_id": "unknown",
+          "expected_parameters": {},
+          "predicted_parameters": {},
+          "expected_condition_fields": [
+            "rigid_expenses_12m"
+          ],
+          "predicted_condition_fields": [
+            "rigid_expenses_12m"
+          ]
+        },
+        {
+          "case_id": "PCR-F010",
+          "source_id": "CN-002",
+          "locator": "PDF第2页",
+          "wrong_dimensions": [
+            "benefit_id",
+            "condition_fields"
+          ],
+          "expected_benefit_id": "B004",
+          "predicted_benefit_id": "unknown",
+          "expected_parameters": {},
+          "predicted_parameters": {},
+          "expected_condition_fields": [
+            "assets_eligible",
+            "rigid_expenses_12m"
+          ],
+          "predicted_condition_fields": []
+        },
+        {
+          "case_id": "PCR-F011",
+          "source_id": "CN-002",
+          "locator": "PDF第2页",
+          "wrong_dimensions": [
+            "benefit_id",
+            "condition_fields"
+          ],
+          "expected_benefit_id": "B003",
+          "predicted_benefit_id": "unknown",
+          "expected_parameters": {},
+          "predicted_parameters": {},
+          "expected_condition_fields": [
+            "assets_eligible"
+          ],
+          "predicted_condition_fields": []
+        },
+        {
+          "case_id": "PCR-F012",
+          "source_id": "CN-002",
+          "locator": "PDF第2页",
+          "wrong_dimensions": [
+            "benefit_id",
+            "condition_fields"
+          ],
+          "expected_benefit_id": "B004",
+          "predicted_benefit_id": "unknown",
+          "expected_parameters": {},
+          "predicted_parameters": {},
+          "expected_condition_fields": [
+            "rigid_expenses_12m"
+          ],
+          "predicted_condition_fields": []
+        },
+        {
+          "case_id": "PCR-F013",
+          "source_id": "CN-002",
+          "locator": "PDF第2页",
+          "wrong_dimensions": [
+            "condition_fields"
+          ],
+          "expected_benefit_id": "B004",
+          "predicted_benefit_id": "unknown",
+          "expected_parameters": {},
+          "predicted_parameters": {},
+          "expected_condition_fields": [
+            "member_scope_confirmed"
+          ],
+          "predicted_condition_fields": []
+        },
+        {
+          "case_id": "PCR-F014",
+          "source_id": "CN-002",
+          "locator": "PDF第3页",
+          "wrong_dimensions": [
+            "condition_fields"
+          ],
+          "expected_benefit_id": "B004",
+          "predicted_benefit_id": "unknown",
+          "expected_parameters": {},
+          "predicted_parameters": {},
+          "expected_condition_fields": [
+            "member_scope_confirmed"
+          ],
+          "predicted_condition_fields": []
+        },
+        {
+          "case_id": "PCR-F015",
+          "source_id": "CN-002",
+          "locator": "PDF第3页",
+          "wrong_dimensions": [
+            "condition_fields"
+          ],
+          "expected_benefit_id": "B004",
+          "predicted_benefit_id": "unknown",
+          "expected_parameters": {},
+          "predicted_parameters": {},
+          "expected_condition_fields": [
+            "member_scope_confirmed"
+          ],
+          "predicted_condition_fields": []
+        },
+        {
+          "case_id": "PCR-F016",
+          "source_id": "CN-002",
+          "locator": "PDF第3页",
+          "wrong_dimensions": [
+            "condition_fields"
+          ],
+          "expected_benefit_id": "B004",
+          "predicted_benefit_id": "unknown",
+          "expected_parameters": {},
+          "predicted_parameters": {},
+          "expected_condition_fields": [
+            "member_scope_confirmed"
+          ],
+          "predicted_condition_fields": []
+        },
+        {
+          "case_id": "PCR-F019",
+          "source_id": "CN-002",
+          "locator": "PDF第3页",
+          "wrong_dimensions": [
+            "benefit_id",
+            "condition_fields"
+          ],
+          "expected_benefit_id": "B004",
+          "predicted_benefit_id": "unknown",
+          "expected_parameters": {},
+          "predicted_parameters": {},
+          "expected_condition_fields": [
+            "member_scope_confirmed",
+            "rigid_expenses_12m"
+          ],
+          "predicted_condition_fields": []
+        },
+        {
+          "case_id": "PCR-F021",
+          "source_id": "CN-002",
+          "locator": "PDF第4页",
+          "wrong_dimensions": [
+            "benefit_id",
+            "condition_fields"
+          ],
+          "expected_benefit_id": "B004",
+          "predicted_benefit_id": "unknown",
+          "expected_parameters": {},
+          "predicted_parameters": {},
+          "expected_condition_fields": [
+            "rigid_expenses_12m"
+          ],
+          "predicted_condition_fields": []
+        },
+        {
+          "case_id": "PCR-F026",
+          "source_id": "CN-002",
+          "locator": "PDF第4页",
+          "wrong_dimensions": [
+            "benefit_id",
+            "condition_fields"
+          ],
+          "expected_benefit_id": "B004",
+          "predicted_benefit_id": "unknown",
+          "expected_parameters": {},
+          "predicted_parameters": {},
+          "expected_condition_fields": [
+            "rigid_expenses_12m"
+          ],
+          "predicted_condition_fields": []
+        },
+        {
+          "case_id": "PCR-F027",
+          "source_id": "CN-002",
+          "locator": "PDF第4页",
+          "wrong_dimensions": [
+            "benefit_id",
+            "condition_fields"
+          ],
+          "expected_benefit_id": "B004",
+          "predicted_benefit_id": "unknown",
+          "expected_parameters": {},
+          "predicted_parameters": {},
+          "expected_condition_fields": [
+            "rigid_expenses_12m"
+          ],
+          "predicted_condition_fields": []
+        },
+        {
+          "case_id": "PCR-F028",
+          "source_id": "CN-002",
+          "locator": "PDF第4页",
+          "wrong_dimensions": [
+            "benefit_id",
+            "condition_fields"
+          ],
+          "expected_benefit_id": "B004",
+          "predicted_benefit_id": "unknown",
+          "expected_parameters": {},
+          "predicted_parameters": {},
+          "expected_condition_fields": [
+            "rigid_expenses_12m"
+          ],
+          "predicted_condition_fields": []
+        },
+        {
+          "case_id": "PCR-F030",
+          "source_id": "CN-002",
+          "locator": "PDF第4页",
+          "wrong_dimensions": [
+            "benefit_id",
+            "condition_fields"
+          ],
+          "expected_benefit_id": "B004",
+          "predicted_benefit_id": "unknown",
+          "expected_parameters": {},
+          "predicted_parameters": {},
+          "expected_condition_fields": [
+            "rigid_expenses_12m"
+          ],
+          "predicted_condition_fields": []
+        },
+        {
+          "case_id": "PCR-F031",
+          "source_id": "CN-003",
+          "locator": "PDF第1页",
+          "wrong_dimensions": [
+            "benefit_id"
+          ],
+          "expected_benefit_id": "B002",
+          "predicted_benefit_id": "unknown",
+          "expected_parameters": {},
+          "predicted_parameters": {},
+          "expected_condition_fields": [],
+          "predicted_condition_fields": []
+        },
+        {
+          "case_id": "PCR-F036",
+          "source_id": "CN-003",
+          "locator": "PDF第2页",
+          "wrong_dimensions": [
+            "condition_fields"
+          ],
+          "expected_benefit_id": "B002",
+          "predicted_benefit_id": "unknown",
+          "expected_parameters": {},
+          "predicted_parameters": {},
+          "expected_condition_fields": [
+            "is_local_hukou",
+            "member_scope_confirmed"
+          ],
+          "predicted_condition_fields": []
+        },
+        {
+          "case_id": "PCR-F038",
+          "source_id": "CN-003",
+          "locator": "PDF第2页",
+          "wrong_dimensions": [
+            "condition_fields"
+          ],
+          "expected_benefit_id": "B002",
+          "predicted_benefit_id": "unknown",
+          "expected_parameters": {},
+          "predicted_parameters": {},
+          "expected_condition_fields": [
+            "is_local_hukou",
+            "member_scope_confirmed"
+          ],
+          "predicted_condition_fields": []
+        },
+        {
+          "case_id": "PCR-F039",
+          "source_id": "CN-003",
+          "locator": "PDF第2页",
+          "wrong_dimensions": [
+            "condition_fields"
+          ],
+          "expected_benefit_id": "B002",
+          "predicted_benefit_id": "unknown",
+          "expected_parameters": {},
+          "predicted_parameters": {},
+          "expected_condition_fields": [
+            "is_local_hukou",
+            "member_scope_confirmed"
+          ],
+          "predicted_condition_fields": []
+        },
+        {
+          "case_id": "PCR-F041",
+          "source_id": "CN-003",
+          "locator": "PDF第2页",
+          "wrong_dimensions": [
+            "condition_fields"
+          ],
+          "expected_benefit_id": "B002",
+          "predicted_benefit_id": "unknown",
+          "expected_parameters": {},
+          "predicted_parameters": {},
+          "expected_condition_fields": [
+            "is_local_hukou",
+            "member_scope_confirmed"
+          ],
+          "predicted_condition_fields": []
+        },
+        {
+          "case_id": "PCR-F043",
+          "source_id": "CN-003",
+          "locator": "PDF第3页",
+          "wrong_dimensions": [
+            "condition_fields"
+          ],
+          "expected_benefit_id": "B002",
+          "predicted_benefit_id": "unknown",
+          "expected_parameters": {},
+          "predicted_parameters": {},
+          "expected_condition_fields": [
+            "member_scope_confirmed"
+          ],
+          "predicted_condition_fields": []
+        },
+        {
+          "case_id": "PCR-F044",
+          "source_id": "CN-003",
+          "locator": "PDF第3页",
+          "wrong_dimensions": [
+            "condition_fields"
+          ],
+          "expected_benefit_id": "B002",
+          "predicted_benefit_id": "unknown",
+          "expected_parameters": {},
+          "predicted_parameters": {},
+          "expected_condition_fields": [
+            "member_scope_confirmed"
+          ],
+          "predicted_condition_fields": []
+        },
+        {
+          "case_id": "PCR-F045",
+          "source_id": "CN-003",
+          "locator": "PDF第3页",
+          "wrong_dimensions": [
+            "condition_fields"
+          ],
+          "expected_benefit_id": "B002",
+          "predicted_benefit_id": "unknown",
+          "expected_parameters": {},
+          "predicted_parameters": {},
+          "expected_condition_fields": [
+            "member_scope_confirmed"
+          ],
+          "predicted_condition_fields": []
+        },
+        {
+          "case_id": "PCR-F048",
+          "source_id": "CN-003",
+          "locator": "PDF第3页",
+          "wrong_dimensions": [
+            "condition_fields"
+          ],
+          "expected_benefit_id": "B002",
+          "predicted_benefit_id": "unknown",
+          "expected_parameters": {},
+          "predicted_parameters": {},
+          "expected_condition_fields": [
+            "member_scope_confirmed"
+          ],
+          "predicted_condition_fields": []
+        },
+        {
+          "case_id": "PCR-F051",
+          "source_id": "CN-003",
+          "locator": "PDF第4页",
+          "wrong_dimensions": [
+            "benefit_id"
+          ],
+          "expected_benefit_id": "B003",
+          "predicted_benefit_id": "unknown",
+          "expected_parameters": {},
+          "predicted_parameters": {},
+          "expected_condition_fields": [],
+          "predicted_condition_fields": []
+        },
+        {
+          "case_id": "PCR-F052",
+          "source_id": "CN-003",
+          "locator": "PDF第4页",
+          "wrong_dimensions": [
+            "benefit_id"
+          ],
+          "expected_benefit_id": "B003",
+          "predicted_benefit_id": "unknown",
+          "expected_parameters": {},
+          "predicted_parameters": {},
+          "expected_condition_fields": [],
+          "predicted_condition_fields": []
+        },
+        {
+          "case_id": "PCR-F055",
+          "source_id": "CN-003",
+          "locator": "PDF第4页",
+          "wrong_dimensions": [
+            "benefit_id",
+            "parameters",
+            "condition_fields"
+          ],
+          "expected_benefit_id": "B003",
+          "predicted_benefit_id": "unknown",
+          "expected_parameters": {
+            "income_multiplier": "1.5"
+          },
+          "predicted_parameters": {},
+          "expected_condition_fields": [
+            "assets_eligible",
+            "per_capita_monthly_income"
+          ],
+          "predicted_condition_fields": [
+            "per_capita_monthly_income"
+          ]
+        },
+        {
+          "case_id": "PCR-F056",
+          "source_id": "CN-003",
+          "locator": "PDF第4页",
+          "wrong_dimensions": [
+            "condition_fields"
+          ],
+          "expected_benefit_id": "B002",
+          "predicted_benefit_id": "unknown",
+          "expected_parameters": {},
+          "predicted_parameters": {},
+          "expected_condition_fields": [
+            "member_scope_confirmed"
+          ],
+          "predicted_condition_fields": []
+        },
+        {
+          "case_id": "PCR-F061",
+          "source_id": "CN-004",
+          "locator": "PDF第1页",
+          "wrong_dimensions": [
+            "benefit_id"
+          ],
+          "expected_benefit_id": "B001",
+          "predicted_benefit_id": "unknown",
+          "expected_parameters": {},
+          "predicted_parameters": {},
+          "expected_condition_fields": [],
+          "predicted_condition_fields": []
+        },
+        {
+          "case_id": "PCR-F062",
+          "source_id": "CN-004",
+          "locator": "PDF第1页",
+          "wrong_dimensions": [
+            "benefit_id"
+          ],
+          "expected_benefit_id": "B001",
+          "predicted_benefit_id": "unknown",
+          "expected_parameters": {},
+          "predicted_parameters": {},
+          "expected_condition_fields": [],
+          "predicted_condition_fields": []
+        },
+        {
+          "case_id": "PCR-F063",
+          "source_id": "CN-004",
+          "locator": "PDF第1页",
+          "wrong_dimensions": [
+            "benefit_id"
+          ],
+          "expected_benefit_id": "B001",
+          "predicted_benefit_id": "unknown",
+          "expected_parameters": {},
+          "predicted_parameters": {},
+          "expected_condition_fields": [],
+          "predicted_condition_fields": []
+        },
+        {
+          "case_id": "PCR-F064",
+          "source_id": "CN-004",
+          "locator": "PDF第1页",
+          "wrong_dimensions": [
+            "benefit_id"
+          ],
+          "expected_benefit_id": "B001",
+          "predicted_benefit_id": "unknown",
+          "expected_parameters": {},
+          "predicted_parameters": {},
+          "expected_condition_fields": [],
+          "predicted_condition_fields": []
+        },
+        {
+          "case_id": "PCR-F065",
+          "source_id": "CN-004",
+          "locator": "PDF第1页",
+          "wrong_dimensions": [
+            "benefit_id",
+            "condition_fields"
+          ],
+          "expected_benefit_id": "B004",
+          "predicted_benefit_id": "unknown",
+          "expected_parameters": {},
+          "predicted_parameters": {},
+          "expected_condition_fields": [
+            "rigid_expenses_12m"
+          ],
+          "predicted_condition_fields": []
+        },
+        {
+          "case_id": "PCR-F067",
+          "source_id": "CN-004",
+          "locator": "PDF第1页",
+          "wrong_dimensions": [
+            "benefit_id",
+            "parameters"
+          ],
+          "expected_benefit_id": "B003",
+          "predicted_benefit_id": "unknown",
+          "expected_parameters": {
+            "income_multiplier": "1.5"
+          },
+          "predicted_parameters": {},
+          "expected_condition_fields": [
+            "assets_eligible",
+            "per_capita_monthly_income"
+          ],
+          "predicted_condition_fields": [
+            "assets_eligible",
+            "per_capita_monthly_income"
+          ]
+        },
+        {
+          "case_id": "PCR-F068",
+          "source_id": "CN-004",
+          "locator": "PDF第1页",
+          "wrong_dimensions": [
+            "condition_fields"
+          ],
+          "expected_benefit_id": "B002",
+          "predicted_benefit_id": "unknown",
+          "expected_parameters": {},
+          "predicted_parameters": {},
+          "expected_condition_fields": [
+            "assets_eligible"
+          ],
+          "predicted_condition_fields": []
+        },
+        {
+          "case_id": "PCR-F069",
+          "source_id": "CN-004",
+          "locator": "PDF第2页",
+          "wrong_dimensions": [
+            "benefit_id"
+          ],
+          "expected_benefit_id": "B001",
+          "predicted_benefit_id": "unknown",
+          "expected_parameters": {},
+          "predicted_parameters": {},
+          "expected_condition_fields": [],
+          "predicted_condition_fields": []
+        },
+        {
+          "case_id": "PCR-F070",
+          "source_id": "CN-004",
+          "locator": "PDF第2页",
+          "wrong_dimensions": [
+            "benefit_id"
+          ],
+          "expected_benefit_id": "B004",
+          "predicted_benefit_id": "unknown",
+          "expected_parameters": {},
+          "predicted_parameters": {},
+          "expected_condition_fields": [
+            "assets_eligible",
+            "per_capita_monthly_income",
+            "rigid_expenses_12m"
+          ],
+          "predicted_condition_fields": [
+            "assets_eligible",
+            "per_capita_monthly_income",
+            "rigid_expenses_12m"
+          ]
+        },
+        {
+          "case_id": "PCR-F071",
+          "source_id": "CN-004",
+          "locator": "PDF第2页",
+          "wrong_dimensions": [
+            "benefit_id"
+          ],
+          "expected_benefit_id": "B001",
+          "predicted_benefit_id": "unknown",
+          "expected_parameters": {},
+          "predicted_parameters": {},
+          "expected_condition_fields": [],
+          "predicted_condition_fields": []
+        },
+        {
+          "case_id": "PCR-F072",
+          "source_id": "CN-004",
+          "locator": "PDF第2页",
+          "wrong_dimensions": [
+            "benefit_id"
+          ],
+          "expected_benefit_id": "B001",
+          "predicted_benefit_id": "unknown",
+          "expected_parameters": {},
+          "predicted_parameters": {},
+          "expected_condition_fields": [],
+          "predicted_condition_fields": []
+        },
+        {
+          "case_id": "PCR-F073",
+          "source_id": "CN-004",
+          "locator": "PDF第2页",
+          "wrong_dimensions": [
+            "benefit_id"
+          ],
+          "expected_benefit_id": "B001",
+          "predicted_benefit_id": "unknown",
+          "expected_parameters": {},
+          "predicted_parameters": {},
+          "expected_condition_fields": [],
+          "predicted_condition_fields": []
+        },
+        {
+          "case_id": "PCR-F074",
+          "source_id": "CN-004",
+          "locator": "PDF第2页",
+          "wrong_dimensions": [
+            "benefit_id"
+          ],
+          "expected_benefit_id": "B001",
+          "predicted_benefit_id": "unknown",
+          "expected_parameters": {},
+          "predicted_parameters": {},
+          "expected_condition_fields": [],
+          "predicted_condition_fields": []
+        },
+        {
+          "case_id": "PCR-F075",
+          "source_id": "CN-004",
+          "locator": "PDF第2页",
+          "wrong_dimensions": [
+            "benefit_id"
+          ],
+          "expected_benefit_id": "B001",
+          "predicted_benefit_id": "unknown",
+          "expected_parameters": {},
+          "predicted_parameters": {},
+          "expected_condition_fields": [],
+          "predicted_condition_fields": []
+        },
+        {
+          "case_id": "PCR-F076",
+          "source_id": "CN-004",
+          "locator": "PDF第2页",
+          "wrong_dimensions": [
+            "benefit_id"
+          ],
+          "expected_benefit_id": "B001",
+          "predicted_benefit_id": "unknown",
+          "expected_parameters": {},
+          "predicted_parameters": {},
+          "expected_condition_fields": [],
+          "predicted_condition_fields": []
+        },
+        {
+          "case_id": "PCR-F077",
+          "source_id": "CN-004",
+          "locator": "PDF第2页",
+          "wrong_dimensions": [
+            "benefit_id"
+          ],
+          "expected_benefit_id": "B001",
+          "predicted_benefit_id": "unknown",
+          "expected_parameters": {},
+          "predicted_parameters": {},
+          "expected_condition_fields": [],
+          "predicted_condition_fields": []
+        },
+        {
+          "case_id": "PCR-F078",
+          "source_id": "CN-004",
+          "locator": "PDF第2页",
+          "wrong_dimensions": [
+            "benefit_id"
+          ],
+          "expected_benefit_id": "B001",
+          "predicted_benefit_id": "unknown",
+          "expected_parameters": {},
+          "predicted_parameters": {},
+          "expected_condition_fields": [],
+          "predicted_condition_fields": []
+        },
+        {
+          "case_id": "PCR-F079",
+          "source_id": "CN-004",
+          "locator": "PDF第2页",
+          "wrong_dimensions": [
+            "benefit_id"
+          ],
+          "expected_benefit_id": "B001",
+          "predicted_benefit_id": "unknown",
+          "expected_parameters": {},
+          "predicted_parameters": {},
+          "expected_condition_fields": [],
+          "predicted_condition_fields": []
+        },
+        {
+          "case_id": "PCR-F080",
+          "source_id": "CN-004",
+          "locator": "PDF第2页",
+          "wrong_dimensions": [
+            "benefit_id"
+          ],
+          "expected_benefit_id": "B001",
+          "predicted_benefit_id": "unknown",
+          "expected_parameters": {},
+          "predicted_parameters": {},
+          "expected_condition_fields": [],
+          "predicted_condition_fields": []
+        },
+        {
+          "case_id": "PCR-F081",
+          "source_id": "CN-004",
+          "locator": "PDF第2页",
+          "wrong_dimensions": [
+            "benefit_id"
+          ],
+          "expected_benefit_id": "B001",
+          "predicted_benefit_id": "unknown",
+          "expected_parameters": {},
+          "predicted_parameters": {},
+          "expected_condition_fields": [],
+          "predicted_condition_fields": []
+        },
+        {
+          "case_id": "PCR-F082",
+          "source_id": "CN-004",
+          "locator": "PDF第2页",
+          "wrong_dimensions": [
+            "benefit_id"
+          ],
+          "expected_benefit_id": "B001",
+          "predicted_benefit_id": "unknown",
+          "expected_parameters": {},
+          "predicted_parameters": {},
+          "expected_condition_fields": [],
+          "predicted_condition_fields": []
+        },
+        {
+          "case_id": "PCR-F083",
+          "source_id": "CN-004",
+          "locator": "PDF第2页",
+          "wrong_dimensions": [
+            "benefit_id"
+          ],
+          "expected_benefit_id": "B001",
+          "predicted_benefit_id": "unknown",
+          "expected_parameters": {},
+          "predicted_parameters": {},
+          "expected_condition_fields": [],
+          "predicted_condition_fields": []
+        },
+        {
+          "case_id": "PCR-F084",
+          "source_id": "CN-004",
+          "locator": "PDF第2页",
+          "wrong_dimensions": [
+            "benefit_id"
+          ],
+          "expected_benefit_id": "B001",
+          "predicted_benefit_id": "unknown",
+          "expected_parameters": {},
+          "predicted_parameters": {},
+          "expected_condition_fields": [],
+          "predicted_condition_fields": []
+        },
+        {
+          "case_id": "PCR-F085",
+          "source_id": "CN-004",
+          "locator": "PDF第2页",
+          "wrong_dimensions": [
+            "benefit_id"
+          ],
+          "expected_benefit_id": "B001",
+          "predicted_benefit_id": "unknown",
+          "expected_parameters": {},
+          "predicted_parameters": {},
+          "expected_condition_fields": [],
+          "predicted_condition_fields": []
+        },
+        {
+          "case_id": "PCR-F086",
+          "source_id": "CN-004",
+          "locator": "PDF第2页",
+          "wrong_dimensions": [
+            "benefit_id"
+          ],
+          "expected_benefit_id": "B001",
+          "predicted_benefit_id": "unknown",
+          "expected_parameters": {},
+          "predicted_parameters": {},
+          "expected_condition_fields": [],
+          "predicted_condition_fields": []
+        },
+        {
+          "case_id": "PCR-F087",
+          "source_id": "CN-004",
+          "locator": "PDF第2页",
+          "wrong_dimensions": [
+            "benefit_id"
+          ],
+          "expected_benefit_id": "B001",
+          "predicted_benefit_id": "unknown",
+          "expected_parameters": {},
+          "predicted_parameters": {},
+          "expected_condition_fields": [],
+          "predicted_condition_fields": []
+        },
+        {
+          "case_id": "PCR-F088",
+          "source_id": "CN-004",
+          "locator": "PDF第2页",
+          "wrong_dimensions": [
+            "benefit_id"
+          ],
+          "expected_benefit_id": "B001",
+          "predicted_benefit_id": "unknown",
+          "expected_parameters": {},
+          "predicted_parameters": {},
+          "expected_condition_fields": [],
+          "predicted_condition_fields": []
+        },
+        {
+          "case_id": "PCR-F089",
+          "source_id": "CN-004",
+          "locator": "PDF第2页",
+          "wrong_dimensions": [
+            "benefit_id"
+          ],
+          "expected_benefit_id": "B001",
+          "predicted_benefit_id": "unknown",
+          "expected_parameters": {},
+          "predicted_parameters": {},
+          "expected_condition_fields": [],
+          "predicted_condition_fields": []
+        },
+        {
+          "case_id": "PCR-F090",
+          "source_id": "CN-004",
+          "locator": "PDF第2页",
+          "wrong_dimensions": [
+            "benefit_id"
+          ],
+          "expected_benefit_id": "B001",
+          "predicted_benefit_id": "unknown",
+          "expected_parameters": {},
+          "predicted_parameters": {},
+          "expected_condition_fields": [],
+          "predicted_condition_fields": []
+        },
+        {
+          "case_id": "PCR-F094",
+          "source_id": "GD-005",
+          "locator": "PDF第2页",
+          "wrong_dimensions": [
+            "condition_fields"
+          ],
+          "expected_benefit_id": "B002",
+          "predicted_benefit_id": "unknown",
+          "expected_parameters": {},
+          "predicted_parameters": {},
+          "expected_condition_fields": [
+            "assets_eligible",
+            "is_local_hukou",
+            "member_scope_confirmed"
+          ],
+          "predicted_condition_fields": [
+            "assets_eligible",
+            "basic_life_interrupted",
+            "per_capita_monthly_income"
+          ]
+        },
+        {
+          "case_id": "PCR-F096",
+          "source_id": "GD-005",
+          "locator": "PDF第2页",
+          "wrong_dimensions": [
+            "benefit_id"
+          ],
+          "expected_benefit_id": "B002",
+          "predicted_benefit_id": "unknown",
+          "expected_parameters": {},
+          "predicted_parameters": {},
+          "expected_condition_fields": [],
+          "predicted_condition_fields": []
+        },
+        {
+          "case_id": "PCR-F097",
+          "source_id": "GD-005",
+          "locator": "PDF第2页",
+          "wrong_dimensions": [
+            "benefit_id"
+          ],
+          "expected_benefit_id": "B002",
+          "predicted_benefit_id": "unknown",
+          "expected_parameters": {},
+          "predicted_parameters": {},
+          "expected_condition_fields": [],
+          "predicted_condition_fields": []
+        },
+        {
+          "case_id": "PCR-F098",
+          "source_id": "GD-005",
+          "locator": "PDF第2页",
+          "wrong_dimensions": [
+            "benefit_id"
+          ],
+          "expected_benefit_id": "B002",
+          "predicted_benefit_id": "unknown",
+          "expected_parameters": {},
+          "predicted_parameters": {},
+          "expected_condition_fields": [],
+          "predicted_condition_fields": []
+        },
+        {
+          "case_id": "PCR-F099",
+          "source_id": "GD-005",
+          "locator": "PDF第2页",
+          "wrong_dimensions": [
+            "benefit_id"
+          ],
+          "expected_benefit_id": "B002",
+          "predicted_benefit_id": "unknown",
+          "expected_parameters": {},
+          "predicted_parameters": {},
+          "expected_condition_fields": [],
+          "predicted_condition_fields": []
+        },
+        {
+          "case_id": "PCR-F105",
+          "source_id": "GD-005",
+          "locator": "PDF第2页",
+          "wrong_dimensions": [
+            "condition_fields"
+          ],
+          "expected_benefit_id": "B002",
+          "predicted_benefit_id": "unknown",
+          "expected_parameters": {},
+          "predicted_parameters": {},
+          "expected_condition_fields": [
+            "assets_eligible",
+            "is_local_hukou"
+          ],
+          "predicted_condition_fields": []
+        },
+        {
+          "case_id": "PCR-F111",
+          "source_id": "GD-005",
+          "locator": "PDF第3页",
+          "wrong_dimensions": [
+            "condition_fields"
+          ],
+          "expected_benefit_id": "B002",
+          "predicted_benefit_id": "unknown",
+          "expected_parameters": {},
+          "predicted_parameters": {},
+          "expected_condition_fields": [
+            "member_scope_confirmed"
+          ],
+          "predicted_condition_fields": []
+        },
+        {
+          "case_id": "PCR-F114",
+          "source_id": "GD-005",
+          "locator": "PDF第3页",
+          "wrong_dimensions": [
+            "condition_fields"
+          ],
+          "expected_benefit_id": "B002",
+          "predicted_benefit_id": "unknown",
+          "expected_parameters": {},
+          "predicted_parameters": {},
+          "expected_condition_fields": [
+            "member_scope_confirmed"
+          ],
+          "predicted_condition_fields": []
+        },
+        {
+          "case_id": "PCR-F116",
+          "source_id": "GD-005",
+          "locator": "PDF第3页",
+          "wrong_dimensions": [
+            "condition_fields"
+          ],
+          "expected_benefit_id": "B002",
+          "predicted_benefit_id": "unknown",
+          "expected_parameters": {},
+          "predicted_parameters": {},
+          "expected_condition_fields": [
+            "member_scope_confirmed"
+          ],
+          "predicted_condition_fields": []
+        },
+        {
+          "case_id": "PCR-F119",
+          "source_id": "GD-005",
+          "locator": "PDF第4页",
+          "wrong_dimensions": [
+            "condition_fields"
+          ],
+          "expected_benefit_id": "B002",
+          "predicted_benefit_id": "unknown",
+          "expected_parameters": {},
+          "predicted_parameters": {},
+          "expected_condition_fields": [
+            "assets_eligible"
+          ],
+          "predicted_condition_fields": []
+        },
+        {
+          "case_id": "PCR-F120",
+          "source_id": "GD-005",
+          "locator": "PDF第4页",
+          "wrong_dimensions": [
+            "condition_fields"
+          ],
+          "expected_benefit_id": "B002",
+          "predicted_benefit_id": "unknown",
+          "expected_parameters": {},
+          "predicted_parameters": {},
+          "expected_condition_fields": [
+            "assets_eligible"
+          ],
+          "predicted_condition_fields": []
+        }
+      ]
+    },
+    "controlled_fusion": {
+      "strategy": "controlled_fusion",
+      "metadata_assistance_used": false,
+      "case_count": 120,
+      "providers": {
+        "local-policy-compiler/1.0+ollama/qwen3:4b-instruct+allowlist-fusion": 120
+      },
+      "benefit_accuracy": 1.0,
+      "benefit_accuracy_ci95": {
+        "method": "wilson",
+        "confidence": 0.95,
+        "lower": 0.93,
+        "upper": 1.0
+      },
+      "benefit_evaluable_cases": 51,
+      "benefit_context_dependent_cases": 69,
+      "effective_from_accuracy": 0.5,
+      "effective_from_accuracy_ci95": {
+        "method": "wilson",
+        "confidence": 0.95,
+        "lower": 0.0945,
+        "upper": 0.9055
+      },
+      "effective_from_evaluable_cases": 2,
+      "effective_to_accuracy": null,
+      "effective_to_accuracy_ci95": {
+        "method": "wilson",
+        "confidence": 0.95,
+        "lower": null,
+        "upper": null
+      },
+      "effective_to_evaluable_cases": 0,
+      "parameter_pair": {
+        "true_positive": 2,
+        "predicted": 2,
+        "gold": 2,
+        "precision": 1.0,
+        "precision_ci95": {
+          "method": "wilson",
+          "confidence": 0.95,
+          "lower": 0.3424,
+          "upper": 1.0
+        },
+        "recall": 1.0,
+        "recall_ci95": {
+          "method": "wilson",
+          "confidence": 0.95,
+          "lower": 0.3424,
+          "upper": 1.0
+        },
+        "f1": 1.0
+      },
+      "condition_field": {
+        "true_positive": 34,
+        "predicted": 43,
+        "gold": 55,
+        "precision": 0.7907,
+        "precision_ci95": {
+          "method": "wilson",
+          "confidence": 0.95,
+          "lower": 0.6479,
+          "upper": 0.8858
+        },
+        "recall": 0.6182,
+        "recall_ci95": {
+          "method": "wilson",
+          "confidence": 0.95,
+          "lower": 0.4861,
+          "upper": 0.7348
+        },
+        "f1": 0.6939
+      },
+      "source_quote_grounding": {
+        "successes": 52,
+        "total": 52,
+        "estimate": 1.0,
+        "ci95": {
+          "method": "wilson",
+          "confidence": 0.95,
+          "lower": 0.9312,
+          "upper": 1.0
+        }
+      },
+      "end_to_end_latency_ms": {
+        "samples": 120,
+        "p50_ms": 661.813,
+        "p95_ms": 925.183,
+        "max_ms": 3693.386,
+        "mean_ms": 746.305
+      },
+      "model_latency_ms": {
+        "samples": 120,
+        "p50_ms": 661.0,
+        "p95_ms": 924.0,
+        "max_ms": 3693.0,
+        "mean_ms": 745.658
+      },
+      "unknown_rejection": {
+        "cases": 30,
+        "accuracy": 1.0,
+        "accuracy_ci95": {
+          "method": "wilson",
+          "confidence": 0.95,
+          "lower": 0.8865,
+          "upper": 1.0
+        },
+        "latency_ms": {
+          "samples": 30,
+          "p50_ms": 655.681,
+          "p95_ms": 685.327,
+          "max_ms": 685.796,
+          "mean_ms": 656.341
+        },
+        "error_table": []
+      },
+      "by_source": {
+        "CN-002": {
+          "cases": 30,
+          "benefit_accuracy": {
+            "successes": 15,
+            "total": 15,
+            "estimate": 1.0,
+            "ci95": {
+              "method": "wilson",
+              "confidence": 0.95,
+              "lower": 0.7961,
+              "upper": 1.0
+            }
+          }
+        },
+        "CN-003": {
+          "cases": 30,
+          "benefit_accuracy": {
+            "successes": 4,
+            "total": 4,
+            "estimate": 1.0,
+            "ci95": {
+              "method": "wilson",
+              "confidence": 0.95,
+              "lower": 0.5101,
+              "upper": 1.0
+            }
+          }
+        },
+        "CN-004": {
+          "cases": 30,
+          "benefit_accuracy": {
+            "successes": 28,
+            "total": 28,
+            "estimate": 1.0,
+            "ci95": {
+              "method": "wilson",
+              "confidence": 0.95,
+              "lower": 0.8794,
+              "upper": 1.0
+            }
+          }
+        },
+        "GD-005": {
+          "cases": 30,
+          "benefit_accuracy": {
+            "successes": 4,
+            "total": 4,
+            "estimate": 1.0,
+            "ci95": {
+              "method": "wilson",
+              "confidence": 0.95,
+              "lower": 0.5101,
+              "upper": 1.0
+            }
+          }
+        }
+      },
+      "error_table": [
+        {
+          "case_id": "PCR-F001",
+          "source_id": "CN-002",
+          "locator": "PDF第1页",
+          "wrong_dimensions": [
+            "condition_fields"
+          ],
+          "expected_benefit_id": "B004",
+          "predicted_benefit_id": "B004",
+          "expected_parameters": {},
+          "predicted_parameters": {},
+          "expected_condition_fields": [
+            "rigid_expenses_12m"
+          ],
+          "predicted_condition_fields": []
+        },
+        {
+          "case_id": "PCR-F002",
+          "source_id": "CN-002",
+          "locator": "PDF第1页",
+          "wrong_dimensions": [
+            "effective_from",
+            "condition_fields"
+          ],
+          "expected_benefit_id": "B004",
+          "predicted_benefit_id": "B004",
+          "expected_parameters": {},
+          "predicted_parameters": {},
+          "expected_condition_fields": [
+            "rigid_expenses_12m"
+          ],
+          "predicted_condition_fields": []
+        },
+        {
+          "case_id": "PCR-F003",
+          "source_id": "CN-002",
+          "locator": "PDF第1页",
+          "wrong_dimensions": [
+            "condition_fields"
+          ],
+          "expected_benefit_id": "B004",
+          "predicted_benefit_id": "B004",
+          "expected_parameters": {},
+          "predicted_parameters": {},
+          "expected_condition_fields": [
+            "rigid_expenses_12m"
+          ],
+          "predicted_condition_fields": []
+        },
+        {
+          "case_id": "PCR-F004",
+          "source_id": "CN-002",
+          "locator": "PDF第2页",
+          "wrong_dimensions": [
+            "condition_fields"
+          ],
+          "expected_benefit_id": "B004",
+          "predicted_benefit_id": "B004",
+          "expected_parameters": {},
+          "predicted_parameters": {},
+          "expected_condition_fields": [
+            "rigid_expenses_12m"
+          ],
+          "predicted_condition_fields": []
+        },
+        {
+          "case_id": "PCR-F006",
+          "source_id": "CN-002",
+          "locator": "PDF第2页",
+          "wrong_dimensions": [
+            "condition_fields"
+          ],
+          "expected_benefit_id": "B004",
+          "predicted_benefit_id": "B004",
+          "expected_parameters": {},
+          "predicted_parameters": {},
+          "expected_condition_fields": [
+            "rigid_expenses_12m"
+          ],
+          "predicted_condition_fields": []
+        },
+        {
+          "case_id": "PCR-F007",
+          "source_id": "CN-002",
+          "locator": "PDF第2页",
+          "wrong_dimensions": [
+            "condition_fields"
+          ],
+          "expected_benefit_id": "B004",
+          "predicted_benefit_id": "B004",
+          "expected_parameters": {},
+          "predicted_parameters": {},
+          "expected_condition_fields": [
+            "member_scope_confirmed",
+            "per_capita_monthly_income"
+          ],
+          "predicted_condition_fields": [
+            "member_scope_confirmed",
+            "per_capita_annual_income",
+            "per_capita_monthly_income"
+          ]
+        },
+        {
+          "case_id": "PCR-F008",
+          "source_id": "CN-002",
+          "locator": "PDF第2页",
+          "wrong_dimensions": [
+            "condition_fields"
+          ],
+          "expected_benefit_id": "B004",
+          "predicted_benefit_id": "B004",
+          "expected_parameters": {},
+          "predicted_parameters": {},
+          "expected_condition_fields": [
+            "rigid_expenses_12m"
+          ],
+          "predicted_condition_fields": []
+        },
+        {
+          "case_id": "PCR-F010",
+          "source_id": "CN-002",
+          "locator": "PDF第2页",
+          "wrong_dimensions": [
+            "condition_fields"
+          ],
+          "expected_benefit_id": "B004",
+          "predicted_benefit_id": "B004",
+          "expected_parameters": {},
+          "predicted_parameters": {},
+          "expected_condition_fields": [
+            "assets_eligible",
+            "rigid_expenses_12m"
+          ],
+          "predicted_condition_fields": [
+            "assets_eligible"
+          ]
+        },
+        {
+          "case_id": "PCR-F012",
+          "source_id": "CN-002",
+          "locator": "PDF第2页",
+          "wrong_dimensions": [
+            "condition_fields"
+          ],
+          "expected_benefit_id": "B004",
+          "predicted_benefit_id": "B004",
+          "expected_parameters": {},
+          "predicted_parameters": {},
+          "expected_condition_fields": [
+            "rigid_expenses_12m"
+          ],
+          "predicted_condition_fields": []
+        },
+        {
+          "case_id": "PCR-F019",
+          "source_id": "CN-002",
+          "locator": "PDF第3页",
+          "wrong_dimensions": [
+            "condition_fields"
+          ],
+          "expected_benefit_id": "B004",
+          "predicted_benefit_id": "B004",
+          "expected_parameters": {},
+          "predicted_parameters": {},
+          "expected_condition_fields": [
+            "member_scope_confirmed",
+            "rigid_expenses_12m"
+          ],
+          "predicted_condition_fields": [
+            "member_scope_confirmed"
+          ]
+        },
+        {
+          "case_id": "PCR-F021",
+          "source_id": "CN-002",
+          "locator": "PDF第4页",
+          "wrong_dimensions": [
+            "condition_fields"
+          ],
+          "expected_benefit_id": "B004",
+          "predicted_benefit_id": "B004",
+          "expected_parameters": {},
+          "predicted_parameters": {},
+          "expected_condition_fields": [
+            "rigid_expenses_12m"
+          ],
+          "predicted_condition_fields": []
+        },
+        {
+          "case_id": "PCR-F025",
+          "source_id": "CN-002",
+          "locator": "PDF第4页",
+          "wrong_dimensions": [
+            "condition_fields"
+          ],
+          "expected_benefit_id": "B004",
+          "predicted_benefit_id": "B004",
+          "expected_parameters": {},
+          "predicted_parameters": {},
+          "expected_condition_fields": [],
+          "predicted_condition_fields": [
+            "basic_life_interrupted"
+          ]
+        },
+        {
+          "case_id": "PCR-F026",
+          "source_id": "CN-002",
+          "locator": "PDF第4页",
+          "wrong_dimensions": [
+            "condition_fields"
+          ],
+          "expected_benefit_id": "B004",
+          "predicted_benefit_id": "B004",
+          "expected_parameters": {},
+          "predicted_parameters": {},
+          "expected_condition_fields": [
+            "rigid_expenses_12m"
+          ],
+          "predicted_condition_fields": []
+        },
+        {
+          "case_id": "PCR-F027",
+          "source_id": "CN-002",
+          "locator": "PDF第4页",
+          "wrong_dimensions": [
+            "condition_fields"
+          ],
+          "expected_benefit_id": "B004",
+          "predicted_benefit_id": "B004",
+          "expected_parameters": {},
+          "predicted_parameters": {},
+          "expected_condition_fields": [
+            "rigid_expenses_12m"
+          ],
+          "predicted_condition_fields": []
+        },
+        {
+          "case_id": "PCR-F028",
+          "source_id": "CN-002",
+          "locator": "PDF第4页",
+          "wrong_dimensions": [
+            "condition_fields"
+          ],
+          "expected_benefit_id": "B004",
+          "predicted_benefit_id": "B004",
+          "expected_parameters": {},
+          "predicted_parameters": {},
+          "expected_condition_fields": [
+            "rigid_expenses_12m"
+          ],
+          "predicted_condition_fields": []
+        },
+        {
+          "case_id": "PCR-F030",
+          "source_id": "CN-002",
+          "locator": "PDF第4页",
+          "wrong_dimensions": [
+            "condition_fields"
+          ],
+          "expected_benefit_id": "B004",
+          "predicted_benefit_id": "B004",
+          "expected_parameters": {},
+          "predicted_parameters": {},
+          "expected_condition_fields": [
+            "rigid_expenses_12m"
+          ],
+          "predicted_condition_fields": []
+        },
+        {
+          "case_id": "PCR-F036",
+          "source_id": "CN-003",
+          "locator": "PDF第2页",
+          "wrong_dimensions": [
+            "condition_fields"
+          ],
+          "expected_benefit_id": "B002",
+          "predicted_benefit_id": "B002",
+          "expected_parameters": {},
+          "predicted_parameters": {},
+          "expected_condition_fields": [
+            "is_local_hukou",
+            "member_scope_confirmed"
+          ],
+          "predicted_condition_fields": [
+            "member_scope_confirmed"
+          ]
+        },
+        {
+          "case_id": "PCR-F038",
+          "source_id": "CN-003",
+          "locator": "PDF第2页",
+          "wrong_dimensions": [
+            "condition_fields"
+          ],
+          "expected_benefit_id": "B002",
+          "predicted_benefit_id": "B002",
+          "expected_parameters": {},
+          "predicted_parameters": {},
+          "expected_condition_fields": [
+            "is_local_hukou",
+            "member_scope_confirmed"
+          ],
+          "predicted_condition_fields": [
+            "member_scope_confirmed"
+          ]
+        },
+        {
+          "case_id": "PCR-F039",
+          "source_id": "CN-003",
+          "locator": "PDF第2页",
+          "wrong_dimensions": [
+            "condition_fields"
+          ],
+          "expected_benefit_id": "B002",
+          "predicted_benefit_id": "B002",
+          "expected_parameters": {},
+          "predicted_parameters": {},
+          "expected_condition_fields": [
+            "is_local_hukou",
+            "member_scope_confirmed"
+          ],
+          "predicted_condition_fields": [
+            "member_scope_confirmed"
+          ]
+        },
+        {
+          "case_id": "PCR-F041",
+          "source_id": "CN-003",
+          "locator": "PDF第2页",
+          "wrong_dimensions": [
+            "condition_fields"
+          ],
+          "expected_benefit_id": "B002",
+          "predicted_benefit_id": "B002",
+          "expected_parameters": {},
+          "predicted_parameters": {},
+          "expected_condition_fields": [
+            "is_local_hukou",
+            "member_scope_confirmed"
+          ],
+          "predicted_condition_fields": [
+            "member_scope_confirmed"
+          ]
+        },
+        {
+          "case_id": "PCR-F042",
+          "source_id": "CN-003",
+          "locator": "PDF第3页",
+          "wrong_dimensions": [
+            "condition_fields"
+          ],
+          "expected_benefit_id": "B002",
+          "predicted_benefit_id": "B002",
+          "expected_parameters": {},
+          "predicted_parameters": {},
+          "expected_condition_fields": [],
+          "predicted_condition_fields": [
+            "residence_proof"
+          ]
+        },
+        {
+          "case_id": "PCR-F064",
+          "source_id": "CN-004",
+          "locator": "PDF第1页",
+          "wrong_dimensions": [
+            "condition_fields"
+          ],
+          "expected_benefit_id": "B001",
+          "predicted_benefit_id": "B001",
+          "expected_parameters": {},
+          "predicted_parameters": {},
+          "expected_condition_fields": [],
+          "predicted_condition_fields": [
+            "basic_life_interrupted"
+          ]
+        },
+        {
+          "case_id": "PCR-F065",
+          "source_id": "CN-004",
+          "locator": "PDF第1页",
+          "wrong_dimensions": [
+            "condition_fields"
+          ],
+          "expected_benefit_id": "B004",
+          "predicted_benefit_id": "B004",
+          "expected_parameters": {},
+          "predicted_parameters": {},
+          "expected_condition_fields": [
+            "rigid_expenses_12m"
+          ],
+          "predicted_condition_fields": [
+            "basic_life_interrupted"
+          ]
+        },
+        {
+          "case_id": "PCR-F070",
+          "source_id": "CN-004",
+          "locator": "PDF第2页",
+          "wrong_dimensions": [
+            "condition_fields"
+          ],
+          "expected_benefit_id": "B004",
+          "predicted_benefit_id": "B004",
+          "expected_parameters": {},
+          "predicted_parameters": {},
+          "expected_condition_fields": [
+            "assets_eligible",
+            "per_capita_monthly_income",
+            "rigid_expenses_12m"
+          ],
+          "predicted_condition_fields": [
+            "assets_eligible",
+            "per_capita_annual_income",
+            "per_capita_monthly_income",
+            "rigid_expenses_12m"
+          ]
+        },
+        {
+          "case_id": "PCR-F087",
+          "source_id": "CN-004",
+          "locator": "PDF第2页",
+          "wrong_dimensions": [
+            "condition_fields"
+          ],
+          "expected_benefit_id": "B001",
+          "predicted_benefit_id": "B001",
+          "expected_parameters": {},
+          "predicted_parameters": {},
+          "expected_condition_fields": [],
+          "predicted_condition_fields": [
+            "basic_life_interrupted"
+          ]
+        },
+        {
+          "case_id": "PCR-F094",
+          "source_id": "GD-005",
+          "locator": "PDF第2页",
+          "wrong_dimensions": [
+            "condition_fields"
+          ],
+          "expected_benefit_id": "B002",
+          "predicted_benefit_id": "B002",
+          "expected_parameters": {},
+          "predicted_parameters": {},
+          "expected_condition_fields": [
+            "assets_eligible",
+            "is_local_hukou",
+            "member_scope_confirmed"
+          ],
+          "predicted_condition_fields": [
+            "assets_eligible",
+            "basic_life_interrupted",
+            "member_scope_confirmed",
+            "per_capita_monthly_income"
+          ]
+        },
+        {
+          "case_id": "PCR-F105",
+          "source_id": "GD-005",
+          "locator": "PDF第2页",
+          "wrong_dimensions": [
+            "condition_fields"
+          ],
+          "expected_benefit_id": "B002",
+          "predicted_benefit_id": "B002",
+          "expected_parameters": {},
+          "predicted_parameters": {},
+          "expected_condition_fields": [
+            "assets_eligible",
+            "is_local_hukou"
+          ],
+          "predicted_condition_fields": [
+            "assets_eligible"
+          ]
+        }
+      ]
+    }
   },
-  "claim_boundary": "主结果是不给benefit_hint和有效期元数据的原文抽取轨；辅助编译轨单独报告，不得把元数据回填计作模型抽取。标签由项目组按官方条款制作，未做外部双人盲标，且规则开发与本基准来源存在重叠，因此只用于回归验证，不宣称独立泛化性能。",
-  "app_version": "1.2.1",
+  "claim_boundary": [
+    "三轨均只接收政策原文，不使用benefit_hint或生效日期元数据回填。",
+    "最终测试按完整政策文件隔离，同一source_id不得跨开发集与冻结测试集。",
+    "标签由项目组按公开标注指南制作，尚不是外部专家双人盲标。",
+    "指标及95%置信区间只描述本冻结集，不外推为真实政务业务准确率。"
+  ],
   "engine_version": "rule-engine/0.5.0",
   "release_metadata": {
-    "release_id": "v1.2.1+source.155f7a8c19f0",
-    "app_version": "1.2.1",
+    "release_id": "v1.3.0+source.4bf15869943e",
+    "app_version": "1.3.0",
     "engine_version": "rule-engine/0.5.0",
-    "git_commit": "3ac4b8c1609abd15f376149eb59a741188bd2ee5",
-    "git_dirty": false,
-    "source_tree_sha256": "155f7a8c19f02ee5e752455532ce8d12e4abf0a87006ec94fcbf10c3da04ecfc",
+    "git_commit": "3d44457cec0e50f71418ad28cc704ada6fa3ce5c",
+    "git_dirty": true,
+    "source_tree_sha256": "4bf15869943e7e6400abf126cc4494042555638289301bca6739da13f276ff48",
     "source_binding": {
-      "code_commit": "3ac4b8c1609abd15f376149eb59a741188bd2ee5",
+      "code_commit": "3d44457cec0e50f71418ad28cc704ada6fa3ce5c",
       "source_inputs_dirty": false,
-      "source_tree_sha256": "155f7a8c19f02ee5e752455532ce8d12e4abf0a87006ec94fcbf10c3da04ecfc",
-      "source_file_count": 123,
+      "source_tree_sha256": "4bf15869943e7e6400abf126cc4494042555638289301bca6739da13f276ff48",
+      "source_file_count": 230,
       "scope": "代码、测试、评测输入、运行和安全配置；生成的评测报告不参与自指纹",
       "text_normalization": "CRLF和LF统一为LF；二进制文件保持原始字节"
     },
     "artifact_binding": {
-      "reports_generated_from_source_sha256": "155f7a8c19f02ee5e752455532ce8d12e4abf0a87006ec94fcbf10c3da04ecfc",
+      "reports_generated_from_source_sha256": "4bf15869943e7e6400abf126cc4494042555638289301bca6739da13f276ff48",
       "evidence_commit": null,
       "note": "报告提交后可由正式发布流程填入证据提交；源码绑定以内容指纹为准。"
     }
