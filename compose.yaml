@@ -12,6 +12,7 @@ services:
       DATABASE_PATH: /app/storage/huimin.db
       AI_MODE: ${AI_MODE:-deterministic}
       OLLAMA_URL: ${OLLAMA_URL:-http://host.docker.internal:11434}
+      ALLOW_REMOTE_OLLAMA: ${ALLOW_REMOTE_OLLAMA:-false}
       OLLAMA_MODEL: ${OLLAMA_MODEL:-qwen3:4b-instruct}
       OLLAMA_EMBED_MODEL: ${OLLAMA_EMBED_MODEL:-qwen3-embedding:0.6b}
       OLLAMA_TIMEOUT_SECONDS: ${OLLAMA_TIMEOUT_SECONDS:-120}

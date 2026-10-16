@@ -1,4 +1,4 @@
-param(
+﻿param(
     [switch]$SkipDependencyAudit,
     [switch]$RequireNativeSemgrep
 )
@@ -51,14 +51,25 @@ if (-not $semgrepPassed) {
 }
 
 Write-Host '[quality] detect-secrets' -ForegroundColor Cyan
-$SecretJson = & $Python -m detect_secrets scan --all-files --exclude-lines '"source_sha256"\s*:' app scripts tests .env.example compose.yaml Dockerfile README.md
+# Hex-escape the quote characters so Windows PowerShell 5.1 and pwsh 7 pass
+# the same regex to Python; literal nested quotes are stripped differently.
+$SecretJson = & $Python -m detect_secrets scan --all-files --exclude-lines '\x22source_sha256\x22\s*:' app scripts tests .env.example compose.yaml Dockerfile README.md
 if ($LASTEXITCODE -ne 0) {
     throw "detect-secrets执行失败（exit=$LASTEXITCODE）"
 }
-$SecretReport = $SecretJson | ConvertFrom-Json
-$SecretCount = @($SecretReport.results.PSObject.Properties | ForEach-Object { $_.Value } | ForEach-Object { $_ }).Count
-if ($SecretCount -gt 0) {
-    throw "密钥扫描发现${SecretCount}个未审查候选，请移除真实密钥或建立经审查基线"
+$SecretReportPath = Join-Path $Root 'tmp\secret-scan.local.json'
+$Utf8NoBom = New-Object System.Text.UTF8Encoding($false)
+$SecretText = $SecretJson -join [Environment]::NewLine
+[System.IO.File]::WriteAllText($SecretReportPath, $SecretText, $Utf8NoBom)
+try {
+    & $Python -c "import json,sys; p=json.load(open(sys.argv[1], encoding='utf-8')); n=sum(len(v) for v in p['results'].values()); print('secret_candidates=', n); sys.exit(n != 0)" $SecretReportPath
+    $SecretScanExit = $LASTEXITCODE
+}
+finally {
+    Remove-Item -LiteralPath $SecretReportPath -Force -ErrorAction SilentlyContinue
+}
+if ($SecretScanExit -ne 0) {
+    throw '密钥扫描发现未审查候选，请移除真实密钥或建立经审查基线'
 }
 
 if (-not $SkipDependencyAudit) {

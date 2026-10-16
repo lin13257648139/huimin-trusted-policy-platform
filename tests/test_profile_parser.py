@@ -29,3 +29,10 @@ def test_parser_does_not_invent_income() -> None:
     assert "urgent_event" not in result.fields
     assert "urgent_event" in result.missing_fields
 
+
+def test_parser_understands_common_ge_ren_household_phrase() -> None:
+    result = parse_profile(
+        ParseProfileRequest(text="我们在天河区，家里三个人。", query_date=date(2026, 9, 29))
+    )
+    assert result.fields["household_size"] == 3
+

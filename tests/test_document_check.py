@@ -1,5 +1,7 @@
 import io
+import sys
 from pathlib import Path
+from types import SimpleNamespace
 
 import pytest
 from PIL import Image, ImageDraw, ImageFilter
@@ -87,6 +89,49 @@ def test_pdf_is_rendered_page_by_page_without_persisting_text() -> None:
     assert page_check["value"] == 1
     assert result.privacy["stored"] is False
     assert "text" not in result.ocr
+
+
+def test_oversized_pdf_page_is_rejected_before_bitmap_allocation(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    state = {"page_closed": False, "document_closed": False}
+
+    class FakePage:
+        def get_size(self) -> tuple[float, float]:
+            return (100_000.0, 100_000.0)
+
+        def render(self, *, scale: float) -> None:
+            raise AssertionError(f"oversized page must not render at scale {scale}")
+
+        def close(self) -> None:
+            state["page_closed"] = True
+
+    class FakeDocument:
+        def __init__(self, _content: bytes) -> None:
+            self.page = FakePage()
+
+        def __len__(self) -> int:
+            return 1
+
+        def __getitem__(self, _index: int) -> FakePage:
+            return self.page
+
+        def close(self) -> None:
+            state["document_closed"] = True
+
+    monkeypatch.setitem(
+        sys.modules, "pypdfium2", SimpleNamespace(PdfDocument=FakeDocument)
+    )
+    with pytest.raises(DocumentValidationError, match="像素总量超过安全上限"):
+        check_document(
+            filename="恶意超大页面.pdf",
+            content=b"%PDF-fake\n%%EOF",
+            declared_type="auto",
+            max_bytes=1024,
+            max_image_pixels=40_000_000,
+            ocr_enabled=False,
+        )
+    assert state == {"page_closed": True, "document_closed": True}
 
 
 def test_disallowed_extension_is_rejected() -> None:

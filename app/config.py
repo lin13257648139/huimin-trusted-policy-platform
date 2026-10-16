@@ -67,6 +67,7 @@ class Settings:
         "ollama" if os.getenv("OLLAMA_ENABLED", "false").lower() == "true" else "deterministic",
     ).lower()
     ollama_url: str = os.getenv("OLLAMA_URL", "http://127.0.0.1:11434")
+    allow_remote_ollama: bool = _env_bool("ALLOW_REMOTE_OLLAMA")
     ollama_model: str = os.getenv("OLLAMA_MODEL", "qwen3:4b-instruct")
     ollama_embedding_model: str | None = (
         os.getenv("OLLAMA_EMBED_MODEL", "qwen3-embedding:0.6b") or None

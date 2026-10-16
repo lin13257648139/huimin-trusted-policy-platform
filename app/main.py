@@ -196,7 +196,11 @@ async def health() -> dict[str, object]:
 
 @app.get("/api/v1/metadata")
 async def metadata() -> dict[str, object]:
-    ai_status = ollama_runtime_status()
+    ai_status = await _run_workload(
+        "llm",
+        ollama_runtime_status,
+        timeout=min(settings.ollama_timeout_seconds, 3),
+    )
     policy_watch = [
         {
             "source_id": source.source_id,
@@ -264,7 +268,11 @@ async def metadata() -> dict[str, object]:
 
 @app.get("/api/v1/system/readiness")
 async def system_readiness() -> dict[str, object]:
-    return build_readiness_report()
+    return await _run_workload(
+        "llm",
+        build_readiness_report,
+        timeout=min(settings.ollama_timeout_seconds + 1, 5),
+    )
 
 
 @app.post("/api/v1/profile/parse", response_model=ParseProfileResponse)
@@ -593,6 +601,11 @@ async def admin_dashboard() -> dict[str, object]:
     database.purge_expired(settings.data_retention_days)
     stats = database.dashboard_stats()
     governance = registry_governance()
+    readiness = await _run_workload(
+        "llm",
+        build_readiness_report,
+        timeout=min(settings.ollama_timeout_seconds + 1, 5),
+    )
     return {
         **stats,
         "rule_registry": governance,
@@ -619,7 +632,7 @@ async def admin_dashboard() -> dict[str, object]:
             "admin_token_required": not settings.demo_mode,
             "runtime_mode": "demo" if settings.demo_mode else "authenticated",
         },
-        "system_readiness": build_readiness_report(),
+        "system_readiness": readiness,
     }
 
 

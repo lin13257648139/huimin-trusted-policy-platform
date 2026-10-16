@@ -1,4 +1,4 @@
-$ErrorActionPreference = 'Stop'
+﻿$ErrorActionPreference = 'Stop'
 Set-StrictMode -Version Latest
 $env:PYTHONUTF8 = '1'
 [Console]::OutputEncoding = [System.Text.UTF8Encoding]::new($false)

@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import hashlib
 import io
+import math
 import warnings as warning_control
 from collections import Counter
 from dataclasses import dataclass
@@ -206,6 +207,7 @@ def _check_pdf(
 ) -> tuple[int, list[dict[str, Any]], list[str], OCRAnalysis]:
     if not content.startswith(b"%PDF"):
         raise DocumentValidationError("文件扩展名为PDF，但内容不是有效PDF")
+    document: Any | None = None
     try:
         import pypdfium2 as pdfium
 
@@ -219,22 +221,39 @@ def _check_pdf(
         page_quality: list[int] = []
         for index in range(page_count):
             page = document[index]
-            width_points, height_points = page.get_size()
-            scale = min(2.0, (max_image_pixels / max(width_points * height_points, 1)) ** 0.5)
-            bitmap = page.render(scale=max(scale, 1.0))
-            image = bitmap.to_pil().convert("RGB")
-            buffer = io.BytesIO()
-            image.save(buffer, format="PNG")
-            rendered = buffer.getvalue()
-            quality, _, _ = _check_image(rendered, max_image_pixels=max_image_pixels)
-            page_quality.append(quality)
-            page_analyses.append(analyze_image_text(rendered, enabled=ocr_enabled))
-            page.close()
-        document.close()
+            bitmap: Any | None = None
+            try:
+                width_points, height_points = page.get_size()
+                page_area = width_points * height_points
+                if not math.isfinite(page_area) or page_area <= 0:
+                    raise DocumentValidationError("PDF页面尺寸无效")
+                # PDFium renders at least one pixel per point at scale=1. Reject an
+                # oversized MediaBox before allocating the bitmap; checking only the
+                # rendered PIL image would be too late for a memory-exhaustion input.
+                if page_area > max_image_pixels:
+                    raise DocumentValidationError(
+                        f"PDF页面像素总量超过安全上限（{max_image_pixels}）"
+                    )
+                scale = min(2.0, (max_image_pixels / page_area) ** 0.5)
+                bitmap = page.render(scale=scale)
+                image = bitmap.to_pil().convert("RGB")
+                buffer = io.BytesIO()
+                image.save(buffer, format="PNG")
+                rendered = buffer.getvalue()
+                quality, _, _ = _check_image(rendered, max_image_pixels=max_image_pixels)
+                page_quality.append(quality)
+                page_analyses.append(analyze_image_text(rendered, enabled=ocr_enabled))
+            finally:
+                if bitmap is not None and hasattr(bitmap, "close"):
+                    bitmap.close()
+                page.close()
     except DocumentValidationError:
         raise
     except Exception as exc:
         raise DocumentValidationError(f"PDF无法安全解析：{type(exc).__name__}") from exc
+    finally:
+        if document is not None:
+            document.close()
     eof_ok = b"%%EOF" in content[-2048:]
     checks = [
         {"code": "pdf_header", "passed": True, "value": "%PDF", "label": "PDF文件头"},

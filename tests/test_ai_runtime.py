@@ -30,6 +30,7 @@ def _runtime_settings(**overrides: Any) -> SimpleNamespace:
         "ai_mode": "hybrid",
         "ollama_enabled": True,
         "ollama_url": "http://127.0.0.1:11434",
+        "allow_remote_ollama": False,
         "ollama_model": "qwen3:4b-instruct",
         "ollama_embedding_model": "qwen3-embedding:0.6b",
         "ollama_timeout_seconds": 5.0,
@@ -69,6 +70,36 @@ def test_request_json_uses_bounded_http_request(monkeypatch: pytest.MonkeyPatch)
         "method": "GET",
         "timeout": 1.25,
     }
+
+
+def test_request_json_rejects_remote_runtime_by_default(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setattr(
+        ai_runtime,
+        "settings",
+        _runtime_settings(ollama_url="https://models.example.test"),
+    )
+    with pytest.raises(ModelRuntimeError, match="默认只允许"):
+        ai_runtime._request_json("/api/tags", None, timeout=1)
+
+
+def test_request_json_allows_explicit_controlled_remote_runtime(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setattr(
+        ai_runtime,
+        "settings",
+        _runtime_settings(
+            ollama_url="https://models.example.test", allow_remote_ollama=True
+        ),
+    )
+    monkeypatch.setattr(
+        ai_runtime.urllib.request,
+        "urlopen",
+        lambda *_args, **_kwargs: _Response(b'{"models": []}'),
+    )
+    assert ai_runtime._request_json("/api/tags", None, timeout=1) == {"models": []}
 
 
 @pytest.mark.parametrize(
@@ -137,6 +168,27 @@ def test_runtime_status_preserves_safe_fallback(monkeypatch: pytest.MonkeyPatch)
     assert status["reachable"] is False
     assert status["active_provider"] == "deterministic-safe-parser"
     assert status["reason"] == "offline"
+
+
+def test_runtime_status_does_not_confuse_different_model_tags(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setattr(
+        ai_runtime,
+        "settings",
+        _runtime_settings(ollama_model="qwen3:4b", ollama_embedding_model="embed:0.6b"),
+    )
+    monkeypatch.setattr(
+        ai_runtime,
+        "_request_json",
+        lambda *_args, **_kwargs: {
+            "models": [{"name": "qwen3:8b"}, {"name": "embed:1.0b"}]
+        },
+    )
+    status = ai_runtime.ollama_runtime_status()
+    assert status["model_present"] is False
+    assert status["embedding_model_present"] is False
+    assert status["active_provider"] == "deterministic-safe-parser"
 
 
 def test_runtime_status_can_skip_probe(monkeypatch: pytest.MonkeyPatch) -> None:

@@ -7,6 +7,13 @@ from typing import Any, Literal
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
+GUANGZHOU_DISTRICTS = frozenset(
+    {
+        "越秀区", "海珠区", "荔湾区", "天河区", "白云区", "黄埔区",
+        "花都区", "番禺区", "南沙区", "从化区", "增城区",
+    }
+)
+
 
 class TruthValue(StrEnum):
     TRUE = "true"
@@ -81,6 +88,8 @@ class HouseholdProfile(BaseModel):
 
     @model_validator(mode="after")
     def validate_event(self) -> HouseholdProfile:
+        if self.city == "广州市" and self.district not in GUANGZHOU_DISTRICTS:
+            raise ValueError("广州市画像的district必须是广州市行政区")
         if self.urgent_event_date and self.urgent_event is not True:
             raise ValueError("填写急难事件日期时，urgent_event必须为true")
         if self.deductible_monthly_total and self.monthly_income_total is not None:
@@ -124,6 +133,16 @@ class GuidanceDraft(BaseModel):
     basic_life_interrupted: bool | None = None
     residence_proof: bool | None = None
     skipped_fields: list[str] = Field(default_factory=list, max_length=20)
+
+    @model_validator(mode="after")
+    def validate_region(self) -> GuidanceDraft:
+        if (
+            self.city in {"广州", "广州市"}
+            and self.district is not None
+            and self.district not in GUANGZHOU_DISTRICTS
+        ):
+            raise ValueError("广州市草稿的district必须是广州市行政区")
+        return self
 
     @field_validator("skipped_fields")
     @classmethod
@@ -173,6 +192,13 @@ class ParseProfileRequest(BaseModel):
     text: str = Field(min_length=2, max_length=2000)
     query_date: date = Field(default_factory=date.today)
     district: str | None = None
+
+    @field_validator("district")
+    @classmethod
+    def validate_district(cls, value: str | None) -> str | None:
+        if value is not None and value not in GUANGZHOU_DISTRICTS:
+            raise ValueError("district必须是广州市行政区")
+        return value
 
 
 class ParseProfileResponse(BaseModel):

@@ -35,12 +35,30 @@ class ModelRuntimeError(RuntimeError):
     """Expected local-model failures that must trigger a visible safe fallback."""
 
 
+def _model_name_matches(installed: str, wanted: str) -> bool:
+    """Match Ollama names without treating different tags as the same model."""
+
+    installed = installed.strip()
+    wanted = wanted.strip()
+    if ":" in wanted:
+        return installed == wanted
+    return installed in {wanted, f"{wanted}:latest"}
+
+
 def _request_json(path: str, payload: dict[str, Any] | None, timeout: float) -> dict[str, Any]:
     parsed = urlsplit(settings.ollama_url)
     if parsed.scheme not in {"http", "https"} or not parsed.hostname:
         raise ModelRuntimeError("OLLAMA_URL必须是有效的HTTP(S)地址")
     if parsed.username or parsed.password:
         raise ModelRuntimeError("OLLAMA_URL不得包含用户名或密码")
+    local_hosts = {"127.0.0.1", "localhost", "::1", "host.docker.internal"}
+    if (
+        parsed.hostname.lower() not in local_hosts
+        and not getattr(settings, "allow_remote_ollama", False)
+    ):
+        raise ModelRuntimeError(
+            "默认只允许连接本机Ollama；受控远程服务须显式设置ALLOW_REMOTE_OLLAMA=true"
+        )
     data = None if payload is None else json.dumps(payload, ensure_ascii=False).encode("utf-8")
     request = urllib.request.Request(
         f"{settings.ollama_url.rstrip('/')}{path}",
@@ -77,25 +95,24 @@ def ollama_runtime_status(*, probe: bool = True) -> dict[str, Any]:
     try:
         payload = _request_json("/api/tags", None, timeout=min(settings.ollama_timeout_seconds, 1.2))
         model_rows = [item for item in payload.get("models", []) if isinstance(item, dict)]
-        installed = {str(item.get("name", "")) for item in model_rows}
-        aliases = installed | {name.split(":", 1)[0] for name in installed}
         wanted = settings.ollama_model
-        model_present = wanted in aliases or wanted.split(":", 1)[0] in aliases
+        model_present = any(
+            _model_name_matches(str(item.get("name", "")), wanted) for item in model_rows
+        )
         selected = next(
             (
                 item
                 for item in model_rows
-                if str(item.get("name", "")) == wanted
-                or str(item.get("name", "")).split(":", 1)[0] == wanted.split(":", 1)[0]
+                if _model_name_matches(str(item.get("name", "")), wanted)
             ),
             None,
         )
         embedding_wanted = settings.ollama_embedding_model
         embedding_present = bool(
             embedding_wanted
-            and (
-                embedding_wanted in aliases
-                or embedding_wanted.split(":", 1)[0] in aliases
+            and any(
+                _model_name_matches(str(item.get("name", "")), embedding_wanted)
+                for item in model_rows
             )
         )
         status.update(

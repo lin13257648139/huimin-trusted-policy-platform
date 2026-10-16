@@ -1,6 +1,6 @@
 {
   "report_schema": "live-ai-smoke/1.0",
-  "generated_at": "2026-10-15T10:37:39.954311+00:00",
+  "generated_at": "2026-10-15T17:18:30.537129+00:00",
   "app_version": "1.2.0",
   "runtime": {
     "mode": "hybrid",
@@ -30,7 +30,7 @@
   "chat": {
     "provider": "ollama-json-schema",
     "model_id": "qwen3:4b-instruct",
-    "latency_ms": 5849,
+    "latency_ms": 10840,
     "prompt_sha256": "09eea7adf048419835f09a3b40f5f9cb48e200a4bbe9bd670dac10736aba687d",
     "response_sha256": "08e2c358ce13cb67f94ebb35b0f67c8763190a857c0db68da6eb196dfe9da46a",
     "schema_payload": {
@@ -40,18 +40,9 @@
   "embedding": {
     "provider": "ollama-embedding",
     "model_id": "qwen3-embedding:0.6b",
-    "latency_ms": 3076,
+    "latency_ms": 3147,
     "vectors": 2,
     "dimensions": 1024
   },
-  "claim_boundary": "这只证明本机配置的对话与向量模型在该时间点完成真实推理；不代表业务准确率，完整指标仍以版本化AI评测报告为准。",
-  "engine_version": "rule-engine/0.5.0",
-  "release_metadata": {
-    "release_id": "v1.2.0+source.5fc011cd9986",
-    "app_version": "1.2.0",
-    "engine_version": "rule-engine/0.5.0",
-    "git_commit": "9ec5c9caf8172a7fbb40a90b0a4db4f8e75565f3",
-    "git_dirty": false,
-    "source_tree_sha256": "5fc011cd9986144f8597a0e87e0ff0a4a9fe15b86f29a797aaf6bf1a34484dd1"
-  }
+  "claim_boundary": "这只证明本机配置的对话与向量模型在该时间点完成真实推理；不代表业务准确率，完整指标仍以版本化AI评测报告为准。"
 }

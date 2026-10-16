@@ -8,23 +8,11 @@ from typing import Any
 from pydantic import BaseModel, ConfigDict, Field, ValidationError, field_validator
 
 from app.config import settings
-from app.domain.models import ParseProfileRequest, ParseProfileResponse
+from app.domain.models import GUANGZHOU_DISTRICTS, ParseProfileRequest, ParseProfileResponse
 from app.services.ai_runtime import ModelRuntimeError, chat_json
 from app.services.intent_classifier import classify_intent
 
-DISTRICTS = [
-    "越秀区",
-    "海珠区",
-    "荔湾区",
-    "天河区",
-    "白云区",
-    "黄埔区",
-    "花都区",
-    "番禺区",
-    "南沙区",
-    "从化区",
-    "增城区",
-]
+DISTRICTS = sorted(GUANGZHOU_DISTRICTS)
 
 CHINESE_DIGITS = {
     "一": 1,
@@ -44,7 +32,7 @@ CHINESE_DIGITS = {
 # 但不能证明字段“来自原文”；这道独立门专门阻断语义联想型幻觉。
 MODEL_FIELD_ANCHORS: dict[str, re.Pattern[str]] = {
     "district": re.compile("区"),
-    "household_size": re.compile(r"(?:口|人)(?:之家|家庭)?"),
+    "household_size": re.compile(r"(?:口|个?人)(?:之家|家庭)?"),
     "is_local_hukou": re.compile(r"(?:户籍|户口)"),
     "has_local_family_member": re.compile(r"(?:本市|广州).{0,8}(?:家庭成员|亲属)"),
     "member_scope_confirmed": re.compile(r"共同生活.{0,10}(?:成员|家庭成员)"),
@@ -168,7 +156,9 @@ def _heuristic_parse(request: ParseProfileRequest) -> ParseProfileResponse:
         fields["district"] = district
         confidence.setdefault("district", 0.85)
 
-    size_match = re.search(r"([1-9]|[一二两三四五六七八九十])\s*(?:口|人)(?:之家|家庭)?", text)
+    size_match = re.search(
+        r"([1-9]|[一二两三四五六七八九十])\s*(?:口|个?人)(?:之家|家庭)?", text
+    )
     if size_match:
         raw = size_match.group(1)
         fields["household_size"] = int(raw) if raw.isdigit() else CHINESE_DIGITS[raw]
