@@ -1056,21 +1056,22 @@
   "app_version": "1.2.1",
   "engine_version": "rule-engine/0.5.0",
   "release_metadata": {
-    "release_id": "v1.2.1+source.38e73d42ccee",
+    "release_id": "v1.2.1+source.155f7a8c19f0",
     "app_version": "1.2.1",
     "engine_version": "rule-engine/0.5.0",
-    "git_commit": "be05d54bd4ca32115d735ae9aec162aa8825ed05",
-    "git_dirty": true,
-    "source_tree_sha256": "38e73d42ccee255a4e53443fd3002c7efbf4edda429c6b72b38a3ca3c642e407",
+    "git_commit": "3ac4b8c1609abd15f376149eb59a741188bd2ee5",
+    "git_dirty": false,
+    "source_tree_sha256": "155f7a8c19f02ee5e752455532ce8d12e4abf0a87006ec94fcbf10c3da04ecfc",
     "source_binding": {
-      "code_commit": "be05d54bd4ca32115d735ae9aec162aa8825ed05",
+      "code_commit": "3ac4b8c1609abd15f376149eb59a741188bd2ee5",
       "source_inputs_dirty": false,
-      "source_tree_sha256": "38e73d42ccee255a4e53443fd3002c7efbf4edda429c6b72b38a3ca3c642e407",
-      "source_file_count": 122,
-      "scope": "代码、测试、评测输入、运行和安全配置；生成的评测报告不参与自指纹"
+      "source_tree_sha256": "155f7a8c19f02ee5e752455532ce8d12e4abf0a87006ec94fcbf10c3da04ecfc",
+      "source_file_count": 123,
+      "scope": "代码、测试、评测输入、运行和安全配置；生成的评测报告不参与自指纹",
+      "text_normalization": "CRLF和LF统一为LF；二进制文件保持原始字节"
     },
     "artifact_binding": {
-      "reports_generated_from_source_sha256": "38e73d42ccee255a4e53443fd3002c7efbf4edda429c6b72b38a3ca3c642e407",
+      "reports_generated_from_source_sha256": "155f7a8c19f02ee5e752455532ce8d12e4abf0a87006ec94fcbf10c3da04ecfc",
       "evidence_commit": null,
       "note": "报告提交后可由正式发布流程填入证据提交；源码绑定以内容指纹为准。"
     }
