@@ -5,11 +5,14 @@ import importlib.util
 import io
 import re
 import threading
+import time
 from dataclasses import dataclass
 from functools import lru_cache
 from typing import Any
 
 from PIL import Image
+
+from app.services.observability import observe
 
 OCR_MATERIAL_HINTS = {
     "identity": ("居民身份证", "公民身份号码", "身份证"),
@@ -103,6 +106,7 @@ def analyze_image_text(content: bytes, *, enabled: bool) -> OCRAnalysis:
             None,
             "未安装RapidOCR与ONNX Runtime，已降级为文件名分类。",
         )
+    started = time.perf_counter()
     try:
         import numpy as np
 
@@ -138,3 +142,5 @@ def analyze_image_text(content: bytes, *, enabled: bool) -> OCRAnalysis:
             None,
             f"OCR处理失败，已安全降级：{type(exc).__name__}",
         )
+    finally:
+        observe("ocr_ms", (time.perf_counter() - started) * 1000)

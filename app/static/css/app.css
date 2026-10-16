@@ -163,14 +163,14 @@ svg { width: 1.2em; height: 1.2em; fill: none; stroke: currentColor; stroke-widt
 .panel-heading { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; }
 .panel-heading h3 { margin: 4px 0 0; font-size: 16px; letter-spacing: -.015em; }
 .panel-heading p:not(.eyebrow) { color: var(--muted); font-size: 11px; margin: 5px 0 0; }
-.soft-tag, .count-badge, .secure-pill { padding: 6px 9px; border-radius: 999px; color: #537b75; background: #eef7f3; font-size: 8px; font-weight: 700; letter-spacing: .03em; white-space: nowrap; }
+.soft-tag, .count-badge, .secure-pill { padding: 6px 9px; border-radius: 999px; color: #405f5a; background: #eef7f3; font-size: 8px; font-weight: 700; letter-spacing: .03em; white-space: nowrap; }
 .soft-tag.success { color: #087c68; background: #e1f6ef; }
 .flow-track { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-top: 28px; }
 .flow-step { position: relative; width: 21%; text-align: center; }
-.step-no { position: absolute; top: -6px; right: 13px; color: #aac0bc; font-size: 8px; font-weight: 700; }
+.step-no { position: absolute; top: -6px; right: 13px; color: #536b68; font-size: 8px; font-weight: 700; }
 .flow-icon { display: grid; place-items: center; width: 47px; height: 47px; margin: 0 auto 10px; color: var(--teal); border: 1px solid #d9eae6; border-radius: 15px; background: linear-gradient(145deg,#fff,#eff7f4); box-shadow: 0 8px 20px rgba(27,89,80,.07); }
 .flow-step strong { font-size: 11px; }
-.flow-step p { margin: 6px auto 0; max-width: 120px; color: #859795; font-size: 8px; line-height: 1.5; }
+.flow-step p { margin: 6px auto 0; max-width: 120px; color: #526866; font-size: 8px; line-height: 1.5; }
 .flow-arrow { color: #c3d4d1; }
 .text-button { padding: 5px 0; border: 0; color: var(--teal); background: transparent; font-size: 10px; font-weight: 700; }
 .timeline-mini { margin-top: 24px; }
@@ -179,13 +179,14 @@ svg { width: 1.2em; height: 1.2em; fill: none; stroke: currentColor; stroke-widt
 .time-item:last-child::before { display: none; }
 .time-item > span { position: relative; z-index: 1; flex: 0 0 9px; width: 9px; height: 9px; margin-top: 3px; border-radius: 50%; background: #b8cac7; box-shadow: 0 0 0 4px #f1f6f4; }
 .time-item.active > span { background: var(--teal-2); }.time-item.warning > span { background: var(--amber); }
-.time-item small { display: block; color: #98aaa8; font-size: 8px; }
+.time-item small { display: block; color: #526866; font-size: 8px; }
 .time-item strong { display: block; margin-top: 3px; font-size: 10px; }
-.time-item p { margin: 3px 0 0; color: #879795; font-size: 8px; line-height: 1.5; }
+.time-item p { margin: 3px 0 0; color: #526866; font-size: 8px; line-height: 1.5; }
 .principle-strip { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; margin-top: 18px; overflow: hidden; border: 1px solid var(--line); border-radius: 18px; background: var(--line); }
 .principle-strip > div { position: relative; padding: 20px 20px 18px 57px; background: rgba(255,255,255,.84); }
 .principle-strip > div > span { position: absolute; left: 21px; top: 22px; color: var(--teal); font-size: 19px; }
-.principle-strip strong { font-size: 11px; }.principle-strip p { margin: 5px 0 0; color: #7a8d8b; font-size: 9px; line-height: 1.6; }
+.principle-strip strong { font-size: 11px; }.principle-strip p { margin: 5px 0 0; color: #526866; font-size: 9px; line-height: 1.6; }
+.policy-watch .eyebrow, .policy-watch .text-button { color: #067365; }
 
 .section-intro { display: flex; align-items: flex-end; justify-content: space-between; gap: 24px; margin: 4px 0 24px; }
 .section-intro h2 { margin: 7px 0 8px; font-size: 28px; letter-spacing: -.035em; }

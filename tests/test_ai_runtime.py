@@ -198,6 +198,52 @@ def test_runtime_status_can_skip_probe(monkeypatch: pytest.MonkeyPatch) -> None:
     assert status["reachable"] is False
 
 
+def test_runtime_status_verifies_both_locked_model_digests(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setattr(
+        ai_runtime,
+        "settings",
+        _runtime_settings(
+            ollama_model_digest="a" * 64,
+            ollama_embedding_model_digest="b" * 64,
+        ),
+    )
+    monkeypatch.setattr(
+        ai_runtime,
+        "_request_json",
+        lambda *_args, **_kwargs: {
+            "models": [
+                {"name": "qwen3:4b-instruct", "digest": "a" * 64},
+                {"name": "qwen3-embedding:0.6b", "digest": "b" * 64},
+            ]
+        },
+    )
+    status = ai_runtime.ollama_runtime_status()
+    assert status["model_digest_verified"] is True
+    assert status["embedding_model_digest_verified"] is True
+    assert status["active_provider"] == "ollama/qwen3:4b-instruct"
+
+
+def test_runtime_status_rejects_digest_mismatch(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setattr(
+        ai_runtime,
+        "settings",
+        _runtime_settings(ollama_model_digest="a" * 64),
+    )
+    monkeypatch.setattr(
+        ai_runtime,
+        "_request_json",
+        lambda *_args, **_kwargs: {
+            "models": [{"name": "qwen3:4b-instruct", "digest": "c" * 64}]
+        },
+    )
+    status = ai_runtime.ollama_runtime_status()
+    assert status["model_digest_verified"] is False
+    assert status["active_provider"] == "deterministic-safe-parser"
+    assert "摘要" in status["reason"]
+
+
 def test_chat_json_returns_auditable_hashes(monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setattr(ai_runtime, "settings", _runtime_settings())
     captured: dict[str, Any] = {}
@@ -219,6 +265,28 @@ def test_chat_json_returns_auditable_hashes(monkeypatch: pytest.MonkeyPatch) -> 
     assert len(result.response_sha256) == 64
     assert captured["path"] == "/api/chat"
     assert captured["payload"]["options"] == {"temperature": 0, "seed": 20261002}
+
+
+def test_chat_json_refuses_unlocked_model(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setattr(
+        ai_runtime,
+        "settings",
+        _runtime_settings(ollama_model_digest="a" * 64),
+    )
+    monkeypatch.setattr(
+        ai_runtime,
+        "_request_json",
+        lambda *_args, **_kwargs: {
+            "models": [{"name": "qwen3:4b-instruct", "digest": "b" * 64}]
+        },
+    )
+    with pytest.raises(ModelRuntimeError, match="摘要不匹配"):
+        ai_runtime.chat_json(
+            system_prompt="system",
+            user_prompt="user",
+            json_schema={"type": "object"},
+            purpose="test",
+        )
 
 
 @pytest.mark.parametrize(

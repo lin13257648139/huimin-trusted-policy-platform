@@ -38,6 +38,10 @@ def main() -> None:
         blockers.append("配置的对话模型未安装")
     if not runtime.get("embedding_model_present"):
         blockers.append("配置的向量模型未安装")
+    if runtime.get("model_digest_verified") is not True:
+        blockers.append("对话模型摘要未通过models.lock.json校验")
+    if runtime.get("embedding_model_digest_verified") is not True:
+        blockers.append("向量模型摘要未通过models.lock.json校验")
     if blockers:
         raise SystemExit("LIVE_AI_GATE_FAILED: " + "；".join(blockers))
 

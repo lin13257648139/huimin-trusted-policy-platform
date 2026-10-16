@@ -133,7 +133,7 @@ function setPortalRole(role, moveToDefault = false) {
   state.portalRole = safeRole;
   sessionStorage.setItem("huimin-portal-role", safeRole);
   document.body.dataset.portalRole = safeRole;
-  $$('[data-portal-role]').forEach((button) => {
+  $$('.portal-option[data-portal-role]').forEach((button) => {
     const active = button.dataset.portalRole === safeRole;
     button.classList.toggle("active", active);
     button.setAttribute("aria-pressed", String(active));
@@ -166,7 +166,7 @@ function navigate(view) {
 }
 
 function setupNavigation() {
-  $$('[data-portal-role]').forEach((button) => {
+  $$('.portal-option[data-portal-role]').forEach((button) => {
     button.addEventListener("click", () => setPortalRole(button.dataset.portalRole, true));
   });
   $$('[data-nav], [data-go]').forEach((element) => {

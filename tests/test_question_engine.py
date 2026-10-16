@@ -1,4 +1,7 @@
+import pytest
+
 from app.domain.models import GuidanceDraft
+from app.services import question_engine
 from app.services.question_engine import next_guidance_question
 
 
@@ -50,3 +53,30 @@ def test_dynamic_strategy_asks_decisive_guard_before_sensitive_income() -> None:
     second = next_guidance_question(GuidanceDraft(district="天河区"))
     assert second.next_question is not None
     assert second.next_question.field_id == "urgent_event"
+
+
+def test_emergency_priority_notice_and_pruning_paths() -> None:
+    draft = GuidanceDraft(
+        district="天河区",
+        household_size=2,
+        urgent_event=True,
+        urgent_event_date="2026-10-01",
+        basic_life_interrupted=True,
+    )
+    response = next_guidance_question(draft)
+    assert response.urgent_notice is not None
+    date_spec = next(
+        item for item in question_engine.QUESTIONS if item.field_id == "urgent_event_date"
+    )
+    assert question_engine._priority(date_spec, draft, ["B005"]) > 0
+    no_temporary = question_engine._candidate_ids(
+        draft.model_copy(update={"basic_life_interrupted": False}), prune_resolved=True
+    )
+    assert "B005" not in no_temporary
+
+
+def test_fixed_strategy_and_invalid_strategy_paths() -> None:
+    fixed = question_engine.next_fixed_guidance_question(GuidanceDraft())
+    assert fixed.next_question is not None
+    with pytest.raises(ValueError, match="未知补问策略"):
+        question_engine._guidance_response(GuidanceDraft(), strategy="invalid")

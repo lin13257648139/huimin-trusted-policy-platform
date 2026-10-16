@@ -11,6 +11,7 @@ ROOT = Path(__file__).resolve().parent.parent
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
+from app.config import settings
 from app.version import APP_VERSION
 from scripts.build_release_manifest import source_fingerprint
 from scripts.verify_evidence_quotes import verify_evidence_quotes
@@ -55,6 +56,52 @@ def main() -> None:
     missing = [path.relative_to(ROOT).as_posix() for path in expected if not path.exists()]
     if missing:
         _fail(f"缺少文件：{missing}")
+
+    stage4_expected = {
+        "model_lock": ROOT / "models.lock.json",
+        "node_lock": ROOT / "package-lock.json",
+        "sbom": ROOT / "data" / "evaluation" / "software_bill_of_materials.json",
+        "coverage": ROOT / "data" / "evaluation" / "coverage_report.json",
+    }
+    missing_stage4 = [name for name, path in stage4_expected.items() if not path.is_file()]
+    if missing_stage4:
+        _fail(f"第四阶段工程证据缺失：{missing_stage4}")
+    model_lock = json.loads(stage4_expected["model_lock"].read_text(encoding="utf-8"))
+    locked_chat = model_lock.get("models", {}).get("chat", {})
+    locked_embedding = model_lock.get("models", {}).get("embedding", {})
+    for role, locked in (("chat", locked_chat), ("embedding", locked_embedding)):
+        if not re.fullmatch(r"[0-9a-f]{64}", str(locked.get("digest", ""))):
+            _fail(f"{role}模型锁缺少有效SHA-256摘要")
+    if locked_chat.get("name") != settings.ollama_model:
+        _fail("对话模型名称与models.lock.json不一致")
+    if locked_embedding.get("name") != settings.ollama_embedding_model:
+        _fail("向量模型名称与models.lock.json不一致")
+    node_lock = json.loads(stage4_expected["node_lock"].read_text(encoding="utf-8"))
+    if node_lock.get("lockfileVersion") != 3:
+        _fail("package-lock.json必须使用lockfileVersion 3")
+    sbom = json.loads(stage4_expected["sbom"].read_text(encoding="utf-8"))
+    if sbom.get("bomFormat") != "CycloneDX" or sbom.get("specVersion") != "1.6":
+        _fail("SBOM不是经验证的CycloneDX 1.6格式")
+    if len(sbom.get("components", [])) < 40:
+        _fail("CycloneDX SBOM组件覆盖不足")
+    coverage = json.loads(stage4_expected["coverage"].read_text(encoding="utf-8"))
+    normalized_coverage = {
+        name.replace("\\", "/"): value for name, value in coverage.get("files", {}).items()
+    }
+
+    def branch_rate(summary: dict[str, object]) -> float:
+        return int(summary["covered_branches"]) / int(summary["num_branches"])
+
+    coverage_targets = {
+        "app/services/policy_compiler.py": 0.85,
+        "app/main.py": 0.85,
+    }
+    for module, target in coverage_targets.items():
+        summary = normalized_coverage.get(module, {}).get("summary")
+        if not isinstance(summary, dict) or branch_rate(summary) < target:
+            _fail(f"核心模块分支覆盖率未达标：{module}")
+    if branch_rate(coverage["totals"]) < 0.90:
+        _fail("总体分支覆盖率未达到90%")
 
     for path in [
         expected[3], expected[4], expected[5], expected[6], expected[7],

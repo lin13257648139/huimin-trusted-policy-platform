@@ -7,3 +7,6 @@ coverage==7.16.2
 pytest-cov==7.1.0
 detect-secrets==1.5.0
 pip-audit==2.10.1
+cyclonedx-bom==7.5.0
+# Starlette 1.7优先使用httpx2；显式锁定后不再走兼容层弃用路径。
+httpx2==2.13.1

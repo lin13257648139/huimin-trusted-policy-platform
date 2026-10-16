@@ -10,6 +10,19 @@ from app.version import APP_VERSION
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
+def _model_lock(role: str) -> tuple[str | None, str | None]:
+    try:
+        payload = json.loads((BASE_DIR / "models.lock.json").read_text(encoding="utf-8"))
+        model = payload["models"][role]
+        return str(model["name"]), str(model["digest"])
+    except (OSError, KeyError, TypeError, ValueError, json.JSONDecodeError):
+        return None, None
+
+
+_LOCKED_CHAT_NAME, _LOCKED_CHAT_DIGEST = _model_lock("chat")
+_LOCKED_EMBED_NAME, _LOCKED_EMBED_DIGEST = _model_lock("embedding")
+
+
 def _env_bool(name: str, default: bool = False) -> bool:
     return os.getenv(name, "true" if default else "false").strip().lower() in {
         "1",
@@ -71,14 +84,23 @@ class Settings:
     ).lower()
     ollama_url: str = os.getenv("OLLAMA_URL", "http://127.0.0.1:11434")
     allow_remote_ollama: bool = _env_bool("ALLOW_REMOTE_OLLAMA")
-    ollama_model: str = os.getenv("OLLAMA_MODEL", "qwen3:4b-instruct")
+    ollama_model: str = os.getenv("OLLAMA_MODEL", _LOCKED_CHAT_NAME or "qwen3:4b-instruct")
+    ollama_model_digest: str | None = os.getenv("OLLAMA_MODEL_DIGEST", _LOCKED_CHAT_DIGEST or "") or None
     ollama_embedding_model: str | None = (
-        os.getenv("OLLAMA_EMBED_MODEL", "qwen3-embedding:0.6b") or None
+        os.getenv("OLLAMA_EMBED_MODEL", _LOCKED_EMBED_NAME or "qwen3-embedding:0.6b") or None
+    )
+    ollama_embedding_model_digest: str | None = (
+        os.getenv("OLLAMA_EMBED_MODEL_DIGEST", _LOCKED_EMBED_DIGEST or "") or None
     )
     # 4060 笔记本首次加载 4B 模型需要十余秒，预留冷启动与 JSON 约束生成时间。
     ollama_timeout_seconds: float = float(os.getenv("OLLAMA_TIMEOUT_SECONDS", "120"))
     ocr_enabled: bool = os.getenv("OCR_ENABLED", "true").lower() == "true"
     policy_as_of: str = _policy_as_of()
+    alert_request_p95_ms: float = float(os.getenv("ALERT_REQUEST_P95_MS", "2000"))
+    alert_llm_p95_ms: float = float(os.getenv("ALERT_LLM_P95_MS", "10000"))
+    alert_ocr_p95_ms: float = float(os.getenv("ALERT_OCR_P95_MS", "15000"))
+    alert_queue_depth: int = int(os.getenv("ALERT_QUEUE_DEPTH", "12"))
+    alert_http_5xx_rate: float = float(os.getenv("ALERT_HTTP_5XX_RATE", "0.05"))
 
     @property
     def ollama_enabled(self) -> bool:
@@ -112,6 +134,14 @@ class Settings:
             raise RuntimeError(f"资源限制必须为正数：{', '.join(invalid)}")
         if self.max_package_bytes < self.max_upload_bytes:
             raise RuntimeError("MAX_PACKAGE_BYTES不得小于MAX_UPLOAD_BYTES")
+        for name, digest in {
+            "OLLAMA_MODEL_DIGEST": self.ollama_model_digest,
+            "OLLAMA_EMBED_MODEL_DIGEST": self.ollama_embedding_model_digest,
+        }.items():
+            if digest and (len(digest) != 64 or any(ch not in "0123456789abcdef" for ch in digest.lower())):
+                raise RuntimeError(f"{name}必须是64位十六进制SHA-256摘要")
+        if not 0 < self.alert_http_5xx_rate <= 1:
+            raise RuntimeError("ALERT_HTTP_5XX_RATE必须在0和1之间")
 
     @property
     def static_dir(self) -> Path:

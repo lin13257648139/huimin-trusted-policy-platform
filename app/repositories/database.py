@@ -2,45 +2,16 @@ from __future__ import annotations
 
 import hashlib
 import json
+import os
 import secrets
 import sqlite3
 from collections.abc import Iterator
-from contextlib import contextmanager
+from contextlib import closing, contextmanager
 from datetime import UTC, datetime, timedelta
 from pathlib import Path
 from typing import Any
 
-SCHEMA = """
-CREATE TABLE IF NOT EXISTS screenings (
-    id TEXT PRIMARY KEY,
-    created_at TEXT NOT NULL,
-    query_date TEXT NOT NULL,
-    district TEXT NOT NULL,
-    policy_snapshot TEXT NOT NULL,
-    request_json TEXT NOT NULL,
-    result_json TEXT NOT NULL,
-    manage_token TEXT,
-    expires_at TEXT
-);
-CREATE TABLE IF NOT EXISTS feedback (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    screening_id TEXT NOT NULL,
-    helpful INTEGER NOT NULL,
-    issue_type TEXT NOT NULL,
-    comment TEXT,
-    created_at TEXT NOT NULL,
-    FOREIGN KEY(screening_id) REFERENCES screenings(id)
-);
-CREATE TABLE IF NOT EXISTS audit_log (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    event_type TEXT NOT NULL,
-    entity_id TEXT,
-    details_json TEXT NOT NULL,
-    created_at TEXT NOT NULL
-);
-CREATE INDEX IF NOT EXISTS idx_screenings_created_at ON screenings(created_at);
-CREATE INDEX IF NOT EXISTS idx_audit_created_at ON audit_log(created_at);
-"""
+from app.repositories.migrations import LATEST_SCHEMA_VERSION, run_migrations
 
 
 class Database:
@@ -62,18 +33,57 @@ class Database:
     def initialize(self) -> None:
         with self.connect() as connection:
             connection.execute("PRAGMA journal_mode = WAL")
-            connection.executescript(SCHEMA)
-            columns = {
-                row["name"]
-                for row in connection.execute("PRAGMA table_info(screenings)").fetchall()
-            }
-            if "manage_token" not in columns:
-                connection.execute("ALTER TABLE screenings ADD COLUMN manage_token TEXT")
-            if "expires_at" not in columns:
-                connection.execute("ALTER TABLE screenings ADD COLUMN expires_at TEXT")
-            connection.execute(
-                "CREATE INDEX IF NOT EXISTS idx_screenings_expires_at ON screenings(expires_at)"
-            )
+            run_migrations(connection)
+
+    @property
+    def schema_version(self) -> int:
+        with self.connect() as connection:
+            return int(connection.execute("PRAGMA user_version").fetchone()[0])
+
+    def backup_to(self, destination: Path) -> Path:
+        """Create a consistent SQLite backup without copying live WAL files."""
+
+        source = self.path.resolve()
+        target = destination.resolve()
+        if source == target:
+            raise ValueError("备份路径不能与当前数据库相同")
+        target.parent.mkdir(parents=True, exist_ok=True)
+        with self.connect() as source_connection:
+            with closing(sqlite3.connect(target)) as target_connection:
+                source_connection.backup(target_connection)
+        return target
+
+    def restore_from(self, backup: Path) -> None:
+        """Validate and atomically restore a backup, then migrate it to current schema."""
+
+        source = backup.resolve()
+        target = self.path.resolve()
+        if source == target:
+            raise ValueError("恢复源不能与当前数据库相同")
+        if not source.is_file():
+            raise FileNotFoundError(source)
+        with closing(
+            sqlite3.connect(f"file:{source.as_posix()}?mode=ro", uri=True)
+        ) as connection:
+            integrity = connection.execute("PRAGMA quick_check").fetchone()[0]
+            version = int(connection.execute("PRAGMA user_version").fetchone()[0])
+        if integrity != "ok":
+            raise ValueError("备份数据库完整性检查失败")
+        if version > LATEST_SCHEMA_VERSION:
+            raise ValueError("备份数据库版本高于当前程序，禁止降级恢复")
+
+        target.parent.mkdir(parents=True, exist_ok=True)
+        temporary = target.with_suffix(target.suffix + ".restore-tmp")
+        try:
+            with closing(sqlite3.connect(source)) as source_connection:
+                with closing(sqlite3.connect(temporary)) as target_connection:
+                    source_connection.backup(target_connection)
+            target.with_name(target.name + "-wal").unlink(missing_ok=True)
+            target.with_name(target.name + "-shm").unlink(missing_ok=True)
+            os.replace(temporary, target)
+        finally:
+            temporary.unlink(missing_ok=True)
+        self.initialize()
 
     def purge_expired(self, retention_days: int) -> int:
         cutoff = (datetime.now(UTC) - timedelta(days=retention_days)).isoformat()

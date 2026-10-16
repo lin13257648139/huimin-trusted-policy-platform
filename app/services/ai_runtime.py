@@ -11,6 +11,7 @@ from typing import Any
 from urllib.parse import urlsplit
 
 from app.config import settings
+from app.services.observability import observe
 
 
 @dataclass(frozen=True)
@@ -43,6 +44,33 @@ def _model_name_matches(installed: str, wanted: str) -> bool:
     if ":" in wanted:
         return installed == wanted
     return installed in {wanted, f"{wanted}:latest"}
+
+
+def _digest_matches(actual: object, expected: str | None) -> bool | None:
+    if not expected:
+        return None
+    return isinstance(actual, str) and actual.lower() == expected.lower()
+
+
+def _assert_locked_model(model: str, expected_digest: str | None) -> None:
+    if not expected_digest:
+        return
+    payload = _request_json(
+        "/api/tags", None, timeout=min(settings.ollama_timeout_seconds, 2.0)
+    )
+    selected = next(
+        (
+            item
+            for item in payload.get("models", [])
+            if isinstance(item, dict)
+            and _model_name_matches(str(item.get("name", "")), model)
+        ),
+        None,
+    )
+    if not selected:
+        raise ModelRuntimeError(f"锁定模型未安装：{model}")
+    if not _digest_matches(selected.get("digest"), expected_digest):
+        raise ModelRuntimeError(f"模型摘要不匹配，拒绝运行：{model}")
 
 
 def _request_json(path: str, payload: dict[str, Any] | None, timeout: float) -> dict[str, Any]:
@@ -108,25 +136,57 @@ def ollama_runtime_status(*, probe: bool = True) -> dict[str, Any]:
             None,
         )
         embedding_wanted = settings.ollama_embedding_model
-        embedding_present = bool(
-            embedding_wanted
-            and any(
-                _model_name_matches(str(item.get("name", "")), embedding_wanted)
+        embedding_selected = next(
+            (
+                item
                 for item in model_rows
-            )
+                if embedding_wanted
+                and _model_name_matches(str(item.get("name", "")), embedding_wanted)
+            ),
+            None,
         )
+        embedding_present = bool(
+            embedding_wanted and embedding_selected
+        )
+        expected_chat_digest = getattr(settings, "ollama_model_digest", None)
+        expected_embedding_digest = getattr(
+            settings, "ollama_embedding_model_digest", None
+        )
+        chat_verified = _digest_matches(
+            selected.get("digest") if selected else None, expected_chat_digest
+        )
+        embedding_verified = _digest_matches(
+            embedding_selected.get("digest") if embedding_selected else None,
+            expected_embedding_digest,
+        )
+        runtime_verified = model_present and chat_verified is not False
         status.update(
             {
                 "reachable": True,
                 "model_present": model_present,
                 "embedding_model_present": embedding_present,
                 "model_digest": selected.get("digest") if selected else None,
+                "expected_model_digest": expected_chat_digest,
+                "model_digest_verified": chat_verified,
                 "model_size_bytes": selected.get("size") if selected else None,
                 "model_details": selected.get("details") if selected else None,
-                "active_provider": (
-                    f"ollama/{wanted}" if model_present else "deterministic-safe-parser"
+                "embedding_model_digest": (
+                    embedding_selected.get("digest") if embedding_selected else None
                 ),
-                "reason": None if model_present else "服务可达，但配置的对话模型未安装",
+                "expected_embedding_model_digest": expected_embedding_digest,
+                "embedding_model_digest_verified": embedding_verified,
+                "active_provider": (
+                    f"ollama/{wanted}" if runtime_verified else "deterministic-safe-parser"
+                ),
+                "reason": (
+                    None
+                    if runtime_verified
+                    else (
+                        "服务可达，但配置的对话模型未安装"
+                        if not model_present
+                        else "对话模型摘要与models.lock.json不一致"
+                    )
+                ),
             }
         )
     except ModelRuntimeError as exc:
@@ -143,6 +203,9 @@ def chat_json(
 ) -> JsonModelResult:
     if not settings.ollama_enabled:
         raise ModelRuntimeError("AI_MODE未启用本地模型")
+    _assert_locked_model(
+        settings.ollama_model, getattr(settings, "ollama_model_digest", None)
+    )
     combined = f"{purpose}\n{system_prompt}\n{user_prompt}"
     prompt_sha256 = hashlib.sha256(combined.encode("utf-8")).hexdigest()
     request_payload = {
@@ -156,8 +219,11 @@ def chat_json(
         "options": {"temperature": 0, "seed": 20261002},
     }
     started = time.perf_counter()
-    body = _request_json("/api/chat", request_payload, timeout=settings.ollama_timeout_seconds)
-    latency_ms = round((time.perf_counter() - started) * 1000)
+    try:
+        body = _request_json("/api/chat", request_payload, timeout=settings.ollama_timeout_seconds)
+    finally:
+        latency_ms = round((time.perf_counter() - started) * 1000)
+        observe("llm_ms", latency_ms)
     try:
         raw = body["message"]["content"]
         parsed = json.loads(raw)
@@ -180,12 +246,19 @@ def embed_texts(texts: list[str]) -> EmbeddingResult:
     model = settings.ollama_embedding_model
     if settings.ai_mode != "hybrid" or not model:
         raise ModelRuntimeError("未配置混合检索所需的OLLAMA_EMBED_MODEL")
-    started = time.perf_counter()
-    body = _request_json(
-        "/api/embed",
-        {"model": model, "input": texts, "truncate": True},
-        timeout=settings.ollama_timeout_seconds,
+    _assert_locked_model(
+        model, getattr(settings, "ollama_embedding_model_digest", None)
     )
+    started = time.perf_counter()
+    try:
+        body = _request_json(
+            "/api/embed",
+            {"model": model, "input": texts, "truncate": True},
+            timeout=settings.ollama_timeout_seconds,
+        )
+    finally:
+        latency_ms = round((time.perf_counter() - started) * 1000)
+        observe("llm_ms", latency_ms)
     vectors = body.get("embeddings")
     if not isinstance(vectors, list) or len(vectors) != len(texts):
         raise ModelRuntimeError("向量模型返回数量与输入不一致")
@@ -204,5 +277,5 @@ def embed_texts(texts: list[str]) -> EmbeddingResult:
         vectors=validated,
         provider="ollama-embedding",
         model_id=model,
-        latency_ms=round((time.perf_counter() - started) * 1000),
+        latency_ms=latency_ms,
     )

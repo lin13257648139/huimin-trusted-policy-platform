@@ -1,0 +1,15 @@
+{
+  "name": "huimin-trusted-policy-platform-e2e",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "test:e2e": "playwright test"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "4.14.0",
+    "@playwright/test": "1.64.1"
+  },
+  "engines": {
+    "node": ">=24"
+  }
+}

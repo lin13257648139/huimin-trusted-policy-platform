@@ -50,6 +50,14 @@ from app.services.document_check import (
 )
 from app.services.intent_classifier import get_intent_classifier
 from app.services.living_assessment import assessment_model_governance, calculate_living_assessment
+from app.services.observability import (
+    configure_structured_logging,
+    increment,
+    observe,
+)
+from app.services.observability import (
+    snapshot as observability_snapshot,
+)
 from app.services.ocr import ocr_runtime_available
 from app.services.policy_compiler import analyze_policy_impact, compile_policy
 from app.services.policy_version import CURRENT_DIBAO_END, TEMPORARY_RESCUE_END
@@ -70,6 +78,7 @@ from app.services.workload import (
 )
 
 database = Database(settings.database_path)
+configure_structured_logging()
 logger = logging.getLogger("huimin.request")
 
 # Windows 注册表在部分机器上会把 .js 识别为 text/plain；配合 nosniff 会导致
@@ -173,6 +182,9 @@ async def security_headers(request: Request, call_next):
     if response is None:
         response = await call_next(request)
     elapsed_ms = (perf_counter() - started) * 1000
+    increment("http.total")
+    increment(f"http.status.{response.status_code}")
+    observe("request_ms", elapsed_ms)
     response.headers["X-Request-ID"] = request_id
     response.headers["Server-Timing"] = f"app;dur={elapsed_ms:.1f}"
     response.headers["X-Content-Type-Options"] = "nosniff"
@@ -191,12 +203,15 @@ async def security_headers(request: Request, call_next):
     elif response.headers.get("content-type", "").startswith("text/html"):
         response.headers["Cache-Control"] = "no-cache"
     logger.info(
-        "%s %s status=%s duration_ms=%.1f request_id=%s",
-        request.method,
-        request.url.path,
-        response.status_code,
-        elapsed_ms,
-        request_id,
+        "request completed",
+        extra={
+            "event": "http_request",
+            "method": request.method,
+            "path": request.url.path,
+            "status": response.status_code,
+            "duration_ms": round(elapsed_ms, 2),
+            "request_id": request_id,
+        },
     )
     return response
 
@@ -216,8 +231,12 @@ async def _run_workload(kind, function, *args, timeout: float, **kwargs):
     try:
         return await run_bounded(kind, function, *args, timeout=timeout, **kwargs)
     except WorkloadBusyError as exc:
+        increment("workload.rejected")
+        increment("http.503")
         raise HTTPException(status_code=503, detail=str(exc), headers={"Retry-After": "2"}) from exc
     except WorkloadTimeoutError as exc:
+        increment("workload.timed_out")
+        increment("http.504")
         raise HTTPException(status_code=504, detail=str(exc)) from exc
 
 
@@ -367,6 +386,7 @@ async def create_screening(
     snapshot, results, warnings = evaluate_profile(profile)
     safety_validation = validate_screening_output(profile, results)
     if not safety_gate_passed(safety_validation):
+        increment("security.safety_gate_blocked")
         failed_ids = safety_validation.get("failed_check_ids", [])
         database.record_audit_event(
             "screening.safety_blocked",
@@ -388,6 +408,7 @@ async def create_screening(
             },
         )
     screening_id = f"HM-{uuid4().hex[:12].upper()}"
+    increment(f"policy_snapshot.{snapshot.snapshot_id}")
     office_records = load_offices()
     office = next((item for item in office_records if item.region == profile.district), None)
     if office is None:
@@ -687,6 +708,14 @@ async def admin_dashboard() -> dict[str, object]:
         },
         "system_readiness": readiness,
     }
+
+
+@app.get("/api/v1/admin/observability", dependencies=[Depends(require_admin_token)])
+async def admin_observability() -> dict[str, object]:
+    """Expose privacy-safe operational signals and active alert thresholds."""
+
+    workload = workload_status()
+    return {**observability_snapshot(workload=workload), "workload": workload}
 
 
 @app.post(

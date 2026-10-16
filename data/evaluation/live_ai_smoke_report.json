@@ -1,7 +1,7 @@
 {
   "report_schema": "live-ai-smoke/1.0",
-  "generated_at": "2026-10-16T08:42:02.180076+00:00",
-  "app_version": "1.3.0",
+  "generated_at": "2026-10-16T11:56:00.783646+00:00",
+  "app_version": "1.4.0",
   "runtime": {
     "mode": "hybrid",
     "configured": true,
@@ -13,6 +13,8 @@
     "model_present": true,
     "embedding_model_present": true,
     "model_digest": "0edcdef34593eac1aa2be9c7d06c432dcf81945adca5eca2f27662c18f168ba0",
+    "expected_model_digest": "0edcdef34593eac1aa2be9c7d06c432dcf81945adca5eca2f27662c18f168ba0",
+    "model_digest_verified": true,
     "model_size_bytes": 2497293803,
     "model_details": {
       "parent_model": "",
@@ -25,12 +27,15 @@
       "quantization_level": "Q4_K_M",
       "context_length": 262144,
       "embedding_length": 2560
-    }
+    },
+    "embedding_model_digest": "ac6da0dfba84a81fdbfbaf330198c33cd77c4cdfc53e8bc50eb581914a15621d",
+    "expected_embedding_model_digest": "ac6da0dfba84a81fdbfbaf330198c33cd77c4cdfc53e8bc50eb581914a15621d",
+    "embedding_model_digest_verified": true
   },
   "chat": {
     "provider": "ollama-json-schema",
     "model_id": "qwen3:4b-instruct",
-    "latency_ms": 10058,
+    "latency_ms": 6184,
     "prompt_sha256": "09eea7adf048419835f09a3b40f5f9cb48e200a4bbe9bd670dac10736aba687d",
     "response_sha256": "08e2c358ce13cb67f94ebb35b0f67c8763190a857c0db68da6eb196dfe9da46a",
     "schema_payload": {
@@ -40,29 +45,29 @@
   "embedding": {
     "provider": "ollama-embedding",
     "model_id": "qwen3-embedding:0.6b",
-    "latency_ms": 2864,
+    "latency_ms": 2722,
     "vectors": 2,
     "dimensions": 1024
   },
   "claim_boundary": "这只证明本机配置的对话与向量模型在该时间点完成真实推理；不代表业务准确率，完整指标仍以版本化AI评测报告为准。",
   "engine_version": "rule-engine/0.5.0",
   "release_metadata": {
-    "release_id": "v1.3.0+source.4bf15869943e",
-    "app_version": "1.3.0",
+    "release_id": "v1.4.0+source.d86ce64fae39",
+    "app_version": "1.4.0",
     "engine_version": "rule-engine/0.5.0",
-    "git_commit": "3d44457cec0e50f71418ad28cc704ada6fa3ce5c",
+    "git_commit": "d2a3fed5952d0b454a3a3fde100d3965d9f79366",
     "git_dirty": true,
-    "source_tree_sha256": "4bf15869943e7e6400abf126cc4494042555638289301bca6739da13f276ff48",
+    "source_tree_sha256": "d86ce64fae3968cbbfd0fde9fd164ace2fa360a30e830a964c5a77b638da617d",
     "source_binding": {
-      "code_commit": "3d44457cec0e50f71418ad28cc704ada6fa3ce5c",
-      "source_inputs_dirty": false,
-      "source_tree_sha256": "4bf15869943e7e6400abf126cc4494042555638289301bca6739da13f276ff48",
-      "source_file_count": 230,
+      "code_commit": "d2a3fed5952d0b454a3a3fde100d3965d9f79366",
+      "source_inputs_dirty": true,
+      "source_tree_sha256": "d86ce64fae3968cbbfd0fde9fd164ace2fa360a30e830a964c5a77b638da617d",
+      "source_file_count": 246,
       "scope": "代码、测试、评测输入、运行和安全配置；生成的评测报告不参与自指纹",
       "text_normalization": "CRLF和LF统一为LF；二进制文件保持原始字节"
     },
     "artifact_binding": {
-      "reports_generated_from_source_sha256": "4bf15869943e7e6400abf126cc4494042555638289301bca6739da13f276ff48",
+      "reports_generated_from_source_sha256": "d86ce64fae3968cbbfd0fde9fd164ace2fa360a30e830a964c5a77b638da617d",
       "evidence_commit": null,
       "note": "报告提交后可由正式发布流程填入证据提交；源码绑定以内容指纹为准。"
     }
