@@ -50,6 +50,14 @@ ALLOWED_FIELDS = {
 }
 ALLOWED_OPERATORS = {"lt", "lte", "gte", "eq", "within_days", "ratio_gte"}
 
+PARAMETER_ANCHORS: dict[str, re.Pattern[str]] = {
+    "income_standard_monthly_per_capita": re.compile(r"最低生活保障|低保标准"),
+    "edge_standard_monthly_per_capita": re.compile(r"低保边缘|最低生活保障边缘"),
+    "income_multiplier": re.compile(r"倍"),
+    "urgent_event_days": re.compile(r"申请日前|日|月"),
+    "rigid_expense_income_ratio": re.compile(r"刚性支出|必需支出|家庭年收入"),
+}
+
 POLICY_EXTRACTION_SCHEMA = {
     "type": "object",
     "additionalProperties": False,
@@ -58,7 +66,14 @@ POLICY_EXTRACTION_SCHEMA = {
         "benefit_id": {"type": ["string", "null"], "enum": [*BENEFITS, None]},
         "effective_from": {"type": ["string", "null"]},
         "effective_to": {"type": ["string", "null"]},
-        "parameters": {"type": "object"},
+        "parameters": {
+            "type": "object",
+            "additionalProperties": False,
+            "properties": {
+                name: {"type": ["string", "number", "integer", "boolean", "null"]}
+                for name in sorted(ALLOWED_PARAMETER_NAMES)
+            },
+        },
         "conditions": {
             "type": "array",
             "items": {
@@ -349,11 +364,14 @@ def _extract_conditions(
 def _ollama_extract(
     request: PolicyCompileRequest,
 ) -> tuple[dict[str, Any] | None, JsonModelResult | None]:
-    if not request.use_llm or not settings.ollama_enabled:
+    if not settings.ollama_enabled:
         return None, None
     system_prompt = (
         "你是政策规则抽取器，不进行资格审批。只输出JSON。不得补写原文没有的信息。"
-        "允许benefit_id为B001-B005；parameters只允许"
+        "benefit_id只能是B001-B005或null；无法从当前原文确定事项时必须输出null，"
+        "禁止默认B001。日期未明说时输出null，parameters未明说时输出空对象，"
+        "conditions未明说时输出空数组，不得输出示例值、占位值或常用默认值。"
+        "parameters只允许"
         f"{sorted(ALLOWED_PARAMETER_NAMES)}；conditions的field只允许{sorted(ALLOWED_FIELDS)}，"
         f"operator只允许{sorted(ALLOWED_OPERATORS)}。每条condition必须包含原文逐字引用source_quote。"
         "输出字段：benefit_id,effective_from,effective_to,parameters,conditions。"
@@ -370,31 +388,81 @@ def _ollama_extract(
         return None, None
 
 
-def _merge_llm(
-    request: PolicyCompileRequest,
-    deterministic: dict[str, Any],
-    llm: dict[str, Any] | None,
-) -> tuple[dict[str, Any], bool]:
+def _benefit_has_source_anchor(benefit_id: str, text: str, title: str) -> bool:
+    keywords = BENEFITS[benefit_id][1]
+    # “社会救助”是上位领域词，不能单独证明B001事项。
+    if benefit_id == "B001":
+        keywords = tuple(item for item in keywords if item != "社会救助")
+    combined = f"{title}\n{text}"
+    return any(keyword in combined for keyword in keywords)
+
+
+def _parameter_has_source_anchor(name: str, value: Any, text: str) -> bool:
+    anchor = PARAMETER_ANCHORS.get(name)
+    if anchor is None or not anchor.search(text) or value is None or isinstance(value, bool):
+        return False
+    compact = re.sub(r"[\s,，]", "", text)
+    raw = str(value).strip()
+    candidates = {raw}
+    try:
+        numeric = Decimal(raw)
+    except InvalidOperation:
+        return re.sub(r"\s", "", raw) in compact
+    normalized = format(numeric.normalize(), "f")
+    candidates.add(normalized)
+    if numeric == numeric.to_integral_value():
+        candidates.add(str(int(numeric)))
+    if name == "rigid_expense_income_ratio":
+        candidates.add(f"{format((numeric * 100).normalize(), 'f')}%")
+    return any(
+        re.search(rf"(?<!\d){re.escape(candidate)}(?!\d)", compact)
+        for candidate in candidates
+        if candidate
+    )
+
+
+def _validated_llm_result(
+    request: PolicyCompileRequest, llm: dict[str, Any] | None
+) -> dict[str, Any]:
+    """Validate model output without borrowing deterministic predictions.
+
+    This is deliberately separate from fusion so the LLM-only evaluation track
+    cannot inherit a benefit, date, parameter or condition from the rules engine.
+    """
+
+    result: dict[str, Any] = {
+        "benefit_id": "unknown",
+        "effective_from": None,
+        "effective_to": None,
+        "parameters": {},
+        "conditions": [],
+    }
     if not llm:
-        return deterministic, False
-    result = dict(deterministic)
+        return result
     benefit_id = llm.get("benefit_id")
-    if benefit_id in BENEFITS and request.benefit_hint is None:
+    if benefit_id in BENEFITS and _benefit_has_source_anchor(
+        benefit_id, request.source_text, request.title
+    ):
         result["benefit_id"] = benefit_id
     for field in ("effective_from", "effective_to"):
         value = llm.get(field)
-        if value and not result.get(field):
+        if value:
             try:
                 result[field] = date.fromisoformat(str(value))
             except ValueError:
                 pass
-    llm_parameters = llm.get("parameters")
-    if isinstance(llm_parameters, dict):
-        for key, value in llm_parameters.items():
-            if key in ALLOWED_PARAMETER_NAMES and isinstance(value, (str, int, float, bool)):
-                result["parameters"].setdefault(key, value)
+    raw_parameters = llm.get("parameters")
+    if isinstance(raw_parameters, dict):
+        result["parameters"] = {
+            key: value
+            for key, value in raw_parameters.items()
+            if key in ALLOWED_PARAMETER_NAMES
+            and isinstance(value, (str, int, float, bool))
+            and _parameter_has_source_anchor(key, value, request.source_text)
+        }
     accepted: list[CompiledRuleCondition] = []
-    for raw in llm.get("conditions", []) if isinstance(llm.get("conditions"), list) else []:
+    raw_conditions = llm.get("conditions")
+    for raw in raw_conditions if isinstance(raw_conditions, list) else []:
         if not isinstance(raw, dict):
             continue
         quote = str(raw.get("source_quote", "")).strip()
@@ -409,6 +477,40 @@ def _merge_llm(
             accepted.append(CompiledRuleCondition(**raw))
         except ValueError:
             continue
+    result["conditions"] = accepted
+    return result
+
+
+def _merge_llm(
+    request: PolicyCompileRequest,
+    deterministic: dict[str, Any],
+    llm: dict[str, Any] | None,
+) -> tuple[dict[str, Any], bool]:
+    if not llm:
+        return deterministic, False
+    result = {
+        **deterministic,
+        "parameters": dict(deterministic["parameters"]),
+        "conditions": list(deterministic["conditions"]),
+    }
+    validated = _validated_llm_result(request, llm)
+    benefit_id = validated.get("benefit_id")
+    if (
+        benefit_id in BENEFITS
+        and request.benefit_hint is None
+        and deterministic.get("benefit_id") == "unknown"
+    ):
+        result["benefit_id"] = benefit_id
+    for field in ("effective_from", "effective_to"):
+        value = validated.get(field)
+        if value and not result.get(field):
+            result[field] = value
+    llm_parameters = validated.get("parameters")
+    if isinstance(llm_parameters, dict):
+        for key, value in llm_parameters.items():
+            if key in ALLOWED_PARAMETER_NAMES and isinstance(value, (str, int, float, bool)):
+                result["parameters"].setdefault(key, value)
+    accepted = validated["conditions"]
     known = {(item.field, item.operator, str(item.value)) for item in result["conditions"]}
     result["conditions"].extend(
         item for item in accepted if (item.field, item.operator, str(item.value)) not in known
@@ -457,6 +559,9 @@ def _version_diff(candidate: PolicyRuleCandidate) -> dict[str, Any]:
 
 
 def compile_policy(request: PolicyCompileRequest) -> PolicyCompileResponse:
+    strategy = request.extraction_strategy or (
+        "controlled_fusion" if request.use_llm else "deterministic"
+    )
     start, end = _extract_dates(request.source_text)
     benefit_id = _detect_benefit(request.source_text, request.benefit_hint, request.title)
     parameters = _extract_parameters(request.source_text, benefit_id)
@@ -467,8 +572,17 @@ def compile_policy(request: PolicyCompileRequest) -> PolicyCompileResponse:
         "parameters": parameters,
         "conditions": _extract_conditions(request.source_text, benefit_id, parameters),
     }
-    llm_payload, llm_trace = _ollama_extract(request)
-    merged, used_llm = _merge_llm(request, deterministic, llm_payload)
+    llm_payload: dict[str, Any] | None = None
+    llm_trace: JsonModelResult | None = None
+    if strategy in {"llm_only", "controlled_fusion"}:
+        llm_payload, llm_trace = _ollama_extract(request)
+    if strategy == "llm_only":
+        merged = _validated_llm_result(request, llm_payload)
+        used_llm = llm_trace is not None
+    elif strategy == "controlled_fusion":
+        merged, used_llm = _merge_llm(request, deterministic, llm_payload)
+    else:
+        merged, used_llm = deterministic, False
     benefit_id = merged["benefit_id"]
     citations = list(dict.fromkeys(item.source_quote for item in merged["conditions"]))[:8]
     exceptions = [
@@ -498,8 +612,10 @@ def compile_policy(request: PolicyCompileRequest) -> PolicyCompileResponse:
         exceptions=exceptions,
         citations=citations,
         provider=(
-            f"ollama/{settings.ollama_model}+allowlist-validation"
-            if used_llm
+            f"ollama/{settings.ollama_model}+allowlist-validation/llm-only"
+            if strategy == "llm_only" and used_llm
+            else f"local-policy-compiler/1.0+ollama/{settings.ollama_model}+allowlist-fusion"
+            if strategy == "controlled_fusion" and used_llm
             else "local-policy-compiler/1.0"
         ),
         extraction_completeness=round(sum(completeness_parts) / len(completeness_parts), 3),
@@ -565,7 +681,7 @@ def compile_policy(request: PolicyCompileRequest) -> PolicyCompileResponse:
                 field="effective_from",
             )
         )
-    if not used_llm and request.use_llm:
+    if not used_llm and strategy in {"llm_only", "controlled_fusion"}:
         issues.append(
             PolicyValidationIssue(
                 severity="info",

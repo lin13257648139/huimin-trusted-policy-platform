@@ -4,6 +4,7 @@ from fastapi.testclient import TestClient
 
 from app.domain.models import PolicyCompileRequest
 from app.repositories.database import Database
+from app.services.ai_runtime import JsonModelResult
 from app.services.policy_compiler import analyze_policy_impact, compile_policy
 
 POLICY_TEXT = (
@@ -76,6 +77,163 @@ def test_policy_compiler_does_not_treat_generic_policy_title_as_benefit() -> Non
         )
     )
     assert result.candidate.benefit_id == "unknown"
+
+
+def test_llm_only_track_does_not_borrow_deterministic_fields(monkeypatch) -> None:
+    import app.services.policy_compiler as compiler
+
+    trace = JsonModelResult(
+        payload={},
+        provider="ollama",
+        model_id="test-model",
+        latency_ms=17,
+        prompt_sha256="a" * 64,
+        response_sha256="b" * 64,
+    )
+    monkeypatch.setattr(
+        compiler,
+        "_ollama_extract",
+        lambda request: (
+            {
+                "benefit_id": "B002",
+                "effective_from": None,
+                "effective_to": None,
+                "parameters": {},
+                "conditions": [],
+            },
+            trace,
+        ),
+    )
+    request = _request().model_copy(
+        update={
+            "benefit_hint": None,
+            "use_llm": True,
+            "extraction_strategy": "llm_only",
+        }
+    )
+    result = compile_policy(request)
+
+    assert result.candidate.benefit_id == "B002"
+    assert result.candidate.parameters == {}
+    assert result.candidate.conditions == []
+    assert result.candidate.effective_from is None
+    assert result.candidate.provider.endswith("/llm-only")
+
+
+def test_controlled_fusion_is_reported_separately(monkeypatch) -> None:
+    import app.services.policy_compiler as compiler
+
+    trace = JsonModelResult(
+        payload={},
+        provider="ollama",
+        model_id="test-model",
+        latency_ms=11,
+        prompt_sha256="c" * 64,
+        response_sha256="d" * 64,
+    )
+    monkeypatch.setattr(
+        compiler,
+        "_ollama_extract",
+        lambda request: (
+            {
+                "benefit_id": "B002",
+                "effective_from": None,
+                "effective_to": None,
+                "parameters": {},
+                "conditions": [],
+            },
+            trace,
+        ),
+    )
+    request = _request().model_copy(
+        update={
+            "benefit_hint": None,
+            "use_llm": True,
+            "extraction_strategy": "controlled_fusion",
+        }
+    )
+    result = compile_policy(request)
+
+    assert result.candidate.parameters["income_standard_monthly_per_capita"] == "1400.00"
+    assert result.candidate.effective_from.isoformat() == "2027-08-01"
+    assert "+allowlist-fusion" in result.candidate.provider
+
+
+def test_llm_b001_requires_specific_source_anchor(monkeypatch) -> None:
+    import app.services.policy_compiler as compiler
+
+    trace = JsonModelResult(
+        payload={},
+        provider="ollama",
+        model_id="test-model",
+        latency_ms=9,
+        prompt_sha256="e" * 64,
+        response_sha256="f" * 64,
+    )
+    monkeypatch.setattr(
+        compiler,
+        "_ollama_extract",
+        lambda request: (
+            {
+                "benefit_id": "B001",
+                "effective_from": None,
+                "effective_to": None,
+                "parameters": {"income_standard_monthly_per_capita": 3000},
+                "conditions": [],
+            },
+            trace,
+        ),
+    )
+    result = compile_policy(
+        PolicyCompileRequest(
+            source_id="OTHER-LLM-001",
+            title="办公用品采购通知",
+            source_text="本通知规定会议室设备维护、值班安排、办公用品采购和库存登记流程。",
+            region="广州市",
+            use_llm=True,
+            extraction_strategy="llm_only",
+        )
+    )
+    assert result.candidate.benefit_id == "unknown"
+    assert result.candidate.parameters == {}
+
+
+def test_controlled_fusion_does_not_override_deterministic_benefit(monkeypatch) -> None:
+    import app.services.policy_compiler as compiler
+
+    trace = JsonModelResult(
+        payload={},
+        provider="ollama",
+        model_id="test-model",
+        latency_ms=8,
+        prompt_sha256="1" * 64,
+        response_sha256="2" * 64,
+    )
+    monkeypatch.setattr(
+        compiler,
+        "_ollama_extract",
+        lambda request: (
+            {
+                "benefit_id": "B001",
+                "effective_from": None,
+                "effective_to": None,
+                "parameters": {},
+                "conditions": [],
+            },
+            trace,
+        ),
+    )
+    result = compile_policy(
+        PolicyCompileRequest(
+            source_id="FUSION-001",
+            title="低收入人口分层救助通知",
+            source_text="刚性支出困难家庭纳入低收入人口监测，按规定开展分层分类社会救助和动态核查。",
+            region="广州市",
+            use_llm=True,
+            extraction_strategy="controlled_fusion",
+        )
+    )
+    assert result.candidate.benefit_id == "B004"
 
 
 def test_policy_impact_reports_changed_synthetic_cases() -> None:

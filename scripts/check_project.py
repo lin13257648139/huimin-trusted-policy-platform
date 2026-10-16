@@ -44,6 +44,13 @@ def main() -> None:
         ROOT / "data" / "processed" / "benefit_relation_registry.json",
         ROOT / "data" / "evaluation" / "release_manifest.json",
         ROOT / "data" / "processed" / "policy_evidence_inventory.json",
+        ROOT / "data" / "evaluation" / "stage2_split_manifest.json",
+        ROOT / "data" / "ml" / "intent_dataset.json",
+        ROOT / "data" / "evaluation" / "profile_extraction_benchmark.jsonl",
+        ROOT / "data" / "evaluation" / "retrieval_benchmark.json",
+        ROOT / "data" / "evaluation" / "policy_compiler_real_benchmark.jsonl",
+        ROOT / "data" / "evaluation" / "high_risk_safety_benchmark.jsonl",
+        ROOT / "data" / "evaluation" / "ocr_synthetic" / "manifest.json",
     ]
     missing = [path.relative_to(ROOT).as_posix() for path in expected if not path.exists()]
     if missing:
@@ -52,6 +59,7 @@ def main() -> None:
     for path in [
         expected[3], expected[4], expected[5], expected[6], expected[7],
         expected[10], expected[11], expected[14], expected[15], expected[16], expected[17],
+        expected[18], expected[19], expected[21], expected[24],
     ]:
         with path.open("r", encoding="utf-8-sig") as handle:
             json.load(handle)
@@ -174,6 +182,40 @@ def main() -> None:
         if not linked or linked - known_source_ids:
             _fail(f"政策PDF关联未知或空来源编号：{item.get('file_name')}")
 
+    stage2 = json.loads(expected[18].read_text(encoding="utf-8"))
+    requirements = stage2.get("requirements", {})
+    if not requirements or not all(requirements.values()):
+        _fail(f"第二阶段冻结集验收未全部通过：{requirements}")
+    for dataset in stage2.get("datasets", []):
+        dataset_path = (ROOT / str(dataset.get("path", ""))).resolve()
+        if not dataset_path.is_relative_to(ROOT) or not dataset_path.is_file():
+            _fail(f"第二阶段数据集缺失或路径越界：{dataset.get('path')}")
+        if _sha256(dataset_path) != dataset.get("sha256"):
+            _fail(f"第二阶段数据集冻结哈希失配：{dataset.get('path')}")
+    policy_rows = [
+        json.loads(line)
+        for line in expected[22].read_text(encoding="utf-8").splitlines()
+        if line
+    ]
+    development_sources = {
+        row["source_id"] for row in policy_rows if row.get("split") == "development"
+    }
+    final_sources = {
+        row["source_id"] for row in policy_rows if row.get("split") == "frozen_final_test"
+    }
+    if development_sources & final_sources:
+        _fail("Policy2Rule开发集和冻结最终集存在政策文件泄漏")
+    ocr_rows = json.loads(expected[24].read_text(encoding="utf-8"))
+    if len(ocr_rows) < 100 or len({row.get("layout") for row in ocr_rows}) < 10:
+        _fail("OCR冻结集不足100张或少于10种版式")
+    missing_ocr = [
+        row.get("file")
+        for row in ocr_rows
+        if not (expected[24].parent / str(row.get("file", ""))).is_file()
+    ]
+    if missing_ocr:
+        _fail(f"OCR冻结集图片缺失：{missing_ocr[:5]}")
+
     pyproject = (ROOT / "pyproject.toml").read_text(encoding="utf-8")
     index_html = (ROOT / "app" / "static" / "index.html").read_text(encoding="utf-8")
     service_worker = (ROOT / "app" / "static" / "sw.js").read_text(encoding="utf-8")
@@ -194,6 +236,8 @@ def main() -> None:
         "PROJECT_CHECK_OK "
         f"version={APP_VERSION} sources={len(sources)} provenance={len(manifest_rows)} "
         f"evidence_quotes={evidence_report['verified']}/{evidence_report['total']} "
+        f"stage2_policy_final={sum(row.get('split') == 'frozen_final_test' for row in policy_rows)} "
+        f"stage2_ocr={len(ocr_rows)} "
         f"locked_dependencies={sum(1 for line in expected[12].read_text(encoding='utf-8').splitlines() if '==' in line)} "
         f"audited_dependencies={len(audited_dependencies)}"
     )

@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0",
-  "generated_at": "2026-10-16T03:06:27.139020+00:00",
+  "generated_at": "2026-10-16T08:41:28.296148+00:00",
   "catalog": "data/processed/policy_source_catalog.csv",
   "catalog_sha256": "df14b4fc9b0ef18ade30035b6d7b0ffcc885a9942c0ee65ce1b2ea801129d31c",
   "path_policy": "all paths are project-relative; no personal absolute path is stored",

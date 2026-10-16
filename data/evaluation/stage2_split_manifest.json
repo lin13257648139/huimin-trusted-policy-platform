@@ -1,0 +1,155 @@
+{
+  "schema_version": "stage2-frozen-splits/1.0",
+  "frozen_on": "2026-10-16",
+  "label_independence": "项目组生成或标注；没有外部专家、真人试点或独立第三方标注",
+  "requirements": {
+    "retrieval_final_queries": true,
+    "intent_final_cases": true,
+    "profile_final_cases": true,
+    "ocr_final_images": true,
+    "ocr_layouts": true,
+    "policy2rule_final_clauses": true,
+    "safety_final_cases": true,
+    "policy_file_isolation": true,
+    "retrieval_file_isolation": true
+  },
+  "policy_file_isolation": {
+    "policy2rule": {
+      "development_source_ids": [
+        "CN-001",
+        "GD-002",
+        "GD-004-A",
+        "GZ-001",
+        "GZ-002",
+        "GZ-003",
+        "GZ-004",
+        "GZ-005",
+        "GZ-008",
+        "GZ-009"
+      ],
+      "frozen_final_source_ids": [
+        "CN-002",
+        "CN-003",
+        "CN-004",
+        "GD-005"
+      ],
+      "overlap": []
+    },
+    "retrieval": {
+      "development_source_ids": [
+        "GZ-001",
+        "GZ-002",
+        "GZ-003",
+        "GZ-004",
+        "GZ-008",
+        "GZ-009"
+      ],
+      "frozen_final_source_ids": [
+        "CN-001",
+        "GD-002",
+        "GD-004-A",
+        "GZ-005"
+      ],
+      "disjoint": true,
+      "rule": "同一source_id及其全部条款改写只能进入一个分组"
+    },
+    "rule": "同一政策source_id及其任何条款、切片或改写只能属于一个分组"
+  },
+  "template_isolation": {
+    "intent": {
+      "split": "frozen_final_test",
+      "test_cases": 250,
+      "template_families_disjoint": true
+    },
+    "profile_template_families": [
+      "final_asset_negative_v2",
+      "final_dual_expense_v2",
+      "final_event_expense_v4",
+      "final_governance_compound_v2",
+      "final_income_sentence_v3",
+      "final_injection_v4",
+      "final_negation_v3",
+      "final_residence_v2",
+      "final_sparse_unknown_v3",
+      "final_wan_unit_v2"
+    ]
+  },
+  "category_counts": {
+    "profile": {
+      "income_basic": 30,
+      "governance_fields": 30,
+      "urgent_medical": 30,
+      "combined_expense": 30,
+      "explicit_negation": 30,
+      "nonlocal_residence": 30,
+      "unit_conversion": 30,
+      "asset_negative": 30,
+      "missing_unknown": 30,
+      "instruction_attack": 30
+    },
+    "safety": {
+      "unknown_preservation": 60,
+      "temporal_boundary": 50,
+      "out_of_scope_no_answer": 50,
+      "prompt_injection": 60,
+      "domain_gate_smuggling": 40,
+      "domain_gate_legitimate_relation": 20,
+      "publish_gate": 40
+    },
+    "ocr_layout": {
+      "layout-01": 10,
+      "layout-02": 10,
+      "layout-03": 10,
+      "layout-04": 10,
+      "layout-05": 10,
+      "layout-06": 10,
+      "layout-07": 10,
+      "layout-08": 10,
+      "layout-09": 10,
+      "layout-10": 10
+    },
+    "ocr_material": {
+      "medical_expense": 20,
+      "income": 20,
+      "residence": 10,
+      "verification_authorization": 10,
+      "identity": 10,
+      "household_register": 10,
+      "medical_diagnosis": 10,
+      "education_expense": 10
+    }
+  },
+  "datasets": [
+    {
+      "path": "data/evaluation/profile_extraction_benchmark.jsonl",
+      "sha256": "4feb3471a0d6bb772f11fe4b1c8777b35528b429e234a1aa3a88c977d925198f",
+      "records": 300
+    },
+    {
+      "path": "data/evaluation/retrieval_benchmark.json",
+      "sha256": "b0ccd57c23cdf90aa3bb653ea9b41f481398e55003a5e6d9e65ff9a90f862a99",
+      "records": 160
+    },
+    {
+      "path": "data/ml/intent_dataset.json",
+      "sha256": "60a7fded87ea2c4d31675c9fbfd0a89daaef82e45f3c41c277861bef2f377122",
+      "records": 250
+    },
+    {
+      "path": "data/evaluation/policy_compiler_real_benchmark.jsonl",
+      "sha256": "65773d242ab179d8796809c8a4e1942a97f17691e9f47559cb19a01d57ac0ddc",
+      "records": 170
+    },
+    {
+      "path": "data/evaluation/high_risk_safety_benchmark.jsonl",
+      "sha256": "745678ad3067ae1bac5aee35149be11dd5ab2800c1964ebafebd3552107eb9cf",
+      "records": 320
+    },
+    {
+      "path": "data/evaluation/ocr_synthetic/manifest.json",
+      "sha256": "cfbbca349f7bf4dff663dd0c2ee8011bafcc7794fb4af88bc2e9f73476f8c77b",
+      "records": 100
+    }
+  ],
+  "claim_boundary": "冻结仅证明文件级隔离、规模与哈希稳定；内部合成或项目组标签不能替代外部专家标注。"
+}

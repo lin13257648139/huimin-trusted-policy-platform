@@ -18,6 +18,7 @@ from app.services.retrieval import search_evidence_result
 from app.services.rule_engine import evaluate_profile
 from app.services.safety_validator import validate_screening_output
 from app.version import APP_VERSION
+from scripts.evaluation_stats import rate_metric
 
 DATASET = ROOT / "data" / "evaluation" / "high_risk_safety_benchmark.jsonl"
 OUTPUT = ROOT / "data" / "evaluation" / "high_risk_safety_report.json"
@@ -98,11 +99,15 @@ def main() -> None:
         "passed": sum(item["passed"] for item in results),
         "failed": sum(not item["passed"] for item in results),
         "pass_rate": round(sum(item["passed"] for item in results) / max(len(results), 1), 4),
+        "pass_rate_ci95": rate_metric(
+            sum(bool(item["passed"]) for item in results), len(results)
+        )["ci95"],
         "by_category": {
             key: {
                 "cases": value["total"],
                 "passed": value["passed"],
                 "pass_rate": round(value["passed"] / value["total"], 4),
+                "pass_rate_ci95": rate_metric(value["passed"], value["total"])["ci95"],
             }
             for key, value in sorted(by_category.items())
         },

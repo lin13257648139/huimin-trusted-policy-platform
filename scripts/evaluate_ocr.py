@@ -13,13 +13,16 @@ sys.path.insert(0, str(ROOT))
 
 from app.services.document_check import check_document  # noqa: E402
 from app.services.ocr import ocr_runtime_available  # noqa: E402
+from scripts.evaluation_stats import latency_summary, rate_metric  # noqa: E402
 
 
 def evaluate(directory: Path) -> dict[str, object]:
     if not ocr_runtime_available():
         raise SystemExit("OCR运行依赖未安装，不能生成OCR指标。")
     manifest = json.loads((directory / "manifest.json").read_text(encoding="utf-8"))
-    by_variant: dict[str, Counter[str]] = defaultdict(Counter)
+    by_degradation: dict[str, Counter[str]] = defaultdict(Counter)
+    by_layout: dict[str, Counter[str]] = defaultdict(Counter)
+    by_material: dict[str, Counter[str]] = defaultdict(Counter)
     classification_correct = 0
     date_correct = 0
     date_total = 0
@@ -49,12 +52,18 @@ def evaluate(directory: Path) -> dict[str, object]:
             amount_total += 1
             amount_match = item["expected_amount"] in amounts
             amount_correct += int(amount_match)
-        by_variant[item["variant"]]["total"] += 1
-        by_variant[item["variant"]]["classification_correct"] += int(class_match)
+        for grouping, name in (
+            (by_degradation, item["degradation"]),
+            (by_layout, item["layout"]),
+            (by_material, item["material_type"]),
+        ):
+            grouping[name]["total"] += 1
+            grouping[name]["classification_correct"] += int(class_match)
         details.append(
             {
                 "case_id": item["case_id"],
-                "variant": item["variant"],
+                "layout": item["layout"],
+                "degradation": item["degradation"],
                 "expected_type": item["material_type"],
                 "predicted_type": result.detected_type,
                 "classification_match": class_match,
@@ -69,18 +78,40 @@ def evaluate(directory: Path) -> dict[str, object]:
         "benchmark_role": "synthetic_ocr_robustness_benchmark",
         "case_count": total,
         "classification_accuracy": round(classification_correct / total, 4),
+        "classification_accuracy_ci95": rate_metric(classification_correct, total)["ci95"],
         "date_candidate_recall": round(date_correct / date_total, 4),
+        "date_candidate_recall_ci95": rate_metric(date_correct, date_total)["ci95"],
         "amount_candidate_recall": round(amount_correct / amount_total, 4),
+        "amount_candidate_recall_ci95": rate_metric(amount_correct, amount_total)["ci95"],
         "mean_seconds_per_image": round(statistics.mean(elapsed), 4),
-        "by_variant": {
+        "latency_ms": latency_summary(value * 1000 for value in elapsed),
+        "by_degradation": {
             name: {
                 "cases": counts["total"],
                 "classification_accuracy": round(
                     counts["classification_correct"] / counts["total"], 4
                 ),
+                "ci95": rate_metric(
+                    counts["classification_correct"], counts["total"]
+                )["ci95"],
             }
-            for name, counts in sorted(by_variant.items())
+            for name, counts in sorted(by_degradation.items())
         },
+        "by_layout": {
+            name: rate_metric(counts["classification_correct"], counts["total"])
+            for name, counts in sorted(by_layout.items())
+        },
+        "by_material": {
+            name: rate_metric(counts["classification_correct"], counts["total"])
+            for name, counts in sorted(by_material.items())
+        },
+        "error_table": [
+            item
+            for item in details
+            if not item["classification_match"]
+            or not item["date_match"]
+            or item["amount_match"] is False
+        ],
         "details": details,
         "warning": "全部图片为程序生成的无真实信息材料；正式对外评测必须增加独立模板和人工标注图片，不能把该结果写成真实材料准确率。",
     }

@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import csv
+import hashlib
 import json
 import re
 from pathlib import Path
@@ -7,6 +9,13 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 EVIDENCE = ROOT / "app" / "data" / "evidence.json"
 OUTPUT = ROOT / "data" / "evaluation" / "policy_compiler_real_benchmark.jsonl"
+CATALOG = ROOT / "data" / "processed" / "policy_source_catalog.csv"
+FINAL_SOURCE_BENEFITS = {
+    "CN-002": "B004",
+    "CN-003": "B002",
+    "CN-004": "B001",
+    "GD-005": "B002",
+}
 
 
 # These labels are project-authored from official clauses.  They are not presented
@@ -157,6 +166,89 @@ def _benefit_evaluable_without_hint(title: str, text: str, benefit_id: str) -> b
     return False
 
 
+def _pdf_clauses(path: Path, *, limit: int) -> list[tuple[int, str]]:
+    """Extract unique verbatim clauses while retaining a page locator."""
+
+    import pypdfium2 as pdfium
+
+    document = pdfium.PdfDocument(path)
+    clauses: list[tuple[int, str]] = []
+    seen: set[str] = set()
+    try:
+        for page_index in range(len(document)):
+            page = document[page_index]
+            text_page = page.get_textpage()
+            try:
+                text = text_page.get_text_bounded()
+            finally:
+                text_page.close()
+                page.close()
+            compact = re.sub(r"\s+", "", text)
+            for part in re.split(r"(?<=[。；！？])", compact):
+                clause = part.strip("；。！？")
+                cjk = sum("\u4e00" <= character <= "\u9fff" for character in clause)
+                if not (20 <= len(clause) <= 500 and cjk >= 15) or clause in seen:
+                    continue
+                seen.add(clause)
+                clauses.append((page_index + 1, clause))
+                if len(clauses) >= limit:
+                    return clauses
+    finally:
+        document.close()
+    return clauses
+
+
+def _final_policy_cases() -> list[dict[str, object]]:
+    with CATALOG.open("r", encoding="utf-8-sig", newline="") as stream:
+        catalog = {row["source_id"]: row for row in csv.DictReader(stream)}
+    cases: list[dict[str, object]] = []
+    for source_id, default_benefit in FINAL_SOURCE_BENEFITS.items():
+        row = catalog[source_id]
+        source_path = (CATALOG.parent / row["local_file"]).resolve()
+        if not source_path.is_file() or not source_path.is_relative_to(ROOT):
+            raise RuntimeError(f"冻结政策原件不可用：{source_id}")
+        clauses = _pdf_clauses(source_path, limit=30)
+        if len(clauses) < 30:
+            raise RuntimeError(f"{source_id}可用独立条款不足30条：{len(clauses)}")
+        source_digest = hashlib.sha256(source_path.read_bytes()).hexdigest()
+        for page, text in clauses:
+            benefit_id = _subclause_benefit(text, default_benefit)
+            parameters, fields = _subclause_gold(text, benefit_id)
+            cases.append(
+                {
+                    "case_id": f"PCR-F{len(cases) + 1:03d}",
+                    "split": "frozen_final_test",
+                    "dataset_role": "official_verbatim_clause_project_authored_gold",
+                    "annotation_method": "project_annotation_guide_v3",
+                    "granularity": "page_clause",
+                    "locator": f"PDF第{page}页",
+                    "unassisted_benefit_evaluable": _benefit_evaluable_without_hint(
+                        row["title"], text, benefit_id
+                    ),
+                    "evidence_id": None,
+                    "source_id": source_id,
+                    "source_sha256": source_digest,
+                    "source_file": source_path.relative_to(ROOT).as_posix(),
+                    "title": row["title"],
+                    "text": text,
+                    "assisted_input": {
+                        "benefit_hint": benefit_id,
+                        "effective_from": row.get("effective_from") or None,
+                        "effective_to": row.get("effective_to") or None,
+                    },
+                    "expected": {
+                        "benefit_id": benefit_id,
+                        "effective_from": row.get("effective_from") or None,
+                        "effective_to": row.get("effective_to") or None,
+                        "parameters": parameters,
+                        "condition_fields": fields,
+                        "date_error": not bool(row.get("effective_from")),
+                    },
+                }
+            )
+    return cases
+
+
 def main() -> None:
     evidence = {item["evidence_id"]: item for item in json.loads(EVIDENCE.read_text(encoding="utf-8"))}
     cases = []
@@ -177,44 +269,62 @@ def main() -> None:
 
     if len(cases) < 50:
         raise RuntimeError(f"真实政策条款基准不足50例：{len(cases)}")
-    lines = []
+    rows: list[dict[str, object]] = []
     for index, (item, text, benefit_id, parameters, fields, granularity) in enumerate(
         cases, start=1
     ):
-        lines.append(
-            json.dumps(
-                {
-                    "case_id": f"PCR-R{index:03d}",
-                    "dataset_role": "real_official_clause_project_authored_gold",
-                    "annotation_method": "project_annotation_guide_v2",
-                    "granularity": granularity,
-                    "unassisted_benefit_evaluable": _benefit_evaluable_without_hint(
-                        item["title"], text, benefit_id
-                    ),
-                    "evidence_id": item["evidence_id"],
-                    "source_id": item["source_id"],
-                    "source_sha256": item["source_sha256"],
-                    "title": item["title"],
-                    "text": text,
-                    "assisted_input": {
-                        "benefit_hint": benefit_id,
-                        "effective_from": item.get("effective_from"),
-                        "effective_to": item.get("effective_to"),
-                    },
-                    "expected": {
-                        "benefit_id": benefit_id,
-                        "effective_from": item.get("effective_from"),
-                        "effective_to": item.get("effective_to"),
-                        "parameters": parameters,
-                        "condition_fields": fields,
-                        "date_error": not bool(item.get("effective_from")),
-                    },
+        rows.append(
+            {
+                "case_id": f"PCR-D{index:03d}",
+                "split": "development",
+                "dataset_role": "official_verbatim_clause_project_authored_gold",
+                "annotation_method": "project_annotation_guide_v3",
+                "granularity": granularity,
+                "locator": item.get("locator"),
+                "unassisted_benefit_evaluable": _benefit_evaluable_without_hint(
+                    item["title"], text, benefit_id
+                ),
+                "evidence_id": item["evidence_id"],
+                "source_id": item["source_id"],
+                "source_sha256": item["source_sha256"],
+                "source_file": item.get("local_file"),
+                "title": item["title"],
+                "text": text,
+                "assisted_input": {
+                    "benefit_hint": benefit_id,
+                    "effective_from": item.get("effective_from"),
+                    "effective_to": item.get("effective_to"),
                 },
-                ensure_ascii=False,
-            )
+                "expected": {
+                    "benefit_id": benefit_id,
+                    "effective_from": item.get("effective_from"),
+                    "effective_to": item.get("effective_to"),
+                    "parameters": parameters,
+                    "condition_fields": fields,
+                    "date_error": not bool(item.get("effective_from")),
+                },
+            }
         )
-    OUTPUT.write_text("\n".join(lines) + "\n", encoding="utf-8")
-    print(f"REAL_POLICY_BENCHMARK_OK cases={len(lines)} output={OUTPUT.relative_to(ROOT)}")
+    rows.extend(_final_policy_cases())
+    development_sources = {str(item["source_id"]) for item in rows if item["split"] == "development"}
+    final_sources = {
+        str(item["source_id"]) for item in rows if item["split"] == "frozen_final_test"
+    }
+    if development_sources & final_sources:
+        raise RuntimeError("Policy2Rule开发集与最终测试集存在政策文件泄漏")
+    final_count = sum(item["split"] == "frozen_final_test" for item in rows)
+    if final_count < 120:
+        raise RuntimeError(f"Policy2Rule最终冻结集不足120条：{final_count}")
+    OUTPUT.write_text(
+        "\n".join(json.dumps(item, ensure_ascii=False, sort_keys=True) for item in rows)
+        + "\n",
+        encoding="utf-8",
+    )
+    print(
+        "REAL_POLICY_BENCHMARK_OK "
+        f"development={len(rows) - final_count} frozen_final={final_count} "
+        f"sources_disjoint={not bool(development_sources & final_sources)}"
+    )
 
 
 if __name__ == "__main__":

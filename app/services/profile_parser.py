@@ -52,6 +52,11 @@ MODEL_FIELD_ANCHORS: dict[str, re.Pattern[str]] = {
     "basic_life_interrupted": re.compile(r"(?:基本生活|生活).{0,8}(?:困难|中断|无法维持|陷入困难)"),
 }
 
+INSTRUCTION_ATTACK_PATTERN = re.compile(
+    r"(?:忽略.{0,8}(?:规则|要求|系统)|编造|伪造|捏造|绕过.{0,6}(?:规则|核验)|"
+    r"不要核验|直接(?:说|写).{0,8}(?:通过|符合|确认)|替我.{0,8}(?:写成|改成|填成))"
+)
+
 
 def _model_field_has_source_anchor(key: str, value: Any, text: str) -> bool:
     anchor = MODEL_FIELD_ANCHORS.get(key)
@@ -60,6 +65,10 @@ def _model_field_has_source_anchor(key: str, value: Any, text: str) -> bool:
     if key in {"district", "urgent_event_type"}:
         return str(value) in text
     return True
+
+
+def _contains_instruction_attack(text: str) -> bool:
+    return INSTRUCTION_ATTACK_PATTERN.search(text) is not None
 
 
 class _ProfileExtraction(BaseModel):
@@ -128,12 +137,7 @@ def _heuristic_parse(request: ParseProfileRequest) -> ParseProfileResponse:
 
     # 把“要求系统编造/改写事实”的指令与用户自述事实隔离。这里不尝试判断恶意，
     # 只要句子明确要求伪造、绕过或跳过核验，就不从该句抽取资格关键字段。
-    instruction_attack = re.search(
-        r"(?:忽略.{0,8}(?:规则|要求|系统)|编造|伪造|捏造|绕过.{0,6}(?:规则|核验)|"
-        r"不要核验|直接说.{0,8}(?:通过|符合)|替我.{0,8}(?:写成|改成|填成))",
-        text,
-    )
-    if instruction_attack:
+    if _contains_instruction_attack(text):
         intent_model, intent_predictions = classify_intent(text)
         warnings.append("检测到要求编造或绕过核验的指令，未从该段生成资格关键事实。")
         return ParseProfileResponse(
@@ -307,7 +311,13 @@ def parse_profile(request: ParseProfileRequest) -> ParseProfileResponse:
     model_fields = candidate.model_dump(mode="json", exclude_none=True)
     conflicts: list[str] = []
     unsupported: list[str] = []
+    instruction_attack = _contains_instruction_attack(request.text)
     for key, value in model_fields.items():
+        # 原文即使包含字段语义锚点，明确要求编造或跳过核验时也不得
+        # 把“指令中的目标值”当成“用户自述事实”。
+        if instruction_attack:
+            unsupported.append(key)
+            continue
         if not _model_field_has_source_anchor(key, value, request.text):
             unsupported.append(key)
             continue

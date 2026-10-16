@@ -21,11 +21,15 @@
 ## 当前主要资产
 
 - `synthetic_conformance_cases.jsonl`：确定性规则的合成边界回归集。
-- `profile_extraction_benchmark.jsonl`：团队自编口语画像抽取集。
-- `retrieval_benchmark.json`：团队自编政策检索问题。
-- `policy_compiler_real_benchmark.jsonl`：官方条款原文与项目组制作的期望标签。
-- `high_risk_safety_benchmark.jsonl`：项目组编写的安全回归案例。
+- `profile_extraction_benchmark.jsonl`：300条内部合成画像抽取冻结集。
+- `retrieval_benchmark.json`：120条按政策文件隔离的最终检索问题，另含40条开发问题。
+- `policy_compiler_real_benchmark.jsonl`：120条来自4份隔离官方文件的最终逐字条款，另含50条开发条款。
+- `high_risk_safety_benchmark.jsonl`：320条项目组编写的安全回归案例。
 - `active_question_decision_cases.jsonl`：动态与固定策略逐轮运行的合成决策路径，轨迹保存在`active_question_traces.jsonl`。
-- `ocr_synthetic/`：程序生成的无真实个人信息OCR材料。
+- `ocr_synthetic/`：100张、10版式的程序生成无真实个人信息OCR材料。
+- `stage2_split_manifest.json`：冻结哈希、规模、类别分布及政策文件隔离证明。
+- `ai_workload_pressure_report.json`：本地LLM、混合检索、图片、多页PDF和材料包的真实HTTP压力结果。
+
+所有比例指标必须同时保留95%置信区间；所有主报告必须保留逐类指标和错误表。错误样本不得从报告中删除。
 
 机器可读的数据治理边界见 `dataset_governance_manifest.json`。

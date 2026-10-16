@@ -5,7 +5,7 @@
 ## 固定环境
 
 - Python：3.11或3.12，当前冻结环境为3.12.14。
-- 应用版本：`1.2.1`；规则引擎版本由API返回，当前为`rule-engine/0.5.0`。
+- 应用版本：`1.3.0`；规则引擎版本由API返回，当前为`rule-engine/0.5.0`。
 - 依赖：`requirements.lock`固定直接与传递依赖；`requirements.txt`只表达允许升级的开发约束。
 - 政策原件：`data/raw_official/provenance_manifest.json`记录项目相对路径、大小与SHA-256。
 - 随机性：语言模型请求固定temperature=0、seed=20261002；模型名、提示指纹和延迟写入响应或实验报告。
@@ -17,7 +17,7 @@
 .\reproduce_phase12.ps1
 ```
 
-脚本依次重建来源指纹、内部画像基准、合成规则回归集和主动提问决策路径，运行规则回归、检索评测、Policy2Rule双轨评测、AI主线评测、架构消融、安全回归、OCR、接口性能、工程检查及全部单元/API测试。每条外部命令都检查退出码，任何一步失败都会立即停止，不会输出虚假的成功提示。
+脚本依次重建来源指纹、第二阶段冻结基准、合成规则回归集和主动提问决策路径，运行规则回归、检索评测、Policy2Rule三轨评测、AI主线评测、架构消融、安全回归、OCR、接口性能、工程检查及全部单元/API测试。每条外部命令都检查退出码，任何一步失败都会立即停止，不会输出虚假的成功提示。Policy2Rule与检索的开发/最终集以完整政策文件为隔离单元，隔离结果和数据哈希记录于`stage2_split_manifest.json`。
 
 关键机器可读产物：
 
@@ -27,6 +27,8 @@
 - `data/evaluation/policy_compiler_report.json`
 - `data/evaluation/policy_compiler_real_report.json`
 - `data/evaluation/release_manifest.json`
+- `data/evaluation/stage2_split_manifest.json`
+- `data/evaluation/ai_workload_pressure_report.json`
 - `data/raw_official/provenance_manifest.json`
 
 所有报告仅保存项目相对路径，不保存个人用户名、Python绝对路径或群众原文。
@@ -44,9 +46,11 @@ $env:OLLAMA_EMBED_MODEL='qwen3-embedding:0.6b'
 $env:OLLAMA_TIMEOUT_SECONDS='120'
 .\start.ps1
 .\.venv\Scripts\python.exe scripts\evaluate_ai_pipeline.py
+.\.venv\Scripts\python.exe scripts\evaluate_policy_compiler.py --benchmark data\evaluation\policy_compiler_real_benchmark.jsonl --split frozen_final_test --tracks all --require-live-llm --output data\evaluation\policy_compiler_real_report.json
+.\.venv\Scripts\python.exe scripts\benchmark_ai_workloads.py
 ```
 
-只有报告中`schema_constrained_llm_ensemble`状态为完成、且`actual_routes`出现`rrf(bm25,local-embedding)`时，才可声称相应模型实验实际运行。模型不可用、部分请求降级或语义模型缺失时，不得引用模型指标。
+只有报告中`schema_constrained_llm_ensemble`状态为完成、`actual_routes`出现`rrf(bm25,local-embedding)`、Policy2Rule报告的LLM轨提供真实Ollama provider，且压力报告覆盖并发1/3/5/10时，才可声称相应模型实验实际运行。模型不可用、部分请求降级或语义模型缺失时，不得引用模型指标。
 
 ## 结果边界
 

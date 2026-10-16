@@ -30,7 +30,15 @@ def _git(*arguments: str) -> str | None:
 
 def source_files() -> list[Path]:
     paths: list[Path] = []
-    for directory in ("app", "scripts", "tests", "data/processed", "data/schemas"):
+    for directory in (
+        "app",
+        "scripts",
+        "tests",
+        "data/ml",
+        "data/processed",
+        "data/schemas",
+        "data/evaluation/ocr_synthetic",
+    ):
         paths.extend(
             path
             for path in (ROOT / directory).rglob("*")
@@ -56,6 +64,7 @@ def source_files() -> list[Path]:
         "reproduce_phase12.ps1",
         ".github/workflows/ci.yml",
         "data/raw_official/provenance_manifest.json",
+        "data/evaluation/stage2_split_manifest.json",
     ):
         path = ROOT / relative
         if path.is_file():

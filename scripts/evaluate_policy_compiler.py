@@ -1,45 +1,61 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import sys
-from collections import Counter
-from datetime import date
+from collections import Counter, defaultdict
+from datetime import UTC, date, datetime
 from pathlib import Path
+from time import perf_counter
+from typing import Any
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
 from app.domain.models import PolicyCompileRequest  # noqa: E402
+from app.services.ai_runtime import ollama_runtime_status  # noqa: E402
 from app.services.policy_compiler import compile_policy  # noqa: E402
-
-NEGATIVE_CASES = (
-    ("NEG-001", "一般行政通知", "本通知规定会议室设备维护、值班安排和办公用品采购流程。"),
-    ("NEG-002", "网络设备巡检规范", "机房交换机每季度巡检一次，故障后填写维修登记表并由管理员签字确认。"),
-    ("NEG-003", "档案移交工作方案", "各部门应当按年度目录整理档案并完成移交，同时核对目录编号和文件数量。"),
-    ("NEG-004", "公共体育场馆开放公告", "体育场馆周一至周五开放，入场人员应当遵守秩序并爱护公共设施。"),
-    ("NEG-005", "城市道路施工通告", "施工期间部分道路临时围蔽，请过往车辆按照现场交通标志安全绕行。"),
-    ("NEG-006", "软件采购验收办法", "采购的软件应完成安装测试和资产登记，并提交功能测试记录和验收报告。"),
-    ("NEG-007", "公园绿化养护规范", "绿化养护包括浇灌、修剪和病虫害防治，作业完成后填写每日记录。"),
-    ("NEG-008", "办公节能倡议", "离开办公室时请关闭照明与空调设备，下班前检查门窗和公共区域电源。"),
-    ("NEG-009", "培训会议安排", "参会人员应在会议开始前完成签到，培训结束后按要求提交学习记录。"),
-    ("NEG-010", "图书借阅规则", "图书借期三十日，逾期应办理续借手续，归还前请检查图书是否完好。"),
+from app.version import APP_VERSION  # noqa: E402
+from scripts.evaluation_stats import (  # noqa: E402
+    f1_metrics,
+    latency_summary,
+    rate_metric,
 )
 
-
-def _f1(true_positive: int, predicted: int, gold: int) -> dict[str, float | None]:
-    precision = true_positive / predicted if predicted else None
-    recall = true_positive / gold if gold else None
-    score = (
-        2 * precision * recall / (precision + recall)
-        if precision is not None and recall is not None and precision + recall
-        else None
-    )
-    return {
-        "precision": round(precision, 4) if precision is not None else None,
-        "recall": round(recall, 4) if recall is not None else None,
-        "f1": round(score, 4) if score is not None else None,
-    }
+TRACKS = ("deterministic", "llm_only", "controlled_fusion")
+NEGATIVE_TOPICS = (
+    "会议室设备维护和办公用品采购流程",
+    "机房交换机季度巡检与维修登记",
+    "年度档案目录整理和移交办法",
+    "公共体育场馆开放秩序公告",
+    "城市道路施工期间交通绕行通告",
+    "软件采购安装测试和资产验收规则",
+    "公园绿化浇灌修剪作业规范",
+    "办公室照明空调节能倡议",
+    "培训会议签到和学习记录安排",
+    "公共图书借阅续借管理规则",
+    "社区垃圾分类投放指引",
+    "电梯年度检验与故障维修制度",
+    "学校运动会报名和赛程安排",
+    "网络账户密码定期更换提示",
+    "停车场车辆进出收费说明",
+    "食堂食品采购留样管理制度",
+    "快递包裹收发登记流程",
+    "博物馆参观预约和讲解安排",
+    "公共自行车维护保养计划",
+    "河道水质监测采样技术规范",
+    "办公电脑报废处置操作规程",
+    "城市路灯巡查维修工作方案",
+    "志愿服务活动排班通知",
+    "小区消防通道日常检查制度",
+    "视频会议系统使用说明",
+    "园林苗木采购质量验收标准",
+    "公共厕所保洁考核办法",
+    "社区文艺演出节目征集通知",
+    "机关车辆加油维修管理办法",
+    "仓库物资盘点和领用流程",
+)
 
 
 def _date_visible_in_text(value: str | None, text: str) -> bool:
@@ -54,202 +70,282 @@ def _date_visible_in_text(value: str | None, text: str) -> bool:
     return any(item in text for item in variants)
 
 
-def _assisted_context(row: dict[str, object]) -> dict[str, object]:
-    context = row.get("assisted_input")
-    if isinstance(context, dict):
-        return context
+def _normalize_parameter_pairs(values: dict[str, object]) -> set[tuple[str, str]]:
+    return {(key, str(value)) for key, value in values.items()}
+
+
+def _evaluate_rejection(strategy: str) -> dict[str, Any]:
+    details = []
+    latencies = []
+    for index, topic in enumerate(NEGATIVE_TOPICS, start=1):
+        started = perf_counter()
+        result = compile_policy(
+            PolicyCompileRequest(
+                source_id=f"NEG-{index:03d}",
+                title="一般行政材料工作说明",
+                source_text=f"本文件规定{topic}。各部门应按要求完成登记并接受检查。",
+                extraction_strategy=strategy,
+                use_llm=strategy != "deterministic",
+            )
+        )
+        latencies.append((perf_counter() - started) * 1000)
+        passed = result.candidate.benefit_id == "unknown" and not result.publishable
+        details.append(
+            {
+                "case_id": f"NEG-{index:03d}",
+                "passed": passed,
+                "predicted_benefit_id": result.candidate.benefit_id,
+                "provider": result.candidate.provider,
+            }
+        )
+    passed = sum(bool(item["passed"]) for item in details)
     return {
-        "benefit_hint": row.get("benefit_hint"),
-        "effective_from": row.get("effective_from_input"),
-        "effective_to": row.get("effective_to_input"),
+        "cases": len(details),
+        "accuracy": round(passed / len(details), 4),
+        "accuracy_ci95": rate_metric(passed, len(details))["ci95"],
+        "latency_ms": latency_summary(latencies),
+        "error_table": [item for item in details if not item["passed"]],
     }
 
 
-def _evaluate_track(
-    rows: list[dict[str, object]], *, use_llm: bool, assisted: bool
-) -> dict[str, object]:
-    benefit_correct = 0
-    benefit_total = 0
-    parameter_counts = Counter()
-    condition_counts = Counter()
-    grounded_quotes = 0
-    total_quotes = 0
-    providers = Counter()
-    details: list[dict[str, object]] = []
-    start_total = start_correct = 0
-    end_total = end_correct = 0
-    missing_start_total = missing_start_correct = 0
+def _evaluate_track(rows: list[dict[str, Any]], strategy: str) -> dict[str, Any]:
+    benefit_correct = benefit_total = 0
+    start_correct = start_total = 0
+    end_correct = end_total = 0
+    parameter_counts: Counter[str] = Counter()
+    condition_counts: Counter[str] = Counter()
+    grounded_quotes = total_quotes = 0
+    providers: Counter[str] = Counter()
+    total_latencies: list[float] = []
+    model_latencies: list[float] = []
+    errors: list[dict[str, Any]] = []
+    by_source: dict[str, Counter[str]] = defaultdict(Counter)
 
     for row in rows:
         expected = row["expected"]
         if not isinstance(expected, dict):
             raise TypeError("expected must be an object")
-        context = _assisted_context(row) if assisted else {}
+        started = perf_counter()
         result = compile_policy(
             PolicyCompileRequest(
                 source_id=str(row["source_id"]),
                 title=str(row["title"]),
                 source_text=str(row["text"]),
-                benefit_hint=context.get("benefit_hint"),
-                effective_from=(
-                    date.fromisoformat(str(context["effective_from"]))
-                    if context.get("effective_from")
-                    else None
-                ),
-                effective_to=(
-                    date.fromisoformat(str(context["effective_to"]))
-                    if context.get("effective_to")
-                    else None
-                ),
-                use_llm=use_llm,
+                extraction_strategy=strategy,
+                use_llm=strategy != "deterministic",
             )
         )
+        total_latencies.append((perf_counter() - started) * 1000)
         candidate = result.candidate
-        benefit_evaluable = assisted or bool(row.get("unassisted_benefit_evaluable", True))
+        if candidate.model_latency_ms is not None:
+            model_latencies.append(float(candidate.model_latency_ms))
+        providers[candidate.provider] += 1
+        text = str(row["text"])
+        source_id = str(row["source_id"])
+        source_bucket = by_source[source_id]
+        source_bucket["cases"] += 1
+
+        benefit_evaluable = bool(row.get("unassisted_benefit_evaluable", True))
+        benefit_match: bool | None = None
         if benefit_evaluable:
             benefit_total += 1
-            benefit_correct += int(candidate.benefit_id == expected["benefit_id"])
+            benefit_match = candidate.benefit_id == expected["benefit_id"]
+            benefit_correct += int(benefit_match)
+            source_bucket["benefit_total"] += 1
+            source_bucket["benefit_correct"] += int(benefit_match)
+
         actual_start = candidate.effective_from.isoformat() if candidate.effective_from else None
         actual_end = candidate.effective_to.isoformat() if candidate.effective_to else None
-        text = str(row["text"])
         expected_start = expected.get("effective_from")
         expected_end = expected.get("effective_to")
-        if assisted or _date_visible_in_text(expected_start, text):
+        start_match: bool | None = None
+        end_match: bool | None = None
+        if _date_visible_in_text(expected_start, text):
             start_total += 1
-            start_correct += int(actual_start == expected_start)
-        if assisted or _date_visible_in_text(expected_end, text):
+            start_match = actual_start == expected_start
+            start_correct += int(start_match)
+        if _date_visible_in_text(expected_end, text):
             end_total += 1
-            end_correct += int(actual_end == expected_end)
-        if not expected_start:
-            missing_start_total += 1
-            missing_start_correct += int(
-                any(item.code == "missing_effective_from" for item in result.validation)
-            )
+            end_match = actual_end == expected_end
+            end_correct += int(end_match)
 
-        predicted_parameters = {key: str(value) for key, value in candidate.parameters.items()}
-        gold_parameters = {key: str(value) for key, value in expected["parameters"].items()}
-        predicted_pairs = set(predicted_parameters.items())
-        gold_pairs = set(gold_parameters.items())
-        parameter_counts["tp"] += len(predicted_pairs & gold_pairs)
-        parameter_counts["predicted"] += len(predicted_pairs)
-        parameter_counts["gold"] += len(gold_pairs)
+        predicted_parameters = _normalize_parameter_pairs(candidate.parameters)
+        gold_parameters = _normalize_parameter_pairs(expected["parameters"])
+        parameter_counts["tp"] += len(predicted_parameters & gold_parameters)
+        parameter_counts["predicted"] += len(predicted_parameters)
+        parameter_counts["gold"] += len(gold_parameters)
         predicted_fields = {item.field for item in candidate.conditions}
         gold_fields = set(expected["condition_fields"])
         condition_counts["tp"] += len(predicted_fields & gold_fields)
         condition_counts["predicted"] += len(predicted_fields)
         condition_counts["gold"] += len(gold_fields)
-        for condition in candidate.conditions:
-            total_quotes += 1
-            grounded_quotes += int(condition.source_quote in text)
-        providers[candidate.provider] += 1
-        details.append(
-            {
-                "case_id": row["case_id"],
-                "benefit_match": candidate.benefit_id == expected["benefit_id"],
-                "effective_from": actual_start,
-                "effective_to": actual_end,
-                "predicted_parameters": candidate.parameters,
-                "predicted_condition_fields": sorted(predicted_fields),
-            }
-        )
+        quote_matches = [item.source_quote in text for item in candidate.conditions]
+        grounded_quotes += sum(quote_matches)
+        total_quotes += len(quote_matches)
 
-    count = len(rows)
+        wrong = []
+        if benefit_match is False:
+            wrong.append("benefit_id")
+        if start_match is False:
+            wrong.append("effective_from")
+        if end_match is False:
+            wrong.append("effective_to")
+        if predicted_parameters != gold_parameters:
+            wrong.append("parameters")
+        if predicted_fields != gold_fields:
+            wrong.append("condition_fields")
+        if not all(quote_matches):
+            wrong.append("source_quote")
+        if wrong:
+            errors.append(
+                {
+                    "case_id": row["case_id"],
+                    "source_id": source_id,
+                    "locator": row.get("locator"),
+                    "wrong_dimensions": wrong,
+                    "expected_benefit_id": expected["benefit_id"],
+                    "predicted_benefit_id": candidate.benefit_id,
+                    "expected_parameters": expected["parameters"],
+                    "predicted_parameters": candidate.parameters,
+                    "expected_condition_fields": sorted(gold_fields),
+                    "predicted_condition_fields": sorted(predicted_fields),
+                }
+            )
+
     return {
-        "track": "metadata_assisted_compilation" if assisted else "unassisted_text_extraction",
-        "case_count": count,
+        "strategy": strategy,
+        "metadata_assistance_used": False,
+        "case_count": len(rows),
         "providers": dict(providers),
-        "benefit_accuracy": round(benefit_correct / max(benefit_total, 1), 4),
+        "benefit_accuracy": round(benefit_correct / benefit_total, 4) if benefit_total else None,
+        "benefit_accuracy_ci95": rate_metric(benefit_correct, benefit_total)["ci95"],
         "benefit_evaluable_cases": benefit_total,
-        "benefit_context_dependent_cases": count - benefit_total,
+        "benefit_context_dependent_cases": len(rows) - benefit_total,
         "effective_from_accuracy": round(start_correct / start_total, 4) if start_total else None,
+        "effective_from_accuracy_ci95": rate_metric(start_correct, start_total)["ci95"],
         "effective_from_evaluable_cases": start_total,
         "effective_to_accuracy": round(end_correct / end_total, 4) if end_total else None,
+        "effective_to_accuracy_ci95": rate_metric(end_correct, end_total)["ci95"],
         "effective_to_evaluable_cases": end_total,
-        "missing_effective_from_guard_accuracy": (
-            round(missing_start_correct / missing_start_total, 4) if missing_start_total else None
-        ),
-        "missing_effective_from_cases": missing_start_total,
-        "parameter_pair": _f1(
+        "parameter_pair": f1_metrics(
             parameter_counts["tp"], parameter_counts["predicted"], parameter_counts["gold"]
         ),
-        "condition_field": _f1(
+        "condition_field": f1_metrics(
             condition_counts["tp"], condition_counts["predicted"], condition_counts["gold"]
         ),
-        "source_quote_grounding_rate": (
-            round(grounded_quotes / total_quotes, 4) if total_quotes else None
-        ),
-        "details": details,
-    }
-
-
-def _evaluate_unknown_rejection() -> dict[str, object]:
-    details: list[dict[str, object]] = []
-    for case_id, title, text in NEGATIVE_CASES:
-        result = compile_policy(
-            PolicyCompileRequest(
-                source_id=case_id,
-                title=title,
-                source_text=text,
-                use_llm=False,
-            )
-        )
-        passed = result.candidate.benefit_id == "unknown" and not result.publishable
-        details.append(
-            {
-                "case_id": case_id,
-                "passed": passed,
-                "predicted_benefit_id": result.candidate.benefit_id,
+        "source_quote_grounding": rate_metric(grounded_quotes, total_quotes),
+        "end_to_end_latency_ms": latency_summary(total_latencies),
+        "model_latency_ms": latency_summary(model_latencies),
+        "unknown_rejection": _evaluate_rejection(strategy),
+        "by_source": {
+            source_id: {
+                "cases": counts["cases"],
+                "benefit_accuracy": rate_metric(
+                    counts["benefit_correct"], counts["benefit_total"]
+                ),
             }
-        )
-    return {
-        "dataset_origin": "project-authored synthetic out-of-domain negatives",
-        "case_count": len(details),
-        "passed": sum(bool(item["passed"]) for item in details),
-        "accuracy": round(sum(bool(item["passed"]) for item in details) / len(details), 4),
-        "details": details,
+            for source_id, counts in sorted(by_source.items())
+        },
+        "error_table": errors,
     }
 
 
-def evaluate(path: Path, use_llm: bool) -> dict[str, object]:
-    rows = [json.loads(line) for line in path.read_text(encoding="utf-8").splitlines() if line]
+def evaluate(
+    path: Path,
+    *,
+    split: str | None,
+    tracks: tuple[str, ...],
+    require_live_llm: bool,
+) -> dict[str, Any]:
+    all_rows = [
+        json.loads(line) for line in path.read_text(encoding="utf-8").splitlines() if line
+    ]
+    rows = [row for row in all_rows if split is None or row.get("split") == split]
+    if not rows:
+        raise RuntimeError(f"数据集中没有split={split!r}的案例")
+    development_sources = {
+        str(row["source_id"]) for row in all_rows if row.get("split") == "development"
+    }
+    final_sources = {
+        str(row["source_id"]) for row in all_rows if row.get("split") == "frozen_final_test"
+    }
+    overlap = sorted(development_sources & final_sources)
+    if overlap:
+        raise RuntimeError(f"政策文件分组泄漏：{overlap}")
+    runtime = ollama_runtime_status()
+    if require_live_llm and (
+        not runtime["reachable"] or not runtime.get("model_present")
+    ):
+        raise RuntimeError(f"要求真实LLM但运行时不可用：{runtime['reason']}")
+    track_reports = {strategy: _evaluate_track(rows, strategy) for strategy in tracks}
+    if require_live_llm:
+        for strategy in tracks:
+            if strategy == "deterministic":
+                continue
+            providers = track_reports[strategy]["providers"]
+            if not any(str(provider).startswith("ollama/") or "+ollama/" in str(provider) for provider in providers):
+                raise RuntimeError(f"{strategy}没有实际调用本地LLM")
     return {
-        "report_schema": "policy2rule-evaluation/2.0",
-        "benchmark_role": (
-            rows[0].get("dataset_role", "internally_curated_policy_compiler_benchmark")
-            if rows
-            else "empty"
-        ),
+        "report_schema": "policy2rule-three-track/3.0",
+        "generated_at": datetime.now(UTC).isoformat(),
+        "app_version": APP_VERSION,
+        "dataset": path.relative_to(ROOT).as_posix(),
+        "dataset_sha256": hashlib.sha256(path.read_bytes()).hexdigest(),
+        "evaluated_split": split or "all",
         "case_count": len(rows),
-        "unassisted_text_extraction": _evaluate_track(
-            rows, use_llm=use_llm, assisted=False
-        ),
-        "metadata_assisted_compilation": _evaluate_track(
-            rows, use_llm=use_llm, assisted=True
-        ),
-        "unknown_rejection": _evaluate_unknown_rejection(),
-        "claim_boundary": (
-            "主结果是不给benefit_hint和有效期元数据的原文抽取轨；辅助编译轨单独报告，"
-            "不得把元数据回填计作模型抽取。标签由项目组按官方条款制作，未做外部双人盲标，"
-            "且规则开发与本基准来源存在重叠，因此只用于回归验证，不宣称独立泛化性能。"
-        ),
+        "dataset_origin": "official verbatim clauses with project-authored labels",
+        "policy_file_isolation": {
+            "development_source_ids": sorted(development_sources),
+            "frozen_final_source_ids": sorted(final_sources),
+            "overlap": overlap,
+            "passed": not overlap,
+        },
+        "ai_runtime": runtime,
+        "tracks": track_reports,
+        "claim_boundary": [
+            "三轨均只接收政策原文，不使用benefit_hint或生效日期元数据回填。",
+            "最终测试按完整政策文件隔离，同一source_id不得跨开发集与冻结测试集。",
+            "标签由项目组按公开标注指南制作，尚不是外部专家双人盲标。",
+            "指标及95%置信区间只描述本冻结集，不外推为真实政务业务准确率。",
+        ],
     }
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="评测Policy2Rule候选编译器。")
+    parser = argparse.ArgumentParser(description="评测Policy2Rule三轨候选编译器。")
     parser.add_argument(
         "--benchmark",
         type=Path,
         default=ROOT / "data" / "evaluation" / "policy_compiler_benchmark.jsonl",
     )
-    parser.add_argument("--use-llm", action="store_true")
+    parser.add_argument("--split", default=None)
+    parser.add_argument(
+        "--tracks",
+        default="deterministic",
+        help="deterministic、llm_only、controlled_fusion或all",
+    )
+    parser.add_argument("--require-live-llm", action="store_true")
     parser.add_argument("--output", type=Path)
     args = parser.parse_args()
-    report = evaluate(args.benchmark, args.use_llm)
+    tracks = TRACKS if args.tracks == "all" else tuple(args.tracks.split(","))
+    if not tracks or any(track not in TRACKS for track in tracks):
+        raise SystemExit(f"tracks必须来自{TRACKS}或all")
+    report = evaluate(
+        args.benchmark.resolve(),
+        split=args.split,
+        tracks=tracks,
+        require_live_llm=args.require_live_llm,
+    )
     content = json.dumps(report, ensure_ascii=False, indent=2)
     if args.output:
-        args.output.write_text(content + "\n", encoding="utf-8")
-    print(content)
+        args.output.resolve().write_text(content + "\n", encoding="utf-8")
+    print(
+        "POLICY2RULE_EVAL_OK "
+        f"split={report['evaluated_split']} cases={report['case_count']} "
+        f"tracks={','.join(tracks)}"
+    )
+    if not args.output:
+        print(content)
 
 
 if __name__ == "__main__":

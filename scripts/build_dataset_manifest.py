@@ -18,6 +18,13 @@ DATASETS: tuple[dict[str, Any], ...] = (
         "contains_personal_data": False,
     },
     {
+        "path": "data/ml/intent_dataset.json",
+        "role": "synthetic_intent_training_and_frozen_test",
+        "label_origin": "programmatically rendered project-authored synthetic utterances",
+        "independent": False,
+        "contains_personal_data": False,
+    },
+    {
         "path": "data/evaluation/profile_extraction_benchmark.jsonl",
         "role": "synthetic_profile_extraction_benchmark",
         "label_origin": "project-authored synthetic gold",
@@ -42,6 +49,14 @@ DATASETS: tuple[dict[str, Any], ...] = (
         "path": "data/evaluation/ocr_synthetic/manifest.json",
         "role": "synthetic_ocr_robustness_benchmark",
         "label_origin": "programmatically rendered synthetic documents",
+        "independent": False,
+        "contains_personal_data": False,
+        "related_glob": "data/evaluation/ocr_synthetic/OCR-*.png",
+    },
+    {
+        "path": "data/evaluation/stage2_split_manifest.json",
+        "role": "frozen_split_and_leakage_control_manifest",
+        "label_origin": "programmatic governance validation",
         "independent": False,
         "contains_personal_data": False,
     },
@@ -73,9 +88,16 @@ def count_records(path: Path) -> int | None:
         if isinstance(payload, list):
             return len(payload)
         if isinstance(payload, dict):
-            for key in ("cases", "records", "items", "documents"):
+            for key in ("cases", "records", "items", "documents", "queries", "datasets"):
                 if isinstance(payload.get(key), list):
                     return len(payload[key])
+            labels = payload.get("labels")
+            if isinstance(labels, dict):
+                return sum(
+                    len(group.get("test", []))
+                    for group in labels.values()
+                    if isinstance(group, dict)
+                )
     return None
 
 
@@ -96,6 +118,16 @@ def main() -> None:
                 "sha256": hashlib.sha256(path.read_bytes()).hexdigest(),
             }
         )
+        related_glob = descriptor.get("related_glob")
+        if related_glob:
+            related = sorted(ROOT.glob(str(related_glob)))
+            digest = hashlib.sha256()
+            for related_path in related:
+                digest.update(related_path.relative_to(ROOT).as_posix().encode("utf-8"))
+                digest.update(b"\0")
+                digest.update(hashlib.sha256(related_path.read_bytes()).digest())
+            assets[-1]["related_files"] = len(related)
+            assets[-1]["related_tree_sha256"] = digest.hexdigest()
     report = {
         "generated_at": datetime.now(UTC).isoformat(),
         "manifest_version": "1.0",

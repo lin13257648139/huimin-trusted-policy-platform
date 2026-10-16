@@ -10,10 +10,14 @@ sys.path.insert(0, str(ROOT))
 
 from app.services.catalog import load_evidence  # noqa: E402
 from app.services.retrieval import search_evidence  # noqa: E402
+from scripts.evaluation_stats import rate_metric  # noqa: E402
 
 
-def evaluate(path: Path) -> dict[str, object]:
-    benchmark = json.loads(path.read_text(encoding="utf-8"))
+def evaluate(path: Path, split: str | None = "frozen_final_test") -> dict[str, object]:
+    payload = json.loads(path.read_text(encoding="utf-8"))
+    benchmark = payload.get("queries", payload.get("cases", [])) if isinstance(payload, dict) else payload
+    if split and any("split" in item for item in benchmark):
+        benchmark = [item for item in benchmark if item.get("split") == split]
     hits = {1: 0, 3: 0, 5: 0}
     reciprocal_rank = 0.0
     details = []
@@ -28,6 +32,8 @@ def evaluate(path: Path) -> dict[str, object]:
             hits[k] += int(bool(relevant & set(ranked[:k])))
         details.append(
             {
+                "query_id": item.get("query_id"),
+                "source_id": item.get("source_id"),
                 "query": item["query"],
                 "relevant_ids": item["relevant_ids"],
                 "ranked_ids": ranked,
@@ -38,11 +44,23 @@ def evaluate(path: Path) -> dict[str, object]:
     return {
         "benchmark_role": "internally_curated_retrieval_benchmark",
         "query_count": total,
+        "evaluated_split": split or "all",
         "recall_at_1": round(hits[1] / total, 4),
+        "recall_at_1_ci95": rate_metric(hits[1], total)["ci95"],
         "recall_at_3": round(hits[3] / total, 4),
+        "recall_at_3_ci95": rate_metric(hits[3], total)["ci95"],
         "recall_at_5": round(hits[5] / total, 4),
+        "recall_at_5_ci95": rate_metric(hits[5], total)["ci95"],
         "mrr_at_5": round(reciprocal_rank / total, 4),
         "details": details,
+        "error_table": [
+            item
+            for item in details
+            if item["first_relevant_rank"] is None or item["first_relevant_rank"] > 3
+        ],
+        "policy_file_isolation": (
+            payload.get("policy_file_isolation") if isinstance(payload, dict) else None
+        ),
         "warning": (
             f"该结果只评价当前{len(load_evidence())}条证据片段的检索，"
             "不等于业务资格判断准确率。"
@@ -58,11 +76,12 @@ def main() -> None:
         default=ROOT / "data" / "evaluation" / "retrieval_benchmark.json",
     )
     parser.add_argument("--output", type=Path)
+    parser.add_argument("--split", default="frozen_final_test")
     args = parser.parse_args()
-    report = evaluate(args.benchmark)
+    report = evaluate(args.benchmark.resolve(), split=args.split or None)
     content = json.dumps(report, ensure_ascii=False, indent=2)
     if args.output:
-        args.output.write_text(content, encoding="utf-8")
+        args.output.resolve().write_text(content, encoding="utf-8")
     print(content)
 
 

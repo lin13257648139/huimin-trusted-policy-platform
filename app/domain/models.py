@@ -454,6 +454,9 @@ class PolicyCompileRequest(BaseModel):
     effective_from: date | None = None
     effective_to: date | None = None
     use_llm: bool = True
+    extraction_strategy: Literal[
+        "deterministic", "llm_only", "controlled_fusion"
+    ] | None = None
 
 
 class CompiledRuleCondition(BaseModel):

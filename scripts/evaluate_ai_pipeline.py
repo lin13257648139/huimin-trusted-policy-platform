@@ -21,6 +21,7 @@ from app.services.intent_classifier import DATASET_PATH, classify_intent
 from app.services.profile_parser import parse_profile, parse_profile_deterministic
 from app.services.retrieval import search_evidence, search_evidence_result
 from app.version import APP_VERSION
+from scripts.evaluation_stats import rate_metric
 
 PROFILE_DATASET = ROOT / "data" / "evaluation" / "profile_extraction_benchmark.jsonl"
 RETRIEVAL_DATASET = ROOT / "data" / "evaluation" / "retrieval_benchmark.json"
@@ -28,15 +29,15 @@ OUTPUT = ROOT / "data" / "evaluation" / "ai_pipeline_report.json"
 SYSTEM_FIELDS = {"query_date", "city"}
 
 
-def _intent_metrics(pairs: list[tuple[str, str]]) -> dict[str, Any]:
-    labels = sorted({gold for gold, _ in pairs})
-    correct = sum(gold == predicted for gold, predicted in pairs)
+def _intent_metrics(pairs: list[tuple[str, str, str]]) -> dict[str, Any]:
+    labels = sorted({gold for gold, _, _ in pairs})
+    correct = sum(gold == predicted for gold, predicted, _ in pairs)
     per_label: dict[str, dict[str, float]] = {}
     f1_values = []
     for label in labels:
-        tp = sum(gold == label and predicted == label for gold, predicted in pairs)
-        fp = sum(gold != label and predicted == label for gold, predicted in pairs)
-        fn = sum(gold == label and predicted != label for gold, predicted in pairs)
+        tp = sum(gold == label and predicted == label for gold, predicted, _ in pairs)
+        fp = sum(gold != label and predicted == label for gold, predicted, _ in pairs)
+        fn = sum(gold == label and predicted != label for gold, predicted, _ in pairs)
         precision = tp / max(tp + fp, 1)
         recall = tp / max(tp + fn, 1)
         f1 = 2 * precision * recall / max(precision + recall, 1e-12)
@@ -45,12 +46,30 @@ def _intent_metrics(pairs: list[tuple[str, str]]) -> dict[str, Any]:
             "precision": round(precision, 4),
             "recall": round(recall, 4),
             "f1": round(f1, 4),
+            "recall_ci95": rate_metric(tp, tp + fn)["ci95"],
         }
+    confusion = {
+        gold: {
+            predicted: sum(
+                expected == gold and observed == predicted
+                for expected, observed, _ in pairs
+            )
+            for predicted in [*labels, "abstain"]
+        }
+        for gold in labels
+    }
     return {
         "cases": len(pairs),
         "accuracy": round(correct / max(len(pairs), 1), 4),
+        "accuracy_ci95": rate_metric(correct, len(pairs))["ci95"],
         "macro_f1": round(sum(f1_values) / max(len(f1_values), 1), 4),
         "per_label": per_label,
+        "confusion_matrix": confusion,
+        "error_table": [
+            {"gold": gold, "predicted": predicted, "text": text}
+            for gold, predicted, text in pairs
+            if gold != predicted
+        ],
     }
 
 
@@ -68,13 +87,15 @@ def _evaluate_intent() -> dict[str, Any]:
     for label, group in payload["labels"].items():
         for text in group["test"]:
             _, predictions = classify_intent(text, limit=1)
-            nb_pairs.append((label, predictions[0]["benefit_id"] if predictions else "abstain"))
+            nb_pairs.append(
+                (label, predictions[0]["benefit_id"] if predictions else "abstain", text)
+            )
             scores = {
                 candidate: sum(term in text for term in terms)
                 for candidate, terms in keyword_map.items()
             }
             best = max(scores, key=scores.get)
-            keyword_pairs.append((label, best if scores[best] else "abstain"))
+            keyword_pairs.append((label, best if scores[best] else "abstain", text))
     model_version, _ = classify_intent("低保申请", limit=1)
     return {
         "dataset": DATASET_PATH.relative_to(ROOT).as_posix(),
@@ -115,6 +136,7 @@ def _evaluate_profile_method(
     true_positive = false_positive = false_negative = 0
     exact_cases = 0
     hallucination_cases: list[str] = []
+    error_cases: list[dict[str, Any]] = []
     by_category: dict[str, Counter[str]] = defaultdict(Counter)
     modes: Counter[str] = Counter()
     latencies: list[int] = []
@@ -145,6 +167,17 @@ def _evaluate_profile_method(
         exact_cases += predicted == expected
         if wrong_or_extra:
             hallucination_cases.append(item["case_id"])
+        if predicted != expected:
+            error_cases.append(
+                {
+                    "case_id": item["case_id"],
+                    "category": item["category"],
+                    "expected": expected,
+                    "predicted": predicted,
+                    "wrong_or_extra_fields": sorted(wrong_or_extra),
+                    "missed_fields": sorted(missed),
+                }
+            )
         bucket = by_category[item["category"]]
         bucket["cases"] += 1
         bucket["exact"] += predicted == expected
@@ -153,10 +186,20 @@ def _evaluate_profile_method(
     return {
         "cases": len(cases),
         "field_precision": round(precision, 4),
+        "field_precision_ci95": rate_metric(
+            true_positive, true_positive + false_positive
+        )["ci95"],
         "field_recall": round(recall, 4),
+        "field_recall_ci95": rate_metric(
+            true_positive, true_positive + false_negative
+        )["ci95"],
         "field_f1": round(2 * precision * recall / max(precision + recall, 1e-12), 4),
         "case_exact_match": round(exact_cases / max(len(cases), 1), 4),
+        "case_exact_match_ci95": rate_metric(exact_cases, len(cases))["ci95"],
         "hallucination_case_rate": round(len(hallucination_cases) / max(len(cases), 1), 4),
+        "hallucination_case_rate_ci95": rate_metric(
+            len(hallucination_cases), len(cases)
+        )["ci95"],
         "hallucination_case_ids": hallucination_cases,
         "routes": dict(modes),
         "latency_ms": {
@@ -169,9 +212,14 @@ def _evaluate_profile_method(
         },
         "fallbacks": {"count": sum(fallbacks.values()), "reasons": dict(fallbacks)},
         "by_category": {
-            key: {"cases": value["cases"], "exact_match": round(value["exact"] / value["cases"], 4)}
+            key: {
+                "cases": value["cases"],
+                "exact_match": round(value["exact"] / value["cases"], 4),
+                "exact_match_ci95": rate_metric(value["exact"], value["cases"])["ci95"],
+            }
             for key, value in sorted(by_category.items())
         },
+        "error_table": error_cases,
     }
 
 
@@ -179,6 +227,8 @@ def _evaluate_retrieval(benchmark: list[dict[str, Any]], hybrid: bool) -> dict[s
     ranks: list[int | None] = []
     actual_routes: Counter[str] = Counter()
     latencies: list[int] = []
+    details: list[dict[str, Any]] = []
+    by_source: dict[str, Counter[str]] = defaultdict(Counter)
     for item in benchmark:
         if hybrid:
             result = search_evidence_result(item["query"], limit=5)
@@ -194,10 +244,26 @@ def _evaluate_retrieval(benchmark: list[dict[str, Any]], hybrid: bool) -> dict[s
         expected = set(item.get("relevant_evidence_ids", item.get("relevant_ids", [])))
         rank = next((index for index, value in enumerate(ids, start=1) if value in expected), None)
         ranks.append(rank)
+        source = str(item.get("source_id", "unknown"))
+        by_source[source]["cases"] += 1
+        by_source[source]["hit_at_3"] += rank is not None and rank <= 3
+        details.append(
+            {
+                "query_id": item.get("query_id"),
+                "source_id": source,
+                "rank": rank,
+                "expected_ids": sorted(expected),
+                "returned_ids": ids,
+            }
+        )
+    recall_1 = sum(rank == 1 for rank in ranks)
+    recall_3 = sum(rank is not None and rank <= 3 for rank in ranks)
     return {
         "queries": len(ranks),
-        "recall_at_1": round(sum(rank == 1 for rank in ranks) / max(len(ranks), 1), 4),
-        "recall_at_3": round(sum(rank is not None and rank <= 3 for rank in ranks) / max(len(ranks), 1), 4),
+        "recall_at_1": round(recall_1 / max(len(ranks), 1), 4),
+        "recall_at_1_ci95": rate_metric(recall_1, len(ranks))["ci95"],
+        "recall_at_3": round(recall_3 / max(len(ranks), 1), 4),
+        "recall_at_3_ci95": rate_metric(recall_3, len(ranks))["ci95"],
         "mrr_at_5": round(sum(1 / rank if rank else 0 for rank in ranks) / max(len(ranks), 1), 4),
         "actual_routes": dict(actual_routes),
         "latency_ms": {
@@ -207,6 +273,11 @@ def _evaluate_retrieval(benchmark: list[dict[str, Any]], hybrid: bool) -> dict[s
             "p95": _percentile(latencies, 0.95),
             "max": max(latencies) if latencies else None,
         },
+        "by_source": {
+            source: rate_metric(counts["hit_at_3"], counts["cases"])
+            for source, counts in sorted(by_source.items())
+        },
+        "error_table": [item for item in details if item["rank"] is None or item["rank"] > 3],
     }
 
 
@@ -216,9 +287,16 @@ def main() -> None:
     profile_cases = [
         json.loads(line) for line in PROFILE_DATASET.read_text(encoding="utf-8").splitlines() if line
     ]
-    retrieval_cases = json.loads(RETRIEVAL_DATASET.read_text(encoding="utf-8"))
-    if isinstance(retrieval_cases, dict):
-        retrieval_cases = retrieval_cases.get("queries", retrieval_cases.get("cases", []))
+    retrieval_payload = json.loads(RETRIEVAL_DATASET.read_text(encoding="utf-8"))
+    retrieval_cases = (
+        retrieval_payload.get("queries", retrieval_payload.get("cases", []))
+        if isinstance(retrieval_payload, dict)
+        else retrieval_payload
+    )
+    retrieval_splits = {
+        split: [item for item in retrieval_cases if item.get("split") == split]
+        for split in ("development", "frozen_final_test")
+    }
     runtime = ollama_runtime_status()
     deterministic = _evaluate_profile_method(profile_cases, parse_profile_deterministic)
     report: dict[str, Any] = {
@@ -243,15 +321,25 @@ def main() -> None:
                 "path": RETRIEVAL_DATASET.relative_to(ROOT).as_posix(),
                 "sha256": _sha256(RETRIEVAL_DATASET),
                 "queries": len(retrieval_cases),
+                "development_queries": len(retrieval_splits["development"]),
+                "frozen_final_queries": len(retrieval_splits["frozen_final_test"]),
                 "origin": "internal policy retrieval questions",
+                "policy_file_isolation": (
+                    retrieval_payload.get("policy_file_isolation")
+                    if isinstance(retrieval_payload, dict)
+                    else None
+                ),
             },
         },
         "ai_runtime": runtime,
         "intent_classification": _evaluate_intent(),
         "profile_extraction": {"deterministic_baseline": deterministic},
         "retrieval": {
-            "bm25_baseline": _evaluate_retrieval(retrieval_cases, hybrid=False),
-            "configured_pipeline": _evaluate_retrieval(retrieval_cases, hybrid=True),
+            split: {
+                "bm25_baseline": _evaluate_retrieval(rows, hybrid=False),
+                "configured_pipeline": _evaluate_retrieval(rows, hybrid=True),
+            }
+            for split, rows in retrieval_splits.items()
         },
         "claim_boundary": [
             "画像基准是内部合成语句，不代表真实困难群众表达分布。",
