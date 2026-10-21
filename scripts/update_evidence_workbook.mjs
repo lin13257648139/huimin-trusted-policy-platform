@@ -19,7 +19,7 @@ const coverage = (await readJson("data/evaluation/coverage_report.json")).totals
 const policy = await readJson("data/evaluation/policy_compiler_real_report.json");
 const ai = await readJson("data/evaluation/ai_pipeline_report.json");
 const active = await readJson("data/evaluation/active_question_report.json");
-const browser = (await readJson("data/evaluation/browser_e2e_report.json")).stats;
+const browser = (await readJson("data/evaluation/browser_e2e_report.json")).summary;
 const pytestXml = await fs.readFile(path.join(ROOT, "data/evaluation/pytest_junit.xml"), "utf8");
 const suiteTag = pytestXml.match(/<testsuite\b[^>]*>/)?.[0] ?? "";
 const suiteNumber = (name) => Number(suiteTag.match(new RegExp(`\\b${name}="(\\d+)"`))?.[1] ?? -1);

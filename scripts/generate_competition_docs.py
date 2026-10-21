@@ -49,7 +49,7 @@ def load_evaluation_metrics() -> dict[str, object]:
         raise RuntimeError(f"Python测试未全通过：{pytest_metrics}")
     browser = json.loads(
         (evaluation / "browser_e2e_report.json").read_text(encoding="utf-8")
-    )["stats"]
+    )["summary"]
     if browser["unexpected"] or browser["flaky"]:
         raise RuntimeError(f"浏览器测试未稳定通过：{browser}")
     return {

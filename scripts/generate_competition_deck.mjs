@@ -39,7 +39,7 @@ async function loadJson(relativePath) {
 const coverage = (await loadJson("data/evaluation/coverage_report.json")).totals;
 const policyReport = await loadJson("data/evaluation/policy_compiler_real_report.json");
 const aiPipeline = await loadJson("data/evaluation/ai_pipeline_report.json");
-const browserReport = (await loadJson("data/evaluation/browser_e2e_report.json")).stats;
+const browserReport = (await loadJson("data/evaluation/browser_e2e_report.json")).summary;
 const pytestXml = await fs.readFile(path.join(ROOT, "data/evaluation/pytest_junit.xml"), "utf8");
 const pytestSuite = pytestXml.match(/<testsuite\b[^>]*>/)?.[0];
 const suiteNumber = (name) => Number(pytestSuite?.match(new RegExp(`\\b${name}="(\\d+)"`))?.[1] ?? -1);

@@ -192,7 +192,7 @@ compiler = load_json("data/evaluation/policy_compiler_report.json")
 compiler_real = load_json("data/evaluation/policy_compiler_real_report.json")
 ai_pipeline = load_json("data/evaluation/ai_pipeline_report.json")
 active_questions = load_json("data/evaluation/active_question_report.json")
-browser = load_json("data/evaluation/browser_e2e_report.json")["stats"]
+browser = load_json("data/evaluation/browser_e2e_report.json")["summary"]
 pytest_suite = ET.parse(ROOT / "data" / "evaluation" / "pytest_junit.xml").getroot().find(
     ".//testsuite"
 )
