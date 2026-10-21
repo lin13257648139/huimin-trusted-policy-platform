@@ -81,6 +81,7 @@ POLICY_EXTRACTION_SCHEMA = {
         },
         "conditions": {
             "type": "array",
+            "maxItems": 12,
             "items": {
                 "type": "object",
                 "additionalProperties": False,
@@ -89,13 +90,37 @@ POLICY_EXTRACTION_SCHEMA = {
                     "field": {"type": "string", "enum": sorted(ALLOWED_FIELDS)},
                     "operator": {"type": "string", "enum": sorted(ALLOWED_OPERATORS)},
                     "value": {"type": ["string", "number", "integer", "boolean"]},
-                    "unit": {"type": ["string", "null"]},
-                    "source_quote": {"type": "string"},
+                    "unit": {"type": ["string", "null"], "maxLength": 40},
+                    "source_quote": {"type": "string", "minLength": 1, "maxLength": 120},
                 },
             },
         },
     },
 }
+
+
+def _policy_extraction_prompt(*, concise: bool = False) -> str:
+    prompt = (
+        "你是政策规则抽取器，不进行资格审批。只输出JSON。不得补写原文没有的信息。"
+        "benefit_id语义固定为：B001低收入人口认定与监测、B002最低生活保障、"
+        "B003最低生活保障边缘家庭、B004刚性支出困难家庭、B005临时救助、"
+        "B006特困人员救助供养；benefit_id只能是B001-B006或null。"
+        "只能根据当前标题和原文选择上述事项；无法确定时必须输出null，"
+        "禁止默认B001。日期未明说时输出null，parameters未明说时输出空对象，"
+        "conditions未明说时输出空数组，不得输出示例值、占位值或常用默认值。"
+        "parameters只允许"
+        f"{sorted(ALLOWED_PARAMETER_NAMES)}；conditions的field只允许{sorted(ALLOWED_FIELDS)}，"
+        f"operator只允许{sorted(ALLOWED_OPERATORS)}。每个field只保留一条最直接的可执行条件，"
+        "conditions最多12条；每条condition必须包含原文逐字引用source_quote，"
+        "引用只截取证明该条件的最短连续原文且不超过120字。"
+        "输出字段：benefit_id,effective_from,effective_to,parameters,conditions。"
+    )
+    if concise:
+        prompt += (
+            "这是格式修复重试：禁止解释、分析、复述法规依据或输出思考过程；"
+            "原文没有明确门槛时conditions必须为[]。"
+        )
+    return prompt
 
 
 def _sentences(text: str) -> list[str]:
@@ -174,7 +199,11 @@ def _detect_benefit(text: str, hint: str | None, title: str = "") -> str:
         generic = text.count("社会救助") * len("社会救助")
         generic += title.count("社会救助") * len("社会救助") * 3
         scores["B001"] = max(0, scores["B001"] - generic)
-    return max(scores, key=lambda benefit_id: scores[benefit_id]) if any(scores.values()) else "unknown"
+    return (
+        max(scores, key=lambda benefit_id: scores[benefit_id])
+        if any(scores.values())
+        else "unknown"
+    )
 
 
 def _money_value(raw: str) -> str | None:
@@ -406,26 +435,19 @@ def _ollama_extract(
 ) -> tuple[dict[str, Any] | None, JsonModelResult | None]:
     if not settings.ollama_enabled:
         return None, None
-    system_prompt = (
-        "你是政策规则抽取器，不进行资格审批。只输出JSON。不得补写原文没有的信息。"
-        "benefit_id只能是B001-B006或null；无法从当前原文确定事项时必须输出null，"
-        "禁止默认B001。日期未明说时输出null，parameters未明说时输出空对象，"
-        "conditions未明说时输出空数组，不得输出示例值、占位值或常用默认值。"
-        "parameters只允许"
-        f"{sorted(ALLOWED_PARAMETER_NAMES)}；conditions的field只允许{sorted(ALLOWED_FIELDS)}，"
-        f"operator只允许{sorted(ALLOWED_OPERATORS)}。每条condition必须包含原文逐字引用source_quote。"
-        "输出字段：benefit_id,effective_from,effective_to,parameters,conditions。"
-    )
-    try:
-        trace = chat_json(
-            system_prompt=system_prompt,
-            user_prompt=f"标题：{request.title}\n政策原文：{request.source_text}",
-            json_schema=POLICY_EXTRACTION_SCHEMA,
-            purpose="policy2rule/v2",
-        )
-        return trace.payload, trace
-    except ModelRuntimeError:
-        return None, None
+    user_prompt = f"标题：{request.title}\n政策原文：{request.source_text}"
+    for attempt in range(2):
+        try:
+            trace = chat_json(
+                system_prompt=_policy_extraction_prompt(concise=attempt > 0),
+                user_prompt=user_prompt,
+                json_schema=POLICY_EXTRACTION_SCHEMA,
+                purpose=f"policy2rule/v2/attempt-{attempt + 1}",
+            )
+            return trace.payload, trace
+        except ModelRuntimeError:
+            continue
+    return None, None
 
 
 def _benefit_has_source_anchor(benefit_id: str, text: str, title: str) -> bool:
@@ -476,6 +498,7 @@ def _validated_llm_result(
         "effective_to": None,
         "parameters": {},
         "conditions": [],
+        "condition_conflicts": [],
     }
     if not llm:
         return result
@@ -517,17 +540,113 @@ def _validated_llm_result(
             accepted.append(CompiledRuleCondition(**raw))
         except ValueError:
             continue
-    result["conditions"] = accepted
+    result["conditions"], result["condition_conflicts"] = _deduplicate_conditions(accepted)
     return result
+
+
+def _canonical_condition_value(value: str | int | float | bool) -> tuple[str, str]:
+    """Return a stable, type-aware value for semantic comparison."""
+
+    if isinstance(value, bool):
+        return ("bool", "true" if value else "false")
+    raw = str(value).strip()
+    try:
+        numeric = Decimal(raw)
+    except InvalidOperation:
+        return ("text", re.sub(r"\s+", "", raw))
+    return ("number", format(numeric.normalize(), "f"))
+
+
+def _condition_signature(condition: CompiledRuleCondition) -> tuple[str, str, str, str]:
+    value_type, value = _canonical_condition_value(condition.value)
+    return (condition.field, condition.operator, value_type, value)
+
+
+def _conditions_form_valid_range(
+    left: CompiledRuleCondition,
+    right: CompiledRuleCondition,
+) -> bool:
+    """Allow an explicit lower/upper range while rejecting competing bounds."""
+
+    if left.field != right.field:
+        return True
+    lower_operators = {"gte", "ratio_gte"}
+    upper_operators = {"lt", "lte"}
+    if not (
+        (left.operator in lower_operators and right.operator in upper_operators)
+        or (right.operator in lower_operators and left.operator in upper_operators)
+    ):
+        return False
+    lower = left if left.operator in lower_operators else right
+    upper = right if left.operator in lower_operators else left
+    lower_type, lower_value = _canonical_condition_value(lower.value)
+    upper_type, upper_value = _canonical_condition_value(upper.value)
+    if lower_type != "number" or upper_type != "number":
+        return False
+    lower_number = Decimal(lower_value)
+    upper_number = Decimal(upper_value)
+    return lower_number < upper_number or (lower_number == upper_number and upper.operator == "lte")
+
+
+def _condition_conflict(
+    kept: CompiledRuleCondition,
+    incoming: CompiledRuleCondition,
+) -> dict[str, str]:
+    return {
+        "field": incoming.field,
+        "kept": f"{kept.operator} {kept.value}",
+        "rejected": f"{incoming.operator} {incoming.value}",
+        "message": (
+            f"字段 {incoming.field} 出现不一致条件：已保留 {kept.operator} {kept.value}，"
+            f"拒绝合并 {incoming.operator} {incoming.value}；必须回看原文确认边界。"
+        ),
+    }
+
+
+def _deduplicate_conditions(
+    conditions: list[CompiledRuleCondition],
+) -> tuple[list[CompiledRuleCondition], list[dict[str, str]]]:
+    """Keep one semantic condition per field and surface any disagreement.
+
+    A repeated condition with numerically equivalent values is harmless and is
+    removed.  Any other condition on the same field is kept out of the
+    executable candidate because differences such as ``lt`` versus ``lte`` are
+    policy-significant boundary changes.
+    """
+
+    accepted: list[CompiledRuleCondition] = []
+    conflicts: list[dict[str, str]] = []
+    signatures: set[tuple[str, str, str, str]] = set()
+    by_field: dict[str, list[CompiledRuleCondition]] = {}
+    for condition in conditions:
+        signature = _condition_signature(condition)
+        if signature in signatures:
+            continue
+        existing_items = by_field.get(condition.field, [])
+        incompatible = next(
+            (
+                existing
+                for existing in existing_items
+                if not _conditions_form_valid_range(existing, condition)
+            ),
+            None,
+        )
+        if incompatible is not None:
+            conflicts.append(_condition_conflict(incompatible, condition))
+            continue
+        accepted.append(condition)
+        signatures.add(signature)
+        by_field.setdefault(condition.field, []).append(condition)
+    return accepted, conflicts
 
 
 def _merge_llm(
     request: PolicyCompileRequest,
     deterministic: dict[str, Any],
     llm: dict[str, Any] | None,
-) -> tuple[dict[str, Any], bool]:
+) -> tuple[dict[str, Any], bool, list[dict[str, str]]]:
     if not llm:
-        return deterministic, False
+        return deterministic, False, []
     result = {
         **deterministic,
         "parameters": dict(deterministic["parameters"]),
@@ -551,11 +670,30 @@ def _merge_llm(
             if key in ALLOWED_PARAMETER_NAMES and isinstance(value, (str, int, float, bool)):
                 result["parameters"].setdefault(key, value)
     accepted = validated["conditions"]
-    known = {(item.field, item.operator, str(item.value)) for item in result["conditions"]}
-    result["conditions"].extend(
-        item for item in accepted if (item.field, item.operator, str(item.value)) not in known
-    )
-    return result, True
+    conflicts = list(validated["condition_conflicts"])
+    known_signatures = {_condition_signature(item) for item in result["conditions"]}
+    known_by_field: dict[str, list[CompiledRuleCondition]] = {}
+    for condition in result["conditions"]:
+        known_by_field.setdefault(condition.field, []).append(condition)
+    for item in accepted:
+        if _condition_signature(item) in known_signatures:
+            continue
+        existing_items = known_by_field.get(item.field, [])
+        incompatible = next(
+            (
+                existing
+                for existing in existing_items
+                if not _conditions_form_valid_range(existing, item)
+            ),
+            None,
+        )
+        if incompatible is not None:
+            conflicts.append(_condition_conflict(incompatible, item))
+            continue
+        result["conditions"].append(item)
+        known_signatures.add(_condition_signature(item))
+        known_by_field.setdefault(item.field, []).append(item)
+    return result, True, conflicts
 
 
 def _version_diff(candidate: PolicyRuleCandidate) -> dict[str, Any]:
@@ -618,11 +756,13 @@ def compile_policy(request: PolicyCompileRequest) -> PolicyCompileResponse:
         llm_payload, llm_trace = _ollama_extract(request)
     if strategy == "llm_only":
         merged = _validated_llm_result(request, llm_payload)
+        condition_conflicts = list(merged.pop("condition_conflicts", []))
         used_llm = llm_trace is not None
     elif strategy == "controlled_fusion":
-        merged, used_llm = _merge_llm(request, deterministic, llm_payload)
+        merged, used_llm, condition_conflicts = _merge_llm(request, deterministic, llm_payload)
     else:
         merged, used_llm = deterministic, False
+        condition_conflicts = []
     benefit_id = merged["benefit_id"]
     citations = list(dict.fromkeys(item.source_quote for item in merged["conditions"]))[:8]
     exceptions = [
@@ -703,6 +843,15 @@ def compile_policy(request: PolicyCompileRequest) -> PolicyCompileResponse:
                 field="conditions",
             )
         )
+    for conflict in condition_conflicts:
+        issues.append(
+            PolicyValidationIssue(
+                severity="error",
+                code="condition_semantic_conflict",
+                message=conflict["message"],
+                field=f"conditions.{conflict['field']}",
+            )
+        )
     if not candidate.parameters:
         issues.append(
             PolicyValidationIssue(
@@ -762,7 +911,9 @@ def analyze_policy_impact(candidate: PolicyRuleCandidate) -> PolicyImpactRespons
         (rule for rule in registered_rules() if rule.benefit_id == candidate.benefit_id), None
     )
     case_path = BASE_DIR / "data" / "processed" / "synthetic_conformance_cases.jsonl"
-    cases = [json.loads(line) for line in case_path.read_text(encoding="utf-8").splitlines() if line]
+    cases = [
+        json.loads(line) for line in case_path.read_text(encoding="utf-8").splitlines() if line
+    ]
     notes = ["影响分析使用合成回归案例，不代表真实群众数量或政策实际覆盖人数。"]
     changes = {"newly_included": 0, "newly_excluded": 0}
     samples: list[str] = []

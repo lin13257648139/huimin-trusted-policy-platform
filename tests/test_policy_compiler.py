@@ -159,6 +159,62 @@ def test_controlled_fusion_is_reported_separately(monkeypatch) -> None:
     assert "+allowlist-fusion" in result.candidate.provider
 
 
+def test_controlled_fusion_blocks_conflicting_boundary_and_deduplicates(monkeypatch) -> None:
+    import app.services.policy_compiler as compiler
+
+    trace = JsonModelResult(
+        payload={},
+        provider="ollama",
+        model_id="test-model",
+        latency_ms=13,
+        prompt_sha256="7" * 64,
+        response_sha256="8" * 64,
+    )
+    monkeypatch.setattr(
+        compiler,
+        "_ollama_extract",
+        lambda request: (
+            {
+                "benefit_id": "B002",
+                "effective_from": None,
+                "effective_to": None,
+                "parameters": {},
+                "conditions": [
+                    {
+                        "field": "per_capita_monthly_income",
+                        "operator": "lt",
+                        "value": 1400,
+                        "unit": "元/人/月",
+                        "source_quote": "人均月收入低于本市最低生活保障标准",
+                    },
+                    {
+                        "field": "assets_eligible",
+                        "operator": "eq",
+                        "value": True,
+                        "source_quote": "家庭财产状况符合规定",
+                    },
+                ],
+            },
+            trace,
+        ),
+    )
+    result = compile_policy(
+        _request().model_copy(update={"use_llm": True, "extraction_strategy": "controlled_fusion"})
+    )
+
+    assert [item.field for item in result.candidate.conditions].count(
+        "per_capita_monthly_income"
+    ) == 1
+    assert [item.field for item in result.candidate.conditions].count("assets_eligible") == 1
+    conflict = next(
+        item for item in result.validation if item.code == "condition_semantic_conflict"
+    )
+    assert conflict.severity == "error"
+    assert "lte 1400.00" in conflict.message
+    assert "lt 1400" in conflict.message
+    assert conflict.message in result.publish_blockers
+
+
 def test_llm_b001_requires_specific_source_anchor(monkeypatch) -> None:
     import app.services.policy_compiler as compiler
 

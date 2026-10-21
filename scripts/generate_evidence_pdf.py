@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import xml.etree.ElementTree as ET
 from pathlib import Path
 
 from reportlab.lib import colors
@@ -174,7 +175,7 @@ def footer(canvas, doc):
     canvas.saveState()
     canvas.setFont("CN", 8)
     canvas.setFillColor(MUTED)
-    canvas.drawString(2 * cm, 1.15 * cm, "惠民智导 v2.0.0 · 国赛佐证材料")
+    canvas.drawString(2 * cm, 1.15 * cm, "惠民智导 v2.0.0 · 技术与运行佐证")
     canvas.drawRightString(19 * cm, 1.15 * cm, f"{doc.page}")
     canvas.restoreState()
 
@@ -188,6 +189,21 @@ retrieval = load_json("data/evaluation/retrieval_report.json")
 safety = load_json("data/evaluation/high_risk_safety_report.json")
 ocr = load_json("data/evaluation/ocr_report.json")
 compiler = load_json("data/evaluation/policy_compiler_report.json")
+compiler_real = load_json("data/evaluation/policy_compiler_real_report.json")
+ai_pipeline = load_json("data/evaluation/ai_pipeline_report.json")
+active_questions = load_json("data/evaluation/active_question_report.json")
+browser = load_json("data/evaluation/browser_e2e_report.json")["stats"]
+pytest_suite = ET.parse(ROOT / "data" / "evaluation" / "pytest_junit.xml").getroot().find(
+    ".//testsuite"
+)
+if pytest_suite is None:
+    raise RuntimeError("pytest_junit.xml缺少testsuite")
+pytest_count = int(pytest_suite.attrib["tests"])
+pytest_failures = int(pytest_suite.attrib["failures"]) + int(pytest_suite.attrib["errors"])
+if pytest_failures or browser["unexpected"] or browser["flaky"]:
+    raise RuntimeError("自动化测试报告包含失败或不稳定场景")
+policy_tracks = compiler_real["tracks"]
+retrieval_pipeline = ai_pipeline["retrieval"]["frozen_final_test"]
 live = load_json("data/evaluation/live_ai_smoke_report.json")
 
 doc = SimpleDocTemplate(
@@ -236,14 +252,14 @@ summary_rows = [
     ["证据", "当前结果", "核验范围"],
     ["产品能力", "六类事项、四步向导、材料预检、政策问答、专业工作台", "申请前导办，不替代正式受理、调查或审批"],
     ["政策证据", f"{len(provenance['sources'])} 个来源，{len(evidence)} 条逐字证据", "URL、本地快照、SHA-256 与原文定位"],
-    ["自动化测试", "265 项通过；浏览器端到端 11/11", "项目内工程测试"],
+    ["自动化测试", f"{pytest_count} 项通过；浏览器端到端 {browser['expected']}/{browser['expected']}", "项目内工程测试"],
     ["代码覆盖", f"行 {coverage['totals']['percent_covered']:.2f}%；分支 {coverage['totals']['percent_branches_covered']:.2f}%", "不代表真实审批准确率"],
     ["真实本地模型", "特困专题 20/20 闭环", "14 次受控模型生成；6 次安全回退"],
 ]
 story.append(metric_table(summary_rows, [3.3 * cm, 6.0 * cm, 8.1 * cm]))
 story.append(Spacer(1, 0.5 * cm))
-story.append(P("真实评价", h2))
-story.append(P("项目已经跨过“概念演示”门槛，具备国赛答辩所需要的完整产品路径、规则边界、证据闭环、模型约束和可复现实验。仍缺少外部专家双人盲标、真实用户封闭试点和正式政务部署评审，因此不能把项目内指标表述为实际审批准确率，也不能承诺获奖。"))
+story.append(P("范围说明", h2))
+story.append(P("项目已经形成完整产品路径、规则边界、证据闭环、模型约束和可复现实验。仍缺少外部专家双人盲标、真实用户封闭试点和正式政务部署评审，因此不能把项目内指标表述为实际审批准确率，也不能承诺实际业务效果。"))
 story.append(PageBreak())
 
 # 3 Architecture
@@ -271,15 +287,17 @@ story.append(PageBreak())
 page_header(story, "03 量化评测", "指标与适用边界")
 metric_rows = [
     ["指标", "结果", "样本", "适用边界"],
-    ["自动化测试", "265/265", "项目测试", "工程回归"],
-    ["浏览器端到端", "11/11", "真实浏览器场景", "核心用户路径"],
+    ["自动化测试", f"{pytest_count}/{pytest_count}", "项目测试", "工程回归"],
+    ["浏览器端到端", f"{browser['expected']}/{browser['expected']}", "真实浏览器场景", "核心用户路径与规则冲突展示"],
     ["代码行覆盖", f"{coverage['totals']['percent_covered']:.2f}%", f"{coverage['totals']['covered_lines']}/{coverage['totals']['num_statements']}", "可执行语句"],
     ["代码分支覆盖", f"{coverage['totals']['percent_branches_covered']:.2f}%", f"{coverage['totals']['covered_branches']}/{coverage['totals']['num_branches']}", "检测到的分支"],
     ["有据政策问答", "138/138", "冻结最终集", "内部构建基准"],
-    ["检索 Recall@1", f"{retrieval['recall_at_1']:.2%}", f"{retrieval['query_count']} 条", "冻结检索集"],
+    ["RRF 混合检索", f"Recall@1 {retrieval_pipeline['configured_pipeline']['recall_at_1']:.2%}；Recall@3 {retrieval_pipeline['configured_pipeline']['recall_at_3']:.2%}", f"{retrieval_pipeline['configured_pipeline']['queries']} 条", "真实本地向量模型"],
     ["特困专题本地模型", "20/20", "冻结专题集", "端到端证据闭环"],
     ["高风险安全", f"{safety['passed']}/{safety['cases']}", "合成对抗与边界用例", "注入、越权、发布门等"],
-    ["Policy2Rule", "120/120", "冻结条款集", "候选规则，不自动发布"],
+    ["Policy2Rule 事项识别", f"规则 {policy_tracks['deterministic']['benefit_accuracy']:.2%}；模型 {policy_tracks['llm_only']['benefit_accuracy']:.2%}；融合 {policy_tracks['controlled_fusion']['benefit_accuracy']:.2%}", "120 条冻结条款", "51 条事项可判样本；其余依赖上下文"],
+    ["Policy2Rule 条件字段", f"F1 规则 {policy_tracks['deterministic']['condition_field']['f1']:.2%}；模型 {policy_tracks['llm_only']['condition_field']['f1']:.2%}；融合 {policy_tracks['controlled_fusion']['condition_field']['f1']:.2%}", "55 个标注字段", "逐维度报告，不写总通过率"],
+    ["动态提问", f"平均 {active_questions['strategies']['information_gain']['mean_questions']:.2f} 问", f"{active_questions['cases']} 条合成路径", f"较固定顺序减少 {active_questions['question_reduction_vs_executed_fixed_order']:.2%}"],
     ["OCR", f"{ocr['classification_accuracy']:.2%}", f"{ocr['case_count']} 张合成退化图像", "不外推真实票据总体"],
 ]
 story.append(metric_table(metric_rows, [4.0 * cm, 3.0 * cm, 4.0 * cm, 6.4 * cm]))

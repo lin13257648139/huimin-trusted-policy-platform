@@ -119,6 +119,7 @@ def _evaluate_track(rows: list[dict[str, Any]], strategy: str) -> dict[str, Any]
     total_latencies: list[float] = []
     model_latencies: list[float] = []
     errors: list[dict[str, Any]] = []
+    runtime_fallback_cases: list[str] = []
     by_source: dict[str, Counter[str]] = defaultdict(Counter)
 
     for row in rows:
@@ -140,6 +141,10 @@ def _evaluate_track(rows: list[dict[str, Any]], strategy: str) -> dict[str, Any]
         if candidate.model_latency_ms is not None:
             model_latencies.append(float(candidate.model_latency_ms))
         providers[candidate.provider] += 1
+        if strategy != "deterministic" and not (
+            candidate.provider.startswith("ollama/") or "+ollama/" in candidate.provider
+        ):
+            runtime_fallback_cases.append(str(row["case_id"]))
         text = str(row["text"])
         source_id = str(row["source_id"])
         source_bucket = by_source[source_id]
@@ -237,12 +242,11 @@ def _evaluate_track(rows: list[dict[str, Any]], strategy: str) -> dict[str, Any]
         "end_to_end_latency_ms": latency_summary(total_latencies),
         "model_latency_ms": latency_summary(model_latencies),
         "unknown_rejection": _evaluate_rejection(strategy),
+        "runtime_fallback_cases": runtime_fallback_cases,
         "by_source": {
             source_id: {
                 "cases": counts["cases"],
-                "benefit_accuracy": rate_metric(
-                    counts["benefit_correct"], counts["benefit_total"]
-                ),
+                "benefit_accuracy": rate_metric(counts["benefit_correct"], counts["benefit_total"]),
             }
             for source_id, counts in sorted(by_source.items())
         },
@@ -257,9 +261,7 @@ def evaluate(
     tracks: tuple[str, ...],
     require_live_llm: bool,
 ) -> dict[str, Any]:
-    all_rows = [
-        json.loads(line) for line in path.read_text(encoding="utf-8").splitlines() if line
-    ]
+    all_rows = [json.loads(line) for line in path.read_text(encoding="utf-8").splitlines() if line]
     rows = [row for row in all_rows if split is None or row.get("split") == split]
     if not rows:
         raise RuntimeError(f"数据集中没有split={split!r}的案例")
@@ -273,9 +275,7 @@ def evaluate(
     if overlap:
         raise RuntimeError(f"政策文件分组泄漏：{overlap}")
     runtime = ollama_runtime_status()
-    if require_live_llm and (
-        not runtime["reachable"] or not runtime.get("model_present")
-    ):
+    if require_live_llm and (not runtime["reachable"] or not runtime.get("model_present")):
         raise RuntimeError(f"要求真实LLM但运行时不可用：{runtime['reason']}")
     track_reports = {strategy: _evaluate_track(rows, strategy) for strategy in tracks}
     if require_live_llm:
@@ -283,8 +283,17 @@ def evaluate(
             if strategy == "deterministic":
                 continue
             providers = track_reports[strategy]["providers"]
-            if not any(str(provider).startswith("ollama/") or "+ollama/" in str(provider) for provider in providers):
-                raise RuntimeError(f"{strategy}没有实际调用本地LLM")
+            live_cases = sum(
+                int(count)
+                for provider, count in providers.items()
+                if str(provider).startswith("ollama/") or "+ollama/" in str(provider)
+            )
+            if live_cases != len(rows):
+                fallback_cases = track_reports[strategy]["runtime_fallback_cases"]
+                raise RuntimeError(
+                    f"{strategy}真实LLM调用不完整：{live_cases}/{len(rows)}；"
+                    f"降级案例={fallback_cases}"
+                )
     return {
         "report_schema": "policy2rule-three-track/3.0",
         "generated_at": datetime.now(UTC).isoformat(),

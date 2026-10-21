@@ -88,12 +88,18 @@ def test_condition_extraction_covers_manual_and_emergency_paths() -> None:
 def test_llm_allowlist_validation_rejects_unanchored_and_malformed_values() -> None:
     request = _request("低保标准为1300元。共同生活家庭成员应当核对。", title="低保政策")
     assert compiler._parameter_has_source_anchor("unsupported", 1, request.source_text) is False
-    assert compiler._parameter_has_source_anchor(
-        "income_standard_monthly_per_capita", True, request.source_text
-    ) is False
-    assert compiler._parameter_has_source_anchor(
-        "income_standard_monthly_per_capita", "一千三百元", request.source_text
-    ) is False
+    assert (
+        compiler._parameter_has_source_anchor(
+            "income_standard_monthly_per_capita", True, request.source_text
+        )
+        is False
+    )
+    assert (
+        compiler._parameter_has_source_anchor(
+            "income_standard_monthly_per_capita", "一千三百元", request.source_text
+        )
+        is False
+    )
     result = compiler._validated_llm_result(
         request,
         {
@@ -138,8 +144,8 @@ def test_controlled_merge_only_fills_missing_allowlisted_values() -> None:
         "parameters": {},
         "conditions": [],
     }
-    assert compiler._merge_llm(request, deterministic, None) == (deterministic, False)
-    merged, used = compiler._merge_llm(
+    assert compiler._merge_llm(request, deterministic, None) == (deterministic, False, [])
+    merged, used, conflicts = compiler._merge_llm(
         request,
         deterministic,
         {
@@ -158,10 +164,89 @@ def test_controlled_merge_only_fills_missing_allowlisted_values() -> None:
         },
     )
     assert used is True
+    assert conflicts == []
     assert merged["benefit_id"] == "B002"
     assert merged["effective_from"] == date(2026, 1, 1)
     assert merged["parameters"]["income_standard_monthly_per_capita"] == 1300
     assert len(merged["conditions"]) == 1
+
+
+def test_controlled_merge_rejects_duplicate_and_boundary_conflict() -> None:
+    request = _request(
+        "低保标准为1400元。共同生活家庭成员人均月收入低于最低生活保障标准，家庭财产符合规定。",
+        title="低保政策",
+        hint="B002",
+    )
+    parameters = compiler._extract_parameters(request.source_text, "B002")
+    deterministic = {
+        "benefit_id": "B002",
+        "effective_from": None,
+        "effective_to": None,
+        "parameters": parameters,
+        "conditions": compiler._extract_conditions(request.source_text, "B002", parameters),
+    }
+    merged, used, conflicts = compiler._merge_llm(
+        request,
+        deterministic,
+        {
+            "benefit_id": "B002",
+            "effective_from": None,
+            "effective_to": None,
+            "parameters": {},
+            "conditions": [
+                {
+                    "field": "per_capita_monthly_income",
+                    "operator": "lt",
+                    "value": 1400,
+                    "unit": "元/人/月",
+                    "source_quote": "人均月收入低于最低生活保障标准",
+                },
+                {
+                    "field": "assets_eligible",
+                    "operator": "eq",
+                    "value": True,
+                    "source_quote": "家庭财产符合规定",
+                },
+            ],
+        },
+    )
+
+    assert used is True
+    assert [item.field for item in merged["conditions"]].count("assets_eligible") == 1
+    assert [item.field for item in merged["conditions"]].count("per_capita_monthly_income") == 1
+    assert conflicts == [
+        {
+            "field": "per_capita_monthly_income",
+            "kept": "lte 1400.00",
+            "rejected": "lt 1400",
+            "message": (
+                "字段 per_capita_monthly_income 出现不一致条件：已保留 lte 1400.00，"
+                "拒绝合并 lt 1400；必须回看原文确认边界。"
+            ),
+        }
+    ]
+
+
+def test_condition_deduplication_allows_a_consistent_numeric_range() -> None:
+    conditions = [
+        compiler.CompiledRuleCondition(
+            field="per_capita_monthly_income",
+            operator="gte",
+            value=1000,
+            source_quote="人均月收入不低于1000元",
+        ),
+        compiler.CompiledRuleCondition(
+            field="per_capita_monthly_income",
+            operator="lte",
+            value="1400.00",
+            source_quote="人均月收入不超过1400元",
+        ),
+    ]
+
+    accepted, conflicts = compiler._deduplicate_conditions(conditions)
+
+    assert accepted == conditions
+    assert conflicts == []
 
 
 def test_ollama_failure_is_auditable_safe_fallback(monkeypatch) -> None:
@@ -171,10 +256,75 @@ def test_ollama_failure_is_auditable_safe_fallback(monkeypatch) -> None:
         "chat_json",
         lambda **_kwargs: (_ for _ in ()).throw(compiler.ModelRuntimeError("offline")),
     )
-    assert compiler._ollama_extract(_request("这是一段用于测试本地模型失败回退的低保政策原文。")) == (
+    assert compiler._ollama_extract(
+        _request("这是一段用于测试本地模型失败回退的低保政策原文。")
+    ) == (
         None,
         None,
     )
+
+
+def test_ollama_retries_once_with_concise_prompt(monkeypatch) -> None:
+    monkeypatch.setattr(compiler, "settings", SimpleNamespace(ollama_enabled=True))
+    prompts: list[str] = []
+
+    def flaky_chat_json(**kwargs):
+        prompts.append(kwargs["system_prompt"])
+        if len(prompts) == 1:
+            raise compiler.ModelRuntimeError("invalid-json")
+        return compiler.JsonModelResult(
+            payload={
+                "benefit_id": "B004",
+                "effective_from": None,
+                "effective_to": None,
+                "parameters": {},
+                "conditions": [],
+            },
+            provider="ollama-json-schema",
+            model_id="test-model",
+            latency_ms=1,
+            prompt_sha256="a" * 64,
+            response_sha256="b" * 64,
+        )
+
+    monkeypatch.setattr(compiler, "chat_json", flaky_chat_json)
+    payload, trace = compiler._ollama_extract(
+        _request("这是一段用于测试格式修复重试的刚性支出困难家庭政策原文。")
+    )
+
+    assert payload is not None
+    assert payload["benefit_id"] == "B004"
+    assert trace is not None
+    assert len(prompts) == 2
+    assert "格式修复重试" not in prompts[0]
+    assert "格式修复重试" in prompts[1]
+
+
+def test_ollama_prompt_defines_every_benefit_identifier(monkeypatch) -> None:
+    captured: dict[str, str] = {}
+    monkeypatch.setattr(compiler, "settings", SimpleNamespace(ollama_enabled=True))
+
+    def fake_chat_json(**kwargs):
+        captured["system_prompt"] = kwargs["system_prompt"]
+        return compiler.JsonModelResult(
+            payload={},
+            provider="ollama",
+            model_id="test-model",
+            latency_ms=1,
+            prompt_sha256="a" * 64,
+            response_sha256="b" * 64,
+        )
+
+    monkeypatch.setattr(compiler, "chat_json", fake_chat_json)
+    compiler._ollama_extract(_request("这是一段用于测试编号语义映射的最低生活保障政策原文。"))
+
+    prompt = captured["system_prompt"]
+    assert "B001低收入人口认定与监测" in prompt
+    assert "B002最低生活保障" in prompt
+    assert "B003最低生活保障边缘家庭" in prompt
+    assert "B004刚性支出困难家庭" in prompt
+    assert "B005临时救助" in prompt
+    assert "B006特困人员救助供养" in prompt
 
 
 def test_compile_reports_invalid_range_and_missing_executable_fields() -> None:
@@ -186,7 +336,9 @@ def test_compile_reports_invalid_range_and_missing_executable_fields() -> None:
 
 
 def test_impact_handles_unknown_and_non_threshold_benefits() -> None:
-    unknown = compiler.compile_policy(_request("本通知用于安排会议室维护和值班采购流程，不涉及救助事项。"))
+    unknown = compiler.compile_policy(
+        _request("本通知用于安排会议室维护和值班采购流程，不涉及救助事项。")
+    )
     assert compiler.analyze_policy_impact(unknown.candidate).comparable_cases == 0
     temporary = compiler.compile_policy(
         _request("本条规定临时救助急难事件应当转由人工核验并记录。", hint="B005")

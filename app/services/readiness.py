@@ -38,6 +38,32 @@ def _line_count(path: Path) -> int:
         return sum(1 for line in stream if line.strip())
 
 
+def _release_binding_status() -> tuple[bool, str]:
+    """Verify that the displayed evidence manifest matches the current source tree."""
+
+    manifest_path = BASE_DIR / "data" / "evaluation" / "release_manifest.json"
+    if not manifest_path.is_file():
+        return False, "源码绑定清单缺失"
+    try:
+        manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+        from scripts.build_release_manifest import source_fingerprint
+
+        current_digest, current_files = source_fingerprint()
+        bound_digest = manifest.get("source_tree_sha256")
+        source_binding = manifest.get("source_binding") or {}
+        clean_when_bound = source_binding.get("source_inputs_dirty") is False
+        matches = bound_digest == current_digest and clean_when_bound
+        if matches:
+            return True, f"源码指纹 {current_digest[:12]} 已绑定 {len(current_files)} 个输入文件"
+        state = "生成时源码未冻结" if not clean_when_bound else "当前源码已变化"
+        return (
+            False,
+            f"{state}：清单 {str(bound_digest)[:12] or '缺失'}，当前 {current_digest[:12]}；请重跑评测并生成清单",
+        )
+    except (OSError, TypeError, ValueError, json.JSONDecodeError):
+        return False, "源码绑定清单无法解析或无法计算当前源码指纹"
+
+
 def build_readiness_report() -> dict[str, Any]:
     """Return a reproducible, non-sensitive deployment readiness snapshot.
 
@@ -78,8 +104,11 @@ def build_readiness_report() -> dict[str, Any]:
         BASE_DIR / "data" / "evaluation" / "high_risk_safety_report.json",
         BASE_DIR / "data" / "evaluation" / "dependency_vulnerability_report.json",
         BASE_DIR / "data" / "evaluation" / "release_manifest.json",
+        BASE_DIR / "data" / "evaluation" / "pytest_junit.xml",
+        BASE_DIR / "data" / "evaluation" / "browser_e2e_report.json",
     ]
     evaluation_count = sum(path.is_file() and path.stat().st_size > 0 for path in evaluation_paths)
+    release_binding_ok, release_binding_detail = _release_binding_status()
     ocr_available = settings.ocr_enabled and ocr_runtime_available()
     provenance_path = BASE_DIR / "data" / "raw_official" / "provenance_manifest.json"
     provenance_ok = False
@@ -91,13 +120,13 @@ def build_readiness_report() -> dict[str, Any]:
             with catalog_path.open("r", encoding="utf-8-sig", newline="") as handle:
                 catalog_rows = list(csv.DictReader(handle))
             manifest_rows = {
-                item["source_id"]: item for item in manifest.get("sources", []) if isinstance(item, dict)
+                item["source_id"]: item
+                for item in manifest.get("sources", [])
+                if isinstance(item, dict)
             }
             p0_ids = {row["source_id"] for row in catalog_rows if row["priority"] == "P0"}
             verified_p0 = {
-                source_id
-                for source_id in p0_ids
-                if manifest_rows.get(source_id, {}).get("sha256")
+                source_id for source_id in p0_ids if manifest_rows.get(source_id, {}).get("sha256")
             }
             catalog_digest = hashlib.sha256(catalog_path.read_bytes()).hexdigest()
             invalid_files = []
@@ -192,6 +221,13 @@ def build_readiness_report() -> dict[str, Any]:
             evaluation_count == len(evaluation_paths),
             f"{evaluation_count}/{len(evaluation_paths)} 份关键评测产物可用",
             critical=False,
+        ),
+        _check(
+            "release_evidence_binding",
+            "评测与源码绑定",
+            release_binding_ok,
+            release_binding_detail,
+            critical=True,
         ),
         _check(
             "local_ocr",

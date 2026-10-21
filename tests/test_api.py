@@ -395,8 +395,14 @@ def test_static_javascript_has_executable_mime_type(tmp_path: Path, monkeypatch)
 
 def test_readiness_request_tracing_and_offline_shell(tmp_path: Path, monkeypatch) -> None:
     import app.main as main
+    import app.services.readiness as readiness
 
     monkeypatch.setattr(main, "database", Database(tmp_path / "test-readiness.db"))
+    monkeypatch.setattr(
+        readiness,
+        "_release_binding_status",
+        lambda: (True, "测试环境中的源码与评测绑定有效"),
+    )
     with TestClient(main.app) as client:
         response = client.get(
             "/api/v1/system/readiness",

@@ -19,7 +19,7 @@ def branch_percent(summary: dict[str, object]) -> float:
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Enforce national-competition branch gates")
+    parser = argparse.ArgumentParser(description="Enforce release branch gates")
     parser.add_argument(
         "report", nargs="?", type=Path, default=Path("data/evaluation/coverage_report.json")
     )

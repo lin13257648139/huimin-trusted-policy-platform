@@ -163,6 +163,80 @@ test("治理接口默认拒绝匿名访问并接受正确令牌", async ({ page 
 });
 
 
+test("Policy2Rule在界面中显式阻断边界冲突且不展示重复条件", async ({ page }) => {
+  await page.route("**/api/v1/admin/policy/compile", async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify({
+        candidate: {
+          candidate_id: "PCR-E2E-CONFLICT",
+          benefit_id: "B002",
+          benefit_name: "最低生活保障",
+          region: "广州市",
+          source_id: "DEMO-POLICY-001",
+          title: "合成演示政策条款",
+          effective_from: "2027-08-01",
+          effective_to: "2028-07-31",
+          parameters: { income_standard_monthly_per_capita: "1400.00" },
+          conditions: [{
+            field: "per_capita_monthly_income",
+            operator: "lte",
+            value: "1400.00",
+            unit: "元/人/月",
+            source_quote: "最低生活保障标准调整为1400元/人/月",
+          }],
+          exceptions: [],
+          citations: ["最低生活保障标准调整为1400元/人/月"],
+          status: "draft_requires_dual_review",
+          provider: "local-policy-compiler/1.0+ollama/test+allowlist-fusion",
+          extraction_completeness: 1,
+          source_sha256: "a".repeat(64),
+          model_id: "test-model",
+          prompt_sha256: "b".repeat(64),
+          model_latency_ms: 12,
+        },
+        validation: [{
+          severity: "error",
+          code: "condition_semantic_conflict",
+          message: "字段 per_capita_monthly_income 出现不一致条件：已保留 lte 1400.00，拒绝合并 lt 1400；必须回看原文确认边界。",
+          field: "conditions.per_capita_monthly_income",
+        }],
+        publishable: false,
+        publish_blockers: ["字段 per_capita_monthly_income 出现不一致条件：已保留 lte 1400.00，拒绝合并 lt 1400；必须回看原文确认边界。"],
+        version_diff: { baseline_found: true, changes: [], temporal_overlap: false },
+      }),
+    });
+  });
+  await page.route("**/api/v1/admin/policy/impact", async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify({
+        benefit_id: "B002",
+        baseline_version: "v2026.08",
+        total_cases: 240,
+        comparable_cases: 120,
+        changed_cases: 0,
+        changes_by_direction: { newly_included: 0, newly_excluded: 0 },
+        sample_case_ids: [],
+        notes: ["影响分析使用合成回归案例，不代表真实群众数量或政策实际覆盖人数。"],
+      }),
+    });
+  });
+
+  await page.locator('[data-route="professional"]').click();
+  await page.locator('[data-pro-tab="compiler"]').click();
+  await page.locator("#load-policy-sample").click();
+  await page.locator("#compile-policy").click();
+
+  await expect(page.locator("#compiler-output")).toContainText("必须回看原文确认边界");
+  await expect(page.locator("#compiler-output")).toContainText("ERROR");
+  await expect(page.locator("#compiler-output code")).toHaveCount(1);
+  await expect(page.locator("#compiler-output code")).toHaveText(/per_capita_monthly_income lte 1400\.00/);
+});
+
+
 test("首页通过WCAG A/AA自动扫描", async ({ page }) => {
   const results = await new AxeBuilder({ page }).withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa"]).analyze();
   expect(results.violations).toEqual([]);

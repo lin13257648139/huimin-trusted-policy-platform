@@ -67,6 +67,35 @@ def test_readiness_helpers_cover_missing_and_warning_states(tmp_path: Path) -> N
     assert readiness._check("x", "label", False, "detail", critical=True)["status"] == "fail"
 
 
+def test_release_binding_detects_matching_and_stale_source(monkeypatch, tmp_path: Path) -> None:
+    evaluation = tmp_path / "data" / "evaluation"
+    evaluation.mkdir(parents=True)
+    manifest = evaluation / "release_manifest.json"
+    manifest.write_text(
+        json.dumps(
+            {
+                "source_tree_sha256": "abc123",
+                "source_binding": {"source_inputs_dirty": False},
+            }
+        ),
+        encoding="utf-8",
+    )
+    monkeypatch.setattr(readiness, "BASE_DIR", tmp_path)
+
+    import scripts.build_release_manifest as release_manifest
+
+    monkeypatch.setattr(release_manifest, "source_fingerprint", lambda: ("abc123", [tmp_path]))
+    assert readiness._release_binding_status() == (
+        True,
+        "源码指纹 abc123 已绑定 1 个输入文件",
+    )
+
+    monkeypatch.setattr(release_manifest, "source_fingerprint", lambda: ("changed", [tmp_path]))
+    passed, detail = readiness._release_binding_status()
+    assert passed is False
+    assert "当前源码已变化" in detail
+
+
 def test_readiness_provenance_handles_missing_invalid_and_malformed_files(
     tmp_path: Path, monkeypatch
 ) -> None:
@@ -99,7 +128,12 @@ def test_readiness_provenance_handles_missing_invalid_and_malformed_files(
     monkeypatch.setattr(
         readiness,
         "ollama_runtime_status",
-        lambda: {"reachable": False, "model_present": False, "reason": "disabled", "chat_model": None},
+        lambda: {
+            "reachable": False,
+            "model_present": False,
+            "reason": "disabled",
+            "chat_model": None,
+        },
     )
     monkeypatch.setattr(
         readiness,
@@ -127,9 +161,7 @@ def test_readiness_provenance_handles_missing_invalid_and_malformed_files(
         json.dumps(
             {
                 "catalog_sha256": digest,
-                "sources": [
-                    {"source_id": "S1", "sha256": "abc", "local_file": "missing.pdf"}
-                ],
+                "sources": [{"source_id": "S1", "sha256": "abc", "local_file": "missing.pdf"}],
             }
         ),
         encoding="utf-8",

@@ -16,6 +16,9 @@ _document_embedding_cache: OrderedDict[
     tuple[int, str, str, tuple[str, ...]], tuple[tuple[float, ...], ...]
 ] = OrderedDict()
 _document_embedding_cache_lock = Lock()
+RRF_RANK_CONSTANT = 60
+RRF_BM25_WEIGHT = 2.0
+RRF_SEMANTIC_WEIGHT = 1.0
 
 DOMAIN_ANCHORS = (
     "救助", "低保", "保障", "家庭", "申请", "材料", "办理", "收入", "支出",
@@ -387,9 +390,11 @@ def search_evidence_result(
     for evidence_id in by_id:
         score = 0.0
         if evidence_id in bm25_rank:
-            score += 1 / (60 + bm25_rank[evidence_id])
+            score += RRF_BM25_WEIGHT / (RRF_RANK_CONSTANT + bm25_rank[evidence_id])
         if evidence_id in semantic_rank:
-            score += 1 / (60 + semantic_rank[evidence_id])
+            score += RRF_SEMANTIC_WEIGHT / (
+                RRF_RANK_CONSTANT + semantic_rank[evidence_id]
+            )
         fused.append((score, evidence_id))
     fused.sort(reverse=True)
     items: list[dict[str, object]] = []
@@ -428,6 +433,11 @@ def search_evidence_result(
             "model_id": model_id,
             "latency_ms": latency_ms,
             "document_embedding_cache_hit": cache_hit,
+            "fusion_weights": {
+                "bm25": RRF_BM25_WEIGHT,
+                "semantic": RRF_SEMANTIC_WEIGHT,
+                "rank_constant": RRF_RANK_CONSTANT,
+            },
         },
     }
 

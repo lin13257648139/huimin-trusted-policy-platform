@@ -264,7 +264,11 @@ def test_chat_json_returns_auditable_hashes(monkeypatch: pytest.MonkeyPatch) -> 
     assert len(result.prompt_sha256) == 64
     assert len(result.response_sha256) == 64
     assert captured["path"] == "/api/chat"
-    assert captured["payload"]["options"] == {"temperature": 0, "seed": 20261002}
+    assert captured["payload"]["options"] == {
+        "temperature": 0,
+        "seed": 20261002,
+        "num_predict": 768,
+    }
 
 
 def test_chat_json_refuses_unlocked_model(monkeypatch: pytest.MonkeyPatch) -> None:

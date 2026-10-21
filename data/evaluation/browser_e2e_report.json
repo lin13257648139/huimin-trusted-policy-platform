@@ -1,0 +1,660 @@
+{
+  "config": {
+    "argv": [
+      "D:\\Node\\node.exe",
+      "C:\\Users\\林琪东\\Desktop\\AI比赛\\惠民智导可信政策智能平台\\node_modules\\@playwright\\test\\cli.js",
+      "test",
+      "--reporter=json"
+    ],
+    "configFile": "C:\\Users\\林琪东\\Desktop\\AI比赛\\惠民智导可信政策智能平台\\playwright.config.js",
+    "rootDir": "C:/Users/林琪东/Desktop/AI比赛/惠民智导可信政策智能平台/tests/e2e",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "C:/Users/林琪东/Desktop/AI比赛/惠民智导可信政策智能平台/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "C:/Users/林琪东/Desktop/AI比赛/惠民智导可信政策智能平台/tests/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 120000
+      }
+    ],
+    "filteredProjects": [
+      {
+        "grep": {},
+        "grepInvert": null,
+        "outputDir": "C:\\Users\\林琪东\\Desktop\\AI比赛\\惠民智导可信政策智能平台\\test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "name": "",
+        "testDir": "C:\\Users\\林琪东\\Desktop\\AI比赛\\惠民智导可信政策智能平台\\tests\\e2e",
+        "snapshotDir": "C:\\Users\\林琪东\\Desktop\\AI比赛\\惠民智导可信政策智能平台\\tests\\e2e",
+        "testIgnore": [],
+        "testMatch": "**/*.@(spec|test).?(c|m)[jt]s?(x)",
+        "timeout": 120000,
+        "use": {
+          "baseURL": "http://127.0.0.1:8880",
+          "channel": "msedge",
+          "trace": "retain-on-failure",
+          "screenshot": "only-on-failure",
+          "locale": "zh-CN"
+        },
+        "dependencies": [],
+        "ignoreSnapshots": false,
+        "__projectId": ""
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "json"
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "default",
+    "updateSourceMethod": "patch",
+    "version": "1.64.1",
+    "workers": 1,
+    "webServer": {
+      "command": "\".venv\\Scripts\\python.exe\" -m uvicorn app.main:app --host 127.0.0.1 --port 8880",
+      "url": "http://127.0.0.1:8880/api/health",
+      "timeout": 120000,
+      "reuseExistingServer": true,
+      "env": {
+        "ALLUSERSPROFILE": "C:\\ProgramData",
+        "APPDATA": "C:\\Users\\林琪东\\AppData\\Roaming",
+        "BROWSER_USE_ACCESS_VERIFYING_IDENTITY": "MCowBQYDK2VwAyEAbmQSDdyZYeY9kidg3YGnAzLN4nsmRuThhqs/8dcXZPY=",
+        "C:\\Python39": "C:\\Python39",
+        "CLASSPATH": ".;C:\\Program Files\\Java\\jdk1.8.0_221\\lib;C:\\Program Files\\Java\\jdk1.8.0_221\\lib\\tools.jar",
+        "CODEX_APPLY_PATCH_PRESERVE_LINE_ENDINGS": "1",
+        "CODEX_APP_TOOLS_PIPE_PATH": "\\\\.\\pipe\\codex-app-tools-1da6d7f7-741e-46cf-8507-bfcf3a875a77",
+        "CODEX_CI": "1",
+        "CODEX_CLI_PATH": "C:\\Users\\林琪东\\AppData\\Local\\OpenAI\\Codex\\bin\\896a0166b774037a\\codex.exe",
+        "CODEX_INTERNAL_ORIGINATOR_OVERRIDE": "Codex Desktop",
+        "CODEX_MCP_NODE_PATH": "C:\\Users\\林琪东\\AppData\\Local\\OpenAI\\Codex\\runtimes\\cua_node\\78fb63cda1a9e2b2\\bin\\node.exe",
+        "CODEX_PERMISSION_PROFILE": ":workspace",
+        "CODEX_SAGE_BACKFILL_TRACKER_TAB_REUSE": "1",
+        "CODEX_SANDBOX_NETWORK_DISABLED": "1",
+        "CODEX_SESSION_ID": "01a1543f-594b-7141-abe9-771608556c31",
+        "CODEX_SHELL": "1",
+        "CODEX_TASK_WORKSPACE_VERIFYING_IDENTITY": "MCowBQYDK2VwAyEAbmQSDdyZYeY9kidg3YGnAzLN4nsmRuThhqs/8dcXZPY=",
+        "CODEX_TECTONIC_PATH": "C:\\Program Files\\WindowsApps\\OpenAI.Codex_26.1013.4894.0_x64__2p2nqsd0c76g0\\app\\resources\\tectonic\\tectonic.exe",
+        "CODEX_THREAD_ID": "01a1543f-594b-7141-abe9-771608556c31",
+        "CODEX_TOOL_CALL_ID": "exec-2083e0d4-da7c-4f97-931e-edaf8da417c1",
+        "CODEX_VERSION": "0.163.0-alpha.10.2",
+        "CODEX_WINDOWS_SANDBOX_PACKAGE_FAMILY": "OpenAI.Codex_2p2nqsd0c76g0",
+        "COLOR": "0",
+        "COLORTERM": "",
+        "CommonProgramFiles": "C:\\Program Files\\Common Files",
+        "CommonProgramFiles(x86)": "C:\\Program Files (x86)\\Common Files",
+        "CommonProgramW6432": "C:\\Program Files\\Common Files",
+        "COMPUTERNAME": "东东",
+        "ComSpec": "C:\\WINDOWS\\system32\\cmd.exe",
+        "configsetroot": "C:\\WINDOWS\\ConfigSetRoot",
+        "CUDA_PATH": "C:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA\\v12.9",
+        "CUDA_PATH_V12_9": "C:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA\\v12.9",
+        "DISABLE_AUTO_UPDATE": "true",
+        "DriverData": "C:\\Windows\\System32\\Drivers\\DriverData",
+        "E2E_PORT": "8880",
+        "E2E_REUSE_SERVER": "true",
+        "EDITOR": "C:\\WINDOWS\\notepad.exe",
+        "GH_PAGER": "cat",
+        "GIT_CONFIG_COUNT": "2",
+        "GIT_CONFIG_KEY_0": "safe.directory",
+        "GIT_CONFIG_KEY_1": "safe.directory",
+        "GIT_CONFIG_VALUE_0": "C:\\Users\\林琪东\\Desktop\\AI比赛\\惠民智导可信政策智能平台",
+        "GIT_CONFIG_VALUE_1": "C:\\Users\\林琪东\\Desktop\\AI比赛\\惠民智导可信政策智能平台/*",
+        "GIT_PAGER": "cat",
+        "Graphviz": "C:\\Program Files\\Graphviz",
+        "HOME": "C:\\Users\\林琪东",
+        "HOMEDRIVE": "C:",
+        "HOMEPATH": "\\Users\\林琪东",
+        "INIT_CWD": "C:\\Users\\林琪东\\Desktop\\AI比赛\\惠民智导可信政策智能平台",
+        "IntelliJ IDEA": "D:\\IntelliJ IDEA 2025.2.3\\bin",
+        "JAVA_HOME": "C:\\Program Files\\Java\\jdk1.8.0_221",
+        "LANG": "C.UTF-8",
+        "LC_ALL": "C.UTF-8",
+        "LC_CTYPE": "C.UTF-8",
+        "LESS": "",
+        "LOCALAPPDATA": "C:\\Users\\林琪东\\AppData\\Local",
+        "LOGONSERVER": "\\\\东东",
+        "LOG_FORMAT": "json",
+        "MAVEN_HOME": "D:\\java\\apache-maven-3.9.4",
+        "NODE": "D:\\Node\\node.exe",
+        "NODE_EXE": "D:\\Node\\\\node.exe",
+        "NO_COLOR": "1",
+        "NPM_CLI_JS": "D:\\Node\\\\node_modules\\npm\\bin\\npm-cli.js",
+        "npm_command": "run",
+        "npm_config_cache": "C:\\Users\\林琪东\\AppData\\Local\\npm-cache",
+        "npm_config_globalconfig": "C:\\Users\\林琪东\\AppData\\Roaming\\npm\\etc\\npmrc",
+        "npm_config_global_prefix": "C:\\Users\\林琪东\\AppData\\Roaming\\npm",
+        "npm_config_init_module": "C:\\Users\\林琪东\\.npm-init.js",
+        "npm_config_local_prefix": "C:\\Users\\林琪东\\Desktop\\AI比赛\\惠民智导可信政策智能平台",
+        "npm_config_node_gyp": "D:\\Node\\node_modules\\npm\\node_modules\\node-gyp\\bin\\node-gyp.js",
+        "npm_config_noproxy": "",
+        "npm_config_npm_version": "11.13.0",
+        "npm_config_prefix": "C:\\Users\\林琪东\\AppData\\Roaming\\npm",
+        "npm_config_registry": "http://registry.npm.taobao.org",
+        "npm_config_userconfig": "C:\\Users\\林琪东\\.npmrc",
+        "npm_config_user_agent": "npm/11.13.0 node/v24.16.0 win32 x64 workspaces/false",
+        "npm_execpath": "D:\\Node\\node_modules\\npm\\bin\\npm-cli.js",
+        "npm_lifecycle_event": "test:e2e",
+        "npm_lifecycle_script": "playwright test",
+        "npm_node_execpath": "D:\\Node\\node.exe",
+        "npm_package_engines_node": ">=24",
+        "npm_package_json": "C:\\Users\\林琪东\\Desktop\\AI比赛\\惠民智导可信政策智能平台\\package.json",
+        "npm_package_name": "huimin-trusted-policy-platform-e2e",
+        "npm_package_version": "1.0.0",
+        "NPM_PREFIX_JS": "D:\\Node\\\\node_modules\\npm\\bin\\npm-prefix.js",
+        "NPM_PREFIX_NPM_CLI_JS": "C:\\Users\\林琪东\\AppData\\Roaming\\npm\\node_modules\\npm\\bin\\npm-cli.js",
+        "NUMBER_OF_PROCESSORS": "20",
+        "OneDrive": "C:\\Users\\林琪东\\OneDrive",
+        "OneDriveConsumer": "C:\\Users\\林琪东\\OneDrive",
+        "OS": "Windows_NT",
+        "PAGER": "cat",
+        "PATH": "C:\\Users\\林琪东\\Desktop\\AI比赛\\惠民智导可信政策智能平台\\node_modules\\.bin;C:\\Users\\林琪东\\Desktop\\AI比赛\\node_modules\\.bin;C:\\Users\\林琪东\\Desktop\\node_modules\\.bin;C:\\Users\\林琪东\\node_modules\\.bin;C:\\Users\\node_modules\\.bin;C:\\node_modules\\.bin;D:\\Node\\node_modules\\npm\\node_modules\\@npmcli\\run-script\\lib\\node-gyp-bin;C:\\Users\\林琪东\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\powershell;C:\\Users\\林琪东\\.codex\\tmp\\arg0-windows\\codex-arg0Sl13jH;C:\\Users\\林琪东\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\libheif\\libheif\\bin;C:\\Users\\林琪东\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\jxrlib\\jxrlib\\bin;C:\\Users\\林琪东\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\poppler\\Library\\bin;C:\\Users\\林琪东\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\bin\\override;C:\\Program Files (x86)\\Common Files\\Oracle\\Java\\java8path;C:\\Program Files (x86)\\Common Files\\Oracle\\Java\\javapath;D:\\JDK\\bin;C:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA\\v12.9\\bin;C:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA\\v12.9\\libnvvp;C:\\Program Files (x86)\\Razer Chroma SDK\\bin;C:\\Program Files\\Razer Chroma SDK\\bin;E:\\vm虚拟机\\bin\\;C:;Windows\\system32;C:\\Windows;C:\\Windows\\System32\\Wbem;C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\;C:\\Windows\\System32\\OpenSSH\\;C:\\Program Files (x86)\\NVIDIA Corporation\\PhysX\\Common;C:\\WINDOWS\\system32;C:\\WINDOWS;C:\\WINDOWS\\System32\\Wbem;C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0\\;C:\\WINDOWS\\System32\\OpenSSH\\;C:\\Users\\林琪东\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\powershell;C:\\WINDOWS\\system32\\config\\systemprofile\\AppData\\Local\\Microsoft\\WindowsApps;C:\\Program Files (x86)\\Razer\\ChromaBroadcast\\bin;C:\\Program Files\\Razer\\ChromaBroadcast\\bin;C:\\Users\\林琪东\\AppData\\Local\\Microsoft\\WindowsApps;C:;Program Files\\NVIDIA Corporation\\Nsight Compute 2025.2.1\\;C:\\Program Files\\NVIDIA Corporation\\NVIDIA App\\NvDLISR;D:\\java\\apache-maven-3.9.4\\bin;C:\\Program Files\\Java\\jdk1.8.0_221\\bin;D:\\soft\\Graphviz\\bin;D:\\maven\\apache-maven-3.9.10\\apache-maven-3.9.10\\bin;C:\\Program Files\\MySQL\\MySQL Server 8.0\\bin;D:\\Trae\\Git\\cmd;D:\\Node\\;C:\\Program Files\\Git\\cmd;D:\\Redis\\;C:\\Program Files\\Docker\\Docker\\resources\\bin;C:\\Program Files (x86)\\cloudflared\\;C:\\Users\\林琪东\\AppData\\Local\\Programs\\Python\\Python310\\;C:\\Users\\林琪东\\AppData\\Local\\Programs\\Python\\Python310\\Scripts\\;C:\\Users\\林琪东\\AppData\\Local\\Programs\\Python\\Python310\\Scripts\\;C:\\Users\\林琪东\\AppData\\Local\\Programs\\Python\\Python310\\;C:\\Users\\林琪东\\.cargo\\bin;C:\\Users\\林琪东\\AppData\\Local\\Programs\\Python\\Python313\\Scripts\\;C:\\Users\\林琪东\\AppData\\Local\\Programs\\Python\\Python313\\;C:\\Users\\林琪东\\AppData\\Local\\Programs\\Python\\Launcher\\;D:\\VSCode\\Microsoft VS Code\\bin;D:\\pycharm\\PyCharm 2025.2.1.1\\bin;C:\\Program Files\\Graphviz\\bin;D:\\IntelliJ IDEA 2025.2.3\\bin;D:\\CodeBuddy CN\\CodeBuddy CN\\bin;C:\\Users\\林琪东\\AppData\\Roaming\\npm;E:\\cursor\\cursor\\resources\\app\\bin;C:\\Users\\林琪东\\AppData\\Local\\Programs\\Ollama;C:\\Users\\林琪东\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\bin\\fallback;C:\\Users\\林琪东\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\node\\bin;C:\\Users\\林琪东\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\git\\cmd;C:\\Users\\林琪东\\AppData\\Local\\OpenAI\\Codex\\bin\\ce4759538b7f2f1a;C:\\Users\\林琪东\\AppData\\Local\\OpenAI\\Codex\\bin\\896a0166b774037a",
+        "PATHEXT": ".COM;.EXE;.BAT;.CMD;.VBS;.VBE;.JS;.JSE;.WSF;.WSH;.MSC;.CPL",
+        "PLAYWRIGHT_JSON_OUTPUT_FILE": "data/evaluation/browser_e2e_report.json",
+        "PROCESSOR_ARCHITECTURE": "AMD64",
+        "PROCESSOR_IDENTIFIER": "Intel64 Family 6 Model 186 Stepping 2, GenuineIntel",
+        "PROCESSOR_LEVEL": "6",
+        "PROCESSOR_REVISION": "ba02",
+        "ProgramData": "C:\\ProgramData",
+        "ProgramFiles": "C:\\Program Files",
+        "ProgramFiles(x86)": "C:\\Program Files (x86)",
+        "ProgramW6432": "C:\\Program Files",
+        "PROMPT": "$P$G",
+        "PSModulePath": "C:\\Users\\林琪东\\Documents\\PowerShell\\Modules;C:\\Program Files\\PowerShell\\Modules;c:\\users\\林琪东\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\powershell\\Modules;C:\\Users\\林琪东\\Documents\\WindowsPowerShell\\Modules;C:\\Program Files\\WindowsPowerShell\\Modules;C:\\WINDOWS\\system32\\WindowsPowerShell\\v1.0\\Modules",
+        "PUBLIC": "C:\\Users\\Public",
+        "PyCharm": "D:\\pycharm\\PyCharm 2025.2.1.1\\bin",
+        "RUST_LOG": "warn",
+        "SHELL": "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
+        "SystemDrive": "C:",
+        "SystemRoot": "C:\\WINDOWS",
+        "TEMP": "E:\\AppData",
+        "TERM": "dumb",
+        "TMP": "E:\\AppData",
+        "USERDOMAIN": "东东",
+        "USERDOMAIN_ROAMINGPROFILE": "东东",
+        "USERNAME": "林琪东",
+        "USERPROFILE": "C:\\Users\\林琪东",
+        "windir": "C:\\WINDOWS",
+        "ZES_ENABLE_SYSMAN": "1",
+        "ZSH_TMUX_AUTOSTART": "false",
+        "ZSH_TMUX_AUTOSTARTED": "true",
+        "__COMPAT_LAYER": "DetectorsAppHealth",
+        "APP_ENV": "e2e",
+        "DEMO_MODE": "false",
+        "ADMIN_API_TOKEN": "e2e-admin-token-32-characters-long",
+        "DATABASE_PATH": "C:\\Users\\林琪东\\Desktop\\AI比赛\\惠民智导可信政策智能平台\\tmp\\playwright-e2e.db",
+        "AI_MODE": "deterministic",
+        "OCR_ENABLED": "true"
+      }
+    }
+  },
+  "suites": [
+    {
+      "title": "platform.spec.js",
+      "file": "platform.spec.js",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "辅助录入只生成草稿并在用户采用后进入逐项核对",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 2736,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-21T10:17:30.809Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "1185f41e8aab7f8405be-f36dbe9b7ac9c96069cc",
+          "file": "platform.spec.js",
+          "line": 12,
+          "column": 1
+        },
+        {
+          "title": "补充情况执行原句锚定、冲突提示和用户确认闭环",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 2975,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-21T10:17:34.287Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "1185f41e8aab7f8405be-6082e98e017808c06b5b",
+          "file": "platform.spec.js",
+          "line": 25,
+          "column": 1
+        },
+        {
+          "title": "UNKNOWN可从结果页直接返回对应字段",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 3482,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-21T10:17:37.294Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "1185f41e8aab7f8405be-714605fbc9b74d178be0",
+          "file": "platform.spec.js",
+          "line": 42,
+          "column": 1
+        },
+        {
+          "title": "居民预筛按结果分层并可保存删除",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 2864,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-21T10:17:40.806Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "1185f41e8aab7f8405be-5f12497f9f783c4ec858",
+          "file": "platform.spec.js",
+          "line": 61,
+          "column": 1
+        },
+        {
+          "title": "高收入且无急难时不强行推荐任何事项",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 2595,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-21T10:17:43.699Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "1185f41e8aab7f8405be-9ba8d14fe007153d1624",
+          "file": "platform.spec.js",
+          "line": 82,
+          "column": 1
+        },
+        {
+          "title": "特困供养按三项法定条件完成预筛并展示逐项依据",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 2483,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-21T10:17:46.322Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "1185f41e8aab7f8405be-ed74d32f73ad40309f52",
+          "file": "platform.spec.js",
+          "line": 106,
+          "column": 1
+        },
+        {
+          "title": "有据政策问答支持键盘操作、逐条引用与时态审计",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1025,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-21T10:17:48.831Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "1185f41e8aab7f8405be-78a6c6c8491fcc124953",
+          "file": "platform.spec.js",
+          "line": 130,
+          "column": 1
+        },
+        {
+          "title": "材料包执行真实图片预检",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 14625,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-21T10:17:49.881Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "1185f41e8aab7f8405be-8d6fda808b136fad34db",
+          "file": "platform.spec.js",
+          "line": 143,
+          "column": 1
+        },
+        {
+          "title": "治理接口默认拒绝匿名访问并接受正确令牌",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 2204,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-21T10:18:04.552Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "1185f41e8aab7f8405be-5a63c1e3fb50608277cf",
+          "file": "platform.spec.js",
+          "line": 154,
+          "column": 1
+        },
+        {
+          "title": "Policy2Rule在界面中显式阻断边界冲突且不展示重复条件",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 2129,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-21T10:18:06.809Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "1185f41e8aab7f8405be-4df92bb9d9dd2fdfbc0c",
+          "file": "platform.spec.js",
+          "line": 166,
+          "column": 1
+        },
+        {
+          "title": "首页通过WCAG A/AA自动扫描",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1805,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-21T10:18:08.978Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "1185f41e8aab7f8405be-36670baab9c6546c3893",
+          "file": "platform.spec.js",
+          "line": 240,
+          "column": 1
+        }
+      ],
+      "suites": [
+        {
+          "title": "移动端与键盘",
+          "file": "platform.spec.js",
+          "line": 246,
+          "column": 6,
+          "specs": [
+            {
+              "title": "移动端导航可由键盘打开并关闭",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 923,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-21T10:18:10.820Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "1185f41e8aab7f8405be-b05b11cdbf322beb930b",
+              "file": "platform.spec.js",
+              "line": 250,
+              "column": 3
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-10-21T10:17:30.011Z",
+    "duration": 42403.174,
+    "expected": 12,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  }
+}

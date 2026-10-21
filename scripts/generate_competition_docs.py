@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import json
+import xml.etree.ElementTree as ET
 from pathlib import Path
 
 from docx import Document
@@ -24,6 +26,40 @@ GRAY_PALE = "F4F6F5"
 GRAY_LINE = "D9DFDC"
 AMBER_PALE = "FFF6E4"
 BLACK = "000000"
+
+
+def load_evaluation_metrics() -> dict[str, object]:
+    evaluation = ROOT / "data" / "evaluation"
+    coverage = json.loads((evaluation / "coverage_report.json").read_text(encoding="utf-8"))
+    policy = json.loads(
+        (evaluation / "policy_compiler_real_report.json").read_text(encoding="utf-8")
+    )
+    ai_pipeline = json.loads(
+        (evaluation / "ai_pipeline_report.json").read_text(encoding="utf-8")
+    )
+    active_questions = json.loads(
+        (evaluation / "active_question_report.json").read_text(encoding="utf-8")
+    )
+    pytest_root = ET.parse(evaluation / "pytest_junit.xml").getroot()
+    pytest_suite = pytest_root.find(".//testsuite")
+    if pytest_suite is None:
+        raise RuntimeError("pytest_junit.xml缺少testsuite")
+    pytest_metrics = {key: int(pytest_suite.attrib.get(key, "0")) for key in ("tests", "failures", "errors", "skipped")}
+    if pytest_metrics["failures"] or pytest_metrics["errors"]:
+        raise RuntimeError(f"Python测试未全通过：{pytest_metrics}")
+    browser = json.loads(
+        (evaluation / "browser_e2e_report.json").read_text(encoding="utf-8")
+    )["stats"]
+    if browser["unexpected"] or browser["flaky"]:
+        raise RuntimeError(f"浏览器测试未稳定通过：{browser}")
+    return {
+        "coverage": coverage["totals"],
+        "policy": policy,
+        "ai_pipeline": ai_pipeline,
+        "active_questions": active_questions,
+        "pytest": pytest_metrics,
+        "browser": browser,
+    }
 
 
 def set_cell_shading(cell, fill: str) -> None:
@@ -301,6 +337,13 @@ def add_toc(doc: Document, entries: list[str]) -> None:
 
 
 def build_proposal() -> None:
+    metrics = load_evaluation_metrics()
+    coverage = metrics["coverage"]
+    policy_tracks = metrics["policy"]["tracks"]
+    retrieval = metrics["ai_pipeline"]["retrieval"]["frozen_final_test"]
+    questions = metrics["active_questions"]
+    pytest_metrics = metrics["pytest"]
+    browser_metrics = metrics["browser"]
     doc = Document()
     configure_document(doc, "惠民智导  作品方案")
     cover(doc, "作品方案", "面向社会救助申请前导办的可信 AI 决策辅助系统")
@@ -313,7 +356,7 @@ def build_proposal() -> None:
 
     add_section_title(doc, "一 项目结论与作品简介")
     paragraph(doc, "惠民智导已经形成可运行、可复现、可解释、可审计的社会救助申请前导办平台。v2.0.0 覆盖低收入人口认定与监测、最低生活保障、低保边缘家庭、刚性支出困难家庭、临时救助和特困人员救助供养六类事项。系统不替代主管部门审批；它把用户表达整理成待核对事实，把政策条款编译成版本化规则，再用三态逻辑输出“优先核对、还需确认、当前未匹配”，每项结论均可回到政策原文。")
-    paragraph(doc, "真实判断：以全国性大学生 AI 软件创新赛事的工程评审标准衡量，本项目已经达到国赛入围与现场答辩竞争力。支撑这一判断的不是页面数量，而是端到端产品闭环、真实本地模型、政策证据治理、可重复评测、自动化测试与安全发布边界同时成立。项目仍不能宣称已被政府采用或替代人工审批，外部专家盲评和真实用户试点属于后续证据，不在本次材料中虚构。")
+    paragraph(doc, "当前版本已经形成端到端产品闭环：居民任务可以完成，真实本地模型受到规则和证据约束，政策来源可追溯，冻结评测可以复现，候选规则有安全发布边界。项目仍不能宣称已被政府采用或替代人工审批；外部专家盲评、真实用户试点和正式部署评审是下一阶段必须补充的证据。")
     add_section_title(doc, "1.1 作品简介")
     paragraph(doc, "面向社会救助政策分散、群众难理解、材料易缺漏和大模型可能越权判断的问题，惠民智导构建“自然语言辅助录入—三态规则预筛—有据政策问答—本地 OCR 材料预检—Policy2Rule 候选规则治理”闭环。Qwen 本地模型只负责理解与证据化整理，资格方向由版本化规则引擎计算；信息不足保持 UNKNOWN，引用、数值或边界校验失败自动退回逐字证据。平台覆盖六类救助事项，具备本地运行、最小数据、可删除、可审计和可复现评测能力，服务居民申请准备、基层咨询与规则运维。")
     add_picture(doc, "01_服务首页_v2.png", "图 1  居民首页以任务语言回答“先做什么”，避免首次使用者面对复杂功能菜单")
@@ -410,14 +453,15 @@ def build_proposal() -> None:
     add_section_title(doc, "七 工程质量与量化评测")
     paragraph(doc, "所有指标均限定为项目内冻结集或自动化工程测试，不外推为真实群众满意度或审批准确率。报告与 v2.0.0、规则引擎 0.6.0、模型摘要和源码指纹绑定。")
     add_table(doc, ["评测项", "规模", "当前结果", "边界"], [
-        ["Python 自动化测试", "265 项", "全部通过", "含 API、规则、证据、OCR、安全和回归"],
-        ["浏览器端到端", "11 场景", "11/11 通过", "含移动端、WCAG A/AA 和特困全流程"],
-        ["代码覆盖率", "全项目", "行 95.00%，分支 90.21%", "质量门阈值分别为 95% 和 90%"],
+        ["Python 自动化测试", f"{pytest_metrics['tests']} 项", "全部通过", "含 API、规则、证据、OCR、安全和回归"],
+        ["浏览器端到端", f"{browser_metrics['expected']} 场景", f"{browser_metrics['expected']}/{browser_metrics['expected']} 通过", "含移动端、WCAG A/AA、特困全流程和规则冲突显示"],
+        ["代码覆盖率", "全项目", f"行 {coverage['percent_covered']:.2f}%，分支 {coverage['percent_branches_covered']:.2f}%", "质量门检查分支总覆盖不低于 90%"],
         ["意图识别", "300 条冻结测试", "六类事项全覆盖", "项目组合成语句，不代表真实用户分布"],
         ["画像抽取", "300 条 + 特困专题 20 条", "专题精确匹配 20/20", "内部合成并含冲突回归样例"],
-        ["政策检索与问答", "138 问 + 专题 20 问", "确定性端到端 138/138；专题 20/20", "文件级隔离的内部冻结集"],
+        ["政策检索与问答", "138 问 + 专题 20 问", f"BM25 Recall@1 {retrieval['bm25_baseline']['recall_at_1']:.2%}；RRF Recall@1 {retrieval['configured_pipeline']['recall_at_1']:.2%}、Recall@3 {retrieval['configured_pipeline']['recall_at_3']:.2%}", "文件级隔离的内部冻结集"],
         ["真实本地模型专题问答", "20 问", "14 次模型输出通过；6 次安全回退；20/20 闭环通过", "证明护栏有效，不等同外部专家评分"],
-        ["Policy2Rule", "120 条冻结政策条款", "候选编译评测通过", "项目组标签，禁止自动发布"],
+        ["Policy2Rule", "120 条冻结政策条款", f"事项识别：确定性 {policy_tracks['deterministic']['benefit_accuracy']:.2%}、纯模型 {policy_tracks['llm_only']['benefit_accuracy']:.2%}、融合 {policy_tracks['controlled_fusion']['benefit_accuracy']:.2%}；条件字段 F1 分别为 {policy_tracks['deterministic']['condition_field']['f1']:.2%}、{policy_tracks['llm_only']['condition_field']['f1']:.2%}、{policy_tracks['controlled_fusion']['condition_field']['f1']:.2%}", "项目组标签；各维度分别报告，禁止自动发布"],
+        ["动态提问", f"{questions['cases']} 条合成路径", f"平均 {questions['strategies']['information_gain']['mean_questions']:.2f} 问；相对固定顺序减少 {questions['question_reduction_vs_executed_fixed_order']:.2%}", "仅描述内部合成路径，不代表真人完成率"],
         ["OCR", "100 张，10 种版式", "评测报告可复现", "合成材料，不包含真实个人信息"],
         ["高风险安全", "320 条", "安全报告通过", "覆盖注入、隐私、越权和证据边界"],
     ], [3.2, 3.5, 5.1, 4.3])
@@ -489,6 +533,7 @@ def build_proposal() -> None:
 
 
 def build_manual() -> None:
+    browser_metrics = load_evaluation_metrics()["browser"]
     doc = Document()
     configure_document(doc, "惠民智导  软件使用说明")
     cover(doc, "软件使用说明", "v2.0.0 Windows 本地运行 部署 演示与故障处理指南")
@@ -614,7 +659,7 @@ def build_manual() -> None:
         "执行项目一致性检查。",
     ], numbered=True)
     add_section_title(doc, "7.3 浏览器端到端", 2)
-    paragraph(doc, "安装 Node 依赖后执行 npm run test:e2e。Windows 若测试器代管 Web 服务不能及时退出，可先手动启动应用，再设置 E2E_REUSE_SERVER=true 运行；产品逻辑的验收结果以 11/11 场景通过为准。")
+    paragraph(doc, f"安装 Node 依赖后执行 npm run test:e2e。Windows 若测试器代管 Web 服务不能及时退出，可先手动启动应用，再设置 E2E_REUSE_SERVER=true 运行；当前浏览器回归结果为 {browser_metrics['expected']}/{browser_metrics['expected']} 场景通过。")
 
     add_section_title(doc, "八 常见故障处理")
     add_table(doc, ["现象", "原因", "处理"], [
@@ -635,7 +680,7 @@ def build_manual() -> None:
         ["2:15–2:50", "材料预检", "本地 OCR 检查可读性和缺项，不判断真伪"],
         ["2:50–3:35", "Policy2Rule", "政策变更先编译候选、做影响分析，禁止自动发布"],
         ["3:35–4:10", "治理与评测", "版本、来源、模型和报告都可追溯"],
-        ["4:10–4:30", "边界与价值", "达到国赛工程水平，但不虚构政务采用和真实用户效果"],
+        ["4:10–4:30", "边界与价值", "说明已完成的工程闭环，以及尚未取得的外部验证"],
     ], [2.8, 5.8, 7.5])
 
     add_section_title(doc, "十 人工提交清单")

@@ -1,6 +1,6 @@
 {
   "report_schema": "ai-experiment/1.0",
-  "generated_at": "2026-10-21T00:18:38.503633+00:00",
+  "generated_at": "2026-10-21T11:01:08.277819+00:00",
   "scope": "internal synthetic benchmark; not real-user effectiveness evidence",
   "app_version": "2.0.0",
   "environment": {
@@ -50,13 +50,35 @@
     }
   },
   "ai_runtime": {
-    "mode": "deterministic",
-    "configured": false,
-    "reachable": false,
-    "chat_model": null,
+    "mode": "hybrid",
+    "configured": true,
+    "reachable": true,
+    "chat_model": "qwen3:4b-instruct",
     "embedding_model": "qwen3-embedding:0.6b",
-    "active_provider": "deterministic-safe-parser",
-    "reason": "AI_MODE未启用本地模型"
+    "active_provider": "ollama/qwen3:4b-instruct",
+    "reason": null,
+    "model_present": true,
+    "embedding_model_present": true,
+    "model_digest": "0edcdef34593eac1aa2be9c7d06c432dcf81945adca5eca2f27662c18f168ba0",
+    "expected_model_digest": "0edcdef34593eac1aa2be9c7d06c432dcf81945adca5eca2f27662c18f168ba0",
+    "model_digest_verified": true,
+    "model_size_bytes": 2497293803,
+    "model_details": {
+      "parent_model": "",
+      "format": "gguf",
+      "family": "qwen3",
+      "families": [
+        "qwen3"
+      ],
+      "parameter_size": "4.0B",
+      "quantization_level": "Q4_K_M",
+      "context_length": 262144,
+      "embedding_length": 2560,
+      "runner": "ggml"
+    },
+    "embedding_model_digest": "ac6da0dfba84a81fdbfbaf330198c33cd77c4cdfc53e8bc50eb581914a15621d",
+    "expected_embedding_model_digest": "ac6da0dfba84a81fdbfbaf330198c33cd77c4cdfc53e8bc50eb581914a15621d",
+    "embedding_model_digest_verified": true
   },
   "intent_classification": {
     "dataset": "data/ml/intent_dataset.json",
@@ -1098,8 +1120,406 @@
       "error_table": []
     },
     "schema_constrained_llm_ensemble": {
-      "status": "not_run",
-      "reason": "AI_MODE未启用本地模型"
+      "cases": 300,
+      "field_precision": 1.0,
+      "field_precision_ci95": {
+        "method": "wilson",
+        "confidence": 0.95,
+        "lower": 0.9956,
+        "upper": 1.0
+      },
+      "field_recall": 1.0,
+      "field_recall_ci95": {
+        "method": "wilson",
+        "confidence": 0.95,
+        "lower": 0.9956,
+        "upper": 1.0
+      },
+      "field_f1": 1.0,
+      "case_exact_match": 1.0,
+      "case_exact_match_ci95": {
+        "method": "wilson",
+        "confidence": 0.95,
+        "lower": 0.9874,
+        "upper": 1.0
+      },
+      "hallucination_case_rate": 0.0,
+      "hallucination_case_rate_ci95": {
+        "method": "wilson",
+        "confidence": 0.95,
+        "lower": 0.0,
+        "upper": 0.0126
+      },
+      "hallucination_case_ids": [],
+      "routes": {
+        "llm_assisted": 300
+      },
+      "latency_ms": {
+        "measured_cases": 300,
+        "mean": 1509.1,
+        "p50": 1457,
+        "p95": 2373,
+        "max": 4623,
+        "includes_model_cold_start": true
+      },
+      "fallbacks": {
+        "count": 0,
+        "reasons": {}
+      },
+      "by_category": {
+        "asset_negative": {
+          "cases": 30,
+          "exact_match": 1.0,
+          "exact_match_ci95": {
+            "method": "wilson",
+            "confidence": 0.95,
+            "lower": 0.8865,
+            "upper": 1.0
+          }
+        },
+        "combined_expense": {
+          "cases": 30,
+          "exact_match": 1.0,
+          "exact_match_ci95": {
+            "method": "wilson",
+            "confidence": 0.95,
+            "lower": 0.8865,
+            "upper": 1.0
+          }
+        },
+        "explicit_negation": {
+          "cases": 30,
+          "exact_match": 1.0,
+          "exact_match_ci95": {
+            "method": "wilson",
+            "confidence": 0.95,
+            "lower": 0.8865,
+            "upper": 1.0
+          }
+        },
+        "governance_fields": {
+          "cases": 30,
+          "exact_match": 1.0,
+          "exact_match_ci95": {
+            "method": "wilson",
+            "confidence": 0.95,
+            "lower": 0.8865,
+            "upper": 1.0
+          }
+        },
+        "income_basic": {
+          "cases": 30,
+          "exact_match": 1.0,
+          "exact_match_ci95": {
+            "method": "wilson",
+            "confidence": 0.95,
+            "lower": 0.8865,
+            "upper": 1.0
+          }
+        },
+        "instruction_attack": {
+          "cases": 30,
+          "exact_match": 1.0,
+          "exact_match_ci95": {
+            "method": "wilson",
+            "confidence": 0.95,
+            "lower": 0.8865,
+            "upper": 1.0
+          }
+        },
+        "missing_unknown": {
+          "cases": 30,
+          "exact_match": 1.0,
+          "exact_match_ci95": {
+            "method": "wilson",
+            "confidence": 0.95,
+            "lower": 0.8865,
+            "upper": 1.0
+          }
+        },
+        "nonlocal_residence": {
+          "cases": 30,
+          "exact_match": 1.0,
+          "exact_match_ci95": {
+            "method": "wilson",
+            "confidence": 0.95,
+            "lower": 0.8865,
+            "upper": 1.0
+          }
+        },
+        "unit_conversion": {
+          "cases": 30,
+          "exact_match": 1.0,
+          "exact_match_ci95": {
+            "method": "wilson",
+            "confidence": 0.95,
+            "lower": 0.8865,
+            "upper": 1.0
+          }
+        },
+        "urgent_medical": {
+          "cases": 30,
+          "exact_match": 1.0,
+          "exact_match_ci95": {
+            "method": "wilson",
+            "confidence": 0.95,
+            "lower": 0.8865,
+            "upper": 1.0
+          }
+        }
+      },
+      "error_table": []
+    },
+    "special_hardship_focused_llm_ensemble": {
+      "cases": 20,
+      "field_precision": 1.0,
+      "field_precision_ci95": {
+        "method": "wilson",
+        "confidence": 0.95,
+        "lower": 0.9197,
+        "upper": 1.0
+      },
+      "field_recall": 1.0,
+      "field_recall_ci95": {
+        "method": "wilson",
+        "confidence": 0.95,
+        "lower": 0.9197,
+        "upper": 1.0
+      },
+      "field_f1": 1.0,
+      "case_exact_match": 1.0,
+      "case_exact_match_ci95": {
+        "method": "wilson",
+        "confidence": 0.95,
+        "lower": 0.8389,
+        "upper": 1.0
+      },
+      "hallucination_case_rate": 0.0,
+      "hallucination_case_rate_ci95": {
+        "method": "wilson",
+        "confidence": 0.95,
+        "lower": 0.0,
+        "upper": 0.1611
+      },
+      "hallucination_case_ids": [],
+      "routes": {
+        "llm_assisted": 20
+      },
+      "latency_ms": {
+        "measured_cases": 20,
+        "mean": 824.4,
+        "p50": 809,
+        "p95": 1120,
+        "max": 1133,
+        "includes_model_cold_start": true
+      },
+      "fallbacks": {
+        "count": 0,
+        "reasons": {}
+      },
+      "by_category": {
+        "all_negative": {
+          "cases": 1,
+          "exact_match": 1.0,
+          "exact_match_ci95": {
+            "method": "wilson",
+            "confidence": 0.95,
+            "lower": 0.2065,
+            "upper": 1.0
+          }
+        },
+        "all_positive": {
+          "cases": 1,
+          "exact_match": 1.0,
+          "exact_match_ci95": {
+            "method": "wilson",
+            "confidence": 0.95,
+            "lower": 0.2065,
+            "upper": 1.0
+          }
+        },
+        "disabled_unknown": {
+          "cases": 1,
+          "exact_match": 1.0,
+          "exact_match_ci95": {
+            "method": "wilson",
+            "confidence": 0.95,
+            "lower": 0.2065,
+            "upper": 1.0
+          }
+        },
+        "explicit_not_member": {
+          "cases": 1,
+          "exact_match": 1.0,
+          "exact_match_ci95": {
+            "method": "wilson",
+            "confidence": 0.95,
+            "lower": 0.2065,
+            "upper": 1.0
+          }
+        },
+        "gateway_denied": {
+          "cases": 1,
+          "exact_match": 1.0,
+          "exact_match_ci95": {
+            "method": "wilson",
+            "confidence": 0.95,
+            "lower": 0.2065,
+            "upper": 1.0
+          }
+        },
+        "gateway_only": {
+          "cases": 1,
+          "exact_match": 1.0,
+          "exact_match_ci95": {
+            "method": "wilson",
+            "confidence": 0.95,
+            "lower": 0.2065,
+            "upper": 1.0
+          }
+        },
+        "labor_negative": {
+          "cases": 1,
+          "exact_match": 1.0,
+          "exact_match_ci95": {
+            "method": "wilson",
+            "confidence": 0.95,
+            "lower": 0.2065,
+            "upper": 1.0
+          }
+        },
+        "labor_only": {
+          "cases": 1,
+          "exact_match": 1.0,
+          "exact_match_ci95": {
+            "method": "wilson",
+            "confidence": 0.95,
+            "lower": 0.2065,
+            "upper": 1.0
+          }
+        },
+        "livelihood_negative": {
+          "cases": 1,
+          "exact_match": 1.0,
+          "exact_match_ci95": {
+            "method": "wilson",
+            "confidence": 0.95,
+            "lower": 0.2065,
+            "upper": 1.0
+          }
+        },
+        "livelihood_only": {
+          "cases": 1,
+          "exact_match": 1.0,
+          "exact_match_ci95": {
+            "method": "wilson",
+            "confidence": 0.95,
+            "lower": 0.2065,
+            "upper": 1.0
+          }
+        },
+        "minor_support": {
+          "cases": 1,
+          "exact_match": 1.0,
+          "exact_match_ci95": {
+            "method": "wilson",
+            "confidence": 0.95,
+            "lower": 0.2065,
+            "upper": 1.0
+          }
+        },
+        "mixed_labor": {
+          "cases": 1,
+          "exact_match": 1.0,
+          "exact_match_ci95": {
+            "method": "wilson",
+            "confidence": 0.95,
+            "lower": 0.2065,
+            "upper": 1.0
+          }
+        },
+        "mixed_livelihood": {
+          "cases": 1,
+          "exact_match": 1.0,
+          "exact_match_ci95": {
+            "method": "wilson",
+            "confidence": 0.95,
+            "lower": 0.2065,
+            "upper": 1.0
+          }
+        },
+        "mixed_support": {
+          "cases": 1,
+          "exact_match": 1.0,
+          "exact_match_ci95": {
+            "method": "wilson",
+            "confidence": 0.95,
+            "lower": 0.2065,
+            "upper": 1.0
+          }
+        },
+        "relationship_guard": {
+          "cases": 1,
+          "exact_match": 1.0,
+          "exact_match_ci95": {
+            "method": "wilson",
+            "confidence": 0.95,
+            "lower": 0.2065,
+            "upper": 1.0
+          }
+        },
+        "silence_guard": {
+          "cases": 1,
+          "exact_match": 1.0,
+          "exact_match_ci95": {
+            "method": "wilson",
+            "confidence": 0.95,
+            "lower": 0.2065,
+            "upper": 1.0
+          }
+        },
+        "supporter_absent": {
+          "cases": 1,
+          "exact_match": 1.0,
+          "exact_match_ci95": {
+            "method": "wilson",
+            "confidence": 0.95,
+            "lower": 0.2065,
+            "upper": 1.0
+          }
+        },
+        "supporter_capable": {
+          "cases": 1,
+          "exact_match": 1.0,
+          "exact_match_ci95": {
+            "method": "wilson",
+            "confidence": 0.95,
+            "lower": 0.2065,
+            "upper": 1.0
+          }
+        },
+        "supporter_incapable": {
+          "cases": 1,
+          "exact_match": 1.0,
+          "exact_match_ci95": {
+            "method": "wilson",
+            "confidence": 0.95,
+            "lower": 0.2065,
+            "upper": 1.0
+          }
+        },
+        "three_no_synonym": {
+          "cases": 1,
+          "exact_match": 1.0,
+          "exact_match_ci95": {
+            "method": "wilson",
+            "confidence": 0.95,
+            "lower": 0.2065,
+            "upper": 1.0
+          }
+        }
+      },
+      "error_table": []
     }
   },
   "retrieval": {
@@ -1340,15 +1760,15 @@
         },
         "mrr_at_5": 0.75,
         "actual_routes": {
-          "field-weighted-bm25": 37,
+          "rrf(bm25,local-embedding)": 37,
           "domain-gate": 3
         },
         "latency_ms": {
-          "measured_queries": 0,
-          "mean": null,
-          "p50": null,
-          "p95": null,
-          "max": null
+          "measured_queries": 37,
+          "mean": 156.5,
+          "p50": 67,
+          "p95": 95,
+          "max": 3372
         },
         "by_source": {
           "GZ-001": {
@@ -1469,10 +1889,10 @@
             ],
             "returned_ids": [
               "E-GZ-002-CURRENT",
-              "E-GZ-003-STANDARD",
-              "E-GZ-008-INCOME",
               "E-CN-001-PRIVACY",
-              "E-CN-001-SPECIAL-HARDSHIP"
+              "E-CN-001-SPECIAL-HARDSHIP",
+              "E-GZ-001-DEADLINE",
+              "E-GZ-001-MATERIALS"
             ]
           },
           {
@@ -1485,9 +1905,9 @@
             "returned_ids": [
               "E-GZ-002-CURRENT",
               "E-GZ-003-STANDARD",
+              "E-GZ-005-RESIDENCE",
               "E-GZ-008-INCOME",
-              "E-GD-004-A-VEHICLE-EXCLUSION",
-              "E-GZ-005-RESIDENCE"
+              "E-GZ-001-DEADLINE"
             ]
           },
           {
@@ -1518,11 +1938,11 @@
               "E-GZ-009-ASSET"
             ],
             "returned_ids": [
-              "E-GZ-001-DEADLINE",
-              "E-CN-001-DIBAO",
-              "E-CN-001-EDGE",
               "E-CN-001-PRIVACY",
-              "E-CN-001-RIGID"
+              "E-CN-001-RIGID",
+              "E-GZ-001-DEADLINE",
+              "E-CN-001-EDGE",
+              "E-CN-001-DIBAO"
             ]
           },
           {
@@ -1535,8 +1955,9 @@
             "returned_ids": [
               "E-GZ-002-CURRENT",
               "E-GZ-005-RESIDENCE",
+              "E-GZ-002-ASSET",
               "E-GZ-001-DEADLINE",
-              "E-GZ-002-ASSET"
+              "E-GZ-001-SCOPE"
             ]
           }
         ]
@@ -1620,12 +2041,12 @@
       },
       "configured_pipeline": {
         "queries": 138,
-        "recall_at_1": 1.0,
+        "recall_at_1": 0.9855,
         "recall_at_1_ci95": {
           "method": "wilson",
           "confidence": 0.95,
-          "lower": 0.9729,
-          "upper": 1.0
+          "lower": 0.9487,
+          "upper": 0.996
         },
         "recall_at_3": 1.0,
         "recall_at_3_ci95": {
@@ -1634,16 +2055,16 @@
           "lower": 0.9729,
           "upper": 1.0
         },
-        "mrr_at_5": 1.0,
+        "mrr_at_5": 0.9928,
         "actual_routes": {
-          "field-weighted-bm25": 138
+          "rrf(bm25,local-embedding)": 138
         },
         "latency_ms": {
-          "measured_queries": 0,
-          "mean": null,
-          "p50": null,
-          "p95": null,
-          "max": null
+          "measured_queries": 138,
+          "mean": 81.5,
+          "p50": 80,
+          "p95": 98,
+          "max": 141
         },
         "by_source": {
           "CN-001": {
@@ -1699,27 +2120,5 @@
     "画像基准是内部合成语句，不代表真实困难群众表达分布。",
     "模型未实际运行时不得引用模型指标；报告中的actual_routes是唯一准确信号。",
     "最终资格始终由时态规则与三值逻辑求值，模型输出仅为待确认候选字段。"
-  ],
-  "engine_version": "rule-engine/0.6.0",
-  "release_metadata": {
-    "release_id": "v2.0.0+source.d71880147ef1",
-    "app_version": "2.0.0",
-    "engine_version": "rule-engine/0.6.0",
-    "git_commit": "8882dde0f9100aefd953e7e10d64add033872643",
-    "git_dirty": false,
-    "source_tree_sha256": "d71880147ef1fd7ec43e4d1be1aef6a102fa2ec1840ca15439d634f3363d8749",
-    "source_binding": {
-      "code_commit": "8882dde0f9100aefd953e7e10d64add033872643",
-      "source_inputs_dirty": false,
-      "source_tree_sha256": "d71880147ef1fd7ec43e4d1be1aef6a102fa2ec1840ca15439d634f3363d8749",
-      "source_file_count": 259,
-      "scope": "代码、测试、评测输入、运行和安全配置；生成的评测报告不参与自指纹",
-      "text_normalization": "CRLF和LF统一为LF；二进制文件保持原始字节"
-    },
-    "artifact_binding": {
-      "reports_generated_from_source_sha256": "d71880147ef1fd7ec43e4d1be1aef6a102fa2ec1840ca15439d634f3363d8749",
-      "evidence_commit": null,
-      "note": "报告提交后可由正式发布流程填入证据提交；源码绑定以内容指纹为准。"
-    }
-  }
+  ]
 }

@@ -236,7 +236,10 @@ def chat_json(
             {"role": "system", "content": system_prompt},
             {"role": "user", "content": user_prompt},
         ],
-        "options": {"temperature": 0, "seed": 20261002},
+        # Bound structured generation so a difficult clause cannot monopolize
+        # the local model worker until the HTTP timeout.  Current schemas fit
+        # comfortably within this limit; incomplete JSON fails closed.
+        "options": {"temperature": 0, "seed": 20261002, "num_predict": 768},
         "keep_alive": "30m",
     }
     started = time.perf_counter()

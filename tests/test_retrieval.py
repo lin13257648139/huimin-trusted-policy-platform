@@ -169,6 +169,7 @@ def test_hybrid_retrieval_runs_semantic_fusion_after_domain_gate(monkeypatch) ->
         "model_id": "test-embedding",
         "latency_ms": 3,
         "document_embedding_cache_hit": False,
+        "fusion_weights": {"bm25": 2.0, "semantic": 1.0, "rank_constant": 60},
     }
 
 

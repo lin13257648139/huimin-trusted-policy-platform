@@ -13,7 +13,7 @@ const { finalizePresentation } = await import(pathToFileURL(path.join(SKILL_DIR,
 const BUILD = path.join(ROOT, "tmp", "ppt-build-v2");
 const PREVIEWS = path.join(BUILD, "previews");
 const STAGING = path.join(BUILD, "finalizer");
-const FINAL = path.join(BUILD, "惠民智导_答辩PPT_v2.0_r2.pptx");
+const FINAL = path.join(BUILD, "惠民智导_答辩PPT_v2.0_r3.pptx");
 const SHOTS = path.join(ROOT, "最终交付", "截图证据");
 const W = 1280;
 const H = 720;
@@ -31,6 +31,29 @@ const C = {
   white: "#FFFFFF",
   black: "#000000",
 };
+
+async function loadJson(relativePath) {
+  return JSON.parse(await fs.readFile(path.join(ROOT, relativePath), "utf8"));
+}
+
+const coverage = (await loadJson("data/evaluation/coverage_report.json")).totals;
+const policyReport = await loadJson("data/evaluation/policy_compiler_real_report.json");
+const aiPipeline = await loadJson("data/evaluation/ai_pipeline_report.json");
+const browserReport = (await loadJson("data/evaluation/browser_e2e_report.json")).stats;
+const pytestXml = await fs.readFile(path.join(ROOT, "data/evaluation/pytest_junit.xml"), "utf8");
+const pytestSuite = pytestXml.match(/<testsuite\b[^>]*>/)?.[0];
+const suiteNumber = (name) => Number(pytestSuite?.match(new RegExp(`\\b${name}="(\\d+)"`))?.[1] ?? -1);
+if (!pytestSuite || suiteNumber("errors") || suiteNumber("failures")) {
+  throw new Error("Python 自动化测试报告缺失或包含失败");
+}
+if (browserReport.unexpected || browserReport.flaky) {
+  throw new Error("浏览器自动化测试报告包含失败或不稳定场景");
+}
+const pythonTests = suiteNumber("tests");
+const browserTests = Number(browserReport.expected);
+const policyTracks = policyReport.tracks;
+const retrievalPipeline = aiPipeline.retrieval.frozen_final_test.configured_pipeline;
+const formatPercent = (value) => `${(Number(value) * 100).toFixed(2)}%`;
 
 async function bytes(file) {
   const data = await fs.readFile(file);
@@ -243,7 +266,7 @@ async function main() {
     addText(s, "每个参数与条件必须能定位到政策原文。", 64, 364, 410, 70, 16, C.ink);
     addText(s, "人工发布门", 64, 468, 300, 30, 21, C.green, true);
     addText(s, "候选规则展示版本差异、合成案例影响和阻断项，系统不自动发布。", 64, 506, 420, 100, 16, C.ink);
-    addFooter(s, "Policy2Rule 冻结测试 120 条政策条款");
+    addFooter(s, `120 条冻结条款  事项识别 规则 ${formatPercent(policyTracks.deterministic.benefit_accuracy)} / 模型 ${formatPercent(policyTracks.llm_only.benefit_accuracy)} / 融合 ${formatPercent(policyTracks.controlled_fusion.benefit_accuracy)}  条件字段F1 ${formatPercent(policyTracks.deterministic.condition_field.f1)} / ${formatPercent(policyTracks.llm_only.condition_field.f1)} / ${formatPercent(policyTracks.controlled_fusion.condition_field.f1)}`);
   }
 
   // 9 Architecture
@@ -277,25 +300,25 @@ async function main() {
     s.charts.add("bar", {
       position: { left: 70, top: 174, width: 650, height: 398 },
       categories: ["单元测试", "浏览器场景", "检索问答", "特困专题", "安全用例"],
-      series: [{ name: "通过率", values: [1, 1, 1, 1, 1], fill: C.green }],
+      series: [{ name: "通过率", values: [1, 1, retrievalPipeline.recall_at_3, 1, 1], fill: C.green }],
       textStyle: { typeface: FONT, fontSize: 13, fill: C.ink },
       hasLegend: false,
       dataLabels: { showValue: true, position: "inEnd", numberFormatCode: "0%", textStyle: { typeface: FONT, fontSize: 12, fill: C.white, bold: true } },
       xAxis: { minimumScale: 0, maximumScale: 1, majorUnit: 0.2, numberFormatCode: "0%", textStyle: { typeface: FONT, fontSize: 11, fill: C.muted } },
       yAxis: { textStyle: { typeface: FONT, fontSize: 12, fill: C.ink }, majorGridlines: { style: "solid", fill: "#D9E1DE", width: 1 } },
     });
-    addText(s, "265", 800, 182, 150, 60, 42, C.green, true);
+    addText(s, String(pythonTests), 800, 182, 150, 60, 42, C.green, true);
     addText(s, "Python 自动化测试全部通过", 800, 240, 340, 32, 16, C.ink);
-    addText(s, "95.00%", 800, 306, 190, 58, 38, C.green, true);
+    addText(s, `${coverage.percent_covered.toFixed(2)}%`, 800, 306, 190, 58, 38, C.green, true);
     addText(s, "行覆盖率", 800, 362, 180, 26, 15, C.muted);
-    addText(s, "90.21%", 1010, 306, 190, 58, 38, C.green, true);
+    addText(s, `${coverage.percent_branches_covered.toFixed(2)}%`, 1010, 306, 190, 58, 38, C.green, true);
     addText(s, "分支覆盖率", 1010, 362, 180, 26, 15, C.muted);
-    addText(s, "138", 800, 438, 150, 58, 38, C.green, true);
+    addText(s, String(retrievalPipeline.queries), 800, 438, 150, 58, 38, C.green, true);
     addText(s, "文件隔离检索问答", 800, 494, 220, 26, 15, C.muted);
     addText(s, "320", 1010, 438, 150, 58, 38, C.green, true);
     addText(s, "高风险安全用例", 1010, 494, 220, 26, 15, C.muted);
     addText(s, "指标只描述项目内冻结集和自动化工程测试，不外推为真实审批准确率。", 800, 560, 400, 60, 14, C.amber, true);
-    addFooter(s, "评测绑定  v2.0.0  规则引擎 0.6.0  模型 digest  源码指纹");
+    addFooter(s, `评测绑定  Python ${pythonTests}/${pythonTests}  浏览器 ${browserTests}/${browserTests}  RRF Recall@3 ${formatPercent(retrievalPipeline.recall_at_3)}  源码指纹`);
   }
 
   // 11 Differentiation
@@ -328,9 +351,9 @@ async function main() {
   {
     const s = deck.slides.add();
     s.background.fill = C.green;
-    addText(s, "国赛竞争力判断", 72, 58, 300, 26, 14, "#CDE7DF", true);
+    addText(s, "交付结论", 72, 58, 300, 26, 14, "#CDE7DF", true);
     addText(s, "工程闭环已经成立", 72, 128, 720, 66, 46, C.white, true);
-    addText(s, "但奖项仍取决于现场表达与外部证据", 72, 198, 850, 48, 28, "#DCEFE9", false);
+    addText(s, "后续验证重点是外部证据与现场展示", 72, 198, 850, 48, 28, "#DCEFE9", false);
     const reasons = [
       "六类事项形成可运行产品，不是概念演示",
       "真实本地模型受到规则、证据和安全回退约束",
@@ -379,7 +402,7 @@ async function main() {
     ],
     fontPolicy: { basis: "design", families: [FONT] },
     verifyArtifactToolImport: true,
-    receiptPath: path.join(ROOT, "tmp", "private-ppt-validation-r2.json"),
+    receiptPath: path.join(ROOT, "tmp", "private-ppt-validation-r3.json"),
   });
   console.log(JSON.stringify({ final: FINAL, slides: deck.slides.items.length, result }, null, 2));
 }
