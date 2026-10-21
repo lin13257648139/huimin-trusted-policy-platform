@@ -2812,5 +2812,27 @@
     "最终测试按完整政策文件隔离，同一source_id不得跨开发集与冻结测试集。",
     "标签由项目组按公开标注指南制作，尚不是外部专家双人盲标。",
     "指标及95%置信区间只描述本冻结集，不外推为真实政务业务准确率。"
-  ]
+  ],
+  "engine_version": "rule-engine/0.6.0",
+  "release_metadata": {
+    "release_id": "v2.0.0+source.dbb541caa297",
+    "app_version": "2.0.0",
+    "engine_version": "rule-engine/0.6.0",
+    "git_commit": "70bde5a6420e0f5a4764813b640132d1b5eed7c9",
+    "git_dirty": false,
+    "source_tree_sha256": "dbb541caa297e40fa5666aa935983eb2f52bc3b73b624ee331ac8c0d370ffee1",
+    "source_binding": {
+      "code_commit": "70bde5a6420e0f5a4764813b640132d1b5eed7c9",
+      "source_inputs_dirty": false,
+      "source_tree_sha256": "dbb541caa297e40fa5666aa935983eb2f52bc3b73b624ee331ac8c0d370ffee1",
+      "source_file_count": 261,
+      "scope": "代码、测试、评测输入、运行和安全配置；生成的评测报告不参与自指纹",
+      "text_normalization": "CRLF和LF统一为LF；二进制文件保持原始字节"
+    },
+    "artifact_binding": {
+      "reports_generated_from_source_sha256": "dbb541caa297e40fa5666aa935983eb2f52bc3b73b624ee331ac8c0d370ffee1",
+      "evidence_commit": null,
+      "note": "报告提交后可由正式发布流程填入证据提交；源码绑定以内容指纹为准。"
+    }
+  }
 }
