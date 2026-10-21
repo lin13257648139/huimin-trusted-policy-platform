@@ -107,5 +107,28 @@
       "duration_ms": 923,
       "retry": 0
     }
-  ]
+  ],
+  "app_version": "2.0.0",
+  "engine_version": "rule-engine/0.6.0",
+  "release_metadata": {
+    "release_id": "v2.0.0+source.026d8701703f",
+    "app_version": "2.0.0",
+    "engine_version": "rule-engine/0.6.0",
+    "git_commit": "a6b677ff193d29b0bc551ae1b0e2e986c61b87d7",
+    "git_dirty": false,
+    "source_tree_sha256": "026d8701703fda3f76dcbd3b95ef18c3f0d51cd025a0801c882cbf57a9f5b321",
+    "source_binding": {
+      "code_commit": "a6b677ff193d29b0bc551ae1b0e2e986c61b87d7",
+      "source_inputs_dirty": false,
+      "source_tree_sha256": "026d8701703fda3f76dcbd3b95ef18c3f0d51cd025a0801c882cbf57a9f5b321",
+      "source_file_count": 262,
+      "scope": "代码、测试、评测输入、运行和安全配置；生成的评测报告不参与自指纹",
+      "text_normalization": "CRLF和LF统一为LF；二进制文件保持原始字节"
+    },
+    "artifact_binding": {
+      "reports_generated_from_source_sha256": "026d8701703fda3f76dcbd3b95ef18c3f0d51cd025a0801c882cbf57a9f5b321",
+      "evidence_commit": null,
+      "note": "报告提交后可由正式发布流程填入证据提交；源码绑定以内容指纹为准。"
+    }
+  }
 }
