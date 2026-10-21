@@ -38,8 +38,13 @@ const metrics = workbook.worksheets.getItem("评测指标");
 overview.getRange("B9:B10").values = [[tests], [Number(browser.expected)]];
 
 // Preserve the original section formatting while making room for three more
-// metric rows.  Values are then replaced from the signed evaluation outputs.
-metrics.getRange("A16:F21").copyTo(metrics.getRange("A19:F24"), "all");
+// metric rows.  The guard keeps the generator idempotent when the current
+// delivery workbook has already been expanded by an earlier run.
+const versionSectionAlreadyMoved =
+  metrics.getRange("A19").values?.[0]?.[0] === "模型与规则版本绑定";
+if (!versionSectionAlreadyMoved) {
+  metrics.getRange("A16:F21").copyTo(metrics.getRange("A19:F24"), "all");
+}
 metrics.unmergeCells("A16:F16");
 for (const row of [15, 16, 17]) {
   metrics.getRange("A14:F14").copyTo(metrics.getRange(`A${row}:F${row}`), "all");
