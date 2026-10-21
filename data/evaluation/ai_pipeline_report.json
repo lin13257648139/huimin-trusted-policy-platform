@@ -1,8 +1,8 @@
 {
   "report_schema": "ai-experiment/1.0",
-  "generated_at": "2026-10-16T07:32:54.603779+00:00",
+  "generated_at": "2026-10-21T00:18:38.503633+00:00",
   "scope": "internal synthetic benchmark; not real-user effectiveness evidence",
-  "app_version": "1.4.0",
+  "app_version": "2.0.0",
   "environment": {
     "python": "3.12.14",
     "platform": "Windows",
@@ -12,16 +12,22 @@
   "datasets": {
     "profile": {
       "path": "data/evaluation/profile_extraction_benchmark.jsonl",
-      "sha256": "4feb3471a0d6bb772f11fe4b1c8777b35528b429e234a1aa3a88c977d925198f",
+      "sha256": "fe7265a79f51af0ff72b2d9035f9cc8be88ad0dad2b22ea5b4d9c2fae94ca976",
       "cases": 300,
       "origin": "team-authored synthetic utterances"
     },
+    "special_hardship_profile": {
+      "path": "data/evaluation/special_hardship_profile_benchmark.jsonl",
+      "sha256": "31f522df1af7926bc2805b0fde97a13e6b9bec20fa33ae0346cdc62b5e501019",
+      "cases": 20,
+      "origin": "team-authored focused synthetic challenge set"
+    },
     "retrieval": {
       "path": "data/evaluation/retrieval_benchmark.json",
-      "sha256": "b0ccd57c23cdf90aa3bb653ea9b41f481398e55003a5e6d9e65ff9a90f862a99",
-      "queries": 160,
+      "sha256": "6ac7fcc26211ffe0370652e98631ffe3fc7fef646228619993db10508174aa9e",
+      "queries": 178,
       "development_queries": 40,
-      "frozen_final_queries": 120,
+      "frozen_final_queries": 138,
       "origin": "internal policy retrieval questions",
       "policy_file_isolation": {
         "development_source_ids": [
@@ -44,44 +50,28 @@
     }
   },
   "ai_runtime": {
-    "mode": "hybrid",
-    "configured": true,
-    "reachable": true,
-    "chat_model": "qwen3:4b-instruct",
+    "mode": "deterministic",
+    "configured": false,
+    "reachable": false,
+    "chat_model": null,
     "embedding_model": "qwen3-embedding:0.6b",
-    "active_provider": "ollama/qwen3:4b-instruct",
-    "reason": null,
-    "model_present": true,
-    "embedding_model_present": true,
-    "model_digest": "0edcdef34593eac1aa2be9c7d06c432dcf81945adca5eca2f27662c18f168ba0",
-    "model_size_bytes": 2497293803,
-    "model_details": {
-      "parent_model": "",
-      "format": "gguf",
-      "family": "qwen3",
-      "families": [
-        "qwen3"
-      ],
-      "parameter_size": "4.0B",
-      "quantization_level": "Q4_K_M",
-      "context_length": 262144,
-      "embedding_length": 2560
-    }
+    "active_provider": "deterministic-safe-parser",
+    "reason": "AI_MODE未启用本地模型"
   },
   "intent_classification": {
     "dataset": "data/ml/intent_dataset.json",
-    "dataset_sha256": "60a7fded87ea2c4d31675c9fbfd0a89daaef82e45f3c41c277861bef2f377122",
+    "dataset_sha256": "7a960b0f8d547c52b904407b180774088ce590bb408fba32d95aecf4f5890ef0",
     "origin": "programmatically rendered project-authored synthetic utterances; no real records",
     "keyword_baseline": {
-      "cases": 250,
-      "accuracy": 0.716,
+      "cases": 300,
+      "accuracy": 0.7633,
       "accuracy_ci95": {
         "method": "wilson",
         "confidence": 0.95,
-        "lower": 0.6572,
-        "upper": 0.7683
+        "lower": 0.7121,
+        "upper": 0.8079
       },
-      "macro_f1": 0.7177,
+      "macro_f1": 0.7648,
       "per_label": {
         "B001": {
           "precision": 1.0,
@@ -137,6 +127,17 @@
             "lower": 0.5419,
             "upper": 0.7924
           }
+        },
+        "B006": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "recall_ci95": {
+            "method": "wilson",
+            "confidence": 0.95,
+            "lower": 0.9287,
+            "upper": 1.0
+          }
         }
       },
       "confusion_matrix": {
@@ -146,6 +147,7 @@
           "B003": 0,
           "B004": 0,
           "B005": 0,
+          "B006": 0,
           "abstain": 0
         },
         "B002": {
@@ -154,6 +156,7 @@
           "B003": 0,
           "B004": 0,
           "B005": 0,
+          "B006": 0,
           "abstain": 0
         },
         "B003": {
@@ -162,6 +165,7 @@
           "B003": 4,
           "B004": 0,
           "B005": 0,
+          "B006": 0,
           "abstain": 9
         },
         "B004": {
@@ -170,6 +174,7 @@
           "B003": 0,
           "B004": 41,
           "B005": 0,
+          "B006": 0,
           "abstain": 9
         },
         "B005": {
@@ -178,7 +183,17 @@
           "B003": 0,
           "B004": 0,
           "B005": 34,
+          "B006": 0,
           "abstain": 16
+        },
+        "B006": {
+          "B001": 0,
+          "B002": 0,
+          "B003": 0,
+          "B004": 0,
+          "B005": 0,
+          "B006": 50,
+          "abstain": 0
         }
       },
       "error_table": [
@@ -540,13 +555,13 @@
       ]
     },
     "char_ngram_naive_bayes": {
-      "model_version": "intent-nb/60a7fded87ea",
-      "cases": 250,
+      "model_version": "intent-nb/7a960b0f8d54",
+      "cases": 300,
       "accuracy": 1.0,
       "accuracy_ci95": {
         "method": "wilson",
         "confidence": 0.95,
-        "lower": 0.9849,
+        "lower": 0.9874,
         "upper": 1.0
       },
       "macro_f1": 1.0,
@@ -605,6 +620,17 @@
             "lower": 0.9287,
             "upper": 1.0
           }
+        },
+        "B006": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "recall_ci95": {
+            "method": "wilson",
+            "confidence": 0.95,
+            "lower": 0.9287,
+            "upper": 1.0
+          }
         }
       },
       "confusion_matrix": {
@@ -614,6 +640,7 @@
           "B003": 0,
           "B004": 0,
           "B005": 0,
+          "B006": 0,
           "abstain": 0
         },
         "B002": {
@@ -622,6 +649,7 @@
           "B003": 0,
           "B004": 0,
           "B005": 0,
+          "B006": 0,
           "abstain": 0
         },
         "B003": {
@@ -630,6 +658,7 @@
           "B003": 50,
           "B004": 0,
           "B005": 0,
+          "B006": 0,
           "abstain": 0
         },
         "B004": {
@@ -638,6 +667,7 @@
           "B003": 0,
           "B004": 50,
           "B005": 0,
+          "B006": 0,
           "abstain": 0
         },
         "B005": {
@@ -646,6 +676,16 @@
           "B003": 0,
           "B004": 0,
           "B005": 50,
+          "B006": 0,
+          "abstain": 0
+        },
+        "B006": {
+          "B001": 0,
+          "B002": 0,
+          "B003": 0,
+          "B004": 0,
+          "B005": 0,
+          "B006": 50,
           "abstain": 0
         }
       },
@@ -806,20 +846,20 @@
       },
       "error_table": []
     },
-    "schema_constrained_llm_ensemble": {
-      "cases": 300,
+    "special_hardship_focused_deterministic": {
+      "cases": 20,
       "field_precision": 1.0,
       "field_precision_ci95": {
         "method": "wilson",
         "confidence": 0.95,
-        "lower": 0.9956,
+        "lower": 0.9197,
         "upper": 1.0
       },
       "field_recall": 1.0,
       "field_recall_ci95": {
         "method": "wilson",
         "confidence": 0.95,
-        "lower": 0.9956,
+        "lower": 0.9197,
         "upper": 1.0
       },
       "field_f1": 1.0,
@@ -827,7 +867,7 @@
       "case_exact_match_ci95": {
         "method": "wilson",
         "confidence": 0.95,
-        "lower": 0.9874,
+        "lower": 0.8389,
         "upper": 1.0
       },
       "hallucination_case_rate": 0.0,
@@ -835,148 +875,252 @@
         "method": "wilson",
         "confidence": 0.95,
         "lower": 0.0,
-        "upper": 0.0126
+        "upper": 0.1611
       },
       "hallucination_case_ids": [],
       "routes": {
-        "llm_assisted": 300
+        "deterministic": 20
       },
       "latency_ms": {
-        "measured_cases": 300,
-        "mean": 1291.0,
-        "p50": 1196,
-        "p95": 2016,
-        "max": 7163,
-        "includes_model_cold_start": true
+        "measured_cases": 0,
+        "mean": null,
+        "p50": null,
+        "p95": null,
+        "max": null,
+        "includes_model_cold_start": null
       },
       "fallbacks": {
         "count": 0,
         "reasons": {}
       },
       "by_category": {
-        "asset_negative": {
-          "cases": 30,
+        "all_negative": {
+          "cases": 1,
           "exact_match": 1.0,
           "exact_match_ci95": {
             "method": "wilson",
             "confidence": 0.95,
-            "lower": 0.8865,
+            "lower": 0.2065,
             "upper": 1.0
           }
         },
-        "combined_expense": {
-          "cases": 30,
+        "all_positive": {
+          "cases": 1,
           "exact_match": 1.0,
           "exact_match_ci95": {
             "method": "wilson",
             "confidence": 0.95,
-            "lower": 0.8865,
+            "lower": 0.2065,
             "upper": 1.0
           }
         },
-        "explicit_negation": {
-          "cases": 30,
+        "disabled_unknown": {
+          "cases": 1,
           "exact_match": 1.0,
           "exact_match_ci95": {
             "method": "wilson",
             "confidence": 0.95,
-            "lower": 0.8865,
+            "lower": 0.2065,
             "upper": 1.0
           }
         },
-        "governance_fields": {
-          "cases": 30,
+        "explicit_not_member": {
+          "cases": 1,
           "exact_match": 1.0,
           "exact_match_ci95": {
             "method": "wilson",
             "confidence": 0.95,
-            "lower": 0.8865,
+            "lower": 0.2065,
             "upper": 1.0
           }
         },
-        "income_basic": {
-          "cases": 30,
+        "gateway_denied": {
+          "cases": 1,
           "exact_match": 1.0,
           "exact_match_ci95": {
             "method": "wilson",
             "confidence": 0.95,
-            "lower": 0.8865,
+            "lower": 0.2065,
             "upper": 1.0
           }
         },
-        "instruction_attack": {
-          "cases": 30,
+        "gateway_only": {
+          "cases": 1,
           "exact_match": 1.0,
           "exact_match_ci95": {
             "method": "wilson",
             "confidence": 0.95,
-            "lower": 0.8865,
+            "lower": 0.2065,
             "upper": 1.0
           }
         },
-        "missing_unknown": {
-          "cases": 30,
+        "labor_negative": {
+          "cases": 1,
           "exact_match": 1.0,
           "exact_match_ci95": {
             "method": "wilson",
             "confidence": 0.95,
-            "lower": 0.8865,
+            "lower": 0.2065,
             "upper": 1.0
           }
         },
-        "nonlocal_residence": {
-          "cases": 30,
+        "labor_only": {
+          "cases": 1,
           "exact_match": 1.0,
           "exact_match_ci95": {
             "method": "wilson",
             "confidence": 0.95,
-            "lower": 0.8865,
+            "lower": 0.2065,
             "upper": 1.0
           }
         },
-        "unit_conversion": {
-          "cases": 30,
+        "livelihood_negative": {
+          "cases": 1,
           "exact_match": 1.0,
           "exact_match_ci95": {
             "method": "wilson",
             "confidence": 0.95,
-            "lower": 0.8865,
+            "lower": 0.2065,
             "upper": 1.0
           }
         },
-        "urgent_medical": {
-          "cases": 30,
+        "livelihood_only": {
+          "cases": 1,
           "exact_match": 1.0,
           "exact_match_ci95": {
             "method": "wilson",
             "confidence": 0.95,
-            "lower": 0.8865,
+            "lower": 0.2065,
+            "upper": 1.0
+          }
+        },
+        "minor_support": {
+          "cases": 1,
+          "exact_match": 1.0,
+          "exact_match_ci95": {
+            "method": "wilson",
+            "confidence": 0.95,
+            "lower": 0.2065,
+            "upper": 1.0
+          }
+        },
+        "mixed_labor": {
+          "cases": 1,
+          "exact_match": 1.0,
+          "exact_match_ci95": {
+            "method": "wilson",
+            "confidence": 0.95,
+            "lower": 0.2065,
+            "upper": 1.0
+          }
+        },
+        "mixed_livelihood": {
+          "cases": 1,
+          "exact_match": 1.0,
+          "exact_match_ci95": {
+            "method": "wilson",
+            "confidence": 0.95,
+            "lower": 0.2065,
+            "upper": 1.0
+          }
+        },
+        "mixed_support": {
+          "cases": 1,
+          "exact_match": 1.0,
+          "exact_match_ci95": {
+            "method": "wilson",
+            "confidence": 0.95,
+            "lower": 0.2065,
+            "upper": 1.0
+          }
+        },
+        "relationship_guard": {
+          "cases": 1,
+          "exact_match": 1.0,
+          "exact_match_ci95": {
+            "method": "wilson",
+            "confidence": 0.95,
+            "lower": 0.2065,
+            "upper": 1.0
+          }
+        },
+        "silence_guard": {
+          "cases": 1,
+          "exact_match": 1.0,
+          "exact_match_ci95": {
+            "method": "wilson",
+            "confidence": 0.95,
+            "lower": 0.2065,
+            "upper": 1.0
+          }
+        },
+        "supporter_absent": {
+          "cases": 1,
+          "exact_match": 1.0,
+          "exact_match_ci95": {
+            "method": "wilson",
+            "confidence": 0.95,
+            "lower": 0.2065,
+            "upper": 1.0
+          }
+        },
+        "supporter_capable": {
+          "cases": 1,
+          "exact_match": 1.0,
+          "exact_match_ci95": {
+            "method": "wilson",
+            "confidence": 0.95,
+            "lower": 0.2065,
+            "upper": 1.0
+          }
+        },
+        "supporter_incapable": {
+          "cases": 1,
+          "exact_match": 1.0,
+          "exact_match_ci95": {
+            "method": "wilson",
+            "confidence": 0.95,
+            "lower": 0.2065,
+            "upper": 1.0
+          }
+        },
+        "three_no_synonym": {
+          "cases": 1,
+          "exact_match": 1.0,
+          "exact_match_ci95": {
+            "method": "wilson",
+            "confidence": 0.95,
+            "lower": 0.2065,
             "upper": 1.0
           }
         }
       },
       "error_table": []
+    },
+    "schema_constrained_llm_ensemble": {
+      "status": "not_run",
+      "reason": "AI_MODE未启用本地模型"
     }
   },
   "retrieval": {
     "development": {
       "bm25_baseline": {
         "queries": 40,
-        "recall_at_1": 0.65,
+        "recall_at_1": 0.75,
         "recall_at_1_ci95": {
           "method": "wilson",
           "confidence": 0.95,
-          "lower": 0.4951,
-          "upper": 0.7787
+          "lower": 0.5981,
+          "upper": 0.8581
         },
-        "recall_at_3": 0.65,
+        "recall_at_3": 0.75,
         "recall_at_3_ci95": {
           "method": "wilson",
           "confidence": 0.95,
-          "lower": 0.4951,
-          "upper": 0.7787
+          "lower": 0.5981,
+          "upper": 0.8581
         },
-        "mrr_at_5": 0.65,
+        "mrr_at_5": 0.75,
         "actual_routes": {
           "field-weighted-bm25": 40
         },
@@ -989,14 +1133,14 @@
         },
         "by_source": {
           "GZ-001": {
-            "successes": 8,
+            "successes": 12,
             "total": 12,
-            "estimate": 0.6667,
+            "estimate": 1.0,
             "ci95": {
               "method": "wilson",
               "confidence": 0.95,
-              "lower": 0.3906,
-              "upper": 0.8619
+              "lower": 0.7575,
+              "upper": 1.0
             }
           },
           "GZ-002": {
@@ -1057,42 +1201,6 @@
         },
         "error_table": [
           {
-            "query_id": "RQ-001",
-            "source_id": "GZ-001",
-            "rank": null,
-            "expected_ids": [
-              "E-GZ-001-SCOPE"
-            ],
-            "returned_ids": []
-          },
-          {
-            "query_id": "RQ-002",
-            "source_id": "GZ-001",
-            "rank": null,
-            "expected_ids": [
-              "E-GZ-001-SCOPE"
-            ],
-            "returned_ids": []
-          },
-          {
-            "query_id": "RQ-003",
-            "source_id": "GZ-001",
-            "rank": null,
-            "expected_ids": [
-              "E-GZ-001-SCOPE"
-            ],
-            "returned_ids": []
-          },
-          {
-            "query_id": "RQ-004",
-            "source_id": "GZ-001",
-            "rank": null,
-            "expected_ids": [
-              "E-GZ-001-SCOPE"
-            ],
-            "returned_ids": []
-          },
-          {
             "query_id": "RQ-038",
             "source_id": "GZ-002",
             "rank": null,
@@ -1145,7 +1253,7 @@
               "E-GZ-003-STANDARD",
               "E-GZ-008-INCOME",
               "E-CN-001-PRIVACY",
-              "E-GZ-001-DEADLINE"
+              "E-CN-001-SPECIAL-HARDSHIP"
             ]
           },
           {
@@ -1192,10 +1300,10 @@
             ],
             "returned_ids": [
               "E-GZ-001-DEADLINE",
-              "E-CN-001-EDGE",
               "E-CN-001-DIBAO",
-              "E-GZ-001-MATERIALS",
-              "E-CN-001-PRIVACY"
+              "E-CN-001-EDGE",
+              "E-CN-001-PRIVACY",
+              "E-CN-001-RIGID"
             ]
           },
           {
@@ -1216,42 +1324,42 @@
       },
       "configured_pipeline": {
         "queries": 40,
-        "recall_at_1": 0.65,
+        "recall_at_1": 0.75,
         "recall_at_1_ci95": {
           "method": "wilson",
           "confidence": 0.95,
-          "lower": 0.4951,
-          "upper": 0.7787
+          "lower": 0.5981,
+          "upper": 0.8581
         },
-        "recall_at_3": 0.65,
+        "recall_at_3": 0.75,
         "recall_at_3_ci95": {
           "method": "wilson",
           "confidence": 0.95,
-          "lower": 0.4951,
-          "upper": 0.7787
+          "lower": 0.5981,
+          "upper": 0.8581
         },
-        "mrr_at_5": 0.65,
+        "mrr_at_5": 0.75,
         "actual_routes": {
-          "domain-gate": 7,
-          "rrf(bm25,local-embedding)": 33
+          "field-weighted-bm25": 37,
+          "domain-gate": 3
         },
         "latency_ms": {
-          "measured_queries": 33,
-          "mean": 1090.5,
-          "p50": 1140,
-          "p95": 1203,
-          "max": 3617
+          "measured_queries": 0,
+          "mean": null,
+          "p50": null,
+          "p95": null,
+          "max": null
         },
         "by_source": {
           "GZ-001": {
-            "successes": 8,
+            "successes": 12,
             "total": 12,
-            "estimate": 0.6667,
+            "estimate": 1.0,
             "ci95": {
               "method": "wilson",
               "confidence": 0.95,
-              "lower": 0.3906,
-              "upper": 0.8619
+              "lower": 0.7575,
+              "upper": 1.0
             }
           },
           "GZ-002": {
@@ -1312,42 +1420,6 @@
         },
         "error_table": [
           {
-            "query_id": "RQ-001",
-            "source_id": "GZ-001",
-            "rank": null,
-            "expected_ids": [
-              "E-GZ-001-SCOPE"
-            ],
-            "returned_ids": []
-          },
-          {
-            "query_id": "RQ-002",
-            "source_id": "GZ-001",
-            "rank": null,
-            "expected_ids": [
-              "E-GZ-001-SCOPE"
-            ],
-            "returned_ids": []
-          },
-          {
-            "query_id": "RQ-003",
-            "source_id": "GZ-001",
-            "rank": null,
-            "expected_ids": [
-              "E-GZ-001-SCOPE"
-            ],
-            "returned_ids": []
-          },
-          {
-            "query_id": "RQ-004",
-            "source_id": "GZ-001",
-            "rank": null,
-            "expected_ids": [
-              "E-GZ-001-SCOPE"
-            ],
-            "returned_ids": []
-          },
-          {
             "query_id": "RQ-038",
             "source_id": "GZ-002",
             "rank": null,
@@ -1374,9 +1446,9 @@
             ],
             "returned_ids": [
               "E-GZ-002-CURRENT",
-              "E-GD-004-A-VEHICLE-EXCLUSION",
               "E-GZ-003-STANDARD",
-              "E-GZ-008-INCOME"
+              "E-GZ-008-INCOME",
+              "E-GD-004-A-VEHICLE-EXCLUSION"
             ]
           },
           {
@@ -1397,10 +1469,10 @@
             ],
             "returned_ids": [
               "E-GZ-002-CURRENT",
+              "E-GZ-003-STANDARD",
+              "E-GZ-008-INCOME",
               "E-CN-001-PRIVACY",
-              "E-GZ-001-DEADLINE",
-              "E-GZ-001-MATERIALS",
-              "E-GZ-001-SCOPE"
+              "E-CN-001-SPECIAL-HARDSHIP"
             ]
           },
           {
@@ -1412,10 +1484,10 @@
             ],
             "returned_ids": [
               "E-GZ-002-CURRENT",
-              "E-GZ-005-RESIDENCE",
               "E-GZ-003-STANDARD",
               "E-GZ-008-INCOME",
-              "E-GZ-001-DEADLINE"
+              "E-GD-004-A-VEHICLE-EXCLUSION",
+              "E-GZ-005-RESIDENCE"
             ]
           },
           {
@@ -1446,11 +1518,11 @@
               "E-GZ-009-ASSET"
             ],
             "returned_ids": [
-              "E-CN-001-RIGID",
+              "E-GZ-001-DEADLINE",
+              "E-CN-001-DIBAO",
               "E-CN-001-EDGE",
               "E-CN-001-PRIVACY",
-              "E-GZ-001-DEADLINE",
-              "E-CN-001-DIBAO"
+              "E-CN-001-RIGID"
             ]
           },
           {
@@ -1463,9 +1535,8 @@
             "returned_ids": [
               "E-GZ-002-CURRENT",
               "E-GZ-005-RESIDENCE",
-              "E-GZ-002-ASSET",
               "E-GZ-001-DEADLINE",
-              "E-GZ-001-SCOPE"
+              "E-GZ-002-ASSET"
             ]
           }
         ]
@@ -1473,24 +1544,24 @@
     },
     "frozen_final_test": {
       "bm25_baseline": {
-        "queries": 120,
-        "recall_at_1": 0.9833,
+        "queries": 138,
+        "recall_at_1": 1.0,
         "recall_at_1_ci95": {
           "method": "wilson",
           "confidence": 0.95,
-          "lower": 0.9413,
-          "upper": 0.9954
+          "lower": 0.9729,
+          "upper": 1.0
         },
-        "recall_at_3": 0.9833,
+        "recall_at_3": 1.0,
         "recall_at_3_ci95": {
           "method": "wilson",
           "confidence": 0.95,
-          "lower": 0.9413,
-          "upper": 0.9954
+          "lower": 0.9729,
+          "upper": 1.0
         },
-        "mrr_at_5": 0.9833,
+        "mrr_at_5": 1.0,
         "actual_routes": {
-          "field-weighted-bm25": 120
+          "field-weighted-bm25": 138
         },
         "latency_ms": {
           "measured_queries": 0,
@@ -1501,14 +1572,14 @@
         },
         "by_source": {
           "CN-001": {
-            "successes": 23,
-            "total": 24,
-            "estimate": 0.9583,
+            "successes": 42,
+            "total": 42,
+            "estimate": 1.0,
             "ci95": {
               "method": "wilson",
               "confidence": 0.95,
-              "lower": 0.7976,
-              "upper": 0.9926
+              "lower": 0.9162,
+              "upper": 1.0
             }
           },
           "GD-002": {
@@ -1523,14 +1594,14 @@
             }
           },
           "GD-004-A": {
-            "successes": 59,
+            "successes": 60,
             "total": 60,
-            "estimate": 0.9833,
+            "estimate": 1.0,
             "ci95": {
               "method": "wilson",
               "confidence": 0.95,
-              "lower": 0.9114,
-              "upper": 0.9971
+              "lower": 0.9398,
+              "upper": 1.0
             }
           },
           "GZ-005": {
@@ -1545,65 +1616,45 @@
             }
           }
         },
-        "error_table": [
-          {
-            "query_id": "RQ-032",
-            "source_id": "CN-001",
-            "rank": null,
-            "expected_ids": [
-              "E-CN-001-PRIVACY"
-            ],
-            "returned_ids": []
-          },
-          {
-            "query_id": "RQ-126",
-            "source_id": "GD-004-A",
-            "rank": null,
-            "expected_ids": [
-              "E-GD-004-A-OBLIGORS"
-            ],
-            "returned_ids": []
-          }
-        ]
+        "error_table": []
       },
       "configured_pipeline": {
-        "queries": 120,
-        "recall_at_1": 0.9667,
+        "queries": 138,
+        "recall_at_1": 1.0,
         "recall_at_1_ci95": {
           "method": "wilson",
           "confidence": 0.95,
-          "lower": 0.9174,
-          "upper": 0.987
+          "lower": 0.9729,
+          "upper": 1.0
         },
-        "recall_at_3": 0.9667,
+        "recall_at_3": 1.0,
         "recall_at_3_ci95": {
           "method": "wilson",
           "confidence": 0.95,
-          "lower": 0.9174,
-          "upper": 0.987
+          "lower": 0.9729,
+          "upper": 1.0
         },
-        "mrr_at_5": 0.9708,
+        "mrr_at_5": 1.0,
         "actual_routes": {
-          "rrf(bm25,local-embedding)": 118,
-          "domain-gate": 2
+          "field-weighted-bm25": 138
         },
         "latency_ms": {
-          "measured_queries": 118,
-          "mean": 1127.2,
-          "p50": 1123,
-          "p95": 1175,
-          "max": 1200
+          "measured_queries": 0,
+          "mean": null,
+          "p50": null,
+          "p95": null,
+          "max": null
         },
         "by_source": {
           "CN-001": {
-            "successes": 23,
-            "total": 24,
-            "estimate": 0.9583,
+            "successes": 42,
+            "total": 42,
+            "estimate": 1.0,
             "ci95": {
               "method": "wilson",
               "confidence": 0.95,
-              "lower": 0.7976,
-              "upper": 0.9926
+              "lower": 0.9162,
+              "upper": 1.0
             }
           },
           "GD-002": {
@@ -1618,14 +1669,14 @@
             }
           },
           "GD-004-A": {
-            "successes": 57,
+            "successes": 60,
             "total": 60,
-            "estimate": 0.95,
+            "estimate": 1.0,
             "ci95": {
               "method": "wilson",
               "confidence": 0.95,
-              "lower": 0.863,
-              "upper": 0.9829
+              "lower": 0.9398,
+              "upper": 1.0
             }
           },
           "GZ-005": {
@@ -1640,56 +1691,7 @@
             }
           }
         },
-        "error_table": [
-          {
-            "query_id": "RQ-032",
-            "source_id": "CN-001",
-            "rank": null,
-            "expected_ids": [
-              "E-CN-001-PRIVACY"
-            ],
-            "returned_ids": []
-          },
-          {
-            "query_id": "RQ-104",
-            "source_id": "GD-004-A",
-            "rank": 4,
-            "expected_ids": [
-              "E-GD-004-A-INCOME"
-            ],
-            "returned_ids": [
-              "E-GZ-004-EXPENSE",
-              "E-GZ-002-CURRENT",
-              "E-GZ-001-SCOPE",
-              "E-GD-004-A-INCOME",
-              "E-GZ-005-RESIDENCE"
-            ]
-          },
-          {
-            "query_id": "RQ-126",
-            "source_id": "GD-004-A",
-            "rank": null,
-            "expected_ids": [
-              "E-GD-004-A-OBLIGORS"
-            ],
-            "returned_ids": []
-          },
-          {
-            "query_id": "RQ-140",
-            "source_id": "GD-004-A",
-            "rank": 4,
-            "expected_ids": [
-              "E-GD-004-A-VEHICLE-EXCLUSION"
-            ],
-            "returned_ids": [
-              "E-GZ-002-CURRENT",
-              "E-GZ-001-SCOPE",
-              "E-GZ-001-DEADLINE",
-              "E-GD-004-A-VEHICLE-EXCLUSION",
-              "E-GD-004-A-LIVING"
-            ]
-          }
-        ]
+        "error_table": []
       }
     }
   },
@@ -1698,24 +1700,24 @@
     "模型未实际运行时不得引用模型指标；报告中的actual_routes是唯一准确信号。",
     "最终资格始终由时态规则与三值逻辑求值，模型输出仅为待确认候选字段。"
   ],
-  "engine_version": "rule-engine/0.5.0",
+  "engine_version": "rule-engine/0.6.0",
   "release_metadata": {
-    "release_id": "v1.4.0+source.31b820b020a7",
-    "app_version": "1.4.0",
-    "engine_version": "rule-engine/0.5.0",
-    "git_commit": "75a4d9da6d7cb1de0babe707c72fb5427dd21272",
-    "git_dirty": false,
-    "source_tree_sha256": "31b820b020a7291b9e8b0ec2324b914d590c54a9189ef18e544f4d4d3a412932",
+    "release_id": "v2.0.0+source.83cbbce1a682",
+    "app_version": "2.0.0",
+    "engine_version": "rule-engine/0.6.0",
+    "git_commit": "e8e572a86c903694f526f39273d7c949fbe16c1d",
+    "git_dirty": true,
+    "source_tree_sha256": "83cbbce1a6826f13b8acf8cf7031a2572067635cc65c4fd4b961eaf7f9f70982",
     "source_binding": {
-      "code_commit": "75a4d9da6d7cb1de0babe707c72fb5427dd21272",
-      "source_inputs_dirty": false,
-      "source_tree_sha256": "31b820b020a7291b9e8b0ec2324b914d590c54a9189ef18e544f4d4d3a412932",
-      "source_file_count": 246,
+      "code_commit": "e8e572a86c903694f526f39273d7c949fbe16c1d",
+      "source_inputs_dirty": true,
+      "source_tree_sha256": "83cbbce1a6826f13b8acf8cf7031a2572067635cc65c4fd4b961eaf7f9f70982",
+      "source_file_count": 253,
       "scope": "代码、测试、评测输入、运行和安全配置；生成的评测报告不参与自指纹",
       "text_normalization": "CRLF和LF统一为LF；二进制文件保持原始字节"
     },
     "artifact_binding": {
-      "reports_generated_from_source_sha256": "31b820b020a7291b9e8b0ec2324b914d590c54a9189ef18e544f4d4d3a412932",
+      "reports_generated_from_source_sha256": "83cbbce1a6826f13b8acf8cf7031a2572067635cc65c4fd4b961eaf7f9f70982",
       "evidence_commit": null,
       "note": "报告提交后可由正式发布流程填入证据提交；源码绑定以内容指纹为准。"
     }

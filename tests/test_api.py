@@ -29,14 +29,19 @@ def test_health_and_screening_api(tmp_path: Path, monkeypatch) -> None:
                 "monthly_income_total": 3200,
                 "deductible_monthly_total": 0,
                 "assets_eligible": True,
+                "special_person_category_confirmed": False,
                 "urgent_event": False,
             },
         )
         assert response.status_code == 200
         payload = response.json()
         assert payload["screening_id"].startswith("HM-")
-        assert payload["combination_plan_version"] == "2026.10.15.1"
-        assert len(payload["results"]) == 5
+        assert payload["combination_plan_version"] == "2026.10.21.1"
+        assert len(payload["results"]) == 6
+        assert payload["outcome"]["code"] == "possible_match"
+        assert payload["outcome"]["lead_benefit_id"] == "B002"
+        assert payload["outcome"]["matched_benefit_ids"] == ["B002"]
+        assert set(payload["outcome"]["related_benefit_ids"]) == {"B001", "B003"}
         rigid = next(item for item in payload["results"] if item["benefit_id"] == "B004")
         assert rigid["plan_role"] == "alternative"
         assert any(
@@ -48,7 +53,7 @@ def test_health_and_screening_api(tmp_path: Path, monkeypatch) -> None:
             headers={"X-Screening-Token": payload["screening_token"]},
         )
         assert stored.status_code == 200
-        assert stored.json()["combination_plan_version"] == "2026.10.15.1"
+        assert stored.json()["combination_plan_version"] == "2026.10.21.1"
 
 
 def test_screening_api_keeps_omitted_urgent_event_unknown(tmp_path: Path, monkeypatch) -> None:
@@ -67,6 +72,7 @@ def test_screening_api_keeps_omitted_urgent_event_unknown(tmp_path: Path, monkey
                 "member_scope_confirmed": True,
                 "monthly_income_total": 3200,
                 "assets_eligible": True,
+                "special_person_category_confirmed": False,
             },
         )
         assert response.status_code == 200
@@ -76,6 +82,112 @@ def test_screening_api_keeps_omitted_urgent_event_unknown(tmp_path: Path, monkey
         event = next(item for item in temporary["conditions"] if item["code"] == "urgent_event")
         assert event["state"] == "unknown"
         assert temporary["status"] == "incomplete"
+
+
+def test_high_income_response_has_no_forced_recommendation(tmp_path: Path, monkeypatch) -> None:
+    import app.main as main
+
+    monkeypatch.setattr(main, "database", Database(tmp_path / "test-high-income.db"))
+    with TestClient(main.app) as client:
+        response = client.post(
+            "/api/v1/screenings",
+            json={
+                "query_date": "2026-09-29",
+                "city": "广州市",
+                "district": "天河区",
+                "household_size": 3,
+                "is_local_hukou": True,
+                "member_scope_confirmed": True,
+                "monthly_income_total": 10000,
+                "deductible_monthly_total": 0,
+                "assets_eligible": True,
+                "special_person_category_confirmed": False,
+                "rigid_expenses_12m": 0,
+                "urgent_event": False,
+            },
+        )
+
+    assert response.status_code == 200
+    payload = response.json()
+    assert payload["outcome"]["code"] == "no_current_match"
+    assert payload["outcome"]["lead_benefit_id"] is None
+    assert payload["outcome"]["matched_benefit_ids"] == []
+    assert "没有强行推荐" in payload["guidance_summary"][0]
+    assert all(item["plan_role"] == "not_recommended" for item in payload["results"])
+
+
+def test_urgent_hardship_is_the_only_priority_and_surfaces_emergency_action(
+    tmp_path: Path, monkeypatch
+) -> None:
+    """A recent crisis must not make unrelated income benefits look like matches."""
+
+    import app.main as main
+
+    monkeypatch.setattr(main, "database", Database(tmp_path / "test-urgent-only.db"))
+    with TestClient(main.app) as client:
+        response = client.post(
+            "/api/v1/screenings",
+            json={
+                "query_date": "2026-09-29",
+                "city": "广州市",
+                "district": "天河区",
+                "household_size": 3,
+                "is_local_hukou": True,
+                "member_scope_confirmed": True,
+                "monthly_income_total": 10000,
+                "deductible_monthly_total": 0,
+                "assets_eligible": True,
+                "special_person_category_confirmed": False,
+                "rigid_expenses_12m": 0,
+                "urgent_event": True,
+                "urgent_event_date": "2026-09-20",
+                "basic_life_interrupted": True,
+            },
+        )
+
+    assert response.status_code == 200
+    payload = response.json()
+    assert payload["outcome"]["matched_benefit_ids"] == ["B005"]
+    assert payload["outcome"]["related_benefit_ids"] == []
+    assert payload["guidance_summary"][0].startswith("基本生活已受严重影响")
+    assert all(
+        item["status"] == "unlikely"
+        for item in payload["results"]
+        if item["benefit_id"] != "B005"
+    )
+
+
+def test_edge_and_rigid_directions_explain_parallel_window_review(
+    tmp_path: Path, monkeypatch
+) -> None:
+    """Independent edge/rigid findings should expose their lawful parallel relationship."""
+
+    import app.main as main
+
+    monkeypatch.setattr(main, "database", Database(tmp_path / "test-parallel.db"))
+    with TestClient(main.app) as client:
+        response = client.post(
+            "/api/v1/screenings",
+            json={
+                "query_date": "2026-09-29",
+                "city": "广州市",
+                "district": "天河区",
+                "household_size": 3,
+                "is_local_hukou": True,
+                "member_scope_confirmed": True,
+                "monthly_income_total": 4500,
+                "deductible_monthly_total": 0,
+                "assets_eligible": True,
+                "special_person_category_confirmed": False,
+                "rigid_expenses_12m": 40000,
+                "urgent_event": False,
+            },
+        )
+
+    assert response.status_code == 200
+    payload = response.json()
+    assert set(payload["outcome"]["matched_benefit_ids"]) == {"B003", "B004"}
+    assert any("同窗并行核验" in item for item in payload["guidance_summary"])
 
 
 def test_safety_failure_returns_422_without_saving_result(tmp_path: Path, monkeypatch) -> None:

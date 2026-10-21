@@ -34,6 +34,7 @@ class BenefitId(StrEnum):
     EDGE_FAMILY = "B003"
     RIGID_EXPENSE = "B004"
     TEMPORARY_RESCUE = "B005"
+    SPECIAL_HARDSHIP = "B006"
 
 
 class MaterialType(StrEnum):
@@ -77,7 +78,33 @@ class HouseholdProfile(BaseModel):
     basic_life_interrupted: bool | None = None
     residence_proof: bool | None = None
 
+    # 特困人员救助供养以个人为认定对象。这里只采集申请前导办所需的四个
+    # 最小事实，不能替代主管部门对劳动能力、生活来源和法定义务人的调查。
+    special_person_category_confirmed: bool | None = None
+    no_labor_capacity: bool | None = None
+    no_livelihood_source: bool | None = None
+    has_capable_legal_supporter: bool | None = None
+
     user_statement: str | None = Field(default=None, max_length=2000)
+    confirmed_supplement_fields: list[str] = Field(default_factory=list, max_length=20)
+
+    @field_validator("confirmed_supplement_fields")
+    @classmethod
+    def validate_confirmed_supplement_fields(cls, value: list[str]) -> list[str]:
+        allowed = {
+            "district", "household_size", "is_local_hukou", "residence_proof",
+            "member_scope_confirmed", "monthly_income_total",
+            "deductible_monthly_total", "assets_eligible",
+            "financial_assets_per_capita", "rigid_expenses_12m",
+            "medical_expenses_12m", "education_expenses_12m", "urgent_event",
+            "urgent_event_date", "urgent_event_type", "basic_life_interrupted",
+            "special_person_category_confirmed", "no_labor_capacity",
+            "no_livelihood_source", "has_capable_legal_supporter",
+        }
+        unknown = set(value) - allowed
+        if unknown:
+            raise ValueError(f"未知AI确认字段：{sorted(unknown)}")
+        return list(dict.fromkeys(value))
 
     @field_validator("city")
     @classmethod
@@ -125,13 +152,21 @@ class GuidanceDraft(BaseModel):
     is_local_hukou: bool | None = None
     member_scope_confirmed: bool | None = None
     monthly_income_total: Decimal | None = Field(default=None, ge=0)
+    deductible_monthly_total: Decimal | None = Field(default=None, ge=0)
     assets_eligible: bool | None = None
+    financial_assets_per_capita: Decimal | None = Field(default=None, ge=0)
     rigid_expenses_12m: Decimal | None = Field(default=None, ge=0)
+    medical_expenses_12m: Decimal | None = Field(default=None, ge=0)
+    education_expenses_12m: Decimal | None = Field(default=None, ge=0)
     urgent_event: bool | None = None
     urgent_event_date: date | None = None
     urgent_event_type: str | None = None
     basic_life_interrupted: bool | None = None
     residence_proof: bool | None = None
+    special_person_category_confirmed: bool | None = None
+    no_labor_capacity: bool | None = None
+    no_livelihood_source: bool | None = None
+    has_capable_legal_supporter: bool | None = None
     skipped_fields: list[str] = Field(default_factory=list, max_length=20)
 
     @model_validator(mode="after")
@@ -152,6 +187,8 @@ class GuidanceDraft(BaseModel):
             "member_scope_confirmed", "assets_eligible", "rigid_expenses_12m",
             "is_local_hukou", "urgent_event_date", "basic_life_interrupted",
             "residence_proof",
+            "special_person_category_confirmed", "no_labor_capacity",
+            "no_livelihood_source", "has_capable_legal_supporter",
         }
         unknown = set(value) - allowed
         if unknown:
@@ -219,6 +256,122 @@ class ParseProfileResponse(BaseModel):
     intent_predictions: list[dict[str, Any]] = Field(default_factory=list)
 
 
+SupplementField = Literal[
+    "district",
+    "household_size",
+    "is_local_hukou",
+    "residence_proof",
+    "member_scope_confirmed",
+    "monthly_income_total",
+    "deductible_monthly_total",
+    "assets_eligible",
+    "financial_assets_per_capita",
+    "rigid_expenses_12m",
+    "medical_expenses_12m",
+    "education_expenses_12m",
+    "urgent_event",
+    "urgent_event_date",
+    "urgent_event_type",
+    "basic_life_interrupted",
+    "special_person_category_confirmed",
+    "no_labor_capacity",
+    "no_livelihood_source",
+    "has_capable_legal_supporter",
+]
+
+
+class SupplementAnalysisRequest(BaseModel):
+    """用户完成结构化表单后，自愿补充的特殊情况。"""
+
+    model_config = ConfigDict(str_strip_whitespace=True)
+
+    text: str = Field(min_length=2, max_length=2000)
+    profile: GuidanceDraft
+
+
+class SupplementCandidate(BaseModel):
+    candidate_id: str
+    field: SupplementField
+    label: str
+    proposed_value: str | int | float | bool
+    display_value: str
+    existing_value: str | int | float | bool | None = None
+    existing_display: str | None = None
+    source_quote: str = Field(min_length=1, max_length=500)
+    comparison: Literal["new", "consistent", "conflict"]
+    reason: str
+    related_benefits: list[str] = Field(default_factory=list)
+    requires_confirmation: bool = True
+    extraction_score: float = Field(ge=0, le=1)
+
+
+class SupplementClue(BaseModel):
+    clue_id: str
+    category: Literal[
+        "medical",
+        "employment",
+        "education",
+        "caregiving",
+        "housing",
+        "relationship",
+        "emergency",
+    ]
+    label: str
+    source_quote: str = Field(min_length=1, max_length=500)
+    implication: str
+
+
+class SupplementFollowUp(BaseModel):
+    question_id: str
+    field_id: SupplementField | None = None
+    question: str
+    reason: str
+    options: list[QuestionOption] = Field(default_factory=list)
+    unit: str | None = None
+
+
+class SupplementImpactDirection(BaseModel):
+    benefit_id: BenefitId
+    benefit_name: str
+    reason: str
+    basis_fields: list[str] = Field(default_factory=list)
+
+
+class SupplementSafetyAudit(BaseModel):
+    sensitive_data_passed: bool
+    instruction_gate_passed: bool
+    domain_gate_passed: bool
+    source_anchor_passed: bool
+    raw_text_persisted: bool = False
+
+
+class SupplementAnalysisResponse(BaseModel):
+    analysis_id: str
+    status: Literal[
+        "ready_for_confirmation",
+        "needs_clarification",
+        "no_actionable_facts",
+        "out_of_scope",
+        "blocked_sensitive_data",
+        "blocked_instruction",
+    ]
+    candidates: list[SupplementCandidate] = Field(default_factory=list)
+    clues: list[SupplementClue] = Field(default_factory=list)
+    ambiguities: list[str] = Field(default_factory=list)
+    follow_up_questions: list[SupplementFollowUp] = Field(default_factory=list)
+    impact_directions: list[SupplementImpactDirection] = Field(default_factory=list)
+    warnings: list[str] = Field(default_factory=list)
+    provider: str
+    mode: Literal["deterministic", "llm_assisted", "not_called"] = "not_called"
+    model_id: str | None = None
+    latency_ms: int | None = Field(default=None, ge=0)
+    confidence_basis: str = "抽取排序分数，不代表资格概率"
+    safety: SupplementSafetyAudit
+    disclaimer: str = (
+        "AI只提出待确认事实和追问，不直接判定资格；只有用户确认后的字段才进入规则引擎。"
+    )
+
+
 class Evidence(BaseModel):
     evidence_id: str
     source_id: str
@@ -240,6 +393,58 @@ class Evidence(BaseModel):
     status: str = "verified"
 
 
+class PolicyQuestionRequest(BaseModel):
+    """面向公开政策库的匿名问题，不接收身份号码等办事材料。"""
+
+    model_config = ConfigDict(str_strip_whitespace=True)
+
+    question: str = Field(min_length=2, max_length=300)
+    as_of: date | None = None
+    max_evidence: int = Field(default=5, ge=1, le=8)
+
+
+class PolicyAnswerClaim(BaseModel):
+    text: str = Field(min_length=2, max_length=360)
+    evidence_ids: list[str] = Field(min_length=1, max_length=3)
+
+
+class PolicyAnswerResponse(BaseModel):
+    status: Literal[
+        "answered",
+        "insufficient_evidence",
+        "out_of_scope",
+        "blocked_instruction",
+        "blocked_sensitive_data",
+    ]
+    question: str
+    as_of: date
+    answer_title: str
+    claims: list[PolicyAnswerClaim] = Field(default_factory=list)
+    evidence: list[Evidence] = Field(default_factory=list)
+    unanswered: list[str] = Field(default_factory=list)
+    retrieval: dict[str, Any] = Field(default_factory=dict)
+    generation: dict[str, Any] = Field(default_factory=dict)
+    grounding_validation: dict[str, Any] = Field(default_factory=dict)
+    disclaimer: str = "仅依据已登记公开政策提供咨询线索，不构成受理、审批或资格认定。"
+
+
+ConditionInputField = Literal[
+    "district",
+    "is_local_hukou",
+    "residence_proof",
+    "member_scope_confirmed",
+    "monthly_income_total",
+    "assets_eligible",
+    "rigid_expenses_12m",
+    "urgent_event",
+    "basic_life_interrupted",
+    "special_person_category_confirmed",
+    "no_labor_capacity",
+    "no_livelihood_source",
+    "has_capable_legal_supporter",
+]
+
+
 class ConditionResult(BaseModel):
     code: str
     label: str
@@ -251,6 +456,7 @@ class ConditionResult(BaseModel):
     hard: bool = True
     actionable: bool = False
     action_hint: str | None = None
+    input_field: ConditionInputField | None = None
 
 
 class AppliedBenefitRelation(BaseModel):
@@ -298,6 +504,7 @@ class ScreeningResponse(BaseModel):
     engine_version: str = "unknown"
     combination_plan_version: str = "unknown"
     recommended_office: dict[str, Any] | None = None
+    outcome: dict[str, Any] = Field(default_factory=dict)
     guidance_summary: list[str] = Field(default_factory=list)
     safety_validation: dict[str, Any] = Field(default_factory=dict)
     screening_token: str | None = None
@@ -450,7 +657,7 @@ class PolicyCompileRequest(BaseModel):
     title: str = Field(min_length=4, max_length=200)
     source_text: str = Field(min_length=20, max_length=20000)
     region: str = Field(default="广州市", min_length=2, max_length=40)
-    benefit_hint: Literal["B001", "B002", "B003", "B004", "B005"] | None = None
+    benefit_hint: Literal["B001", "B002", "B003", "B004", "B005", "B006"] | None = None
     effective_from: date | None = None
     effective_to: date | None = None
     use_llm: bool = True
@@ -471,6 +678,10 @@ class CompiledRuleCondition(BaseModel):
         "urgent_event_date",
         "basic_life_interrupted",
         "residence_proof",
+        "special_person_category_confirmed",
+        "no_labor_capacity",
+        "no_livelihood_source",
+        "has_capable_legal_supporter",
     ]
     operator: Literal["lt", "lte", "gte", "eq", "within_days", "ratio_gte"]
     value: str | int | float | bool
@@ -480,7 +691,7 @@ class CompiledRuleCondition(BaseModel):
 
 class PolicyRuleCandidate(BaseModel):
     candidate_id: str
-    benefit_id: Literal["B001", "B002", "B003", "B004", "B005", "unknown"]
+    benefit_id: Literal["B001", "B002", "B003", "B004", "B005", "B006", "unknown"]
     benefit_name: str
     region: str
     source_id: str

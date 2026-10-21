@@ -1,18 +1,27 @@
 from __future__ import annotations
 
 import re
-from collections import Counter
+from collections import Counter, OrderedDict
 from datetime import date
 from math import log, sqrt
+from threading import Lock
 
 from app.config import settings
 from app.domain.models import Evidence
 from app.services.ai_runtime import ModelRuntimeError, embed_texts
 from app.services.catalog import load_evidence
 
+_DOCUMENT_EMBEDDING_CACHE_LIMIT = 4
+_document_embedding_cache: OrderedDict[
+    tuple[int, str, str, tuple[str, ...]], tuple[tuple[float, ...], ...]
+] = OrderedDict()
+_document_embedding_cache_lock = Lock()
+
 DOMAIN_ANCHORS = (
     "救助", "低保", "保障", "家庭", "申请", "材料", "办理", "收入", "支出",
     "财产", "户籍", "居住", "急难", "政策", "窗口", "残疾", "医疗", "教育",
+    "导办", "必需信息", "保密", "安全措施", "赡养", "抚养", "扶养", "义务人", "D值",
+    "特困", "供养", "劳动能力", "生活来源", "街道", "办结", "照料", "丧葬",
 )
 OUT_OF_DOMAIN_ANCHORS = (
     "量子", "卫星", "轨道", "编程", "代码", "股票", "基金", "彩票", "天气",
@@ -28,9 +37,11 @@ SMUGGLING_CONNECTORS = (
 ELIGIBILITY_RELATION_MARKERS = (
     "是否", "算不算", "计入", "影响", "申报", "核查", "认定", "属于", "资格", "条件",
 )
-ELIGIBILITY_ANCHORS = ("低保", "救助", "保障", "收入", "财产", "资格", "申请")
+ELIGIBILITY_ANCHORS = (
+    "低保", "救助", "保障", "收入", "财产", "资格", "申请", "特困", "供养"
+)
 UNSUPPORTED_ASSISTANCE_TOPICS = (
-    "住房救助", "教育救助", "就业救助", "特困供养", "流浪乞讨", "孤儿福利",
+    "住房救助", "教育救助", "就业救助", "流浪乞讨", "孤儿福利",
 )
 
 
@@ -219,6 +230,52 @@ def _cosine(left: list[float], right: list[float]) -> float:
     return sum(a * b for a, b in zip(left, right, strict=True)) / denominator
 
 
+def _embed_query_and_documents(
+    query: str, documents: tuple[str, ...]
+) -> tuple[list[float], list[list[float]], str, int, bool]:
+    """Embed stable policy documents once while keeping resident queries uncached.
+
+    The cache key binds vectors to the embedding function, configured model and
+    optional model digest, plus the exact policy text.  User queries are always
+    sent only for the current request and are never retained in the cache.
+    Holding the lock during a cold fill prevents concurrent requests from
+    duplicating the expensive full-catalog embedding operation.
+    """
+
+    model = str(settings.ollama_embedding_model)
+    digest = str(getattr(settings, "ollama_embedding_model_digest", None) or "")
+    cache_key = (id(embed_texts), model, digest, documents)
+    with _document_embedding_cache_lock:
+        cached = _document_embedding_cache.get(cache_key)
+        if cached is None:
+            embedded = embed_texts([query, *documents])
+            document_vectors = tuple(
+                tuple(float(value) for value in vector)
+                for vector in embedded.vectors[1:]
+            )
+            _document_embedding_cache[cache_key] = document_vectors
+            _document_embedding_cache.move_to_end(cache_key)
+            while len(_document_embedding_cache) > _DOCUMENT_EMBEDDING_CACHE_LIMIT:
+                _document_embedding_cache.popitem(last=False)
+            return (
+                embedded.vectors[0],
+                [list(vector) for vector in document_vectors],
+                embedded.model_id,
+                embedded.latency_ms,
+                False,
+            )
+        _document_embedding_cache.move_to_end(cache_key)
+
+    query_embedding = embed_texts([query])
+    return (
+        query_embedding.vectors[0],
+        [list(vector) for vector in cached],
+        query_embedding.model_id,
+        query_embedding.latency_ms,
+        True,
+    )
+
+
 def search_evidence_result(
     query: str, limit: int = 5, *, as_of: date | None = None
 ) -> dict[str, object]:
@@ -284,15 +341,17 @@ def search_evidence_result(
             retriever["reason"] = "未配置OLLAMA_EMBED_MODEL，使用BM25"
         return base
 
-    documents = [
+    documents = tuple(
         (
             f"{item.title}\n{item.article or ''}\n{item.verbatim_quote or item.excerpt}\n"
             f"{item.plain_language_explanation or ''}"
         )
         for item in catalog
-    ]
+    )
     try:
-        embedded = embed_texts([query, *documents])
+        query_vector, document_vectors, model_id, latency_ms, cache_hit = (
+            _embed_query_and_documents(query, documents)
+        )
     except ModelRuntimeError as exc:
         retriever = base["retriever"]
         if not isinstance(retriever, dict):
@@ -302,7 +361,10 @@ def search_evidence_result(
         return base
 
     semantic_ranked = sorted(
-        ((item, vector, _cosine(embedded.vectors[0], vector)) for item, vector in zip(catalog, embedded.vectors[1:], strict=True)),
+        (
+            (item, vector, _cosine(query_vector, vector))
+            for item, vector in zip(catalog, document_vectors, strict=True)
+        ),
         key=lambda pair: pair[2],
         reverse=True,
     )
@@ -363,8 +425,9 @@ def search_evidence_result(
             "semantic_enabled": True,
             "degraded": False,
             "reason": None,
-            "model_id": embedded.model_id,
-            "latency_ms": embedded.latency_ms,
+            "model_id": model_id,
+            "latency_ms": latency_ms,
+            "document_embedding_cache_hit": cache_hit,
         },
     }
 

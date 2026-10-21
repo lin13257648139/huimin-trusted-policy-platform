@@ -1,6 +1,6 @@
 [project]
 name = "huimin-guide"
-version = "1.4.0"
+version = "2.0.0"
 description = "惠民智导可信政策智能平台（社会救助首个落地场景）"
 requires-python = ">=3.11"
 

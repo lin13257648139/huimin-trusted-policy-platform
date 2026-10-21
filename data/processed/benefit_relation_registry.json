@@ -1,8 +1,8 @@
 {
-  "registry_version": "2026.10.15.1",
+  "registry_version": "2026.10.21.1",
   "title": "分层分类社会救助事项关系登记表",
   "region": "广州市",
-  "reviewed_at": "2026-10-15",
+  "reviewed_at": "2026-10-21",
   "relationships": [
     {
       "relation_id": "REL-B002-B003",
@@ -34,11 +34,20 @@
     {
       "relation_id": "REL-B001-CLASSIFIED",
       "left_benefit_id": "B001",
-      "right_benefit_id": "B002|B003|B004",
+      "right_benefit_id": "B002|B003|B004|B006",
       "relation_type": "monitoring_link",
-      "activation": "B002、B003或B004存在符合、待补充或人工核验线索",
+      "activation": "B002、B003、B004或B006存在符合、待补充或人工核验线索",
       "routing": "B001作为低收入人口监测与转介入口，不与具体认定事项竞争主路径",
       "evidence_ids": ["E-GZ-001-SCOPE"]
+    },
+    {
+      "relation_id": "REL-B006-B003-B004",
+      "left_benefit_id": "B006",
+      "right_benefit_id": "B003|B004",
+      "relation_type": "priority_fallback",
+      "activation": "B006存在明确符合线索",
+      "routing": "先核验特困人员救助供养；正式纳入后不再按B003/B004重复认定",
+      "evidence_ids": ["E-CN-001-SPECIAL-HARDSHIP", "E-GD-002-DIBAO-EXCLUSION"]
     }
   ]
 }

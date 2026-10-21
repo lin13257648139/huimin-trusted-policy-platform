@@ -62,6 +62,7 @@ jobs:
         run: |
           python scripts/evaluate_conformance.py
           python scripts/evaluate_retrieval.py
+          python scripts/evaluate_policy_qa.py
           python scripts/evaluate_policy_compiler.py
           python scripts/build_question_strategy_benchmark.py
           python scripts/evaluate_question_strategy.py

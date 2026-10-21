@@ -22,6 +22,7 @@ def current_profile(**changes) -> HouseholdProfile:
         "urgent_event_type": "突发急病",
         "basic_life_interrupted": True,
         "residence_proof": True,
+        "special_person_category_confirmed": False,
     }
     base.update(changes)
     return HouseholdProfile(**base)
@@ -243,6 +244,7 @@ def test_omitted_urgent_event_remains_unknown() -> None:
     temporary = by_id(results, "B005")
     event = next(item for item in temporary.conditions if item.code == "urgent_event")
     assert event.state == TruthValue.UNKNOWN
+    assert event.input_field == "urgent_event"
     assert temporary.status == EligibilityStatus.INCOMPLETE
     assert "不会将未填写视为没有发生" in event.reason
 

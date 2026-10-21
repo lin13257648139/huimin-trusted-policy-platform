@@ -26,6 +26,7 @@ def test_false_asset_and_no_urgent_event_prune_resolved_branches() -> None:
     draft = {
         "urgent_event": False,
         "assets_eligible": False,
+        "special_person_category_confirmed": False,
         "query_date": "2026-09-30",
     }
     asked = _answer_until_done(draft)

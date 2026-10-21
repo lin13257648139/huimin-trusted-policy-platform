@@ -32,8 +32,22 @@ DATASETS: tuple[dict[str, Any], ...] = (
         "contains_personal_data": False,
     },
     {
+        "path": "data/evaluation/special_hardship_profile_benchmark.jsonl",
+        "role": "focused_special_hardship_profile_challenge",
+        "label_origin": "project-authored synthetic gold",
+        "independent": False,
+        "contains_personal_data": False,
+    },
+    {
         "path": "data/evaluation/retrieval_benchmark.json",
         "role": "internal_retrieval_benchmark",
+        "label_origin": "project-authored queries and expected evidence",
+        "independent": False,
+        "contains_personal_data": False,
+    },
+    {
+        "path": "data/evaluation/policy_qa_special_challenge.json",
+        "role": "focused_special_hardship_grounding_challenge",
         "label_origin": "project-authored queries and expected evidence",
         "independent": False,
         "contains_personal_data": False,

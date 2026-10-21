@@ -58,6 +58,16 @@ def test_heuristic_parser_covers_negative_and_positive_explicit_facts() -> None:
     assert positive.fields["urgent_event_type"] == "交通事故"
     assert positive.fields["basic_life_interrupted"] is True
 
+    plain_language = parser.parse_profile_deterministic(
+        ParseProfileRequest(
+            text="天河区三口之家，每月总收入3200元，最近家人生病花了3万元，基本生活受到严重影响。"
+        )
+    )
+    assert plain_language.fields["medical_expenses_12m"] == "30000.00"
+    assert plain_language.fields["rigid_expenses_12m"] == "30000.00"
+    assert plain_language.fields["basic_life_interrupted"] is True
+    assert parser._model_field_has_source_anchor("urgent_event", True, "最近家人生病")
+
 
 def _trace(payload: dict[str, object]) -> JsonModelResult:
     return JsonModelResult(

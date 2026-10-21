@@ -1,7 +1,7 @@
 {
   "report_schema": "live-ai-smoke/1.0",
-  "generated_at": "2026-10-16T20:05:53.538459+00:00",
-  "app_version": "1.4.0",
+  "generated_at": "2026-10-21T01:20:51.444086+00:00",
+  "app_version": "2.0.0",
   "runtime": {
     "mode": "hybrid",
     "configured": true,
@@ -26,7 +26,8 @@
       "parameter_size": "4.0B",
       "quantization_level": "Q4_K_M",
       "context_length": 262144,
-      "embedding_length": 2560
+      "embedding_length": 2560,
+      "runner": "ggml"
     },
     "embedding_model_digest": "ac6da0dfba84a81fdbfbaf330198c33cd77c4cdfc53e8bc50eb581914a15621d",
     "expected_embedding_model_digest": "ac6da0dfba84a81fdbfbaf330198c33cd77c4cdfc53e8bc50eb581914a15621d",
@@ -35,7 +36,7 @@
   "chat": {
     "provider": "ollama-json-schema",
     "model_id": "qwen3:4b-instruct",
-    "latency_ms": 13128,
+    "latency_ms": 5814,
     "prompt_sha256": "09eea7adf048419835f09a3b40f5f9cb48e200a4bbe9bd670dac10736aba687d",
     "response_sha256": "08e2c358ce13cb67f94ebb35b0f67c8763190a857c0db68da6eb196dfe9da46a",
     "schema_payload": {
@@ -45,31 +46,9 @@
   "embedding": {
     "provider": "ollama-embedding",
     "model_id": "qwen3-embedding:0.6b",
-    "latency_ms": 2893,
+    "latency_ms": 2652,
     "vectors": 2,
     "dimensions": 1024
   },
-  "claim_boundary": "这只证明本机配置的对话与向量模型在该时间点完成真实推理；不代表业务准确率，完整指标仍以版本化AI评测报告为准。",
-  "engine_version": "rule-engine/0.5.0",
-  "release_metadata": {
-    "release_id": "v1.4.0+source.31b820b020a7",
-    "app_version": "1.4.0",
-    "engine_version": "rule-engine/0.5.0",
-    "git_commit": "75a4d9da6d7cb1de0babe707c72fb5427dd21272",
-    "git_dirty": false,
-    "source_tree_sha256": "31b820b020a7291b9e8b0ec2324b914d590c54a9189ef18e544f4d4d3a412932",
-    "source_binding": {
-      "code_commit": "75a4d9da6d7cb1de0babe707c72fb5427dd21272",
-      "source_inputs_dirty": false,
-      "source_tree_sha256": "31b820b020a7291b9e8b0ec2324b914d590c54a9189ef18e544f4d4d3a412932",
-      "source_file_count": 246,
-      "scope": "代码、测试、评测输入、运行和安全配置；生成的评测报告不参与自指纹",
-      "text_normalization": "CRLF和LF统一为LF；二进制文件保持原始字节"
-    },
-    "artifact_binding": {
-      "reports_generated_from_source_sha256": "31b820b020a7291b9e8b0ec2324b914d590c54a9189ef18e544f4d4d3a412932",
-      "evidence_commit": null,
-      "note": "报告提交后可由正式发布流程填入证据提交；源码绑定以内容指纹为准。"
-    }
-  }
+  "claim_boundary": "这只证明本机配置的对话与向量模型在该时间点完成真实推理；不代表业务准确率，完整指标仍以版本化AI评测报告为准。"
 }

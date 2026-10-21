@@ -97,6 +97,7 @@ async def run_level(base_url: str, concurrency: int) -> dict[str, Any]:
 async def benchmark() -> dict[str, Any]:
     port = free_port()
     base_url = f"http://127.0.0.1:{port}"
+    server_log_tail: str | None = None
     with tempfile.TemporaryDirectory(prefix="huimin-http-benchmark-") as temp_dir:
         temp = Path(temp_dir)
         environment = os.environ.copy()
@@ -124,27 +125,36 @@ async def benchmark() -> dict[str, Any]:
             "--log-level",
             "warning",
         ]
-        process = subprocess.Popen(
-            command,
-            cwd=ROOT,
-            env=environment,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.STDOUT,
-        )
-        try:
-            await wait_until_ready(base_url, process)
-            async with httpx.AsyncClient(timeout=5.0) as client:
-                for path in ("/api/health", "/api/v1/system/readiness"):
-                    await client.get(f"{base_url}{path}")
-            results = [await run_level(base_url, level) for level in CONCURRENCY_LEVELS]
-        finally:
-            process.terminate()
+        server_log_path = temp / "uvicorn.log"
+        # Do not use stdout=PIPE without a concurrent reader.  The application
+        # emits one structured log per request; a full Windows pipe blocks the
+        # child process and turns the benchmark itself into a 15-second timeout.
+        with server_log_path.open("wb") as server_log:
+            process = subprocess.Popen(
+                command,
+                cwd=ROOT,
+                env=environment,
+                stdout=server_log,
+                stderr=subprocess.STDOUT,
+            )
             try:
-                process.wait(timeout=5)
-            except subprocess.TimeoutExpired:
-                process.kill()
-                process.wait(timeout=5)
-    return {
+                await wait_until_ready(base_url, process)
+                async with httpx.AsyncClient(timeout=5.0) as client:
+                    for path in ("/api/health", "/api/v1/system/readiness"):
+                        await client.get(f"{base_url}{path}")
+                results = [await run_level(base_url, level) for level in CONCURRENCY_LEVELS]
+            finally:
+                process.terminate()
+                try:
+                    process.wait(timeout=5)
+                except subprocess.TimeoutExpired:
+                    process.kill()
+                    process.wait(timeout=5)
+        if not all(item["passed"] for item in results):
+            server_log_tail = server_log_path.read_text(
+                encoding="utf-8", errors="replace"
+            )[-4000:]
+    report: dict[str, Any] = {
         "generated_at": datetime.now(UTC).isoformat(),
         "environment": {
             "python": platform.python_version(),
@@ -166,6 +176,9 @@ async def benchmark() -> dict[str, Any]:
             "不代表公网生产容量，也不代表包含大模型生成或文件OCR的端到端延迟。"
         ),
     }
+    if server_log_tail:
+        report["server_log_tail_on_failure"] = server_log_tail
+    return report
 
 
 def main() -> None:
@@ -173,7 +186,7 @@ def main() -> None:
     OUTPUT.parent.mkdir(parents=True, exist_ok=True)
     OUTPUT.write_text(json.dumps(report, ensure_ascii=False, indent=2), encoding="utf-8")
     print(
-        "HTTP_CONCURRENCY_OK "
+        "HTTP_CONCURRENCY_RESULT "
         + " ".join(
             f"c{item['concurrency']}={item['throughput_rps']}rps/p95:{item['p95_ms']}ms"
             for item in report["results"]

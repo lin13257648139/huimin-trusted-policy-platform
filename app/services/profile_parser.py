@@ -41,15 +41,30 @@ MODEL_FIELD_ANCHORS: dict[str, re.Pattern[str]] = {
     "deductible_monthly_total": re.compile(r"(?:扣减|扣除).{0,8}(?:支出|费用|金额)"),
     "assets_eligible": re.compile(r"(?:财产状况|家庭财产)"),
     "financial_assets_per_capita": re.compile(r"(?:金融资产|存款|理财|证券).{0,10}(?:人均|每人)"),
-    "rigid_expenses_12m": re.compile(r"(?:刚性支出|医疗|看病|住院|教育|学费)"),
-    "medical_expenses_12m": re.compile(r"(?:医疗|看病|住院)"),
+    "rigid_expenses_12m": re.compile(r"(?:刚性支出|医疗|看病|治病|生病|患病|住院|教育|学费)"),
+    "medical_expenses_12m": re.compile(r"(?:医疗|看病|治病|生病|患病|住院)"),
     "education_expenses_12m": re.compile(r"(?:教育|学费)"),
-    "urgent_event": re.compile(r"(?:火灾|交通事故|重大疾病|突发急病|意外伤害|急难事件)"),
+    "urgent_event": re.compile(
+        r"(?:火灾|交通事故|重大疾病|突发急病|意外伤害|急难事件|"
+        r"(?:近期|最近).{0,12}(?:生病|患病|就医|住院))"
+    ),
     "urgent_event_date": re.compile(
         r"(?:\d{4}[-/.年]\d{1,2}[-/.月]\d{1,2}(?:日)?|\d{1,2}月\d{1,2}日)"
     ),
     "urgent_event_type": re.compile(r"(?:火灾|交通事故|重大疾病|突发急病|意外伤害|急难事件)"),
-    "basic_life_interrupted": re.compile(r"(?:基本生活|生活).{0,8}(?:困难|中断|无法维持|陷入困难)"),
+    "basic_life_interrupted": re.compile(
+        r"(?:基本生活|生活).{0,10}(?:困难|中断|无法维持|陷入困难|受到.{0,4}影响|受.{0,4}影响)"
+    ),
+    "special_person_category_confirmed": re.compile(
+        r"(?:特困人员|特困供养|老年人|未成年人|残疾人)"
+    ),
+    "no_labor_capacity": re.compile(r"(?:无劳动能力|没有劳动能力|不能劳动|有劳动能力)"),
+    "no_livelihood_source": re.compile(
+        r"(?:无生活来源|没有生活来源|没有收入来源|有生活来源|有收入来源)"
+    ),
+    "has_capable_legal_supporter": re.compile(
+        r"(?:赡养|抚养|扶养|法定义务人|子女).{0,16}(?:能力|履行|照顾|支持|供养)"
+    ),
 }
 
 INSTRUCTION_ATTACK_PATTERN = re.compile(
@@ -93,6 +108,10 @@ class _ProfileExtraction(BaseModel):
     urgent_event_date: date | None = None
     urgent_event_type: str | None = Field(default=None, max_length=80)
     basic_life_interrupted: bool | None = None
+    special_person_category_confirmed: bool | None = None
+    no_labor_capacity: bool | None = None
+    no_livelihood_source: bool | None = None
+    has_capable_legal_supporter: bool | None = None
 
     @field_validator("district")
     @classmethod
@@ -118,11 +137,16 @@ def _missing_profile_fields(fields: dict[str, Any]) -> list[str]:
         "member_scope_confirmed",
         "is_local_hukou",
         "urgent_event",
+        "special_person_category_confirmed",
     ]
     if fields.get("urgent_event") is True:
         required.extend(["urgent_event_date", "basic_life_interrupted"])
     if fields.get("is_local_hukou") is False:
         required.append("residence_proof")
+    if fields.get("special_person_category_confirmed") is True:
+        required.extend(
+            ["no_labor_capacity", "no_livelihood_source", "has_capable_legal_supporter"]
+        )
     return [field for field in required if fields.get(field) is None]
 
 
@@ -181,7 +205,10 @@ def _heuristic_parse(request: ParseProfileRequest) -> ParseProfileResponse:
             break
 
     expense_patterns = [
-        ("medical_expenses_12m", r"(?:医疗|看病|住院)(?:支出|花费|费用)?(?:约|是|为)?\s*(\d+(?:\.\d+)?)\s*(万)?元?"),
+        (
+            "medical_expenses_12m",
+            r"(?:医疗|看病|治病|生病|患病|住院)(?:支出|花费|费用|花了|花)?(?:约|是|为)?\s*(\d+(?:\.\d+)?)\s*(万)?元?",
+        ),
         ("education_expenses_12m", r"(?:教育|学费)(?:支出|花费|费用)?(?:约|是|为)?\s*(\d+(?:\.\d+)?)\s*(万)?元?"),
     ]
     expense_total = Decimal("0")
@@ -252,13 +279,51 @@ def _heuristic_parse(request: ParseProfileRequest) -> ParseProfileResponse:
     if event_mentioned and not event_positive:
         fields["urgent_event"] = False
         confidence["urgent_event"] = 0.94
-    if re.search(r"基本生活.{0,8}(困难|中断|无法维持)|生活陷入困难", text):
+    if re.search(
+        r"基本生活.{0,10}(困难|中断|无法维持|受到.{0,4}影响|受.{0,4}影响)|生活陷入困难",
+        text,
+    ):
         fields["basic_life_interrupted"] = True
         confidence["basic_life_interrupted"] = 0.86
 
+    special_explicit = re.search(r"(?:申请|咨询|核对|属于|办理).{0,8}(?:特困人员|特困供养)|特困人员", text)
+    special_denied = re.search(r"(?:不属于|不是|不申请|不咨询).{0,6}(?:特困人员|特困供养)", text)
+    if special_denied:
+        fields["special_person_category_confirmed"] = False
+        confidence["special_person_category_confirmed"] = 0.94
+    elif special_explicit:
+        fields["special_person_category_confirmed"] = True
+        confidence["special_person_category_confirmed"] = 0.9
+    if re.search(r"(?:无|没有|完全丧失).{0,4}劳动能力|不能劳动", text):
+        fields["no_labor_capacity"] = True
+        confidence["no_labor_capacity"] = 0.93
+    elif re.search(r"(?:仍有|具有|有).{0,4}劳动能力", text):
+        fields["no_labor_capacity"] = False
+        confidence["no_labor_capacity"] = 0.93
+    if re.search(r"(?:无|没有).{0,4}(?:生活来源|收入来源)", text):
+        fields["no_livelihood_source"] = True
+        confidence["no_livelihood_source"] = 0.92
+    elif re.search(r"(?:有|具有).{0,4}(?:生活来源|收入来源)", text):
+        fields["no_livelihood_source"] = False
+        confidence["no_livelihood_source"] = 0.92
+    if re.search(
+        r"(?:没有|无)(?:能够履行义务的)?(?:法定)?(?:赡养|抚养|扶养)(?:义务人|人)|"
+        r"(?:赡养|抚养|扶养)(?:义务人|人).{0,10}(?:无|没有)(?:履行)?能力|无人赡养",
+        text,
+    ):
+        fields["has_capable_legal_supporter"] = False
+        confidence["has_capable_legal_supporter"] = 0.88
+    elif re.search(
+        r"(?:赡养|抚养|扶养)(?:义务人|人).{0,10}(?:有|具备)(?:履行)?能力|"
+        r"有子女.{0,8}(?:赡养|照顾|供养)",
+        text,
+    ):
+        fields["has_capable_legal_supporter"] = True
+        confidence["has_capable_legal_supporter"] = 0.88
+
     missing = _missing_profile_fields(fields)
     if missing:
-        warnings.append("自然语言只生成画像草稿，带金额和资格影响的字段必须由用户确认。")
+        warnings.append("自动识别只会预填待确认信息；金额和资格相关内容必须由你逐项确认。")
     intent_model, intent_predictions = classify_intent(text)
     return ParseProfileResponse(
         fields=fields,
@@ -280,6 +345,9 @@ def _ollama_parse(request: ParseProfileRequest) -> tuple[_ProfileExtraction, Any
         "用户表示尚未确认成员范围时，member_scope_confirmed必须为null而不是false。"
         "urgent_event只有在用户明确说明发生或明确否认发生时才能填写true或false；"
         "用户未提及急难事件时必须为null，严禁把沉默推断为false。"
+        "special_person_category_confirmed只有用户明确咨询特困供养或明确否认时才填写；"
+        "no_labor_capacity、no_livelihood_source和has_capable_legal_supporter都必须有原文明确表述，"
+        "不得根据年龄、残疾或家庭关系自行推断。"
     )
     result = chat_json(
         system_prompt=system_prompt,
@@ -335,9 +403,9 @@ def parse_profile(request: ParseProfileRequest) -> ParseProfileResponse:
         )
     if unsupported:
         baseline.warnings.append(
-            f"模型提出的{len(unsupported)}个字段缺少原文语义锚点，已拒绝写入画像。"
+            f"模型提出的{len(unsupported)}个字段缺少原文语义锚点，已拒绝自动填写。"
         )
-    baseline.warnings.append("本地模型只补全画像草稿；全部关键字段仍须用户逐项确认。")
+    baseline.warnings.append("本地模型只补全待确认信息；全部关键字段仍须你逐项确认。")
     baseline.provider = f"deterministic+{trace.provider}"
     baseline.mode = "llm_assisted"
     baseline.schema_validated = True

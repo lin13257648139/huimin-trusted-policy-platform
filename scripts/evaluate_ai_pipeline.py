@@ -24,6 +24,9 @@ from app.version import APP_VERSION
 from scripts.evaluation_stats import rate_metric
 
 PROFILE_DATASET = ROOT / "data" / "evaluation" / "profile_extraction_benchmark.jsonl"
+SPECIAL_PROFILE_DATASET = (
+    ROOT / "data" / "evaluation" / "special_hardship_profile_benchmark.jsonl"
+)
 RETRIEVAL_DATASET = ROOT / "data" / "evaluation" / "retrieval_benchmark.json"
 OUTPUT = ROOT / "data" / "evaluation" / "ai_pipeline_report.json"
 SYSTEM_FIELDS = {"query_date", "city"}
@@ -81,6 +84,7 @@ def _evaluate_intent() -> dict[str, Any]:
         "B003": ("低保边缘", "超过低保线", "衔接救助"),
         "B004": ("刚性支出", "住院", "医疗", "学费", "大病"),
         "B005": ("临时救助", "火灾", "事故", "意外", "急难"),
+        "B006": ("特困", "三无", "无劳动能力", "无人赡养", "无人扶养"),
     }
     nb_pairs: list[tuple[str, str]] = []
     keyword_pairs: list[tuple[str, str]] = []
@@ -287,6 +291,11 @@ def main() -> None:
     profile_cases = [
         json.loads(line) for line in PROFILE_DATASET.read_text(encoding="utf-8").splitlines() if line
     ]
+    special_profile_cases = [
+        json.loads(line)
+        for line in SPECIAL_PROFILE_DATASET.read_text(encoding="utf-8").splitlines()
+        if line
+    ]
     retrieval_payload = json.loads(RETRIEVAL_DATASET.read_text(encoding="utf-8"))
     retrieval_cases = (
         retrieval_payload.get("queries", retrieval_payload.get("cases", []))
@@ -317,6 +326,12 @@ def main() -> None:
                 "cases": len(profile_cases),
                 "origin": "team-authored synthetic utterances",
             },
+            "special_hardship_profile": {
+                "path": SPECIAL_PROFILE_DATASET.relative_to(ROOT).as_posix(),
+                "sha256": _sha256(SPECIAL_PROFILE_DATASET),
+                "cases": len(special_profile_cases),
+                "origin": "team-authored focused synthetic challenge set",
+            },
             "retrieval": {
                 "path": RETRIEVAL_DATASET.relative_to(ROOT).as_posix(),
                 "sha256": _sha256(RETRIEVAL_DATASET),
@@ -333,7 +348,12 @@ def main() -> None:
         },
         "ai_runtime": runtime,
         "intent_classification": _evaluate_intent(),
-        "profile_extraction": {"deterministic_baseline": deterministic},
+        "profile_extraction": {
+            "deterministic_baseline": deterministic,
+            "special_hardship_focused_deterministic": _evaluate_profile_method(
+                special_profile_cases, parse_profile_deterministic
+            ),
+        },
         "retrieval": {
             split: {
                 "bm25_baseline": _evaluate_retrieval(rows, hybrid=False),
@@ -357,6 +377,9 @@ def main() -> None:
                 "reason": "部分案例发生安全降级，不能作为完整模型实验",
                 "observed": assisted,
             }
+        report["profile_extraction"]["special_hardship_focused_llm_ensemble"] = (
+            _evaluate_profile_method(special_profile_cases, parse_profile)
+        )
     else:
         report["profile_extraction"]["schema_constrained_llm_ensemble"] = {
             "status": "not_run",

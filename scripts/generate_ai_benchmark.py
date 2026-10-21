@@ -244,6 +244,16 @@ INTENTS: dict[str, dict[str, Any]] = {
         "topics": ("临时救助", "急难型救助", "突发事件救助", "紧急生活救助"),
         "situations": ("突然遭遇火灾", "发生交通事故", "突发急病断了生活费", "意外后无法维持生活"),
     },
+    "B006": {
+        "name": "特困人员救助供养",
+        "topics": ("特困人员救助供养", "特困人员认定", "特困供养申请", "特困人员照料服务"),
+        "situations": (
+            "没有劳动能力和生活来源",
+            "没有法定义务人履行赡养义务",
+            "年老后无人照料且生活困难",
+            "残疾且无收入来源也无人供养",
+        ),
+    },
 }
 
 
@@ -288,12 +298,13 @@ def build_intent_dataset() -> dict[str, Any]:
             "train_template_family": "development_intent_templates_v2",
             "test_template_family": "frozen_final_intent_templates_v3",
         }
+    test_cases = sum(len(group["test"]) for group in labels.values())
     return {
         "schema_version": "2.0",
         "origin": "programmatically rendered project-authored synthetic utterances; no real records",
         "freeze": {
             "split": "frozen_final_test",
-            "test_cases": 250,
+            "test_cases": test_cases,
             "template_families_disjoint": True,
         },
         "labels": labels,
@@ -373,7 +384,9 @@ def main() -> None:
     )
     print(
         "AI_BENCHMARKS_OK "
-        f"profiles={len(profiles)} intent_test=250 retrieval_final={final_retrieval}"
+        f"profiles={len(profiles)} "
+        f"intent_test={sum(len(group['test']) for group in intent['labels'].values())} "
+        f"retrieval_final={final_retrieval}"
     )
 
 

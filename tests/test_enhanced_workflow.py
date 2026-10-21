@@ -216,8 +216,8 @@ def test_admin_reports_verifiable_governance_controls(
         assert assessment["registry_sha256_prefix"]
         assert "不可自动替代" in assessment["automation_boundary"]
         relations = dashboard["benefit_relation_registry"]
-        assert relations["registry_version"] == "2026.10.15.1"
-        assert relations["relationship_count"] == 4
+        assert relations["registry_version"] == "2026.10.21.1"
+        assert relations["relationship_count"] == 5
         assert relations["registry_sha256_prefix"]
         assert "不会" in relations["routing_boundary"]
         historical_manual = [

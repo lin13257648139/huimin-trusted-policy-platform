@@ -15,6 +15,7 @@ BENEFIT_NAMES = {
     "B003": "低保边缘家庭认定",
     "B004": "刚性支出困难家庭认定",
     "B005": "临时救助",
+    "B006": "特困人员救助供养",
 }
 
 
@@ -39,7 +40,7 @@ QUESTIONS = (
         "你目前在广州哪个区办理或居住？",
         "用于推荐对应区的办理窗口，不影响你获得通用说明。",
         "select",
-        ("B001", "B002", "B003", "B004", "B005"),
+        ("B001", "B002", "B003", "B004", "B005", "B006"),
         0.5,
         0.1,
         tuple((item, item) for item in ("越秀区", "海珠区", "荔湾区", "天河区", "白云区", "黄埔区", "花都区", "番禺区", "南沙区", "从化区", "增城区")),
@@ -54,6 +55,50 @@ QUESTIONS = (
         0.4,
         0.3,
         (("true", "是"), ("false", "否"), ("", "不清楚")),
+    ),
+    QuestionSpec(
+        "special_person_category_confirmed",
+        "是否存在特困供养对象线索",
+        "申请人是否属于老年人、未成年人、残疾人等，并希望核对特困供养？",
+        "只有存在这类个人情况时，系统才继续询问特困供养的三项法定条件。",
+        "boolean",
+        ("B006",),
+        0.5,
+        0.6,
+        (("true", "是"), ("false", "否"), ("", "不清楚")),
+    ),
+    QuestionSpec(
+        "no_labor_capacity",
+        "劳动能力情况",
+        "申请人目前是否无劳动能力？",
+        "特困供养需要由主管部门同时核验劳动能力、生活来源和法定支持情况。",
+        "boolean",
+        ("B006",),
+        0.6,
+        0.8,
+        (("true", "无劳动能力"), ("false", "有劳动能力"), ("", "不清楚")),
+    ),
+    QuestionSpec(
+        "no_livelihood_source",
+        "生活来源情况",
+        "申请人目前是否没有工资、养老金、经营收入等生活来源？",
+        "生活来源必须由主管部门核实，线上只记录自述线索。",
+        "boolean",
+        ("B006",),
+        0.7,
+        0.9,
+        (("true", "没有生活来源"), ("false", "有生活来源"), ("", "不清楚")),
+    ),
+    QuestionSpec(
+        "has_capable_legal_supporter",
+        "法定支持情况",
+        "是否有具备履行能力的法定赡养、抚养或扶养义务人？",
+        "没有法定义务人，或义务人无履行能力，才形成特困供养的对应线索。",
+        "boolean",
+        ("B006",),
+        0.8,
+        0.9,
+        (("true", "有且能够履行"), ("false", "没有或无履行能力"), ("", "不清楚")),
     ),
     QuestionSpec(
         "household_size",
@@ -116,7 +161,7 @@ QUESTIONS = (
         "家庭中申请人是否具有广州户籍？",
         "临时救助等事项可能还需要结合居住证明判断。",
         "boolean",
-        ("B001", "B002", "B003", "B004", "B005"),
+        ("B001", "B002", "B003", "B004", "B005", "B006"),
         0.6,
         0.5,
         (("true", "是"), ("false", "否"), ("", "不清楚")),
@@ -172,6 +217,14 @@ def _is_relevant(
     if spec.field_id == "residence_proof":
         conditional = draft.urgent_event is True and draft.is_local_hukou is False
         return conditional and (not prune_resolved or "B005" in candidates)
+    if spec.field_id in {
+        "no_labor_capacity",
+        "no_livelihood_source",
+        "has_capable_legal_supporter",
+    }:
+        return draft.special_person_category_confirmed is True and (
+            not prune_resolved or "B006" in candidates
+        )
     if not prune_resolved or spec.field_id in MANDATORY_GUIDANCE_FIELDS:
         return True
     if spec.field_id == "urgent_event":
@@ -194,6 +247,8 @@ def _candidate_ids(draft: GuidanceDraft, *, prune_resolved: bool) -> list[str]:
         if draft.basic_life_interrupted is False:
             temporary = False
     candidates = (["B001"] if core else []) + core
+    if draft.special_person_category_confirmed is not False:
+        candidates.insert(0, "B006")
     if temporary:
         candidates.insert(0, "B005")
     return candidates
@@ -204,6 +259,10 @@ def _priority(spec: QuestionSpec, draft: GuidanceDraft, candidates: list[str]) -
     decisive = {
         "district": 200,
         "urgent_event": 90,
+        "special_person_category_confirmed": 82,
+        "no_labor_capacity": 64,
+        "no_livelihood_source": 62,
+        "has_capable_legal_supporter": 60,
         "assets_eligible": 78,
         "member_scope_confirmed": 72,
         "rigid_expenses_12m": 30,

@@ -27,6 +27,7 @@ BENEFITS = {
     "B003": ("最低生活保障边缘家庭认定", ("低保边缘", "最低生活保障边缘")),
     "B004": ("刚性支出困难家庭认定", ("刚性支出", "支出型困难")),
     "B005": ("临时救助", ("临时救助", "急难型")),
+    "B006": ("特困人员救助供养", ("特困人员", "特困供养", "救助供养")),
 }
 
 ALLOWED_PARAMETER_NAMES = {
@@ -47,6 +48,10 @@ ALLOWED_FIELDS = {
     "urgent_event_date",
     "basic_life_interrupted",
     "residence_proof",
+    "special_person_category_confirmed",
+    "no_labor_capacity",
+    "no_livelihood_source",
+    "has_capable_legal_supporter",
 }
 ALLOWED_OPERATORS = {"lt", "lte", "gte", "eq", "within_days", "ratio_gte"}
 
@@ -156,6 +161,8 @@ def _detect_benefit(text: str, hint: str | None, title: str = "") -> str:
         return "B003"
     if any(marker in text for marker in ("临时救助", "急难型")):
         return "B005"
+    if any(marker in text for marker in ("特困人员", "特困供养", "救助供养")):
+        return "B006"
     scores: dict[str, int] = {}
     for benefit_id, (_, keywords) in BENEFITS.items():
         text_score = sum(text.count(keyword) * len(keyword) for keyword in keywords)
@@ -163,7 +170,7 @@ def _detect_benefit(text: str, hint: str | None, title: str = "") -> str:
         scores[benefit_id] = text_score + title_score
     # “社会救助”是上位领域词，只能在没有明确具体事项时用于B001；否则它会
     # 把《社会救助法》中低保边缘、刚性支出、临时救助条款全部吞成B001。
-    if any(scores[item] > 0 for item in ("B002", "B003", "B004", "B005")):
+    if any(scores[item] > 0 for item in ("B002", "B003", "B004", "B005", "B006")):
         generic = text.count("社会救助") * len("社会救助")
         generic += title.count("社会救助") * len("社会救助") * 3
         scores["B001"] = max(0, scores["B001"] - generic)
@@ -340,6 +347,39 @@ def _extract_conditions(
                     source_quote=_quote_for(text, "申请日前"),
                 )
             )
+    if benefit_id == "B006":
+        special_conditions = (
+            ("无劳动能力", "no_labor_capacity", True),
+            ("无生活来源", "no_livelihood_source", True),
+        )
+        for phrase, field, value in special_conditions:
+            if phrase in text:
+                conditions.append(
+                    CompiledRuleCondition(
+                        field=field,  # type: ignore[arg-type]
+                        operator="eq",
+                        value=value,
+                        source_quote=_quote_for(text, phrase),
+                    )
+                )
+        if any(marker in text for marker in ("老年人", "未成年人", "残疾人")):
+            conditions.append(
+                CompiledRuleCondition(
+                    field="special_person_category_confirmed",
+                    operator="eq",
+                    value=True,
+                    source_quote=_quote_for(text, "特困人员"),
+                )
+            )
+        if "无法定赡养、抚养、扶养义务人" in text or "无履行义务能力" in text:
+            conditions.append(
+                CompiledRuleCondition(
+                    field="has_capable_legal_supporter",
+                    operator="eq",
+                    value=False,
+                    source_quote=_quote_for(text, "义务人"),
+                )
+            )
     if "基本生活" in text and ("困难" in text or "无法维持" in text):
         conditions.append(
             CompiledRuleCondition(
@@ -368,7 +408,7 @@ def _ollama_extract(
         return None, None
     system_prompt = (
         "你是政策规则抽取器，不进行资格审批。只输出JSON。不得补写原文没有的信息。"
-        "benefit_id只能是B001-B005或null；无法从当前原文确定事项时必须输出null，"
+        "benefit_id只能是B001-B006或null；无法从当前原文确定事项时必须输出null，"
         "禁止默认B001。日期未明说时输出null，parameters未明说时输出空对象，"
         "conditions未明说时输出空数组，不得输出示例值、占位值或常用默认值。"
         "parameters只允许"

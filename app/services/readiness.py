@@ -61,6 +61,8 @@ def build_readiness_report() -> dict[str, Any]:
     synthetic_count = _line_count(synthetic_path)
     evaluation_paths = [
         BASE_DIR / "data" / "evaluation" / "retrieval_report.json",
+        BASE_DIR / "data" / "evaluation" / "policy_qa_report.json",
+        BASE_DIR / "data" / "evaluation" / "policy_qa_live_report.json",
         BASE_DIR / "data" / "evaluation" / "policy_compiler_report.json",
         BASE_DIR / "data" / "evaluation" / "policy_compiler_real_report.json",
         BASE_DIR / "data" / "evaluation" / "ai_pipeline_report.json",

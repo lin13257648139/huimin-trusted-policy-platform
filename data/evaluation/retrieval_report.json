@@ -1965,25 +1965,25 @@
     "rule": "同一source_id及其全部条款改写只能进入一个分组"
   },
   "warning": "该结果只评价当前30条证据片段的检索，不等于业务资格判断准确率。",
-  "app_version": "1.4.0",
-  "engine_version": "rule-engine/0.5.0",
+  "app_version": "2.0.0",
+  "engine_version": "rule-engine/0.6.0",
   "release_metadata": {
-    "release_id": "v1.4.0+source.31b820b020a7",
-    "app_version": "1.4.0",
-    "engine_version": "rule-engine/0.5.0",
-    "git_commit": "75a4d9da6d7cb1de0babe707c72fb5427dd21272",
-    "git_dirty": false,
-    "source_tree_sha256": "31b820b020a7291b9e8b0ec2324b914d590c54a9189ef18e544f4d4d3a412932",
+    "release_id": "v2.0.0+source.83cbbce1a682",
+    "app_version": "2.0.0",
+    "engine_version": "rule-engine/0.6.0",
+    "git_commit": "e8e572a86c903694f526f39273d7c949fbe16c1d",
+    "git_dirty": true,
+    "source_tree_sha256": "83cbbce1a6826f13b8acf8cf7031a2572067635cc65c4fd4b961eaf7f9f70982",
     "source_binding": {
-      "code_commit": "75a4d9da6d7cb1de0babe707c72fb5427dd21272",
-      "source_inputs_dirty": false,
-      "source_tree_sha256": "31b820b020a7291b9e8b0ec2324b914d590c54a9189ef18e544f4d4d3a412932",
-      "source_file_count": 246,
+      "code_commit": "e8e572a86c903694f526f39273d7c949fbe16c1d",
+      "source_inputs_dirty": true,
+      "source_tree_sha256": "83cbbce1a6826f13b8acf8cf7031a2572067635cc65c4fd4b961eaf7f9f70982",
+      "source_file_count": 253,
       "scope": "代码、测试、评测输入、运行和安全配置；生成的评测报告不参与自指纹",
       "text_normalization": "CRLF和LF统一为LF；二进制文件保持原始字节"
     },
     "artifact_binding": {
-      "reports_generated_from_source_sha256": "31b820b020a7291b9e8b0ec2324b914d590c54a9189ef18e544f4d4d3a412932",
+      "reports_generated_from_source_sha256": "83cbbce1a6826f13b8acf8cf7031a2572067635cc65c4fd4b961eaf7f9f70982",
       "evidence_commit": null,
       "note": "报告提交后可由正式发布流程填入证据提交；源码绑定以内容指纹为准。"
     }

@@ -1,0 +1,473 @@
+{
+  "benchmark_role": "internally_curated_policy_qa_grounding_benchmark",
+  "evaluated_split": "frozen_final_test",
+  "case_count": 20,
+  "live_model_enabled": true,
+  "answerable_rate": {
+    "successes": 20,
+    "total": 20,
+    "estimate": 1.0,
+    "ci95": {
+      "method": "wilson",
+      "confidence": 0.95,
+      "lower": 0.8389,
+      "upper": 1.0
+    }
+  },
+  "expected_evidence_citation_rate": {
+    "successes": 20,
+    "total": 20,
+    "estimate": 1.0,
+    "ci95": {
+      "method": "wilson",
+      "confidence": 0.95,
+      "lower": 0.8389,
+      "upper": 1.0
+    }
+  },
+  "citation_allowlist_valid_rate": {
+    "successes": 20,
+    "total": 20,
+    "estimate": 1.0,
+    "ci95": {
+      "method": "wilson",
+      "confidence": 0.95,
+      "lower": 0.8389,
+      "upper": 1.0
+    }
+  },
+  "verified_quote_rate": {
+    "successes": 20,
+    "total": 20,
+    "estimate": 1.0,
+    "ci95": {
+      "method": "wilson",
+      "confidence": 0.95,
+      "lower": 0.8389,
+      "upper": 1.0
+    }
+  },
+  "end_to_end_grounded_success_rate": {
+    "successes": 20,
+    "total": 20,
+    "estimate": 1.0,
+    "ci95": {
+      "method": "wilson",
+      "confidence": 0.95,
+      "lower": 0.8389,
+      "upper": 1.0
+    }
+  },
+  "generation_modes": {
+    "grounded_local_llm": 18,
+    "extractive_fallback": 2
+  },
+  "error_table": [],
+  "details": [
+    {
+      "query_id": "RQ-013",
+      "source_id": "CN-001",
+      "status": "answered",
+      "relevant_ids": [
+        "E-CN-001-DIBAO"
+      ],
+      "cited_ids": [
+        "E-CN-001-DIBAO",
+        "E-CN-001-EDGE",
+        "E-GD-002-SEPARATE-RECOGNITION"
+      ],
+      "relevant_cited": true,
+      "citation_allowlist_valid": true,
+      "all_quotes_verified": true,
+      "claim_count": 3,
+      "generation_mode": "grounded_local_llm",
+      "fallback_reason": null
+    },
+    {
+      "query_id": "RQ-014",
+      "source_id": "CN-001",
+      "status": "answered",
+      "relevant_ids": [
+        "E-CN-001-DIBAO"
+      ],
+      "cited_ids": [
+        "E-CN-001-DIBAO",
+        "E-CN-001-EDGE"
+      ],
+      "relevant_cited": true,
+      "citation_allowlist_valid": true,
+      "all_quotes_verified": true,
+      "claim_count": 2,
+      "generation_mode": "grounded_local_llm",
+      "fallback_reason": null
+    },
+    {
+      "query_id": "RQ-015",
+      "source_id": "CN-001",
+      "status": "answered",
+      "relevant_ids": [
+        "E-CN-001-DIBAO"
+      ],
+      "cited_ids": [
+        "E-CN-001-DIBAO",
+        "E-CN-001-EDGE",
+        "E-GD-002-SEPARATE-RECOGNITION"
+      ],
+      "relevant_cited": true,
+      "citation_allowlist_valid": true,
+      "all_quotes_verified": true,
+      "claim_count": 3,
+      "generation_mode": "grounded_local_llm",
+      "fallback_reason": null
+    },
+    {
+      "query_id": "RQ-016",
+      "source_id": "CN-001",
+      "status": "answered",
+      "relevant_ids": [
+        "E-CN-001-DIBAO"
+      ],
+      "cited_ids": [
+        "E-CN-001-DIBAO",
+        "E-CN-001-EDGE"
+      ],
+      "relevant_cited": true,
+      "citation_allowlist_valid": true,
+      "all_quotes_verified": true,
+      "claim_count": 2,
+      "generation_mode": "grounded_local_llm",
+      "fallback_reason": null
+    },
+    {
+      "query_id": "RQ-017",
+      "source_id": "CN-001",
+      "status": "answered",
+      "relevant_ids": [
+        "E-CN-001-DIBAO"
+      ],
+      "cited_ids": [
+        "E-CN-001-DIBAO",
+        "E-CN-001-EDGE",
+        "E-GD-002-SEPARATE-RECOGNITION"
+      ],
+      "relevant_cited": true,
+      "citation_allowlist_valid": true,
+      "all_quotes_verified": true,
+      "claim_count": 3,
+      "generation_mode": "grounded_local_llm",
+      "fallback_reason": null
+    },
+    {
+      "query_id": "RQ-018",
+      "source_id": "CN-001",
+      "status": "answered",
+      "relevant_ids": [
+        "E-CN-001-DIBAO"
+      ],
+      "cited_ids": [
+        "E-CN-001-DIBAO",
+        "E-CN-001-EDGE",
+        "E-GD-002-SEPARATE-RECOGNITION"
+      ],
+      "relevant_cited": true,
+      "citation_allowlist_valid": true,
+      "all_quotes_verified": true,
+      "claim_count": 3,
+      "generation_mode": "grounded_local_llm",
+      "fallback_reason": null
+    },
+    {
+      "query_id": "RQ-019",
+      "source_id": "CN-001",
+      "status": "answered",
+      "relevant_ids": [
+        "E-CN-001-EDGE"
+      ],
+      "cited_ids": [
+        "E-CN-001-EDGE",
+        "E-GD-002-SEPARATE-RECOGNITION"
+      ],
+      "relevant_cited": true,
+      "citation_allowlist_valid": true,
+      "all_quotes_verified": true,
+      "claim_count": 2,
+      "generation_mode": "grounded_local_llm",
+      "fallback_reason": null
+    },
+    {
+      "query_id": "RQ-020",
+      "source_id": "CN-001",
+      "status": "answered",
+      "relevant_ids": [
+        "E-CN-001-EDGE"
+      ],
+      "cited_ids": [
+        "E-CN-001-EDGE",
+        "E-GD-002-SEPARATE-RECOGNITION"
+      ],
+      "relevant_cited": true,
+      "citation_allowlist_valid": true,
+      "all_quotes_verified": true,
+      "claim_count": 2,
+      "generation_mode": "grounded_local_llm",
+      "fallback_reason": null
+    },
+    {
+      "query_id": "RQ-021",
+      "source_id": "CN-001",
+      "status": "answered",
+      "relevant_ids": [
+        "E-CN-001-EDGE"
+      ],
+      "cited_ids": [
+        "E-CN-001-EDGE",
+        "E-GD-002-SEPARATE-RECOGNITION"
+      ],
+      "relevant_cited": true,
+      "citation_allowlist_valid": true,
+      "all_quotes_verified": true,
+      "claim_count": 2,
+      "generation_mode": "grounded_local_llm",
+      "fallback_reason": null
+    },
+    {
+      "query_id": "RQ-022",
+      "source_id": "CN-001",
+      "status": "answered",
+      "relevant_ids": [
+        "E-CN-001-EDGE"
+      ],
+      "cited_ids": [
+        "E-CN-001-EDGE",
+        "E-GD-002-SEPARATE-RECOGNITION"
+      ],
+      "relevant_cited": true,
+      "citation_allowlist_valid": true,
+      "all_quotes_verified": true,
+      "claim_count": 2,
+      "generation_mode": "grounded_local_llm",
+      "fallback_reason": null
+    },
+    {
+      "query_id": "RQ-023",
+      "source_id": "CN-001",
+      "status": "answered",
+      "relevant_ids": [
+        "E-CN-001-EDGE"
+      ],
+      "cited_ids": [
+        "E-CN-001-EDGE",
+        "E-GD-002-SEPARATE-RECOGNITION"
+      ],
+      "relevant_cited": true,
+      "citation_allowlist_valid": true,
+      "all_quotes_verified": true,
+      "claim_count": 2,
+      "generation_mode": "grounded_local_llm",
+      "fallback_reason": null
+    },
+    {
+      "query_id": "RQ-024",
+      "source_id": "CN-001",
+      "status": "answered",
+      "relevant_ids": [
+        "E-CN-001-EDGE"
+      ],
+      "cited_ids": [
+        "E-CN-001-EDGE",
+        "E-GD-002-SEPARATE-RECOGNITION"
+      ],
+      "relevant_cited": true,
+      "citation_allowlist_valid": true,
+      "all_quotes_verified": true,
+      "claim_count": 2,
+      "generation_mode": "grounded_local_llm",
+      "fallback_reason": null
+    },
+    {
+      "query_id": "RQ-025",
+      "source_id": "CN-001",
+      "status": "answered",
+      "relevant_ids": [
+        "E-CN-001-RIGID"
+      ],
+      "cited_ids": [
+        "E-CN-001-RIGID",
+        "E-GD-002-SEPARATE-RECOGNITION"
+      ],
+      "relevant_cited": true,
+      "citation_allowlist_valid": true,
+      "all_quotes_verified": true,
+      "claim_count": 2,
+      "generation_mode": "grounded_local_llm",
+      "fallback_reason": null
+    },
+    {
+      "query_id": "RQ-026",
+      "source_id": "CN-001",
+      "status": "answered",
+      "relevant_ids": [
+        "E-CN-001-RIGID"
+      ],
+      "cited_ids": [
+        "E-CN-001-RIGID",
+        "E-GD-002-SEPARATE-RECOGNITION"
+      ],
+      "relevant_cited": true,
+      "citation_allowlist_valid": true,
+      "all_quotes_verified": true,
+      "claim_count": 2,
+      "generation_mode": "grounded_local_llm",
+      "fallback_reason": null
+    },
+    {
+      "query_id": "RQ-027",
+      "source_id": "CN-001",
+      "status": "answered",
+      "relevant_ids": [
+        "E-CN-001-RIGID"
+      ],
+      "cited_ids": [
+        "E-CN-001-RIGID",
+        "E-GD-002-SEPARATE-RECOGNITION"
+      ],
+      "relevant_cited": true,
+      "citation_allowlist_valid": true,
+      "all_quotes_verified": true,
+      "claim_count": 2,
+      "generation_mode": "grounded_local_llm",
+      "fallback_reason": null
+    },
+    {
+      "query_id": "RQ-028",
+      "source_id": "CN-001",
+      "status": "answered",
+      "relevant_ids": [
+        "E-CN-001-RIGID"
+      ],
+      "cited_ids": [
+        "E-CN-001-RIGID"
+      ],
+      "relevant_cited": true,
+      "citation_allowlist_valid": true,
+      "all_quotes_verified": true,
+      "claim_count": 1,
+      "generation_mode": "grounded_local_llm",
+      "fallback_reason": null
+    },
+    {
+      "query_id": "RQ-029",
+      "source_id": "CN-001",
+      "status": "answered",
+      "relevant_ids": [
+        "E-CN-001-RIGID"
+      ],
+      "cited_ids": [
+        "E-CN-001-RIGID",
+        "E-GD-002-SEPARATE-RECOGNITION"
+      ],
+      "relevant_cited": true,
+      "citation_allowlist_valid": true,
+      "all_quotes_verified": true,
+      "claim_count": 2,
+      "generation_mode": "grounded_local_llm",
+      "fallback_reason": null
+    },
+    {
+      "query_id": "RQ-030",
+      "source_id": "CN-001",
+      "status": "answered",
+      "relevant_ids": [
+        "E-CN-001-RIGID"
+      ],
+      "cited_ids": [
+        "E-CN-001-RIGID",
+        "E-GD-002-SEPARATE-RECOGNITION"
+      ],
+      "relevant_cited": true,
+      "citation_allowlist_valid": true,
+      "all_quotes_verified": true,
+      "claim_count": 2,
+      "generation_mode": "grounded_local_llm",
+      "fallback_reason": null
+    },
+    {
+      "query_id": "RQ-031",
+      "source_id": "CN-001",
+      "status": "answered",
+      "relevant_ids": [
+        "E-CN-001-PRIVACY"
+      ],
+      "cited_ids": [
+        "E-CN-001-PRIVACY"
+      ],
+      "relevant_cited": true,
+      "citation_allowlist_valid": true,
+      "all_quotes_verified": true,
+      "claim_count": 1,
+      "generation_mode": "extractive_fallback",
+      "fallback_reason": "模型引入了证据中不存在的数值：['001']"
+    },
+    {
+      "query_id": "RQ-032",
+      "source_id": "CN-001",
+      "status": "answered",
+      "relevant_ids": [
+        "E-CN-001-PRIVACY"
+      ],
+      "cited_ids": [
+        "E-CN-001-EDGE",
+        "E-CN-001-PRIVACY",
+        "E-CN-001-RIGID"
+      ],
+      "relevant_cited": true,
+      "citation_allowlist_valid": true,
+      "all_quotes_verified": true,
+      "claim_count": 3,
+      "generation_mode": "extractive_fallback",
+      "fallback_reason": "模型把同一组证据拆成了重复结论"
+    }
+  ],
+  "policy_file_isolation": {
+    "development_source_ids": [
+      "GZ-001",
+      "GZ-002",
+      "GZ-003",
+      "GZ-004",
+      "GZ-008",
+      "GZ-009"
+    ],
+    "frozen_final_source_ids": [
+      "CN-001",
+      "GD-002",
+      "GD-004-A",
+      "GZ-005"
+    ],
+    "disjoint": true,
+    "rule": "同一source_id及其全部条款改写只能进入一个分组"
+  },
+  "claim_boundary": "该基准复用冻结检索集，评价端到端回答是否引用预期证据、引用是否在检索白名单内及原文是否核验；不代表真实群众满意度、资格判断准确率或外部专家评测。",
+  "app_version": "2.0.0",
+  "engine_version": "rule-engine/0.6.0",
+  "release_metadata": {
+    "release_id": "v2.0.0+source.83cbbce1a682",
+    "app_version": "2.0.0",
+    "engine_version": "rule-engine/0.6.0",
+    "git_commit": "e8e572a86c903694f526f39273d7c949fbe16c1d",
+    "git_dirty": true,
+    "source_tree_sha256": "83cbbce1a6826f13b8acf8cf7031a2572067635cc65c4fd4b961eaf7f9f70982",
+    "source_binding": {
+      "code_commit": "e8e572a86c903694f526f39273d7c949fbe16c1d",
+      "source_inputs_dirty": true,
+      "source_tree_sha256": "83cbbce1a6826f13b8acf8cf7031a2572067635cc65c4fd4b961eaf7f9f70982",
+      "source_file_count": 253,
+      "scope": "代码、测试、评测输入、运行和安全配置；生成的评测报告不参与自指纹",
+      "text_normalization": "CRLF和LF统一为LF；二进制文件保持原始字节"
+    },
+    "artifact_binding": {
+      "reports_generated_from_source_sha256": "83cbbce1a6826f13b8acf8cf7031a2572067635cc65c4fd4b961eaf7f9f70982",
+      "evidence_commit": null,
+      "note": "报告提交后可由正式发布流程填入证据提交；源码绑定以内容指纹为准。"
+    }
+  }
+}

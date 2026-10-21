@@ -58,7 +58,7 @@
   "template_isolation": {
     "intent": {
       "split": "frozen_final_test",
-      "test_cases": 250,
+      "test_cases": 300,
       "template_families_disjoint": true
     },
     "profile_template_families": [
@@ -127,13 +127,13 @@
     },
     {
       "path": "data/evaluation/retrieval_benchmark.json",
-      "sha256": "3412d0b3220488350957a35d64a1050915e1d4ba306a2dcb804b3bc83baf717d",
-      "records": 160
+      "sha256": "6ac7fcc26211ffe0370652e98631ffe3fc7fef646228619993db10508174aa9e",
+      "records": 178
     },
     {
       "path": "data/ml/intent_dataset.json",
-      "sha256": "6b5cddc65271c030a974f38b705173b42376ededf0fc4d2861761a0c64e8de72",
-      "records": 250
+      "sha256": "7a960b0f8d547c52b904407b180774088ce590bb408fba32d95aecf4f5890ef0",
+      "records": 300
     },
     {
       "path": "data/evaluation/policy_compiler_real_benchmark.jsonl",

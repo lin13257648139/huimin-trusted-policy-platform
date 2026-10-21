@@ -3,11 +3,11 @@
   "short_name": "惠民智导",
   "description": "可信、可解释、可追溯的社会救助申请前智能导办系统",
   "lang": "zh-CN",
-  "start_url": "/#overview",
+  "start_url": "/#home",
   "scope": "/",
   "display": "standalone",
-  "background_color": "#f3f7f5",
-  "theme_color": "#071a1d",
+  "background_color": "#fbfcfa",
+  "theme_color": "#0b5c4d",
   "icons": [
     {
       "src": "/static/icons/app-icon.svg",

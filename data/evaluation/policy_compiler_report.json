@@ -1,7 +1,7 @@
 {
   "report_schema": "policy2rule-three-track/3.0",
-  "generated_at": "2026-10-16T08:41:31.261646+00:00",
-  "app_version": "1.4.0",
+  "generated_at": "2026-10-21T00:15:23.765580+00:00",
+  "app_version": "2.0.0",
   "dataset": "data/evaluation/policy_compiler_benchmark.jsonl",
   "dataset_sha256": "91065e890e504dc60d3543d70f9001f607b82c668c29a88f67b535a4ce439c57",
   "evaluated_split": "all",
@@ -108,10 +108,10 @@
       },
       "end_to_end_latency_ms": {
         "samples": 10,
-        "p50_ms": 0.162,
-        "p95_ms": 2.938,
-        "max_ms": 2.938,
-        "mean_ms": 0.55
+        "p50_ms": 0.146,
+        "p95_ms": 2.896,
+        "max_ms": 2.896,
+        "mean_ms": 0.48
       },
       "model_latency_ms": {
         "samples": 0,
@@ -131,10 +131,10 @@
         },
         "latency_ms": {
           "samples": 30,
-          "p50_ms": 0.083,
-          "p95_ms": 0.106,
-          "max_ms": 0.124,
-          "mean_ms": 0.087
+          "p50_ms": 0.094,
+          "p95_ms": 0.122,
+          "max_ms": 0.131,
+          "mean_ms": 0.098
         },
         "error_table": []
       },
@@ -289,24 +289,24 @@
     "标签由项目组按公开标注指南制作，尚不是外部专家双人盲标。",
     "指标及95%置信区间只描述本冻结集，不外推为真实政务业务准确率。"
   ],
-  "engine_version": "rule-engine/0.5.0",
+  "engine_version": "rule-engine/0.6.0",
   "release_metadata": {
-    "release_id": "v1.4.0+source.31b820b020a7",
-    "app_version": "1.4.0",
-    "engine_version": "rule-engine/0.5.0",
-    "git_commit": "75a4d9da6d7cb1de0babe707c72fb5427dd21272",
-    "git_dirty": false,
-    "source_tree_sha256": "31b820b020a7291b9e8b0ec2324b914d590c54a9189ef18e544f4d4d3a412932",
+    "release_id": "v2.0.0+source.83cbbce1a682",
+    "app_version": "2.0.0",
+    "engine_version": "rule-engine/0.6.0",
+    "git_commit": "e8e572a86c903694f526f39273d7c949fbe16c1d",
+    "git_dirty": true,
+    "source_tree_sha256": "83cbbce1a6826f13b8acf8cf7031a2572067635cc65c4fd4b961eaf7f9f70982",
     "source_binding": {
-      "code_commit": "75a4d9da6d7cb1de0babe707c72fb5427dd21272",
-      "source_inputs_dirty": false,
-      "source_tree_sha256": "31b820b020a7291b9e8b0ec2324b914d590c54a9189ef18e544f4d4d3a412932",
-      "source_file_count": 246,
+      "code_commit": "e8e572a86c903694f526f39273d7c949fbe16c1d",
+      "source_inputs_dirty": true,
+      "source_tree_sha256": "83cbbce1a6826f13b8acf8cf7031a2572067635cc65c4fd4b961eaf7f9f70982",
+      "source_file_count": 253,
       "scope": "代码、测试、评测输入、运行和安全配置；生成的评测报告不参与自指纹",
       "text_normalization": "CRLF和LF统一为LF；二进制文件保持原始字节"
     },
     "artifact_binding": {
-      "reports_generated_from_source_sha256": "31b820b020a7291b9e8b0ec2324b914d590c54a9189ef18e544f4d4d3a412932",
+      "reports_generated_from_source_sha256": "83cbbce1a6826f13b8acf8cf7031a2572067635cc65c4fd4b961eaf7f9f70982",
       "evidence_commit": null,
       "note": "报告提交后可由正式发布流程填入证据提交；源码绑定以内容指纹为准。"
     }

@@ -8,7 +8,7 @@ import secrets
 from contextlib import asynccontextmanager
 from datetime import UTC, date, datetime
 from time import perf_counter
-from typing import Annotated
+from typing import Annotated, Any
 from uuid import uuid4
 
 from fastapi import Depends, FastAPI, File, Form, Header, HTTPException, Query, Request, UploadFile
@@ -29,15 +29,19 @@ from app.domain.models import (
     Office,
     ParseProfileRequest,
     ParseProfileResponse,
+    PolicyAnswerResponse,
     PolicyCompileRequest,
     PolicyCompileResponse,
     PolicyImpactRequest,
     PolicyImpactResponse,
+    PolicyQuestionRequest,
     PolicySource,
     ScreeningResponse,
+    SupplementAnalysisRequest,
+    SupplementAnalysisResponse,
 )
 from app.repositories.database import Database
-from app.services.ai_runtime import ollama_runtime_status
+from app.services.ai_runtime import ModelRuntimeError, ollama_runtime_status, warm_ollama_runtime
 from app.services.benefit_relations import (
     benefit_relation_governance,
     load_benefit_relation_registry,
@@ -60,6 +64,7 @@ from app.services.observability import (
 )
 from app.services.ocr import ocr_runtime_available
 from app.services.policy_compiler import analyze_policy_impact, compile_policy
+from app.services.policy_qa import answer_policy_question
 from app.services.policy_version import CURRENT_DIBAO_END, TEMPORARY_RESCUE_END
 from app.services.profile_parser import parse_profile
 from app.services.question_engine import next_guidance_question
@@ -68,6 +73,7 @@ from app.services.retrieval import search_evidence_result
 from app.services.rule_engine import DIBAO_STANDARD, EDGE_STANDARD, ENGINE_VERSION, evaluate_profile
 from app.services.rule_registry import registry_governance
 from app.services.safety_validator import safety_gate_passed, validate_screening_output
+from app.services.supplement_analyzer import analyze_supplement
 from app.services.workload import (
     WorkloadBusyError,
     WorkloadTimeoutError,
@@ -97,9 +103,21 @@ async def lifespan(_: FastAPI):
     load_benefit_relation_registry()
     load_offices()
     load_policy_sources()
+    warmup_task: asyncio.Task[None] | None = None
+    if settings.ollama_enabled:
+        async def warmup() -> None:
+            try:
+                await asyncio.to_thread(warm_ollama_runtime)
+                logger.info("local_model_warmup_completed")
+            except ModelRuntimeError as exc:
+                logger.warning("local_model_warmup_failed", extra={"reason": str(exc)})
+
+        warmup_task = asyncio.create_task(warmup())
     try:
         yield
     finally:
+        if warmup_task is not None and not warmup_task.done():
+            warmup_task.cancel()
         shutdown_workloads(wait=False)
 
 
@@ -313,6 +331,7 @@ async def metadata() -> dict[str, object]:
         "capabilities": [
             "时态规则",
             "三值推理",
+            "补充情况原句锚定、冲突检测与用户确认",
             "本地字符N-gram意图分类（只排序导办事项）",
             "Policy2Rule候选编译",
             "版本差异与影响分析",
@@ -343,7 +362,7 @@ async def system_readiness() -> dict[str, object]:
     return await _run_workload(
         "llm",
         build_readiness_report,
-        timeout=min(settings.ollama_timeout_seconds + 1, 5),
+        timeout=min(settings.ollama_timeout_seconds + 1, 15),
     )
 
 
@@ -352,6 +371,23 @@ async def parse_profile_endpoint(request: ParseProfileRequest) -> ParseProfileRe
     return await _run_workload(
         "llm",
         parse_profile,
+        request,
+        timeout=settings.ollama_timeout_seconds + 5,
+    )
+
+
+@app.post(
+    "/api/v1/profile/analyze-supplement",
+    response_model=SupplementAnalysisResponse,
+)
+async def analyze_profile_supplement(
+    request: SupplementAnalysisRequest,
+) -> SupplementAnalysisResponse:
+    """分析特殊情况，只返回待确认候选，不直接修改画像或作资格判断。"""
+
+    return await _run_workload(
+        "llm",
+        analyze_supplement,
         request,
         timeout=settings.ollama_timeout_seconds + 5,
     )
@@ -413,24 +449,77 @@ async def create_screening(
     office = next((item for item in office_records if item.region == profile.district), None)
     if office is None:
         office = next((item for item in office_records if item.region == "广州市"), None)
-    first_actionable = next(
-        (item for item in results if item.plan_role == "primary"),
-        next(
-            (item for item in results if item.plan_role in {"manual", "alternative"}),
-            results[0],
-        ),
-    )
-    action_label = "优先查看" if first_actionable.plan_role == "primary" else "优先核验"
-    guidance_summary = [
-        f"{action_label}：{first_actionable.name}（{first_actionable.summary}）",
-        "先补齐报告中的最小必要信息，再携带材料咨询对应窗口。",
-        "办理前建议电话确认受理地点、材料版本和服务时间。",
+    matched = [item for item in results if item.status.value == "likely"]
+    needs_review = [
+        item for item in results if item.status.value in {"incomplete", "manual_review"}
     ]
+    not_matched = [item for item in results if item.status.value == "unlikely"]
+    primary_matched = [item for item in matched if item.plan_role == "primary"]
+    related_matched = [item for item in matched if item.plan_role != "primary"]
+    outcome: dict[str, Any]
+    if matched:
+        lead = primary_matched[0] if primary_matched else matched[0]
+        title = (
+            f"发现{len(primary_matched)}个需要优先核对的救助方向"
+            if primary_matched
+            else f"发现{len(matched)}个可能方向，但应先核对前置条件"
+        )
+        detail = "这是基于自述信息的申请前预筛，不代表已经取得资格。"
+        if related_matched:
+            detail += f"另有{len(related_matched)}个关联或后续方向，已与优先事项分开显示。"
+        outcome = {
+            "code": "possible_match",
+            "title": title,
+            "detail": detail,
+            "lead_benefit_id": lead.benefit_id,
+            "matched_benefit_ids": [item.benefit_id for item in primary_matched],
+            "related_benefit_ids": [item.benefit_id for item in related_matched],
+            "review_benefit_ids": [item.benefit_id for item in needs_review],
+            "not_matched_benefit_ids": [item.benefit_id for item in not_matched],
+        }
+        guidance_summary = [
+            f"先核对：{lead.name}（{lead.plan_reason}）",
+            "查看报告中的计算依据和待确认条件，再准备对应材料。",
+            "办理前电话确认受理地点、材料版本和服务时间。",
+        ]
+    elif needs_review:
+        lead = needs_review[0]
+        outcome = {
+            "code": "needs_information",
+            "title": "现有信息不足，暂时不能判断",
+            "detail": "系统保留了未知项，没有将缺失信息当作符合或不符合。",
+            "lead_benefit_id": lead.benefit_id,
+            "matched_benefit_ids": [],
+            "related_benefit_ids": [],
+            "review_benefit_ids": [item.benefit_id for item in needs_review],
+            "not_matched_benefit_ids": [item.benefit_id for item in not_matched],
+        }
+        guidance_summary = [
+            f"先补充：{lead.name}所需的最小必要信息。",
+            "无法确认的内容可携带材料到属地社会救助窗口核验。",
+            "办理前电话确认受理地点、材料版本和服务时间。",
+        ]
+    else:
+        outcome = {
+            "code": "no_current_match",
+            "title": "根据目前信息，暂未发现匹配的救助方向",
+            "detail": "这不是行政审批结论；如果家庭情况有遗漏或近期发生变化，可以补充信息后重新预筛。",
+            "lead_benefit_id": None,
+            "matched_benefit_ids": [],
+            "related_benefit_ids": [],
+            "review_benefit_ids": [],
+            "not_matched_benefit_ids": [item.benefit_id for item in not_matched],
+        }
+        guidance_summary = [
+            "当前六类救助事项均存在明确不满足项，系统没有强行推荐任何事项。",
+            "如收入、共同生活成员、财产或急难情况填写不完整，请修正后重新预筛。",
+            "仍有实际困难时，可联系属地社会救助窗口或广州12345咨询其他救助渠道。",
+        ]
     alternatives = [item.name for item in results if item.plan_role == "alternative"]
     if alternatives:
         guidance_summary.insert(
             2,
-            f"分层备选/转介：{'、'.join(alternatives)}；由窗口统一核验，避免重复申请。",
+            f"如优先事项未获确认，可在同一窗口继续核对：{'、'.join(alternatives)}；避免重复准备材料。",
         )
     parallel_pairs = {
         tuple(sorted((item.benefit_id, relation.related_benefit_id)))
@@ -459,11 +548,15 @@ async def create_screening(
                 str(profile.rigid_expenses_12m) if profile.rigid_expenses_12m is not None else None
             ),
             "urgent_event": profile.urgent_event,
+            "special_hardship_gateway": profile.special_person_category_confirmed,
+            "confirmed_supplement_fields": profile.confirmed_supplement_fields,
+            "confirmed_supplement_count": len(profile.confirmed_supplement_fields),
             "data_minimized": True,
         },
         results=results,
         global_warnings=warnings,
         recommended_office=office.model_dump(mode="json") if office else None,
+        outcome=outcome,
         guidance_summary=guidance_summary,
         safety_validation=safety_validation,
         persisted=persist,
@@ -569,6 +662,18 @@ async def evidence_search(
         q,
         limit=limit,
         as_of=as_of,
+        timeout=settings.ollama_timeout_seconds + 5,
+    )
+
+
+@app.post("/api/v1/policy/answer", response_model=PolicyAnswerResponse)
+async def policy_answer(request: PolicyQuestionRequest) -> PolicyAnswerResponse:
+    """生成逐条引用、通过白名单校验的政策答复；证据不足时明确拒答。"""
+
+    return await _run_workload(
+        "llm",
+        answer_policy_question,
+        request,
         timeout=settings.ollama_timeout_seconds + 5,
     )
 

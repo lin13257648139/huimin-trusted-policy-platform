@@ -45,6 +45,7 @@ BENEFIT_REQUIRED_TYPES = {
     "B003": ("identity", "verification_authorization", "income"),
     "B004": ("identity", "verification_authorization", "income"),
     "B005": ("identity",),
+    "B006": ("identity",),
 }
 
 

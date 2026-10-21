@@ -23,9 +23,12 @@ Invoke-CheckedPython scripts\build_stage2_benchmarks.py
 Invoke-CheckedPython scripts\generate_synthetic_cases.py
 Invoke-CheckedPython scripts\evaluate_conformance.py
 Invoke-CheckedPython scripts\evaluate_retrieval.py
+Invoke-CheckedPython scripts\evaluate_policy_qa.py
+Invoke-CheckedPython scripts\evaluate_policy_qa.py --benchmark data\evaluation\policy_qa_special_challenge.json --output data\evaluation\policy_qa_special_report.json
 Invoke-CheckedPython scripts\evaluate_policy_compiler.py --output data\evaluation\policy_compiler_report.json
 if ($env:AI_MODE -eq 'hybrid') {
     Invoke-CheckedPython scripts\verify_live_ai.py
+    Invoke-CheckedPython scripts\evaluate_policy_qa.py --live-model --limit 20 --output data\evaluation\policy_qa_live_report.json
     Invoke-CheckedPython scripts\evaluate_policy_compiler.py --benchmark data\evaluation\policy_compiler_real_benchmark.jsonl --split frozen_final_test --tracks all --require-live-llm --output data\evaluation\policy_compiler_real_report.json
 }
 else {

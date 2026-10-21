@@ -1,0 +1,27 @@
+{
+  "schema_version": "1.0",
+  "origin": "team-authored focused challenge questions; no real-user records",
+  "queries": [
+    {"query_id":"SPQ-001","split":"frozen_final_test","source_id":"CN-001","query":"特困人员救助供养需要同时满足哪些法定条件？","relevant_ids":["E-CN-001-SPECIAL-HARDSHIP"]},
+    {"query_id":"SPQ-002","split":"frozen_final_test","source_id":"CN-001","query":"没有劳动能力、没有生活来源且无人赡养，可以咨询什么救助？","relevant_ids":["E-CN-001-SPECIAL-HARDSHIP"]},
+    {"query_id":"SPQ-003","split":"frozen_final_test","source_id":"CN-001","query":"法定赡养义务人没有履行能力时能否核对特困供养？","relevant_ids":["E-CN-001-SPECIAL-HARDSHIP"]},
+    {"query_id":"SPQ-004","split":"frozen_final_test","source_id":"CN-001","query":"特困人员供养包括哪些基本服务？","relevant_ids":["E-CN-001-SPECIAL-HARDSHIP"]},
+    {"query_id":"SPQ-005","split":"frozen_final_test","source_id":"CN-001","query":"疾病治疗是否属于特困人员供养内容？","relevant_ids":["E-CN-001-SPECIAL-HARDSHIP"]},
+    {"query_id":"SPQ-006","split":"frozen_final_test","source_id":"CN-001","query":"特困人员死亡后的丧葬事宜由供养制度覆盖吗？","relevant_ids":["E-CN-001-SPECIAL-HARDSHIP"]},
+    {"query_id":"SPQ-007","split":"frozen_final_test","source_id":"CN-001","query":"申请特困人员供养应当向哪里提出？","relevant_ids":["E-CN-001-SPECIAL-APPLICATION"]},
+    {"query_id":"SPQ-008","split":"frozen_final_test","source_id":"CN-001","query":"特困供养原则上是在户籍所在地办理吗？","relevant_ids":["E-CN-001-SPECIAL-APPLICATION"]},
+    {"query_id":"SPQ-009","split":"frozen_final_test","source_id":"CN-001","query":"持有居住证的人能否在居住地申请特困供养？","relevant_ids":["E-CN-001-SPECIAL-APPLICATION"]},
+    {"query_id":"SPQ-010","split":"frozen_final_test","source_id":"CN-001","query":"申请特困供养有困难时可以由他人代为提出吗？","relevant_ids":["E-CN-001-APPLICATION-ASSISTANCE"]},
+    {"query_id":"SPQ-011","split":"frozen_final_test","source_id":"GZ-001","query":"广州特困人员救助供养一般多少个工作日办结？","relevant_ids":["E-GZ-001-DEADLINE"]},
+    {"query_id":"SPQ-012","split":"frozen_final_test","source_id":"GZ-001","query":"特困供养从受理到办结的时限是什么？","relevant_ids":["E-GZ-001-DEADLINE"]},
+    {"query_id":"SPQ-013","split":"frozen_final_test","source_id":"GZ-001","query":"申请特困人员供养通常要准备哪些基础材料？","relevant_ids":["E-GZ-001-MATERIALS"]},
+    {"query_id":"SPQ-014","split":"frozen_final_test","source_id":"GZ-001","query":"特困供养是否需要身份类证明和核对授权书？","relevant_ids":["E-GZ-001-MATERIALS"]},
+    {"query_id":"SPQ-015","split":"frozen_final_test","source_id":"GZ-001","query":"广州社会救助一件事是否包含特困人员救助供养？","relevant_ids":["E-GZ-001-SCOPE"]},
+    {"query_id":"SPQ-016","split":"frozen_final_test","source_id":"CN-001","query":"老人有生活来源时，特困供养的条件原文怎么说？","relevant_ids":["E-CN-001-SPECIAL-HARDSHIP"]},
+    {"query_id":"SPQ-017","split":"frozen_final_test","source_id":"CN-001","query":"残疾人仅凭残疾身份就能认定特困供养吗？","relevant_ids":["E-CN-001-SPECIAL-HARDSHIP"]},
+    {"query_id":"SPQ-018","split":"frozen_final_test","source_id":"CN-001","query":"未成年人申请特困供养时需要核验什么支持关系？","relevant_ids":["E-CN-001-SPECIAL-HARDSHIP"]},
+    {"query_id":"SPQ-019","split":"frozen_final_test","source_id":"CN-001","query":"特困供养申请地点和法定条件分别依据哪两条原文？","relevant_ids":["E-CN-001-SPECIAL-HARDSHIP","E-CN-001-SPECIAL-APPLICATION"]},
+    {"query_id":"SPQ-020","split":"frozen_final_test","source_id":"GZ-001","query":"特困供养的申请材料和办理时限分别是什么？","relevant_ids":["E-GZ-001-MATERIALS","E-GZ-001-DEADLINE"]}
+  ],
+  "claim_boundary": "内部专题挑战集，仅验证证据召回、引用约束和回退闭环，不代表真实用户满意度或资格判断准确率。"
+}

@@ -1779,6 +1779,204 @@
       "split": "frozen_final_test",
       "paraphrase_family": "evidence-query-v6",
       "label_origin": "project-authored query template over verified policy evidence"
+    },
+    {
+      "query_id": "RQ-161",
+      "query": "特困供养需要同时核验劳动能力、生活来源和法定赡养抚养扶养支持情况；系统只提示咨询方向，不能凭自述完成认定，对应哪条政策证据？",
+      "relevant_ids": [
+        "E-CN-001-SPECIAL-HARDSHIP"
+      ],
+      "source_id": "CN-001",
+      "split": "frozen_final_test",
+      "paraphrase_family": "evidence-query-v1",
+      "label_origin": "project-authored query template over verified policy evidence"
+    },
+    {
+      "query_id": "RQ-162",
+      "query": "请查询第十六条中关于特困供养需要同时核验劳动能力、生活来源和法定赡养抚养扶养支持情况；系统只提示咨询方向，不能凭自述完成认定的规定。",
+      "relevant_ids": [
+        "E-CN-001-SPECIAL-HARDSHIP"
+      ],
+      "source_id": "CN-001",
+      "split": "frozen_final_test",
+      "paraphrase_family": "evidence-query-v2",
+      "label_origin": "project-authored query template over verified policy evidence"
+    },
+    {
+      "query_id": "RQ-163",
+      "query": "社会救助办理时，特困供养需要同时核验劳动能力、生活来源和法定赡养抚养扶养支持情况；系统只提示咨询方向，不能凭自述完成认定有何依据？",
+      "relevant_ids": [
+        "E-CN-001-SPECIAL-HARDSHIP"
+      ],
+      "source_id": "CN-001",
+      "split": "frozen_final_test",
+      "paraphrase_family": "evidence-query-v3",
+      "label_origin": "project-authored query template over verified policy evidence"
+    },
+    {
+      "query_id": "RQ-164",
+      "query": "广州救助政策是否明确：特困供养需要同时核验劳动能力、生活来源和法定赡养抚养扶养支持情况；系统只提示咨询方向，不能凭自述完成认定？",
+      "relevant_ids": [
+        "E-CN-001-SPECIAL-HARDSHIP"
+      ],
+      "source_id": "CN-001",
+      "split": "frozen_final_test",
+      "paraphrase_family": "evidence-query-v4",
+      "label_origin": "project-authored query template over verified policy evidence"
+    },
+    {
+      "query_id": "RQ-165",
+      "query": "申请前想核实特困供养需要同时核验劳动能力、生活来源和法定赡养抚养扶养支持情况；系统只提示咨询方向，不能凭自述完成认定，请给官方条款。",
+      "relevant_ids": [
+        "E-CN-001-SPECIAL-HARDSHIP"
+      ],
+      "source_id": "CN-001",
+      "split": "frozen_final_test",
+      "paraphrase_family": "evidence-query-v5",
+      "label_origin": "project-authored query template over verified policy evidence"
+    },
+    {
+      "query_id": "RQ-166",
+      "query": "关于家庭救助，怎样理解特困供养需要同时核验劳动能力、生活来源和法定赡养抚养扶养支持情况；系统只提示咨询方向，不能凭自述完成认定？",
+      "relevant_ids": [
+        "E-CN-001-SPECIAL-HARDSHIP"
+      ],
+      "source_id": "CN-001",
+      "split": "frozen_final_test",
+      "paraphrase_family": "evidence-query-v6",
+      "label_origin": "project-authored query template over verified policy evidence"
+    },
+    {
+      "query_id": "RQ-167",
+      "query": "特困供养等事项原则上向户籍所在地乡镇人民政府或街道办事处提出；居住证人员能否在居住地申请，以当地实际受理口径为准，对应哪条政策证据？",
+      "relevant_ids": [
+        "E-CN-001-SPECIAL-APPLICATION"
+      ],
+      "source_id": "CN-001",
+      "split": "frozen_final_test",
+      "paraphrase_family": "evidence-query-v1",
+      "label_origin": "project-authored query template over verified policy evidence"
+    },
+    {
+      "query_id": "RQ-168",
+      "query": "请查询第三十七条中关于特困供养等事项原则上向户籍所在地乡镇人民政府或街道办事处提出；居住证人员能否在居住地申请，以当地实际受理口径为准的规定。",
+      "relevant_ids": [
+        "E-CN-001-SPECIAL-APPLICATION"
+      ],
+      "source_id": "CN-001",
+      "split": "frozen_final_test",
+      "paraphrase_family": "evidence-query-v2",
+      "label_origin": "project-authored query template over verified policy evidence"
+    },
+    {
+      "query_id": "RQ-169",
+      "query": "社会救助办理时，特困供养等事项原则上向户籍所在地乡镇人民政府或街道办事处提出；居住证人员能否在居住地申请，以当地实际受理口径为准有何依据？",
+      "relevant_ids": [
+        "E-CN-001-SPECIAL-APPLICATION"
+      ],
+      "source_id": "CN-001",
+      "split": "frozen_final_test",
+      "paraphrase_family": "evidence-query-v3",
+      "label_origin": "project-authored query template over verified policy evidence"
+    },
+    {
+      "query_id": "RQ-170",
+      "query": "广州救助政策是否明确：特困供养等事项原则上向户籍所在地乡镇人民政府或街道办事处提出；居住证人员能否在居住地申请，以当地实际受理口径为准？",
+      "relevant_ids": [
+        "E-CN-001-SPECIAL-APPLICATION"
+      ],
+      "source_id": "CN-001",
+      "split": "frozen_final_test",
+      "paraphrase_family": "evidence-query-v4",
+      "label_origin": "project-authored query template over verified policy evidence"
+    },
+    {
+      "query_id": "RQ-171",
+      "query": "申请前想核实特困供养等事项原则上向户籍所在地乡镇人民政府或街道办事处提出；居住证人员能否在居住地申请，以当地实际受理口径为准，请给官方条款。",
+      "relevant_ids": [
+        "E-CN-001-SPECIAL-APPLICATION"
+      ],
+      "source_id": "CN-001",
+      "split": "frozen_final_test",
+      "paraphrase_family": "evidence-query-v5",
+      "label_origin": "project-authored query template over verified policy evidence"
+    },
+    {
+      "query_id": "RQ-172",
+      "query": "关于家庭救助，怎样理解特困供养等事项原则上向户籍所在地乡镇人民政府或街道办事处提出；居住证人员能否在居住地申请，以当地实际受理口径为准？",
+      "relevant_ids": [
+        "E-CN-001-SPECIAL-APPLICATION"
+      ],
+      "source_id": "CN-001",
+      "split": "frozen_final_test",
+      "paraphrase_family": "evidence-query-v6",
+      "label_origin": "project-authored query template over verified policy evidence"
+    },
+    {
+      "query_id": "RQ-173",
+      "query": "本人或共同生活家庭成员提出申请有困难时，可以委托村委会、居委会或他人代为提出申请，对应哪条政策证据？",
+      "relevant_ids": [
+        "E-CN-001-APPLICATION-ASSISTANCE"
+      ],
+      "source_id": "CN-001",
+      "split": "frozen_final_test",
+      "paraphrase_family": "evidence-query-v1",
+      "label_origin": "project-authored query template over verified policy evidence"
+    },
+    {
+      "query_id": "RQ-174",
+      "query": "请查询第三十七条中关于本人或共同生活家庭成员提出申请有困难时，可以委托村委会、居委会或他人代为提出申请的规定。",
+      "relevant_ids": [
+        "E-CN-001-APPLICATION-ASSISTANCE"
+      ],
+      "source_id": "CN-001",
+      "split": "frozen_final_test",
+      "paraphrase_family": "evidence-query-v2",
+      "label_origin": "project-authored query template over verified policy evidence"
+    },
+    {
+      "query_id": "RQ-175",
+      "query": "社会救助办理时，本人或共同生活家庭成员提出申请有困难时，可以委托村委会、居委会或他人代为提出申请有何依据？",
+      "relevant_ids": [
+        "E-CN-001-APPLICATION-ASSISTANCE"
+      ],
+      "source_id": "CN-001",
+      "split": "frozen_final_test",
+      "paraphrase_family": "evidence-query-v3",
+      "label_origin": "project-authored query template over verified policy evidence"
+    },
+    {
+      "query_id": "RQ-176",
+      "query": "广州救助政策是否明确：本人或共同生活家庭成员提出申请有困难时，可以委托村委会、居委会或他人代为提出申请？",
+      "relevant_ids": [
+        "E-CN-001-APPLICATION-ASSISTANCE"
+      ],
+      "source_id": "CN-001",
+      "split": "frozen_final_test",
+      "paraphrase_family": "evidence-query-v4",
+      "label_origin": "project-authored query template over verified policy evidence"
+    },
+    {
+      "query_id": "RQ-177",
+      "query": "申请前想核实本人或共同生活家庭成员提出申请有困难时，可以委托村委会、居委会或他人代为提出申请，请给官方条款。",
+      "relevant_ids": [
+        "E-CN-001-APPLICATION-ASSISTANCE"
+      ],
+      "source_id": "CN-001",
+      "split": "frozen_final_test",
+      "paraphrase_family": "evidence-query-v5",
+      "label_origin": "project-authored query template over verified policy evidence"
+    },
+    {
+      "query_id": "RQ-178",
+      "query": "关于家庭救助，怎样理解本人或共同生活家庭成员提出申请有困难时，可以委托村委会、居委会或他人代为提出申请？",
+      "relevant_ids": [
+        "E-CN-001-APPLICATION-ASSISTANCE"
+      ],
+      "source_id": "CN-001",
+      "split": "frozen_final_test",
+      "paraphrase_family": "evidence-query-v6",
+      "label_origin": "project-authored query template over verified policy evidence"
     }
   ]
 }

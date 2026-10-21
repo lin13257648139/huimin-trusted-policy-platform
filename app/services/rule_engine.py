@@ -5,6 +5,7 @@ from decimal import Decimal
 
 from app.domain.models import (
     BenefitResult,
+    ConditionInputField,
     ConditionResult,
     EligibilityStatus,
     HouseholdProfile,
@@ -24,7 +25,26 @@ from app.services.rule_registry import decimal_parameter, get_rule_for_date
 # 禁止使用这两个常量作为历史回退值。
 DIBAO_STANDARD = decimal_parameter("B002", "income_standard_monthly_per_capita")
 EDGE_STANDARD = decimal_parameter("B003", "income_standard_monthly_per_capita")
-ENGINE_VERSION = "rule-engine/0.5.0"
+ENGINE_VERSION = "rule-engine/0.6.0"
+
+CONDITION_INPUT_FIELDS: dict[str, ConditionInputField] = {
+    "region": "district",
+    "hukou": "is_local_hukou",
+    "residence": "residence_proof",
+    "member_scope": "member_scope_confirmed",
+    "dibao_income": "monthly_income_total",
+    "edge_income": "monthly_income_total",
+    "assets": "assets_eligible",
+    "rigid_expense": "rigid_expenses_12m",
+    "rigid_expense_ratio": "rigid_expenses_12m",
+    "rigid_income_ceiling": "monthly_income_total",
+    "urgent_event": "urgent_event",
+    "basic_life": "basic_life_interrupted",
+    "special_category": "special_person_category_confirmed",
+    "no_labor_capacity": "no_labor_capacity",
+    "no_livelihood_source": "no_livelihood_source",
+    "capable_legal_supporter": "has_capable_legal_supporter",
+}
 
 
 def _condition(
@@ -51,6 +71,7 @@ def _condition(
         hard=hard,
         actionable=actionable,
         action_hint=action_hint,
+        input_field=CONDITION_INPUT_FIELDS.get(code) if actionable else None,
     )
 
 
@@ -794,12 +815,129 @@ def evaluate_temporary(profile: HouseholdProfile, snapshot: PolicySnapshot) -> B
     )
 
 
+def evaluate_special_hardship(
+    profile: HouseholdProfile, snapshot: PolicySnapshot
+) -> BenefitResult:
+    """Evaluate only the statutory gateway facts for special hardship support.
+
+    The four inputs are self-reported consultation clues.  The authority must
+    still investigate labor capacity, livelihood and the legal obligor's
+    ability; this function never treats a self-report as an official finding.
+    """
+
+    evidence_ids = ("E-CN-001-SPECIAL-HARDSHIP",)
+    category = _known_boolean(
+        profile.special_person_category_confirmed,
+        code="special_category",
+        label="特困人员适用对象线索",
+        true_reason="已申报申请人属于老年人、未成年人、残疾人等需要进一步核验的对象。",
+        false_reason="当前申报未发现特困人员适用对象线索。",
+        unknown_reason="尚未确认申请人是否属于老年人、未成年人、残疾人等适用对象。",
+        evidence_ids=evidence_ids,
+        action_hint="确认申请人是否属于老年人、未成年人、残疾人等需要核验的对象。",
+    )
+    labor = _known_boolean(
+        profile.no_labor_capacity,
+        code="no_labor_capacity",
+        label="劳动能力",
+        true_reason="已申报无劳动能力；仍需主管部门按认定办法核实。",
+        false_reason="当前申报显示仍有劳动能力。",
+        unknown_reason="尚未说明劳动能力情况。",
+        evidence_ids=evidence_ids,
+        action_hint="说明申请人的劳动能力情况，并准备相应证明材料供窗口核验。",
+    )
+    livelihood = _known_boolean(
+        profile.no_livelihood_source,
+        code="no_livelihood_source",
+        label="生活来源",
+        true_reason="已申报无生活来源；仍需主管部门核实收入和供给情况。",
+        false_reason="当前申报显示存在生活来源。",
+        unknown_reason="尚未说明是否具有生活来源。",
+        evidence_ids=evidence_ids,
+        action_hint="说明工资、经营、养老金、赡养费等生活来源情况。",
+    )
+    supporter_value = profile.has_capable_legal_supporter
+    if supporter_value is None:
+        supporter = _condition(
+            code="capable_legal_supporter",
+            label="法定赡养抚养扶养支持",
+            state=TruthValue.UNKNOWN,
+            reason="尚未确认是否存在有履行能力的法定赡养、抚养或扶养义务人。",
+            evidence_ids=evidence_ids,
+            actionable=True,
+            action_hint="确认是否有法定义务人，以及义务人是否具有履行义务能力。",
+        )
+    elif supporter_value is False:
+        supporter = _condition(
+            code="capable_legal_supporter",
+            label="法定赡养抚养扶养支持",
+            state=TruthValue.TRUE,
+            reason="已申报无法定义务人，或法定义务人无履行能力；仍需主管部门核实。",
+            evidence_ids=evidence_ids,
+        )
+    else:
+        supporter = _condition(
+            code="capable_legal_supporter",
+            label="法定赡养抚养扶养支持",
+            state=TruthValue.FALSE,
+            reason="当前申报显示存在有履行能力的法定赡养、抚养或扶养义务人。",
+            evidence_ids=evidence_ids,
+            actionable=True,
+            action_hint="如义务人实际无法履行，请携带相关情况说明由窗口核验。",
+        )
+    dated_rule = get_rule_for_date("B006", profile.query_date)
+    conditions = [
+        _household_hukou_condition(profile, ("E-CN-001-SPECIAL-APPLICATION",)),
+        category,
+        labor,
+        livelihood,
+        supporter,
+    ]
+    return _build_result(
+        benefit_id="B006",
+        name="特困人员救助供养",
+        conditions=conditions,
+        evidence_ids=(
+            "E-CN-001-SPECIAL-HARDSHIP",
+            "E-CN-001-SPECIAL-APPLICATION",
+            "E-GZ-001-DEADLINE",
+        ),
+        materials=[
+            "身份类证明",
+            "劳动能力、生活来源和法定赡养抚养扶养情况材料（以窗口告知为准）",
+        ],
+        next_actions=[
+            "向户籍所在地街镇社会救助窗口说明个人情况",
+            "由主管部门核验劳动能力、生活来源和法定义务人履行能力",
+        ],
+        deadline="通常34个工作日，以官方受理为准",
+        snapshot=snapshot,
+        policy_version="中华人民共和国社会救助法（2026）第十六条",
+        force_manual=dated_rule is None or dated_rule.manual_review_required,
+        boost=10
+        if all(
+            value is True
+            for value in (
+                profile.special_person_category_confirmed,
+                profile.no_labor_capacity,
+                profile.no_livelihood_source,
+            )
+        )
+        and profile.has_capable_legal_supporter is False
+        else 0,
+    )
+
+
 def evaluate_low_income_monitoring(
     profile: HouseholdProfile, snapshot: PolicySnapshot, downstream: list[BenefitResult]
 ) -> BenefitResult:
     # 临时救助是事件型救助，不能单独证明属于低收入人口。这里只依据三类
     # 家庭经济状况认定事项派生监测结论，避免“任何B004人工复核都令B001通过”。
-    candidates = [result for result in downstream if result.benefit_id in {"B002", "B003", "B004"}]
+    candidates = [
+        result
+        for result in downstream
+        if result.benefit_id in {"B002", "B003", "B004", "B006"}
+    ]
     likely = [result for result in candidates if result.status == EligibilityStatus.LIKELY]
     incomplete = [result for result in candidates if result.status == EligibilityStatus.INCOMPLETE]
     manual = [result for result in candidates if result.status == EligibilityStatus.MANUAL_REVIEW]
@@ -810,7 +948,7 @@ def evaluate_low_income_monitoring(
         action_hint = None
     elif incomplete:
         state = TruthValue.UNKNOWN
-        reason = "低保、低保边缘或刚性支出困难认定仍缺少关键信息。"
+        reason = "特困供养或家庭经济状况认定仍缺少关键信息。"
         actionable = True
         action_hint = "先补充相关事项列出的最小信息缺口。"
     elif manual:
@@ -855,9 +993,12 @@ def evaluate_profile(profile: HouseholdProfile) -> tuple[PolicySnapshot, list[Be
     edge = evaluate_edge(profile, snapshot)
     rigid = evaluate_rigid_expense(profile, snapshot)
     temporary = evaluate_temporary(profile, snapshot)
-    low_income = evaluate_low_income_monitoring(profile, snapshot, [dibao, edge, rigid, temporary])
+    special = evaluate_special_hardship(profile, snapshot)
+    low_income = evaluate_low_income_monitoring(
+        profile, snapshot, [dibao, edge, rigid, temporary, special]
+    )
 
-    results = apply_combination_plan([temporary, dibao, edge, rigid, low_income])
+    results = apply_combination_plan([temporary, special, dibao, edge, rigid, low_income])
 
     warnings = [
         "系统输出仅用于申请前预筛和导办，不具有行政审批效力。",

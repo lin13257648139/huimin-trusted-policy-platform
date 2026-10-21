@@ -23,7 +23,11 @@ function Invoke-Gate {
 
 Invoke-Gate 'Ruff' @('-m', 'ruff', 'check', 'app', 'scripts', 'tests')
 Invoke-Gate 'Mypy' @('-m', 'mypy', 'app')
-Invoke-Gate 'Pytest + branch coverage' @('-m', 'pytest', '--cov=app', '--cov-branch', '--cov-report=term-missing')
+Invoke-Gate 'Pytest + branch coverage' @(
+    '-m', 'pytest', '--cov=app', '--cov-branch', '--cov-report=term-missing',
+    '--cov-report=json:data/evaluation/coverage_report.json'
+)
+Invoke-Gate 'National-competition branch thresholds' @('scripts/check_coverage.py')
 Invoke-Gate 'Bandit' @('-m', 'bandit', '-q', '-r', 'app')
 Invoke-Gate 'AST static security policy' @('scripts/static_security_policy.py', 'app', 'scripts')
 

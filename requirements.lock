@@ -3,7 +3,7 @@ annotated-doc==0.0.5
 annotated-types==0.8.0
 antlr4-python3-runtime==4.9.3
 anyio==4.15.1
-certifi==2026.7.22
+certifi==2026.10.19
 charset-normalizer==3.5.1
 click==8.5.0
 colorama==0.4.6
@@ -21,7 +21,7 @@ omegaconf==2.3.1
 onnxruntime==1.30.0
 opencv-python==5.0.0.93
 packaging==26.3
-pillow==12.3.0
+pillow==13.0.0
 pluggy==1.6.0
 protobuf==7.36.2
 pyclipper==1.4.0

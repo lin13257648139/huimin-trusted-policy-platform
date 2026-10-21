@@ -113,6 +113,13 @@ def test_uncovered_assistance_topic_returns_specific_abstention() -> None:
     assert result["domain_gate"]["reason_code"] == "unsupported_social_assistance_topic"
 
 
+def test_domain_gate_allows_policy_privacy_and_family_obligor_questions() -> None:
+    privacy = search_evidence_result("导办必需信息如何保密", limit=3)
+    obligor = search_evidence_result("赡养抚养义务人如何评估", limit=3)
+    assert privacy["domain_gate"]["passed"] is True
+    assert obligor["domain_gate"]["passed"] is True
+
+
 def test_new_bypass_phrase_is_rejected_before_embedding(monkeypatch) -> None:
     monkeypatch.setattr(
         retrieval,
@@ -161,7 +168,39 @@ def test_hybrid_retrieval_runs_semantic_fusion_after_domain_gate(monkeypatch) ->
         "reason": None,
         "model_id": "test-embedding",
         "latency_ms": 3,
+        "document_embedding_cache_hit": False,
     }
+
+
+def test_hybrid_retrieval_reuses_only_stable_document_embeddings(monkeypatch) -> None:
+    monkeypatch.setattr(
+        retrieval,
+        "settings",
+        SimpleNamespace(
+            ai_mode="hybrid",
+            ollama_embedding_model="cache-test-embedding",
+            ollama_embedding_model_digest="a" * 64,
+            policy_as_of="2026-09-30",
+        ),
+    )
+    calls: list[list[str]] = []
+
+    def fake_embed(texts):
+        calls.append(list(texts))
+        return SimpleNamespace(
+            vectors=[[1.0, 0.0] for _ in texts],
+            model_id="cache-test-embedding",
+            latency_ms=3,
+        )
+
+    monkeypatch.setattr(retrieval, "embed_texts", fake_embed)
+    first = search_evidence_result("申请低保一般要准备什么材料", limit=3)
+    second = search_evidence_result("低保收入如何认定", limit=3)
+
+    assert len(calls[0]) > 1
+    assert calls[1] == ["低保收入如何认定"]
+    assert first["retriever"]["document_embedding_cache_hit"] is False
+    assert second["retriever"]["document_embedding_cache_hit"] is True
 
 
 def test_hybrid_retrieval_exposes_model_fallback(monkeypatch) -> None:

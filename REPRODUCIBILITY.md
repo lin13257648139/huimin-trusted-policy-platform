@@ -5,7 +5,7 @@
 ## 固定环境
 
 - Python：3.11或3.12，当前冻结环境为3.12.14。
-- 应用版本：`1.4.0`；规则引擎版本由API返回，当前为`rule-engine/0.5.0`。
+- 应用版本：`2.0.0`；规则引擎版本由API返回，当前为`rule-engine/0.6.0`。
 - 依赖：`requirements.lock`固定直接与传递依赖；`requirements.txt`只表达允许升级的开发约束。
 - 政策原件：`data/raw_official/provenance_manifest.json`记录项目相对路径、大小与SHA-256。
 - 随机性：语言模型请求固定temperature=0、seed=20261002；模型名、提示指纹和延迟写入响应或实验报告。
@@ -29,6 +29,9 @@
 - `data/evaluation/release_manifest.json`
 - `data/evaluation/stage2_split_manifest.json`
 - `data/evaluation/ai_workload_pressure_report.json`
+- `data/evaluation/policy_qa_report.json`
+- `data/evaluation/policy_qa_special_report.json`
+- `data/evaluation/policy_qa_live_report.json`
 - `data/raw_official/provenance_manifest.json`
 
 所有报告仅保存项目相对路径，不保存个人用户名、Python绝对路径或群众原文。
@@ -54,4 +57,4 @@ $env:OLLAMA_TIMEOUT_SECONDS='120'
 
 ## 结果边界
 
-画像、意图与检索基准均为团队内部构造数据；规则回归标签来自确定性引擎。它们用于算法选型、回归和安全消融，不是第三阶段真人试点，也不能证明真实业务效果。
+画像、意图、检索和特困供养专题基准均为团队内部构造数据；规则回归标签来自确定性引擎。它们用于算法选型、回归和安全消融，不是第三阶段真人试点，也不能证明真实业务效果。

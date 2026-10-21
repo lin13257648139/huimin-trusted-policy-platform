@@ -84,6 +84,18 @@ def validate_screening_output(
         ("member_scope_confirmed", profile.member_scope_confirmed, "member_scope"),
         ("urgent_event", profile.urgent_event, "urgent_event"),
         ("basic_life_interrupted", profile.basic_life_interrupted, "basic_life"),
+        (
+            "special_person_category_confirmed",
+            profile.special_person_category_confirmed,
+            "special_category",
+        ),
+        ("no_labor_capacity", profile.no_labor_capacity, "no_labor_capacity"),
+        ("no_livelihood_source", profile.no_livelihood_source, "no_livelihood_source"),
+        (
+            "has_capable_legal_supporter",
+            profile.has_capable_legal_supporter,
+            "capable_legal_supporter",
+        ),
     ]
     tri_state_violations: list[str] = []
     for field_name, value, condition_code in unknown_contracts:
@@ -108,6 +120,7 @@ def validate_screening_output(
     dibao = results_by_id.get("B002")
     edge = results_by_id.get("B003")
     rigid = results_by_id.get("B004")
+    special = results_by_id.get("B006")
     if dibao and edge and rigid:
         if dibao.plan_role == "primary":
             duplicate_primary = [
@@ -124,6 +137,16 @@ def validate_screening_output(
         )
         if has_parallel and dibao.status.value != "unlikely":
             relation_violations.append("B002尚未明确排除时错误启用B003/B004并行关系")
+    if special and special.status.value == "likely":
+        duplicate_primary = [
+            item.benefit_id
+            for item in (edge, rigid)
+            if item and item.plan_role == "primary"
+        ]
+        if duplicate_primary:
+            relation_violations.append(
+                f"B006为优先核验路径时仍存在重复主路径:{duplicate_primary}"
+            )
     for result in results:
         evidence_ids = {item.evidence_id for item in result.evidence}
         for relation in result.plan_relations:
@@ -137,7 +160,7 @@ def validate_screening_output(
         not relation_violations,
         "；".join(relation_violations)
         if relation_violations
-        else "B002优先、B003/B004转介或并行关系一致且证据完整",
+        else "B006/B002优先及B003/B004转介或并行关系一致且证据完整",
     )
     contradictions = []
     if profile.urgent_event is False and profile.urgent_event_date is not None:

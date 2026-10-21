@@ -6,6 +6,7 @@ from pathlib import Path
 
 TARGETS = {
     "app/services/policy_compiler.py": 85.0,
+    "app/services/policy_qa.py": 90.0,
     "app/main.py": 85.0,
 }
 TOTAL_TARGET = 90.0

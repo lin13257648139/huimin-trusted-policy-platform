@@ -52,6 +52,8 @@ def main() -> None:
         ROOT / "data" / "evaluation" / "policy_compiler_real_benchmark.jsonl",
         ROOT / "data" / "evaluation" / "high_risk_safety_benchmark.jsonl",
         ROOT / "data" / "evaluation" / "ocr_synthetic" / "manifest.json",
+        ROOT / "data" / "evaluation" / "policy_qa_report.json",
+        ROOT / "data" / "evaluation" / "policy_qa_live_report.json",
     ]
     missing = [path.relative_to(ROOT).as_posix() for path in expected if not path.exists()]
     if missing:
@@ -94,6 +96,7 @@ def main() -> None:
 
     coverage_targets = {
         "app/services/policy_compiler.py": 0.85,
+        "app/services/policy_qa.py": 0.90,
         "app/main.py": 0.85,
     }
     for module, target in coverage_targets.items():

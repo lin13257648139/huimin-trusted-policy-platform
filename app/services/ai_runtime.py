@@ -36,6 +36,26 @@ class ModelRuntimeError(RuntimeError):
     """Expected local-model failures that must trigger a visible safe fallback."""
 
 
+def warm_ollama_runtime() -> None:
+    """Best-effort background warm-up so the first resident request is not the cold start."""
+
+    if not settings.ollama_enabled:
+        return
+    _assert_locked_model(
+        settings.ollama_model, getattr(settings, "ollama_model_digest", None)
+    )
+    _request_json(
+        "/api/generate",
+        {
+            "model": settings.ollama_model,
+            "prompt": "",
+            "stream": False,
+            "keep_alive": "30m",
+        },
+        timeout=settings.ollama_timeout_seconds,
+    )
+
+
 def _model_name_matches(installed: str, wanted: str) -> bool:
     """Match Ollama names without treating different tags as the same model."""
 
@@ -217,6 +237,7 @@ def chat_json(
             {"role": "user", "content": user_prompt},
         ],
         "options": {"temperature": 0, "seed": 20261002},
+        "keep_alive": "30m",
     }
     started = time.perf_counter()
     try:
@@ -253,7 +274,7 @@ def embed_texts(texts: list[str]) -> EmbeddingResult:
     try:
         body = _request_json(
             "/api/embed",
-            {"model": model, "input": texts, "truncate": True},
+            {"model": model, "input": texts, "truncate": True, "keep_alive": "30m"},
             timeout=settings.ollama_timeout_seconds,
         )
     finally:

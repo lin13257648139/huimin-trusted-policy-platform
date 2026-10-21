@@ -78,25 +78,28 @@ def _set_base_roles(results: list[BenefitResult]) -> None:
         item.plan_relations = []
         if item.status == EligibilityStatus.UNLIKELY:
             item.plan_role = "not_recommended"
-            item.plan_reason = "当前信息存在不满足项，先核对条件，不列入本次主路径。"
+            item.plan_reason = "当前信息存在不满足项，本次不列为优先核对方向。"
         elif item.status == EligibilityStatus.MANUAL_REVIEW:
             item.plan_role = "manual"
             item.plan_reason = "规则边界或年度参数需要人工核验，系统不自动归类。"
         elif item.status == EligibilityStatus.INCOMPLETE:
             item.plan_role = "alternative"
-            item.plan_reason = "关键资料尚未齐全，补充最小缺口后再决定是否进入主路径。"
+            item.plan_reason = "关键资料尚未齐全，补充最小缺口后再判断是否需要优先核对。"
         elif item.benefit_id == "B005":
             item.plan_role = "primary"
-            item.plan_reason = "存在近期急难且基本生活受影响，按快速响应优先级列为首要路径。"
+            item.plan_reason = "存在近期急难且基本生活受影响，应优先联系窗口核对临时救助。"
         elif item.benefit_id == "B002":
             item.plan_role = "primary"
             item.plan_reason = "低保属于基本生活救助，应先完成该项核验。"
+        elif item.benefit_id == "B006":
+            item.plan_role = "primary"
+            item.plan_reason = "特困供养属于基本生活救助，应优先核验个人资格条件。"
         elif item.benefit_id == "B001":
             item.plan_role = "linked"
             item.plan_reason = "作为低收入人口监测和转介入口，与具体认定事项联动办理。"
         else:
             item.plan_role = "primary"
-            item.plan_reason = "当前线索支持列入优先咨询路径。"
+            item.plan_reason = "当前线索支持把这项救助列为优先咨询方向。"
 
 
 def apply_combination_plan(results: list[BenefitResult]) -> list[BenefitResult]:
@@ -107,14 +110,15 @@ def apply_combination_plan(results: list[BenefitResult]) -> list[BenefitResult]:
     dibao = by_id["B002"]
     edge = by_id["B003"]
     rigid = by_id["B004"]
+    special = by_id.get("B006")
 
     # 预筛阶段不能声称已经完成互斥认定；只要低保尚未明确排除，就先核验B002，
     # B003/B004保留为“未获低保确认时”的转介，不与B002并列重复申请。
     if dibao.status != EligibilityStatus.UNLIKELY:
         if dibao.status == EligibilityStatus.MANUAL_REVIEW:
-            dibao.plan_reason = "低保处于政策或金额边界，须先人工核验，再决定是否转介其他分层对象。"
+            dibao.plan_reason = "低保处于政策或金额边界，须先人工核验，再决定是否继续核对其他救助。"
         elif dibao.status == EligibilityStatus.INCOMPLETE:
-            dibao.plan_reason = "低保关键条件尚未齐全，应先补齐并核验，再决定是否转介其他分层对象。"
+            dibao.plan_reason = "低保关键条件尚未齐全，应先补齐并核验，再决定是否继续核对其他救助。"
         for candidate, relation_id in (
             (edge, "REL-B002-B003"),
             (rigid, "REL-B002-B004"),
@@ -122,8 +126,8 @@ def apply_combination_plan(results: list[BenefitResult]) -> list[BenefitResult]:
             if candidate.status in {EligibilityStatus.LIKELY, EligibilityStatus.INCOMPLETE}:
                 candidate.plan_role = "alternative"
                 candidate.plan_reason = (
-                    "低保尚未明确排除；本事项保留为低保未获正式确认时的分层转介，"
-                    "不要与低保重复申请。"
+                    "低保尚未明确排除；如果低保未获正式确认，可继续核对本事项，"
+                    "暂时不必重复准备材料。"
                 )
                 rule = _rule(relation_id)
                 reason = "先核验最低生活保障；未获正式确认时再转入本事项。"
@@ -168,9 +172,36 @@ def apply_combination_plan(results: list[BenefitResult]) -> list[BenefitResult]:
             reason="两类对象分别认定，可并行核验并复用家庭经济状况材料。",
         )
 
+    # 特困供养以个人为对象，满足三无条件的线索应先于家庭类分层救助核验。
+    # 这里只调整咨询顺序；正式纳入后是否排除其他事项由主管部门确认。
+    if special and special.status == EligibilityStatus.LIKELY:
+        rule = _rule("REL-B006-B003-B004")
+        for candidate in (edge, rigid):
+            if candidate.status in {EligibilityStatus.LIKELY, EligibilityStatus.INCOMPLETE}:
+                candidate.plan_role = "alternative"
+                candidate.plan_reason = (
+                    "当前存在特困供养线索；建议先核验特困供养，再由窗口确认是否需要"
+                    "继续核对本事项。"
+                )
+                reason = "先核验特困人员救助供养；正式纳入后不重复认定本事项。"
+                _append_relation(
+                    special,
+                    rule=rule,
+                    related_benefit_id=candidate.benefit_id,
+                    direction="outgoing",
+                    reason=reason,
+                )
+                _append_relation(
+                    candidate,
+                    rule=rule,
+                    related_benefit_id="B006",
+                    direction="incoming",
+                    reason=reason,
+                )
+
     plausible = [
         item
-        for item in (dibao, edge, rigid)
+        for item in ((special,) if special else ()) + (dibao, edge, rigid)
         if item.status != EligibilityStatus.UNLIKELY
     ]
     low_income = by_id["B001"]

@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-16T08:41:34.359887+00:00",
+  "generated_at": "2026-10-21T00:18:43.788548+00:00",
   "manifest_version": "1.0",
   "assets": [
     {
@@ -8,9 +8,9 @@
       "label_origin": "programmatically generated from documented rules",
       "independent": false,
       "contains_personal_data": false,
-      "bytes": 204578,
+      "bytes": 251172,
       "records": 240,
-      "sha256": "415f2151fae319e6553e3926cf8d1493e7d816eebf97b85c3e3ece49d2e5f74f"
+      "sha256": "e1080f10674f9458494d7692981b247e261788ea4ab043b8034d9a6103394595"
     },
     {
       "path": "data/ml/intent_dataset.json",
@@ -18,9 +18,9 @@
       "label_origin": "programmatically rendered project-authored synthetic utterances",
       "independent": false,
       "contains_personal_data": false,
-      "bytes": 25502,
-      "records": 250,
-      "sha256": "60a7fded87ea2c4d31675c9fbfd0a89daaef82e45f3c41c277861bef2f377122"
+      "bytes": 30616,
+      "records": 300,
+      "sha256": "7a960b0f8d547c52b904407b180774088ce590bb408fba32d95aecf4f5890ef0"
     },
     {
       "path": "data/evaluation/profile_extraction_benchmark.jsonl",
@@ -28,9 +28,19 @@
       "label_origin": "project-authored synthetic gold",
       "independent": false,
       "contains_personal_data": false,
-      "bytes": 133119,
+      "bytes": 132819,
       "records": 300,
-      "sha256": "4feb3471a0d6bb772f11fe4b1c8777b35528b429e234a1aa3a88c977d925198f"
+      "sha256": "fe7265a79f51af0ff72b2d9035f9cc8be88ad0dad2b22ea5b4d9c2fae94ca976"
+    },
+    {
+      "path": "data/evaluation/special_hardship_profile_benchmark.jsonl",
+      "role": "focused_special_hardship_profile_challenge",
+      "label_origin": "project-authored synthetic gold",
+      "independent": false,
+      "contains_personal_data": false,
+      "bytes": 4606,
+      "records": 20,
+      "sha256": "31f522df1af7926bc2805b0fde97a13e6b9bec20fa33ae0346cdc62b5e501019"
     },
     {
       "path": "data/evaluation/retrieval_benchmark.json",
@@ -38,9 +48,19 @@
       "label_origin": "project-authored queries and expected evidence",
       "independent": false,
       "contains_personal_data": false,
-      "bytes": 77925,
-      "records": 160,
-      "sha256": "b0ccd57c23cdf90aa3bb653ea9b41f481398e55003a5e6d9e65ff9a90f862a99"
+      "bytes": 85444,
+      "records": 178,
+      "sha256": "6ac7fcc26211ffe0370652e98631ffe3fc7fef646228619993db10508174aa9e"
+    },
+    {
+      "path": "data/evaluation/policy_qa_special_challenge.json",
+      "role": "focused_special_hardship_grounding_challenge",
+      "label_origin": "project-authored queries and expected evidence",
+      "independent": false,
+      "contains_personal_data": false,
+      "bytes": 4183,
+      "records": 20,
+      "sha256": "9d65a94eccc6f535e834ae77d17f63f8c2078472e22576188f5a253068b03fa9"
     },
     {
       "path": "data/evaluation/policy_compiler_real_benchmark.jsonl",
@@ -48,9 +68,9 @@
       "label_origin": "official verbatim clauses with project-authored gold",
       "independent": false,
       "contains_personal_data": false,
-      "bytes": 187420,
+      "bytes": 187250,
       "records": 170,
-      "sha256": "65773d242ab179d8796809c8a4e1942a97f17691e9f47559cb19a01d57ac0ddc"
+      "sha256": "f88afbbda1da5d1f6f9c131726b62f70f06a19f2e7f23d8de5ad1adf958684f7"
     },
     {
       "path": "data/evaluation/ocr_synthetic/manifest.json",
@@ -59,9 +79,9 @@
       "independent": false,
       "contains_personal_data": false,
       "related_glob": "data/evaluation/ocr_synthetic/OCR-*.png",
-      "bytes": 34335,
+      "bytes": 33233,
       "records": 100,
-      "sha256": "cfbbca349f7bf4dff663dd0c2ee8011bafcc7794fb4af88bc2e9f73476f8c77b",
+      "sha256": "0c392d5eb3f7877c52cc9c2c899ca33786e9b7921b82722b3296fdf49d0407f1",
       "related_files": 100,
       "related_tree_sha256": "1ca132cfdd2c63975c4ddc9093587b2e05e429bb68586e1c5e73e8faaa842890"
     },
@@ -71,9 +91,9 @@
       "label_origin": "programmatic governance validation",
       "independent": false,
       "contains_personal_data": false,
-      "bytes": 4450,
+      "bytes": 4295,
       "records": 6,
-      "sha256": "3537e0328ce5a40ec1dd14d3f12109210c86a42b34155ca0ea94f616562df2c8"
+      "sha256": "851e2528131410ee0e5a663e0383746d356cf1a420e0b24fa64196441f1d1389"
     },
     {
       "path": "data/evaluation/high_risk_safety_benchmark.jsonl",
@@ -81,9 +101,9 @@
       "label_origin": "project-authored adversarial and boundary guards",
       "independent": false,
       "contains_personal_data": false,
-      "bytes": 126042,
+      "bytes": 125722,
       "records": 320,
-      "sha256": "745678ad3067ae1bac5aee35149be11dd5ab2800c1964ebafebd3552107eb9cf"
+      "sha256": "949512ec16810d927da7a9d141ed499a91dc396077ecda29c337f36ffd236cab"
     },
     {
       "path": "data/evaluation/active_question_decision_cases.jsonl",
@@ -91,31 +111,31 @@
       "label_origin": "programmatically transformed from synthetic conformance profiles",
       "independent": false,
       "contains_personal_data": false,
-      "bytes": 87423,
+      "bytes": 108063,
       "records": 120,
-      "sha256": "a822d8f685728b0429f4be7d103bb428a47402c5f1ba2b10dc0562d3336e3f89"
+      "sha256": "ff10b323ae1fc2b3d47fde8d7c867a6f8dbae7f97d3f39d50c1c470dedda2ee4"
     }
   ],
   "missing": [],
   "claim_boundary": "当前资产全部为合成数据或项目组标注，只用于回归、消融与可复现工程验证；项目尚未开展外部专家评测，不得把任何资产表述为独立专家证据，也不得外推为真实困难群众使用效果。",
   "privacy": "清单不包含群众姓名、证件号、电话、地址或自由叙述。",
   "release_metadata": {
-    "release_id": "v1.4.0+source.31b820b020a7",
-    "app_version": "1.4.0",
-    "engine_version": "rule-engine/0.5.0",
-    "git_commit": "75a4d9da6d7cb1de0babe707c72fb5427dd21272",
-    "git_dirty": false,
-    "source_tree_sha256": "31b820b020a7291b9e8b0ec2324b914d590c54a9189ef18e544f4d4d3a412932",
+    "release_id": "v2.0.0+source.83cbbce1a682",
+    "app_version": "2.0.0",
+    "engine_version": "rule-engine/0.6.0",
+    "git_commit": "e8e572a86c903694f526f39273d7c949fbe16c1d",
+    "git_dirty": true,
+    "source_tree_sha256": "83cbbce1a6826f13b8acf8cf7031a2572067635cc65c4fd4b961eaf7f9f70982",
     "source_binding": {
-      "code_commit": "75a4d9da6d7cb1de0babe707c72fb5427dd21272",
-      "source_inputs_dirty": false,
-      "source_tree_sha256": "31b820b020a7291b9e8b0ec2324b914d590c54a9189ef18e544f4d4d3a412932",
-      "source_file_count": 246,
+      "code_commit": "e8e572a86c903694f526f39273d7c949fbe16c1d",
+      "source_inputs_dirty": true,
+      "source_tree_sha256": "83cbbce1a6826f13b8acf8cf7031a2572067635cc65c4fd4b961eaf7f9f70982",
+      "source_file_count": 253,
       "scope": "代码、测试、评测输入、运行和安全配置；生成的评测报告不参与自指纹",
       "text_normalization": "CRLF和LF统一为LF；二进制文件保持原始字节"
     },
     "artifact_binding": {
-      "reports_generated_from_source_sha256": "31b820b020a7291b9e8b0ec2324b914d590c54a9189ef18e544f4d4d3a412932",
+      "reports_generated_from_source_sha256": "83cbbce1a6826f13b8acf8cf7031a2572067635cc65c4fd4b961eaf7f9f70982",
       "evidence_commit": null,
       "note": "报告提交后可由正式发布流程填入证据提交；源码绑定以内容指纹为准。"
     }

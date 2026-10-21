@@ -1,5 +1,5 @@
 {
-  "registry_version": "2026.10.15.1",
+  "registry_version": "2026.10.21.1",
   "region": "广州市",
   "reviewed_at": "2026-10-15",
   "release_status": "verified_for_demo",
@@ -104,6 +104,18 @@
       "status": "verified",
       "source_ids": ["GZ-005", "GD-001"],
       "parameters": {"urgent_event_days": 31},
+      "manual_review_required": false
+    },
+    {
+      "benefit_id": "B006",
+      "name": "特困人员救助供养",
+      "version": "social-assistance-law-2026",
+      "document_no": "中华人民共和国主席令第75号",
+      "effective_from": "2026-07-01",
+      "effective_to": null,
+      "status": "verified",
+      "source_ids": ["CN-001", "GZ-001"],
+      "parameters": {},
       "manual_review_required": false
     }
   ],

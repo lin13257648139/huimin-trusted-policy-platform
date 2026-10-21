@@ -1,0 +1,637 @@
+{
+  "benchmark_role": "internally_curated_policy_qa_grounding_benchmark",
+  "evaluated_split": "frozen_final_test",
+  "case_count": 20,
+  "live_model_enabled": false,
+  "answerable_rate": {
+    "successes": 20,
+    "total": 20,
+    "estimate": 1.0,
+    "ci95": {
+      "method": "wilson",
+      "confidence": 0.95,
+      "lower": 0.8389,
+      "upper": 1.0
+    }
+  },
+  "expected_evidence_citation_rate": {
+    "successes": 20,
+    "total": 20,
+    "estimate": 1.0,
+    "ci95": {
+      "method": "wilson",
+      "confidence": 0.95,
+      "lower": 0.8389,
+      "upper": 1.0
+    }
+  },
+  "citation_allowlist_valid_rate": {
+    "successes": 20,
+    "total": 20,
+    "estimate": 1.0,
+    "ci95": {
+      "method": "wilson",
+      "confidence": 0.95,
+      "lower": 0.8389,
+      "upper": 1.0
+    }
+  },
+  "verified_quote_rate": {
+    "successes": 20,
+    "total": 20,
+    "estimate": 1.0,
+    "ci95": {
+      "method": "wilson",
+      "confidence": 0.95,
+      "lower": 0.8389,
+      "upper": 1.0
+    }
+  },
+  "claim_lexical_grounding_rate": {
+    "successes": 20,
+    "total": 20,
+    "estimate": 1.0,
+    "ci95": {
+      "method": "wilson",
+      "confidence": 0.95,
+      "lower": 0.8389,
+      "upper": 1.0
+    }
+  },
+  "numeric_grounding_rate": {
+    "successes": 20,
+    "total": 20,
+    "estimate": 1.0,
+    "ci95": {
+      "method": "wilson",
+      "confidence": 0.95,
+      "lower": 0.8389,
+      "upper": 1.0
+    }
+  },
+  "decision_boundary_valid_rate": {
+    "successes": 20,
+    "total": 20,
+    "estimate": 1.0,
+    "ci95": {
+      "method": "wilson",
+      "confidence": 0.95,
+      "lower": 0.8389,
+      "upper": 1.0
+    }
+  },
+  "end_to_end_grounded_success_rate": {
+    "successes": 20,
+    "total": 20,
+    "estimate": 1.0,
+    "ci95": {
+      "method": "wilson",
+      "confidence": 0.95,
+      "lower": 0.8389,
+      "upper": 1.0
+    }
+  },
+  "generation_modes": {
+    "extractive_fallback": 20
+  },
+  "error_table": [],
+  "details": [
+    {
+      "query_id": "SPQ-001",
+      "source_id": "CN-001",
+      "status": "answered",
+      "relevant_ids": [
+        "E-CN-001-SPECIAL-HARDSHIP"
+      ],
+      "cited_ids": [
+        "E-CN-001-SPECIAL-HARDSHIP",
+        "E-GZ-001-DEADLINE",
+        "E-GZ-001-SCOPE"
+      ],
+      "relevant_cited": true,
+      "citation_allowlist_valid": true,
+      "all_quotes_verified": true,
+      "claim_count": 3,
+      "claim_grounding_scores": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "claim_grounding_valid": true,
+      "unsupported_numbers": [],
+      "decision_boundary_valid": true,
+      "generation_mode": "extractive_fallback",
+      "fallback_reason": "本地大模型未启用"
+    },
+    {
+      "query_id": "SPQ-002",
+      "source_id": "CN-001",
+      "status": "answered",
+      "relevant_ids": [
+        "E-CN-001-SPECIAL-HARDSHIP"
+      ],
+      "cited_ids": [
+        "E-CN-001-APPLICATION-ASSISTANCE",
+        "E-CN-001-SPECIAL-HARDSHIP",
+        "E-GD-004-A-OBLIGORS"
+      ],
+      "relevant_cited": true,
+      "citation_allowlist_valid": true,
+      "all_quotes_verified": true,
+      "claim_count": 3,
+      "claim_grounding_scores": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "claim_grounding_valid": true,
+      "unsupported_numbers": [],
+      "decision_boundary_valid": true,
+      "generation_mode": "extractive_fallback",
+      "fallback_reason": "本地大模型未启用"
+    },
+    {
+      "query_id": "SPQ-003",
+      "source_id": "CN-001",
+      "status": "answered",
+      "relevant_ids": [
+        "E-CN-001-SPECIAL-HARDSHIP"
+      ],
+      "cited_ids": [
+        "E-CN-001-SPECIAL-APPLICATION",
+        "E-CN-001-SPECIAL-HARDSHIP",
+        "E-GZ-001-SCOPE"
+      ],
+      "relevant_cited": true,
+      "citation_allowlist_valid": true,
+      "all_quotes_verified": true,
+      "claim_count": 3,
+      "claim_grounding_scores": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "claim_grounding_valid": true,
+      "unsupported_numbers": [],
+      "decision_boundary_valid": true,
+      "generation_mode": "extractive_fallback",
+      "fallback_reason": "本地大模型未启用"
+    },
+    {
+      "query_id": "SPQ-004",
+      "source_id": "CN-001",
+      "status": "answered",
+      "relevant_ids": [
+        "E-CN-001-SPECIAL-HARDSHIP"
+      ],
+      "cited_ids": [
+        "E-CN-001-SPECIAL-APPLICATION",
+        "E-CN-001-SPECIAL-HARDSHIP",
+        "E-GD-002-DIBAO-EXCLUSION"
+      ],
+      "relevant_cited": true,
+      "citation_allowlist_valid": true,
+      "all_quotes_verified": true,
+      "claim_count": 3,
+      "claim_grounding_scores": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "claim_grounding_valid": true,
+      "unsupported_numbers": [],
+      "decision_boundary_valid": true,
+      "generation_mode": "extractive_fallback",
+      "fallback_reason": "本地大模型未启用"
+    },
+    {
+      "query_id": "SPQ-005",
+      "source_id": "CN-001",
+      "status": "answered",
+      "relevant_ids": [
+        "E-CN-001-SPECIAL-HARDSHIP"
+      ],
+      "cited_ids": [
+        "E-CN-001-SPECIAL-APPLICATION",
+        "E-CN-001-SPECIAL-HARDSHIP",
+        "E-GD-002-DIBAO-EXCLUSION"
+      ],
+      "relevant_cited": true,
+      "citation_allowlist_valid": true,
+      "all_quotes_verified": true,
+      "claim_count": 3,
+      "claim_grounding_scores": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "claim_grounding_valid": true,
+      "unsupported_numbers": [],
+      "decision_boundary_valid": true,
+      "generation_mode": "extractive_fallback",
+      "fallback_reason": "本地大模型未启用"
+    },
+    {
+      "query_id": "SPQ-006",
+      "source_id": "CN-001",
+      "status": "answered",
+      "relevant_ids": [
+        "E-CN-001-SPECIAL-HARDSHIP"
+      ],
+      "cited_ids": [
+        "E-CN-001-SPECIAL-APPLICATION",
+        "E-CN-001-SPECIAL-HARDSHIP",
+        "E-GZ-001-SCOPE"
+      ],
+      "relevant_cited": true,
+      "citation_allowlist_valid": true,
+      "all_quotes_verified": true,
+      "claim_count": 3,
+      "claim_grounding_scores": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "claim_grounding_valid": true,
+      "unsupported_numbers": [],
+      "decision_boundary_valid": true,
+      "generation_mode": "extractive_fallback",
+      "fallback_reason": "本地大模型未启用"
+    },
+    {
+      "query_id": "SPQ-007",
+      "source_id": "CN-001",
+      "status": "answered",
+      "relevant_ids": [
+        "E-CN-001-SPECIAL-APPLICATION"
+      ],
+      "cited_ids": [
+        "E-CN-001-SPECIAL-APPLICATION",
+        "E-CN-001-SPECIAL-HARDSHIP",
+        "E-GD-002-DIBAO-EXCLUSION"
+      ],
+      "relevant_cited": true,
+      "citation_allowlist_valid": true,
+      "all_quotes_verified": true,
+      "claim_count": 3,
+      "claim_grounding_scores": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "claim_grounding_valid": true,
+      "unsupported_numbers": [],
+      "decision_boundary_valid": true,
+      "generation_mode": "extractive_fallback",
+      "fallback_reason": "本地大模型未启用"
+    },
+    {
+      "query_id": "SPQ-008",
+      "source_id": "CN-001",
+      "status": "answered",
+      "relevant_ids": [
+        "E-CN-001-SPECIAL-APPLICATION"
+      ],
+      "cited_ids": [
+        "E-CN-001-SPECIAL-APPLICATION"
+      ],
+      "relevant_cited": true,
+      "citation_allowlist_valid": true,
+      "all_quotes_verified": true,
+      "claim_count": 1,
+      "claim_grounding_scores": [
+        1.0
+      ],
+      "claim_grounding_valid": true,
+      "unsupported_numbers": [],
+      "decision_boundary_valid": true,
+      "generation_mode": "extractive_fallback",
+      "fallback_reason": "本地大模型未启用"
+    },
+    {
+      "query_id": "SPQ-009",
+      "source_id": "CN-001",
+      "status": "answered",
+      "relevant_ids": [
+        "E-CN-001-SPECIAL-APPLICATION"
+      ],
+      "cited_ids": [
+        "E-CN-001-SPECIAL-APPLICATION"
+      ],
+      "relevant_cited": true,
+      "citation_allowlist_valid": true,
+      "all_quotes_verified": true,
+      "claim_count": 1,
+      "claim_grounding_scores": [
+        1.0
+      ],
+      "claim_grounding_valid": true,
+      "unsupported_numbers": [],
+      "decision_boundary_valid": true,
+      "generation_mode": "extractive_fallback",
+      "fallback_reason": "本地大模型未启用"
+    },
+    {
+      "query_id": "SPQ-010",
+      "source_id": "CN-001",
+      "status": "answered",
+      "relevant_ids": [
+        "E-CN-001-APPLICATION-ASSISTANCE"
+      ],
+      "cited_ids": [
+        "E-CN-001-APPLICATION-ASSISTANCE"
+      ],
+      "relevant_cited": true,
+      "citation_allowlist_valid": true,
+      "all_quotes_verified": true,
+      "claim_count": 1,
+      "claim_grounding_scores": [
+        1.0
+      ],
+      "claim_grounding_valid": true,
+      "unsupported_numbers": [],
+      "decision_boundary_valid": true,
+      "generation_mode": "extractive_fallback",
+      "fallback_reason": "本地大模型未启用"
+    },
+    {
+      "query_id": "SPQ-011",
+      "source_id": "GZ-001",
+      "status": "answered",
+      "relevant_ids": [
+        "E-GZ-001-DEADLINE"
+      ],
+      "cited_ids": [
+        "E-GZ-001-DEADLINE"
+      ],
+      "relevant_cited": true,
+      "citation_allowlist_valid": true,
+      "all_quotes_verified": true,
+      "claim_count": 1,
+      "claim_grounding_scores": [
+        1.0
+      ],
+      "claim_grounding_valid": true,
+      "unsupported_numbers": [],
+      "decision_boundary_valid": true,
+      "generation_mode": "extractive_fallback",
+      "fallback_reason": "本地大模型未启用"
+    },
+    {
+      "query_id": "SPQ-012",
+      "source_id": "GZ-001",
+      "status": "answered",
+      "relevant_ids": [
+        "E-GZ-001-DEADLINE"
+      ],
+      "cited_ids": [
+        "E-GZ-001-DEADLINE"
+      ],
+      "relevant_cited": true,
+      "citation_allowlist_valid": true,
+      "all_quotes_verified": true,
+      "claim_count": 1,
+      "claim_grounding_scores": [
+        1.0
+      ],
+      "claim_grounding_valid": true,
+      "unsupported_numbers": [],
+      "decision_boundary_valid": true,
+      "generation_mode": "extractive_fallback",
+      "fallback_reason": "本地大模型未启用"
+    },
+    {
+      "query_id": "SPQ-013",
+      "source_id": "GZ-001",
+      "status": "answered",
+      "relevant_ids": [
+        "E-GZ-001-MATERIALS"
+      ],
+      "cited_ids": [
+        "E-GZ-001-MATERIALS"
+      ],
+      "relevant_cited": true,
+      "citation_allowlist_valid": true,
+      "all_quotes_verified": true,
+      "claim_count": 1,
+      "claim_grounding_scores": [
+        1.0
+      ],
+      "claim_grounding_valid": true,
+      "unsupported_numbers": [],
+      "decision_boundary_valid": true,
+      "generation_mode": "extractive_fallback",
+      "fallback_reason": "本地大模型未启用"
+    },
+    {
+      "query_id": "SPQ-014",
+      "source_id": "GZ-001",
+      "status": "answered",
+      "relevant_ids": [
+        "E-GZ-001-MATERIALS"
+      ],
+      "cited_ids": [
+        "E-GZ-001-MATERIALS"
+      ],
+      "relevant_cited": true,
+      "citation_allowlist_valid": true,
+      "all_quotes_verified": true,
+      "claim_count": 1,
+      "claim_grounding_scores": [
+        1.0
+      ],
+      "claim_grounding_valid": true,
+      "unsupported_numbers": [],
+      "decision_boundary_valid": true,
+      "generation_mode": "extractive_fallback",
+      "fallback_reason": "本地大模型未启用"
+    },
+    {
+      "query_id": "SPQ-015",
+      "source_id": "GZ-001",
+      "status": "answered",
+      "relevant_ids": [
+        "E-GZ-001-SCOPE"
+      ],
+      "cited_ids": [
+        "E-CN-001-SPECIAL-HARDSHIP",
+        "E-GZ-001-DEADLINE",
+        "E-GZ-001-SCOPE"
+      ],
+      "relevant_cited": true,
+      "citation_allowlist_valid": true,
+      "all_quotes_verified": true,
+      "claim_count": 3,
+      "claim_grounding_scores": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "claim_grounding_valid": true,
+      "unsupported_numbers": [],
+      "decision_boundary_valid": true,
+      "generation_mode": "extractive_fallback",
+      "fallback_reason": "本地大模型未启用"
+    },
+    {
+      "query_id": "SPQ-016",
+      "source_id": "CN-001",
+      "status": "answered",
+      "relevant_ids": [
+        "E-CN-001-SPECIAL-HARDSHIP"
+      ],
+      "cited_ids": [
+        "E-CN-001-SPECIAL-APPLICATION",
+        "E-CN-001-SPECIAL-HARDSHIP",
+        "E-GZ-001-SCOPE"
+      ],
+      "relevant_cited": true,
+      "citation_allowlist_valid": true,
+      "all_quotes_verified": true,
+      "claim_count": 3,
+      "claim_grounding_scores": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "claim_grounding_valid": true,
+      "unsupported_numbers": [],
+      "decision_boundary_valid": true,
+      "generation_mode": "extractive_fallback",
+      "fallback_reason": "本地大模型未启用"
+    },
+    {
+      "query_id": "SPQ-017",
+      "source_id": "CN-001",
+      "status": "answered",
+      "relevant_ids": [
+        "E-CN-001-SPECIAL-HARDSHIP"
+      ],
+      "cited_ids": [
+        "E-CN-001-SPECIAL-APPLICATION",
+        "E-CN-001-SPECIAL-HARDSHIP",
+        "E-GZ-001-SCOPE"
+      ],
+      "relevant_cited": true,
+      "citation_allowlist_valid": true,
+      "all_quotes_verified": true,
+      "claim_count": 3,
+      "claim_grounding_scores": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "claim_grounding_valid": true,
+      "unsupported_numbers": [],
+      "decision_boundary_valid": true,
+      "generation_mode": "extractive_fallback",
+      "fallback_reason": "本地大模型未启用"
+    },
+    {
+      "query_id": "SPQ-018",
+      "source_id": "CN-001",
+      "status": "answered",
+      "relevant_ids": [
+        "E-CN-001-SPECIAL-HARDSHIP"
+      ],
+      "cited_ids": [
+        "E-CN-001-SPECIAL-APPLICATION",
+        "E-CN-001-SPECIAL-HARDSHIP",
+        "E-GZ-001-SCOPE"
+      ],
+      "relevant_cited": true,
+      "citation_allowlist_valid": true,
+      "all_quotes_verified": true,
+      "claim_count": 3,
+      "claim_grounding_scores": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "claim_grounding_valid": true,
+      "unsupported_numbers": [],
+      "decision_boundary_valid": true,
+      "generation_mode": "extractive_fallback",
+      "fallback_reason": "本地大模型未启用"
+    },
+    {
+      "query_id": "SPQ-019",
+      "source_id": "CN-001",
+      "status": "answered",
+      "relevant_ids": [
+        "E-CN-001-SPECIAL-APPLICATION",
+        "E-CN-001-SPECIAL-HARDSHIP"
+      ],
+      "cited_ids": [
+        "E-CN-001-SPECIAL-APPLICATION",
+        "E-CN-001-SPECIAL-HARDSHIP",
+        "E-GZ-001-SCOPE"
+      ],
+      "relevant_cited": true,
+      "citation_allowlist_valid": true,
+      "all_quotes_verified": true,
+      "claim_count": 3,
+      "claim_grounding_scores": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "claim_grounding_valid": true,
+      "unsupported_numbers": [],
+      "decision_boundary_valid": true,
+      "generation_mode": "extractive_fallback",
+      "fallback_reason": "本地大模型未启用"
+    },
+    {
+      "query_id": "SPQ-020",
+      "source_id": "GZ-001",
+      "status": "answered",
+      "relevant_ids": [
+        "E-GZ-001-DEADLINE",
+        "E-GZ-001-MATERIALS"
+      ],
+      "cited_ids": [
+        "E-GZ-001-DEADLINE",
+        "E-GZ-001-MATERIALS"
+      ],
+      "relevant_cited": true,
+      "citation_allowlist_valid": true,
+      "all_quotes_verified": true,
+      "claim_count": 2,
+      "claim_grounding_scores": [
+        1.0,
+        1.0
+      ],
+      "claim_grounding_valid": true,
+      "unsupported_numbers": [],
+      "decision_boundary_valid": true,
+      "generation_mode": "extractive_fallback",
+      "fallback_reason": "本地大模型未启用"
+    }
+  ],
+  "policy_file_isolation": null,
+  "claim_boundary": "该基准复用冻结检索集，评价端到端回答是否引用预期证据、引用是否在检索白名单内及原文是否核验；不代表真实群众满意度、资格判断准确率或外部专家评测。",
+  "app_version": "2.0.0",
+  "engine_version": "rule-engine/0.6.0",
+  "release_metadata": {
+    "release_id": "v2.0.0+source.83cbbce1a682",
+    "app_version": "2.0.0",
+    "engine_version": "rule-engine/0.6.0",
+    "git_commit": "e8e572a86c903694f526f39273d7c949fbe16c1d",
+    "git_dirty": true,
+    "source_tree_sha256": "83cbbce1a6826f13b8acf8cf7031a2572067635cc65c4fd4b961eaf7f9f70982",
+    "source_binding": {
+      "code_commit": "e8e572a86c903694f526f39273d7c949fbe16c1d",
+      "source_inputs_dirty": true,
+      "source_tree_sha256": "83cbbce1a6826f13b8acf8cf7031a2572067635cc65c4fd4b961eaf7f9f70982",
+      "source_file_count": 253,
+      "scope": "代码、测试、评测输入、运行和安全配置；生成的评测报告不参与自指纹",
+      "text_normalization": "CRLF和LF统一为LF；二进制文件保持原始字节"
+    },
+    "artifact_binding": {
+      "reports_generated_from_source_sha256": "83cbbce1a6826f13b8acf8cf7031a2572067635cc65c4fd4b961eaf7f9f70982",
+      "evidence_commit": null,
+      "note": "报告提交后可由正式发布流程填入证据提交；源码绑定以内容指纹为准。"
+    }
+  }
+}

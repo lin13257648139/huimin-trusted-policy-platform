@@ -7,14 +7,14 @@
 ## 数据资产
 
 1. `processed/synthetic_conformance_cases.jsonl`：依据已登记规则生成的合成边界案例，用于回归。
-2. `ml/intent_dataset.json`：100条开发语句与250条冻结测试语句，模板族隔离。
-3. `evaluation/profile_extraction_benchmark.jsonl`：300条程序渲染的项目组自编家庭情况，覆盖10类表达。
-4. `evaluation/retrieval_benchmark.json`：40条开发查询与120条冻结查询；按完整政策文件隔离。
+2. `ml/intent_dataset.json`：120条开发语句与300条冻结测试语句，覆盖6类事项，模板族隔离。
+3. `evaluation/profile_extraction_benchmark.jsonl`：300条程序渲染的项目组自编家庭情况，覆盖10类表达；`special_hardship_profile_benchmark.jsonl`另含20条特困供养专题挑战样例。
+4. `evaluation/retrieval_benchmark.json`：40条开发查询与120条冻结查询；按完整政策文件隔离。`policy_qa_special_challenge.json`另含20条特困供养证据化问答专题问题。
 5. `evaluation/policy_compiler_benchmark.jsonl`：团队自编政策条款模板。
 6. `evaluation/policy_compiler_real_benchmark.jsonl`：50条开发条款与120条冻结官方逐字条款；期望标签由项目组按公开指南制作。
 7. `evaluation/high_risk_safety_benchmark.jsonl`：320条越域、注入、UNKNOWN、时态和发布门案例。
 8. `evaluation/ocr_synthetic/`：程序生成的100张无个人信息材料图片，覆盖10种版式和10种质量变化。
-8. `evaluation/active_question_decision_cases.jsonl`：项目组构造的120条决策路径，用于真实逐轮比较动态与固定提问策略。
+9. `evaluation/active_question_decision_cases.jsonl`：项目组构造的120条决策路径，用于真实逐轮比较动态与固定提问策略。
 
 ## 标签独立性
 
